@@ -1,0 +1,55 @@
+{
+ "name": "plate_rest",
+ "mode": "strip:0:4",
+ "width": 2340,
+ "height": 1273,
+ "full_width": 2340,
+ "full_height": 1273,
+ "border_y": null,
+ "overlap_px": 32,
+ "overscan": {
+  "x": 0.15,
+  "top": 0.2,
+  "bottom": 0.13,
+  "shift_y": 0.014321581460535526
+ },
+ "camera": {
+  "location_blender": [
+   0.2318388819694519,
+   -11.787528991699219,
+   2.90397310256958
+  ],
+  "rotation_euler_deg": [
+   89.95154231231693,
+   0.0,
+   0.6722209748928667
+  ],
+  "lens_mm": 32.502342224121094,
+  "sensor_mm": 36.0,
+  "sensor_fit": "HORIZONTAL"
+ },
+ "linear_stats": {
+  "p50": 0.8115234375,
+  "p99": 3.552734375,
+  "p99.9": 7.99609375,
+  "max": 39.375,
+  "alpha_mean": 1.0,
+  "alpha_zero_frac": 0.0
+ },
+ "png_exposure_stops": -2.158,
+ "png_decode": "linear = srgb_to_linear(png) * 2^(-png_exposure_stops)  (Standard view, sRGB display)",
+ "color_management_in_file": {
+  "view_transform": "AgX",
+  "look": "None",
+  "exposure": 0.0,
+  "gamma": 1.0,
+  "display": "sRGB"
+ },
+ "render_seconds": 494.6117169857025,
+ "stitched_from": [
+  "plate_rest_s0.exr",
+  "plate_rest_s1.exr",
+  "plate_rest_s2.exr",
+  "plate_rest_s3.exr"
+ ]
+}

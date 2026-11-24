@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "incremental": false,
+    "plugins": []
+  },
+  "include": ["app/hero/**/*.ts", "hero-lab/**/*.ts"],
+  "exclude": ["node_modules", "hero-lab/dist"]
+}

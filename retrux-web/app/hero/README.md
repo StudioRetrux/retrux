@@ -1,0 +1,53 @@
+# Retrux hero (real-time ice gyroscope)
+
+The home hero is a real-time WebGL scene (three.js r184, no React Three Fiber) that reproduces the
+artist's Blender scene (`Home - EXPORT.blend`) and the motion of the reference renders
+(`Default Loop.mp4`, `State 2 to 5.mp4`). Nothing is a pre-rendered video.
+
+## How it is built
+
+| Layer | Technique | Files |
+|---|---|---|
+| Arctic environment | A Cycles render of the scene **without the hero** ("plate"), projected from the rest camera onto decimated copies of the Blender geometry, so it looks exactly like the offline render but still parallaxes and occludes in 3D. A projector depth map (baked once at load) removes the classic projection ghosts when the camera moves: surfaces hidden from the projector take the nearest background beside them (within a plausible depth band), and the sky near a mountain is sampled at that mountain's depth (the decimated proxies are smaller than the mountains in the plate). Region grades are keyed at the fragment's own projector position as well as at its fill source, so a hidden fold of the far-left ridge stays navy (no bright seams when the pointer orbits the camera). Fog is always taken at the surface the projector saw (proxy slivers no longer draw white hairlines) and clouds behind a proxy are discarded. A shader grade brings the plate towards the reference: tone curve + cooler, slightly more chromatic shadows, the far-left ridge in textured navy, a glacier-blue iceberg face, cobalt foreground rock shadows, mild local contrast on the far mountains, aerial haze and a drifting far-shore mist band (shared with the lake), plus a patchy fog bank over the mountain bases and far lake that rises only with the hold dolly (F420) | `engine/world/PlateEnvironment.ts` |
+| Sky / clouds | The flat emissive sky card is part of the plate; the six cloud cards are drawn live and drift | `PlateEnvironment.ts` |
+| Lake | The plate's calm mirror water, shaded by broad rolling ripple rings under the hero (sinusoid, 4.2 m spacing, 1.115 m/s, soft panorama lookup) and lightly de-streaked (T1+). The plate's baked reflections are re-aimed for the moving camera through a reflection distance traced at bake time (`uPlateDepth.b`), so the floe reflections stay vertical under the hold dolly instead of fanning out like light shafts; where the re-aimed mirror point is hidden from the projector but the lake point itself is not, the straight lookup is used (the sideways fill there drew striped floe-shaped bands at the pointer extremes); the near lake, and lake the projector never saw, become the live rippled mirror while dollied in. Plus the live reflection of the hero broken into soft fragments and the orb's cyan-white sheen on the crests | `engine/world/Water.ts` |
+| Ice rings | Custom GLSL after Blender's `Ice.004`: frost-driven rough transmission, faceted thick-lens refraction (each chiselled facet bends the view, muted refracted colour), Voronoi plateaus with crisp creases + two bump layers, thickness from a back-face depth pass (2x2 nearest, clamped), Beer-Lambert absorption in an azure tint, soft internal fracture sheets, a slate band only where the ice refracts something dark, steel-blue total internal reflection that fades at the silhouette, roughness-aware Fresnel (no silver sheen), the orb's light transmitted along the view ray. Ice behind ice (T1+, `?ibi=0/1` to force): the cage is drawn in two halves split at the orb's view depth, the far half first, then over a fresh screen copy the near half (strict depth test, no discard), which refracts it. The section is remapped to a superellipse slab and the silhouette is broken by soft dips along the facet borders (T1+); one noise domain per ring, so the pieces never show seams | `engine/hero/IceMaterial.ts`, `engine/hero/Rings.ts` |
+| Orb | Analytic sphere + raymarched emissive volume after the Blender `magick_ball_01` material; core clamped near the AgX white point, at most one bounced pass (the plasma tongues keep their contrast), a thin lilac / mint glass rim, a tight halo (per-level bloom weights), and a light for the ice (glint, transmitted glow) and the lake | `engine/hero/Orb.ts`, `engine/pipeline/PostChain.ts` |
+| Shards | One draw call, motion in the vertex shader (two counter-rotating belts) | `engine/hero/Shards.ts` |
+| Motion | State machine reconstructed frame by frame from the reference video: pointer orbit (edges), a hover push-in that grows as the pointer nears the orb (~1.12x), and press-and-hold. A click does nothing (a press only becomes a hold after 0.25 s). The hold is the video's F331-F442: rings pass through a near-frontal vortex, camera creep, the 0.88 s pop (an X of edge-on slabs, end quarters thrown out), then a slow-motion sustain in which every ring keeps tumbling while its axis is drawn towards the hold pose (ring A in four chunky slabs, B a split bowl, C / D moving inside); release resolves the inner rings first and re-joins A last. Every phase change blends the drivers and alignment targets keep their side, so nothing jumps. The idle tumble is motion-captured from the Default Loop (`ringMocap.ts`, built by `hero-pipeline/ringfit`): A and B are its exact constant-rate rotations (A = Ry(90t) Rx(180t), B = Ry(90t) Rx(-135t), deg/s), C and D the smoothed measured tracks; B and C run 8 s tracks because their 4 s loop ends turned over (no texture pop). The intro sets the tumble clock so its own cycle lands on the loop's 1.5 s pose (the F045 vortex). A 900 deg/s turn-rate cap per ring is the safety net against latched-side flips. `HeroState.alignment` reports how face-on the set is (the audio follows it) | `engine/Choreography.ts`, `engine/curves.ts`, `engine/CameraRig.ts`, `engine/hero/Rings.ts`, `engine/hero/ringMocap.ts` |
+| Frame graph | mirrored hero reflection, env + shards, refraction copy, orb, copy, ring back depth, rings, bloom, AgX grade | `engine/pipeline/RenderPipeline.ts`, `engine/pipeline/PostChain.ts` |
+| Quality | GPU tiers T0 (Intel Iris/UHD) to T2 (RTX / M-Pro) plus an adaptive render scale; MSAA 4 from T1 (Apple GPUs) | `engine/quality.ts`, `engine/types.ts` |
+| UI | Loader, cursor (the ring is an OS cursor image, so a trackpad never lags behind a slow WebGL frame; the DOM only draws the press disc), staggered text reveal, Figma sound wave, procedural audio | `engine/ui/*`, `engine/audio/SoundEngine.ts`, `public/hero/cursor/` |
+
+Colour: everything is scene-linear until the final pass, which applies AgX (Blender's view transform
+in this file: AgX, look None, exposure 0), so the plate and the live hero meet in the same space.
+
+## Running
+
+- Lab (fast, low RAM, reachable from other devices on the same Wi-Fi): `npm run hero:lab`, then open
+  the printed `http://<lan-ip>:5173/`. Add `?debug=1` for the HUD (and shader error checks),
+  `?tier=T0|T1|T2` to force a tier, `?scale=0.75` to pin the render scale. On Windows, allow
+  `node.exe` on Private networks the first time the firewall asks.
+- Site: `npm run dev`, or `npm run build && npm run start` (the page mounts `app/hero/HeroExperience.tsx`).
+- Type check: `npm run hero:typecheck`.
+- Validation against the reference frames, perf probes, UX captures:
+  `E:\Retrux Hero R&D\hero-pipeline\validate\` (see its README). In the browser console,
+  `__hero.debug.pose("expand", 2.97)`, `__hero.debug.settle(1.6)` and `__hero.debug.freeze(true)`
+  hold any moment of the timeline (lab only).
+
+## Assets (`public/hero/`)
+
+| File | Source |
+|---|---|
+| `plate_rest.webp`, `plate.json` | Cycles plate (hero hidden, Wave modifier off, clouds camera-invisible), 8-bit sRGB at a fixed exposure; `plate.json` holds the overscan and the exposure used for decoding |
+| `pano_orb.exr` | 360 degree Cycles panorama from the orb centre (hero hidden), PMREM'd at load for reflections |
+| `env_proxy.glb` | Environment meshes, decimated (mountains 524k -> 16k triangles), Draco |
+| `hero.glb` | Rings (subdivision level 2), orb, shard belts |
+| `cloud_a.webp`, `cloud_b.webp` | The two cloud PNGs from `HOME - Assets/Environment/Textures`, 2048 px |
+| `draco/` | three.js Draco decoder |
+| `poster.webp` | Still fallback when WebGL 2 is unavailable |
+
+The Blender scripts that produce them (export, plate strips, stitching, panorama) live next to the
+repo in `E:\Retrux Hero R&D\hero-pipeline\blender\`. The recipe: export with `export_apply`, render
+the plate in horizontal strips so the denoiser fits in 8 GB of RAM, stitch, then encode to WebP
+with dithering. Keep the RAM watchdog running and one heavy job at a time.

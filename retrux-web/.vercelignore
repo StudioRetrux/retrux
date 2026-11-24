@@ -1,0 +1,12 @@
+# Not part of the deployed site (the hero lab, old R3F models, local tooling).
+node_modules
+.next
+.git
+hero-lab
+public/models
+*.py
+inspect-glb.mjs
+inspect-glb-raw.mjs
+probe.mjs
+screenshot.mjs
+tsconfig.tsbuildinfo

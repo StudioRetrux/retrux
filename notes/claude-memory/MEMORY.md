@@ -1,0 +1,6 @@
+- [Laptop hangs on parallel heavy jobs](laptop-hangs-on-parallel-heavy-jobs.md) — run Blender/Chrome/Next/numpy one at a time; free RAM ~1.7 GB with IDE open; GPU throttles after hours of captures
+- [Hero must be real-time, not video](hero-must-be-realtime-not-video.md) — user rejected a pre-rendered video hero; poster only as no-WebGL fallback
+- [Retrux hero project status](retrux-hero-project-status.md) — engine + hero-pipeline locations, LAN preview, validators, what is still open (plate from EXPORT.blend vs render file)
+- [Hero interaction spec](hero-interaction-spec.md) — click does nothing, hold = slow-mo zoom with rings still moving, seamless rings, slight centre zoom, no glitches
+- [Retrux GitHub repo](retrux-github-repo.md) — private fvldi/retrux-hero-rnd, staging copy E:\retrux-hero-rnd, how to sync + push
+- [Retrux WIP on Vercel](retrux-wip-vercel.md) — https://retrux-hero-wip.vercel.app (project retrux-hero-wip, Vercel auth on), redeploy command

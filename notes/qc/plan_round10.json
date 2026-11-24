@@ -1,0 +1,787 @@
+﻿{
+    "overall_score":  7.53,
+    "per_lens":  [
+                     {
+                         "lens":  "composition_motion",
+                         "score":  8
+                     },
+                     {
+                         "lens":  "ice_material",
+                         "score":  6.2
+                     },
+                     {
+                         "lens":  "orb_shards_light",
+                         "score":  7
+                     },
+                     {
+                         "lens":  "environment",
+                         "score":  8.1
+                     },
+                     {
+                         "lens":  "color_grade_post",
+                         "score":  7.8
+                     },
+                     {
+                         "lens":  "awwwards_jury",
+                         "score":  8.1
+                     },
+                     {
+                         "lens":  "glitch_cursor_orbit",
+                         "score":  8.7
+                     },
+                     {
+                         "lens":  "glitch_hold_sweep",
+                         "score":  7.6
+                     }
+                 ],
+    "fix_tasks":  [
+                      {
+                          "id":  "T01",
+                          "title":  "Ring \u0027seam bars\u0027: make the TIR bar and end block soft, D-shaped and noisy, and fade them on detached hold pieces",
+                          "priority":  1,
+                          "lenses":  [
+                                         "glitch_hold_sweep",
+                                         "ice_material",
+                                         "awwwards_jury"
+                                     ],
+                          "evidence_summary":  "Hold-sweep MAJOR (+0.5). Crisp, parallel-edged, uniform darker-blue bars cross a ring band perpendicular to its tangent. They appear in idle/intro (sw_intro_3 x872-881 y324-382, sw_tau_2.75 x812-824 just inside the end cap, sw_tau_1.25 x758-803 and x837-870), in the pop (sw_pop_B x926-946 y319-417, the p04 blocks) and in the hold (sw_hold_L x910-922, sw_hold_TR). zoom_glitch_hold_sweep/bars_4x.png shows a flat steel-blue strip with a lighter block beyond it, which breaks the client\u0027s \u0027seamless rings\u0027 rule. Ice MAJOR (part of +0.5): a ruler-straight uniform stripe sits at band A\u0027s right corner (q00 x871-882 y346-415, q02 x872-882) where F000 has an irregular D-shaped dark corner (x866-880 y360-415), and a straight transverse stripe crosses the q02 ring end (x790-830 y263-303). Ice minor (+0.2): edge-on ring ends are opaque white with no horizon through them (q02 x593-680 y410-497).",
+                          "root_cause":  "This is the IceMaterial ICE_FRAG \u0027TIR bar\u0027 block (~lines 439-502). tbB is the distance of the UNREFRACTED line of sight (vCamRing) from the ring axis, and tbX = tbB - (uSectionRadius - uSectionHalf.x). Contours of constant tbB are planes through the camera, so they project as straight screen lines across the band near its apparent ends. tirBar is a window tbX in [-0.13, -0.02] m with only fwidth AA (tbAA), mixed to vec3(0.14,0.27,0.68) at a constant 0.8: that gives a ruler-straight, uniform bar. tirZone (tbX \u003e -0.02) is the end block. Since #63 it does mix(body, mix(luma,body,0.6)*1.45, 0.85*tirZone) plus scatterLight*0.3, which makes a flat milky block behind a hard straight edge; that block is the \u0027opaque white ends\u0027. vCamRing = camObj + uNoiseOffset, so every detached A quarter and B half computes its own bar in the pop and hold, at arbitrary places on the arcs. The front material has no \u0027detached\u0027 state; uJoined exists only on the back-depth material.",
+                          "implementation_plan":  "0) Before any tuning in this plan, re-baseline. Deploys #64-#69 shipped AFTER the round-10 captures (#63). Run shoot_qc, shoot_pointer and shoot_sweep on #69 and re-measure every target on #69.\n1) Confirm the cause with a probe_icevar variant tirBar = tirZone = 0 at sw_intro_3, sw_tau_2.75, sw_pop_B and sw_hold_L. The bars must vanish.\n2) Make the bar D-shaped and jagged. After tbZ add: zr = saturate(abs(tbZ)/uSectionHalf.y); jag = (nA-0.5)*0.05 + b2.x*0.012. Set lo = -0.13*mix(0.5,1.0,sqrt(1-zr*zr)) + jag and hi = -0.02 + 0.5*jag. Use edge width w = max(tbAA, 0.012) m in all four smoothsteps of tirBar and tirZone.\n3) Bar strength: replace the constant 0.8 with mix(0.45,0.72,nA). Change the colour to vec3(0.12,0.25,0.60), slightly darker so the corner holds its value with less coverage. Keep F *= 1-0.6*tirBar.\n4) End block, which also fixes the opaque white ends: body = mix(body, mix(trans*tint*1.15, mix(vec3(lb),body,0.75)*1.2, 0.5), 0.45*tirZone). Drop the scatter add from 0.3 to 0.15 and keep the Â±8 % frost-noise luma. The refracted horizon then stays visible through the ends.\n5) Detached pieces: add a uDetached uniform (0..1) to createIceMaterial. In Rings.update, in the loop that sets back.uJoined, compute per piece k = smoothstep(0.01, 0.2, |pivot.position - rest| + 2*(1-|pivot.quaternion.w|)) and write it to materials[i]. Then apply tirBar *= 1-0.75k and tirZone *= 1-0.6k. The value is continuous, so there are no pops.\n6) Hold q00: the right band end (x860-890 y340-420) should keep a darker curved corner of about 135,165,200 (today\u0027s bar matched F000\u0027s 135,164,200). The end-block mean should land at about L170-180 (F000 L177).",
+                          "files":  [
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/hero/IceMaterial.ts",
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/hero/Rings.ts"
+                                    ],
+                          "verify_poses":  [
+                                               "sw_intro_3",
+                                               "sw_tau_1.25",
+                                               "sw_tau_2.75",
+                                               "sw_pop_B",
+                                               "p04_expand_pop",
+                                               "sw_hold_L",
+                                               "sw_hold_TR",
+                                               "q00_rest",
+                                               "q02_loop30",
+                                               "q03_eye",
+                                               "p06_sustain",
+                                               "T0 q00/q02 (?tier=T0)",
+                                               "probe_interact"
+                                           ],
+                          "risk":  "Low-medium. q00 must keep a dark band-end corner, because F000 has one. Soften the term, do not delete it. T0 has no back depth (t is a constant 0.38 m), so check T0\u0027s end blocks separately. There is no performance cost.",
+                          "expected_gain":  "glitch_hold_sweep +0.4-0.5; ice +0.3-0.4 (stripes and white ends); awwwards +0.05. Overall â‰ˆ +0.06 plus the glitch lens.",
+                          "needs_render_blend":  false
+                      },
+                      {
+                          "id":  "T02",
+                          "title":  "Ridge specks and dashes in orbit, hover and hold views: weld the V2_Ridge proxy; add a guarded crack veto",
+                          "priority":  2,
+                          "lenses":  [
+                                         "glitch_cursor_orbit",
+                                         "environment",
+                                         "glitch_hold_sweep"
+                                     ],
+                          "evidence_summary":  "Cursor-orbit MAJOR (+0.3): a straight dotted line of 1-px light specks crosses the navy far-left ridge. Counts: ptr_right x228-282 y348-385 has 12-15; ptr_orb x86-133 y388-420 has about 8 (the most common hover spot); ptr_top_right and ptr_bottom_right show the same line; ptr_left, top_left and bottom_left show 3-5 each; ptr_rest shows 1-2. The specks will twinkle as the blend weights change. Env and hold-sweep minors add 1-px dark diagonal dashes and light dotted scratches on the ridge in p06 (x13-21 y461-467, x35-37 y449-454, x43-53 y502-512, x70-83 y517-527), sw_hold_R, sw_hold_BL, sw_hold_L and sw_rel_BL.",
+                          "root_cause":  "The cause is in the engine; the raw plates are clean (#60). The envvar46 debug shows the specks are massif fragments (\u003e 100 m) seen through cracks in the V2_Ridge proxy. The decoded proxy has 2623 open edges, and 564 of their endpoints lie within 2 cm of another open endpoint, i.e. unwelded seams. PLATE_FRAG\u0027s crack rule takes one sample at the occluder\u0027s depth and misses grazing cracks (envvar48). In GLSL_PLATE_PROJECTOR_BLEND, a projector that sees the massif through the crack wins the fragment even at a small uMix. The #60 speck clamp, min(col, rbf*1.35+0.015) on ridgeBody, only halves the specks, and its rbf is the REST plate\u0027s blur even when another projector supplied the colour.",
+                          "implementation_plan":  "1) Finish the in-flight A/B: qc/speck70-73 with pipeline/envvar47-49. Variants: w2 (runtime weld of V2_Ridge, 2 cm); w5 (ridge + massif, 5 cm); c1 (crackK: a crack counts as seen by the rest plate, and extra projectors get wK *= 1-crackK); c2 (c1 plus an 8-sample march through the rest depth map). Count specks with bright_px.py and crack_px.py in box x0-300 y290-430 on ptr_R, ptr_BR, ptr_C (orb) and ptr_L, and count dashes on p06 and sw_hold_R.\n2) Ship the weld. Bake it into the asset with export_env_v3.py (Merge by Distance 0.02 m on V2_Ridge, and on V2_Massif if w5 wins) and re-export env_proxy.glb. This is a Blender export only (minutes, no Cycles). If Blender time is not free, keep envvar47\u0027s weld at load in the PlateEnvironment constructor for V2_Ridge, before bakeDepth.\n3) Use c1 or c2 only if specks remain after the weld, and only for orbN, orbP and tilt, or with camAway \u003c 2.5 m. Never veto the HOLD projector: in the hold, the rest projector\u0027s crack test fires on parallax slivers above the crest and would paint the rest plate\u0027s navy there, which is a doubled crest (see T03).\n4) Once the cracks are gone, restrict the #60 speck clamp to true outliers: clamp only where luma(col) \u003e 1.5x its own 1.5-mip blur. Take that blur from the blended projectors (T03 step 2).",
+                          "files":  [
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/world/PlateEnvironment.ts",
+                                        "E:/Retrux Hero R\u0026D/retrux-web/public/hero/env_proxy.glb",
+                                        "C:/Users/fvldi/AppData/Local/Temp/claude/dc2ac90effee4131/570a569a-5122-4ff1-b51f-d34d42e5fde3/scratchpad/pipeline/export_env_v3.py"
+                                    ],
+                          "verify_poses":  [
+                                               "ptr_right",
+                                               "ptr_top_right",
+                                               "ptr_bottom_right",
+                                               "ptr_orb",
+                                               "ptr_left",
+                                               "ptr_top_left",
+                                               "ptr_bottom_left",
+                                               "ptr_rest",
+                                               "p06_sustain",
+                                               "sw_hold_R",
+                                               "sw_hold_BL",
+                                               "sw_rel_BL",
+                                               "probe_time at ptr_right (no twinkle over 2 s)"
+                                           ],
+                          "risk":  "Low-medium. A welded proxy changes every projector\u0027s baked depth map. Re-check the massif/ridge seam (the v7 \u0027Z\u0027 fix), the cloud cull along the skyline and doubled ridge rims in the ptr_* views. A runtime weld adds load time on T0. If c1 is applied to the hold projector, it creates the T03 ghost.",
+                          "expected_gain":  "glitch_cursor_orbit +0.3; environment +0.1; glitch_hold_sweep +0.05.",
+                          "needs_render_blend":  false
+                      },
+                      {
+                          "id":  "T03",
+                          "title":  "Ghost crest: a light-grey, stair-stepped ledge on the left ridge crest in every dollied-in frame",
+                          "priority":  3,
+                          "lenses":  [
+                                         "glitch_hold_sweep",
+                                         "environment"
+                                     ],
+                          "evidence_summary":  "Hold-sweep MAJOR (+0.25): a 2-4 px light-grey ledge with stair-stepped ends sits ~3 px above the navy crest. Locations: p06 x30-68 y440-446; sw_hold_L x0-38 y440-447; sw_hold_R x20-40 and x58-90 (with a 1 px spike); sw_hold_TR; sw_pop_B x10-20 and x43-73 y397-408; p04 (crest_stack6x.png, crest_stack2_6x.png). It is absent at rest (sw_tau_1.25, sw_intro_3) and at release (camExpand 0.26). Env minor: the same stepped sliver at p06 x0-7 y432-437. This is the \u0027doubled mountains\u0027 class the client banned.",
+                          "root_cause":  "Leading hypothesis, to be confirmed by bisect: the plate shader\u0027s ridge treatments are keyed to the REST projector\u0027s nearest-sampled depth, while the colour comes from the hold plate. At the hold camera (8 m forward of the rest projector) the crest misregisters by parallax. For a hold-plate SKY texel just above the crest, the rest projector\u0027s crack rule or pz still says \u0027ridge\u0027 (rz ~87 m), so ridgeBody = 1. The #60 speck clamp then pulls the sky texel down to rbf*1.35+0.015, where rbf is the REST plate\u0027s navy blur at uv0. Since #69 the slate desaturation also applies there. Both are applied only where the 1536-px NEAREST depth map flags ridge, which explains the 2-px stair steps, and the effect is absent where camera and rest projector coincide. Other candidates: (b) a light rim baked into plate_hold.webp; (c) w0\u0027s max(uRestMix, 0.001) floor letting the rest plate leak where the hold PCF visibility drops.",
+                          "implementation_plan":  "1) Bisect. First, crop public/hero/plate_hold.webp and plate_rest.webp at the crest (plate x 0-12 %, y 38-48 %) at 6x with Python to see whether the ledge is baked into the plate. Then run probe_envvar at p06 and sw_hold_L with these variants: (v1) ridgeBody = 0; (v2) speck clamp off; (v3) #69 slate off; (v4) the w0 floor at 0; (v5) hold Rim re-projection off.\n2) If the cause is the speck clamp or slate: in GLSL_PLATE_PROJECTOR_BLEND, accumulate a blurred copy alongside acc when plateRidgeArea(uv0) \u003e 0: accB += textureLod(u\u003cP\u003ePlate, k0, lodDof+1.5)*gain*wK, and the rest term likewise. Clamp against plateGrade(accB/wsum) instead of the rest plate\u0027s rbf. Gate the slate term by the sampled colour: slateK = ridgeBody*(1 - smoothstep(0.18, 0.35, luma(col))).\n3) If the cause is the w0 floor: use 1e-5 instead of 0.001 whenever any extra projector has visK \u003e 0.5.\n4) If the ledge is baked into the plate: retouch plate_hold.webp. Mask pixels within 5 px above the crest that are more than 6 levels lighter than the sky 6 px higher, clone the row above vertically, and re-encode at finalize_v7\u0027s WebP quality. Back the v7 plate up to qc/backup first.",
+                          "files":  [
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/world/PlateEnvironment.ts",
+                                        "E:/Retrux Hero R\u0026D/retrux-web/public/hero/plate_hold.webp"
+                                    ],
+                          "verify_poses":  [
+                                               "p06_sustain",
+                                               "sw_hold_L",
+                                               "sw_hold_R",
+                                               "sw_hold_TR",
+                                               "sw_hold_B",
+                                               "sw_pop_B",
+                                               "p04_expand_pop",
+                                               "sw_rel_BL",
+                                               "q00_rest (crest unchanged)",
+                                               "ptr_right",
+                                               "ptr_left"
+                                           ],
+                          "risk":  "Low once the cause is bisected. Step 2 touches the clamp that hides T02\u0027s specks, so do T02 first. A plate retouch must not open a seam between the hold and rest plates in the pop and release frames.",
+                          "expected_gain":  "glitch_hold_sweep +0.25; environment +0.1.",
+                          "needs_render_blend":  false
+                      },
+                      {
+                          "id":  "T04",
+                          "title":  "Lake reflection tears near the right floes off-centre: fade out the re-aim near a projector and cross-fade the straight fallback",
+                          "priority":  4,
+                          "lenses":  [
+                                         "glitch_hold_sweep",
+                                         "glitch_cursor_orbit"
+                                     ],
+                          "evidence_summary":  "Hold-sweep MAJOR (+0.4): floe reflection columns are cut by a hard horizontal line and continue shifted sideways. Cases: sw_hold_BL x1273-1293 at y659 (5 px); sw_pop_B x1270-1320 at y623 (18 px); p04 x1274-1300 y618-690, plus a vertical texture boundary at x~1295; sw_rel_TR x1235-1263 at y547, with a detached white rectangle at x1248-1263 y548-562; also sw_rel_BL and sw_hold_L (stairstep_stack3x.png). Centred p06 and rest are clean, so the tear jumps as the cursor moves. Cursor-orbit minor: a wavy 1-2 px dark hairline doubles the snowy rock\u0027s right silhouette on the water (ptr_left x440-446 y673-702, top_left, bottom_left).",
+                          "root_cause":  "Water.ts has binary lookup switches. For the rest projector: if (behind \u003e 0.0) { if (sBehind \u003c= 0.0) { pw = vWorldPos; pclip = vPlateClip; vis0 = 1.0; } }. The lookup jumps from plateMirrorPoint (re-aimed) to the straight lookup on the row where the re-aimed mirror point goes behind a floe. The two lookups differ by the reflection\u0027s parallax, so the column steps sideways. Every extra projector does the same in GLSL_WATER_PROJECTOR_BLEND (the `straight` flag), and that re-aim is already active at awayK \u003e 0.02 m. The hold-sweep cameras sit 0.22 m off the hold projector (hold_L x -0.08 vs the projector at 0.14). Secondary sources: the `raised` test smoothstep(0.05,0.12) and visK make projector hand-offs at floe edges near-binary (probably the vertical boundary in p04); mirrorL\u0027s \u0027nearest reflector\u0027 rule (mx \u003e 1.25 mn) is a hard switch; and the quv guard near rocks is binary, which drew the rock hairline.",
+                          "implementation_plan":  "1) Bisect with a probe_water / probe_glitch tint: R where the rest straight fallback was taken, G where any extra projector used `straight`, B where mirrorL took the min across an edge. Capture sw_hold_BL, sw_pop_B, p04, sw_rel_TR. The step rows should coincide with a tint boundary.\n2) Fade out the re-aim near a projector: reaimK = smoothstep(0.3, 1.2, camAway) for the rest projector, with the same ramp on awayK for each extra one, then pw = mix(vWorldPos, mirrorPoint, reaimK). At hold_L/R/BL/TR (0.22 m) all lookups become straight. That costs about 4 px of reflection parallax, which is acceptable.\n3) Replace the binary fallback with a cross-fade. Inside the band -0.5 \u003c behind \u003c 1.5 m, sample both lookups (branch, so the second fetch runs only there). Weight wS = smoothstep(-0.3,0.8,behind)*(1 - smoothstep(-0.2,0.6,sBehind)); colour = mix(reaimed, straight, wS); vis0 = mix(vis0, 1, wS). Do the same in GLSL_WATER_PROJECTOR_BLEND.\n4) If the p04 vertical boundary is a projector hand-off, soften `raised` to smoothstep(0.04,0.3,...) and average visK over 3 taps (Â±1.5 depth texels).\n5) Rock hairline: scale `offs` by 0.2 when any of 4 depth taps 2-3 texels around cuv is more than 15 % nearer (an occluder edge).\n6) Optional: a soft-min in mirrorL (weights exp(-(L-mn)/(0.25mn))), but only if step 1 shows blue tints at the steps.",
+                          "files":  [
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/world/Water.ts"
+                                    ],
+                          "verify_poses":  [
+                                               "sw_hold_BL",
+                                               "sw_hold_L",
+                                               "sw_hold_R",
+                                               "sw_hold_TR",
+                                               "sw_pop_B",
+                                               "sw_pop_T",
+                                               "sw_pop_BL",
+                                               "p04_expand_pop",
+                                               "sw_rel_TR",
+                                               "sw_rel_BL",
+                                               "p06_sustain (unchanged)",
+                                               "ptr_left",
+                                               "ptr_right",
+                                               "ptr_bottom_right",
+                                               "probe_time (ripple phase)",
+                                               "T0 perf_probe hold fps"
+                                           ],
+                          "risk":  "Medium. The straight fallback (deploy #25) fixed the striped floe-shaped bands at the pointer extremes, and the raised test fixed rock and floe copies on the water. A cross-fade can leave a faint double column inside the band. Extra lake fetches cost T0 frame time in the hold (about 26 fps at scale 0.6 on a hot GPU), so keep them branched.",
+                          "expected_gain":  "glitch_hold_sweep +0.3-0.4; glitch_cursor_orbit +0.05.",
+                          "needs_render_blend":  false
+                      },
+                      {
+                          "id":  "T05",
+                          "title":  "Bottom overscan: remove the dark ice-sheet hole that slides into the bottom-right corner when the pointer is low",
+                          "priority":  5,
+                          "lenses":  [
+                                         "glitch_cursor_orbit"
+                                     ],
+                          "evidence_summary":  "Cursor-orbit minor (+0.15), but it is exactly the client\u0027s \u0027weird thing at the bottom\u0027. ptr_bottom x1237-1440 y743-766 shows a rounded flat navy notch with a pale strip and ice chips, cut off by the frame edge. ptr_bottom_left shows it at x1327-1440 y731-766, and ptr_bottom_right at x1130-1217 y753-766 plus a dark band at x1312-1440 y761-766. It is not visible at rest or in the top spots.",
+                          "root_cause":  "This is baked content: a hole in the reconstruction\u0027s foreground ice sheet, inside the plates\u0027 bottom overscan (overscanBottom 0.13). CameraRig\u0027s pointer pan (EL_PAN 0.75 deg per deg of orbitEl, clamped to panDown) reveals it. PLATE_FRAG\u0027s overscan term (ovK) only lifts luma \u003c 0.05 on a 0.7 curve; the notch is mid navy.",
+                          "implementation_plan":  "1) Retouch the bottom overscan of plate_rest.webp, plate_orbN.webp and plate_orbP.webp, plus plate_tilt.webp if the notch is there. Use Python (Pillow + cv2.inpaint TELEA, radius 6) with a mask of the notch: rest-frame y \u003c 0, x \u003e 0.84, sRGB luma \u003c ~95 inside the box. Re-encode at finalize_v7.ps1\u0027s WebP quality and back the v7 plates up to qc/backup first. Only overscan rows change, so the rest pose is untouched.\n2) Shader safety net in PLATE_FRAG\u0027s overscan block: where restFrame(uv0).y \u003c 0 and luma(col) \u003c 0.6*luma(3-mip blur), mix 0.7 toward the blur. This also softens other recesses.\n3) Fix the source in the v8 re-bake (T22) by closing the hole.",
+                          "files":  [
+                                        "E:/Retrux Hero R\u0026D/retrux-web/public/hero/plate_rest.webp",
+                                        "E:/Retrux Hero R\u0026D/retrux-web/public/hero/plate_orbN.webp",
+                                        "E:/Retrux Hero R\u0026D/retrux-web/public/hero/plate_orbP.webp",
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/world/PlateEnvironment.ts"
+                                    ],
+                          "verify_poses":  [
+                                               "ptr_bottom",
+                                               "ptr_bottom_left",
+                                               "ptr_bottom_right",
+                                               "ptr_rest",
+                                               "q00_rest",
+                                               "sw_rel_B",
+                                               "probe_time at ptr_bottom_right"
+                                           ],
+                          "risk":  "Low. The proxy still contains the hole\u0027s walls, so the painted snow can slide slightly over those depth edges while the camera moves. Check it in motion.",
+                          "expected_gain":  "glitch_cursor_orbit +0.15.",
+                          "needs_render_blend":  false
+                      },
+                      {
+                          "id":  "T06",
+                          "title":  "Left-orbit halo, ghost haze patch and orbP hairline: take far background from the rest plate and colour-match the extra plates",
+                          "priority":  6,
+                          "lenses":  [
+                                         "glitch_cursor_orbit"
+                                     ],
+                          "evidence_summary":  "Cursor-orbit minors, +0.35 together. In ptr_left x400-470 y355-440 (also top_left and bottom_left), a 5-8 px lighter band with a hard stair-stepped outer edge follows the massif\u0027s sunlit slope. In ptr_left x1290-1430 y362-428, a mountain-shaped haze patch 3-6 levels lighter with hard edges sits beside the far range and will slide while the cursor moves (a faint doubled-mountain case). In ptr_right x1008-1024 y356-386 (also top_right and bottom_right), a 1 px dashed dark hairline crosses the far white range. Separately, ptr_rest x1240-1290 y397-430 shows a pale diagonal smear in every view.",
+                          "root_cause":  "GLSL_PLATE_PROJECTOR_BLEND mixes the orbN and orbP plates into far content wherever \u003cp\u003eVisible says the projector sees the fragment. That test is a 5-tap step PCF on a NEAREST, 1536-px depth map, and the weights come from updateProjectors\u0027 inverse-4th-power proximity. The plates differ in haze/exposure by a few levels, so hand-off regions show as patches. Each projector\u0027s Rim re-projection (kz \u003e= 330, kg from the 40-texel min dilation) also puts that plate\u0027s anti-aliased rim at a slightly different place, which shows as a stepped halo. The hairline exists only in the orbP plate.",
+                          "implementation_plan":  "1) Take far background from the rest plate wherever it sees it. For orbN, orbP and tilt only (not hold): wK *= mix(1.0, 1.0 - vis1, smoothstep(200.0, 300.0, kz)). vis1 is already in scope. Disocclusions beside the iceberg and massif, which the rest projector cannot see, keep the orbit plates.\n2) Colour-match in the far field: for kz \u003e 150 m, multiply each extra sample by clamp(restBlur/extraBlur, 0.85, 1.15), with both blurs at lod ~5. That is 2 extra fetches, far fragments only.\n3) If the halo remains, apply the same rule inside the kz \u003e= 330 Rim branch, and blur visibility over 9 taps at depth discontinuities.\n4) If the hairline is nearer than 200 m, clone-stamp it out of plate_orbP.webp. The smear: clone it out of each plate, or fix the stretched face in v8 (T22).",
+                          "files":  [
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/world/PlateEnvironment.ts",
+                                        "E:/Retrux Hero R\u0026D/retrux-web/public/hero/plate_orbP.webp"
+                                    ],
+                          "verify_poses":  [
+                                               "ptr_left",
+                                               "ptr_top_left",
+                                               "ptr_bottom_left",
+                                               "ptr_right",
+                                               "ptr_top_right",
+                                               "ptr_bottom_right",
+                                               "ptr_rest",
+                                               "ptr_orb",
+                                               "sw_hold_L",
+                                               "sw_pop_B",
+                                               "probe_time while sweeping the pointer"
+                                           ],
+                          "risk":  "Medium. Step 1 can bring back fill-from-the-side artefacts, or a doubled rim on the iceberg and massif along disocclusion boundaries, which is why the orbit plates exist. Check the iceberg edges at 3x in ptr_left and ptr_right. The hold projector is excluded on purpose.",
+                          "expected_gain":  "glitch_cursor_orbit +0.25-0.35.",
+                          "needs_render_blend":  false
+                      },
+                      {
+                          "id":  "T07",
+                          "title":  "Right floe waterline slit: verify #66, then fill the undercut void",
+                          "priority":  7,
+                          "lenses":  [
+                                         "glitch_cursor_orbit"
+                                     ],
+                          "evidence_summary":  "Cursor-orbit minor (+0.1). ptr_right x1086-1138 y655-661 shows a near-black lens-shaped slit at the base of the right floe. It is 2-3x larger in the orbit views (ptr_bottom_right, ptr_top_right, ptr_top_left, ptr_orb) and about 20x3 px at ptr_rest. #66 shipped after the captures and added a crushed-black toe to the plate and the lake, moving the slit\u0027s p0.1 from 4.6 to 11 and p5 from 13.7 to 22.5.",
+                          "root_cause":  "A disocclusion void under the floe slab\u0027s overhang, or a gap between slab and water. No plate sample covers it, so the floe\u0027s own dark undercut texels (or the fill) paint it near-black.",
+                          "implementation_plan":  "1) Measure on #69 (boxstats on the slit boxes). If p5 is at least about 45 sRGB and the shape no longer reads as a crisp lens, close the task.\n2) Otherwise, in Water.ts, where raised \u003e 0.5 or nofill within 25-70 m and luma \u003c 0.06, take the blurred fill (lod + 3) from the open water instead of the undercut. In PLATE_FRAG, lift texels with luma \u003c 0.05 within d 30-70 m toward 0.8x their 3-mip blur.\n3) Fix the source in v8 (T22) by sinking the floe slabs 3-5 cm into the water.",
+                          "files":  [
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/world/Water.ts",
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/world/PlateEnvironment.ts"
+                                    ],
+                          "verify_poses":  [
+                                               "ptr_right",
+                                               "ptr_bottom_right",
+                                               "ptr_top_right",
+                                               "ptr_top_left",
+                                               "ptr_orb",
+                                               "ptr_rest",
+                                               "sw_hold_R",
+                                               "sw_rel_TR"
+                                           ],
+                          "risk":  "Low. Over-lifting greys real dark waterlines; F000 keeps deep blues there (p1 about 45).",
+                          "expected_gain":  "glitch_cursor_orbit +0.1.",
+                          "needs_render_blend":  false
+                      },
+                      {
+                          "id":  "T08",
+                          "title":  "Orb seen through the ice: replace the Gaussian glow floor with an analytic refracted-ray orb hit, and tint the orb light mint",
+                          "priority":  8,
+                          "lenses":  [
+                                         "ice_material",
+                                         "composition_motion",
+                                         "orb_shards_light",
+                                         "color_grade_post",
+                                         "awwwards_jury"
+                                     ],
+                          "evidence_summary":  "Ice MAJOR (+0.6): the orb is never refracted. At p06, band A over the orb (x630-830 y370-460) is a soft milky-white smear, where F420 shows sharp white-cyan streaks (x600-847 y417-437) under a dark band (y403-417). p05 reads as \u0027white wax\u0027. At q03, ring A over the orb is nearly invisible, while F045 shows a defined band with dark edges and a crack. Composition minor (+0.2): orb glare washes out the q03 inner \u0027eye\u0027 ring and swallows the innermost p07 rings. Orb MAJOR (+0.5): no teal/cyan glow on nearby ice. The hold band peaks at 234,242,247 vs 254,255,255. At rest, ring A over the orb is 185,200,215 (B-R 30) vs 193,213,235 (42), and ring D around the cap is too light. Colour lens: the halo around the orb is lavender, not mint.",
+                          "root_cause":  "IceMaterial ICE_FRAG, block \u0027Orb light carried by the ice\u0027: a FLOOR glowC = vec3(0.82,1.0,0.97)*uOrbGlow*2.4*lanternG*carry. lanternG is a Gaussian (sigma 1.15 orb radii) of the UNREFRACTED camera ray\u0027s distance to the orb. The floor fills wherever the ice is darker than it, times mix(0.45,1.2,frost). Every ring in front of the orb therefore lifts to a smooth near-white disc that ignores the facets, erasing the band\u0027s dark body, its rims and the q03 inner ring. The refraction copy carries the orb knee-compressed (BLIT_FRAG m\u0027 = 0.8 sqrt(m/0.8), so a core of 16 becomes 3.6), and the copy is sampled at uLensDepth 6 m while the orb sits about 1-2.5 m behind the bands. The true refracted orb is therefore neither bright nor in the right place. The proximity glow (0.07*prox, colour 0.9,0.95,1.0) is neutral. The orb radius 0.8255 is hard-coded three times.",
+                          "implementation_plan":  "1) Add a shared uOrbRadius uniform: declare it in uniforms.ts, set it from the orb\u0027s uRadius each frame (Orb.syncTransform / HeroEngine), and replace the three hard-coded 0.8255 values.\n2) Analytic hit along rdG (the facet-bent ray already computed): b = dot(rdG, P-C); c = |P-C|^2 - R^2; h2 = c - b*b; hn = sqrt(max(h2,0))/R. hit = step(b,0)*(1 - smoothstep(0.94 - 0.2*frost, 1.0, hn)). Lo = uOrbGlow*mix(vec3(0.80,1.0,0.95), vec3(1.0,1.0,0.98), 1-hn*hn)*(1.6 + 1.4*(1-hn)^2)*tint*(1-F), where tint carries the absorption. Then col = mix(col, max(col, Lo), hit*mix(0.9,0.55,frost)). Facets bend rdG differently, so the orb breaks into a mosaic of streaks, and rays that miss keep the band\u0027s dark body.\n3) Floor: lower the 2.4 to 0.9, applied only where hit \u003c 0.5. This keeps a faint lantern for frosted or TIR ice and preserves round 8\u0027s \u0027no dark pearl\u0027 guard.\n4) Mint in-scatter: change the prox glow colour to vec3(0.72,1.0,0.94) and 0.07 to 0.10, weight it by mix(0.6,1.2,thick) and cap it at +0.15 luma. Change the orb spec glint colour to vec3(2.4,3.0,2.9).\n5) Leave the RenderPipeline knee alone; it is what removed the milky veil.\n6) Rebalance the sculpture mean (q00 x530-910 y215-525) with col *= 1.035 â†’ up to 1.06. Targets: q00 band over the orb L ~222 with sd \u003e= 15 (F000 222); q03 band (x625-810 y350-415) with dark edges; p06 band x640-840 y400-450 with brightest 10 % \u003e= 250 over a darker internal band.",
+                          "files":  [
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/hero/IceMaterial.ts",
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/uniforms.ts",
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/hero/Orb.ts",
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/HeroEngine.ts"
+                                    ],
+                          "verify_poses":  [
+                                               "q00_rest",
+                                               "q01_loop15",
+                                               "q03_eye",
+                                               "p04_expand_pop",
+                                               "p05_expand",
+                                               "p06_sustain",
+                                               "p07_release_snap",
+                                               "p08_release_home",
+                                               "sw_hold_L",
+                                               "sw_hold_B",
+                                               "T0 q00/q03",
+                                               "probe_icevar boxstats"
+                                           ],
+                          "risk":  "Medium. Round 8\u0027s CRITICAL was the opposite failure: the orb read as a dark pearl or soap bubble behind bands. Keep the reduced floor and check that read at q00, q03 and p06. In the T1+ ice-behind-ice near half, the orb may show through the far half; that is acceptable. The cost is one ray-sphere test per fragment, negligible on T0.",
+                          "expected_gain":  "ice +0.4-0.6; composition +0.15; orb +0.3-0.4; color +0.1; awwwards +0.1. Overall â‰ˆ +0.18.",
+                          "needs_render_blend":  false
+                      },
+                      {
+                          "id":  "T09",
+                          "title":  "Thick-ice optics: steel-blue core bands from an analytic section exit (TIR along the tube), plus an analytic slab path that also feeds T0",
+                          "priority":  9,
+                          "lenses":  [
+                                         "ice_material",
+                                         "color_grade_post",
+                                         "awwwards_jury",
+                                         "composition_motion"
+                                     ],
+                          "evidence_summary":  "Ice CRITICAL (+1.0): grey-white, under-saturated ice that lacks the saturated steel-blue bands along each tube. At q03, box x822-857 y300-420 measures L164, p10 143, sat 18 vs F045\u0027s 148 / 110 / 27; box x585-610 has sat 11 vs 19. q00 band A (x590-640) is 163,182,202 vs 174,196,226. F000 shows a dark band along the lower inner ring (x620-820 y440-460). Color MAJOR (+0.35): hero chroma is 15-36 % low, with no deep blue arc above the orb (y300: 190,201,212 vs 108,141,181). Composition minor: q00 C/D read as thin washers, while F000 shows a deep tunnel with a navy inner wall (x640-800 y290-310). Note: #65 multiplied the final ice chroma by 1.35 after the captures (eye-pose ring side sat 0.169 â†’ 0.209, F045 0.31). Chroma alone does not create the bands.",
+                          "root_cause":  "In the reference the bands come from the slab section\u0027s optics: light enters a face and meets a side wall past the critical angle (~50 deg at n = 1.31). IceMaterial only approximates this with masks: `band` (inward normals, suppressed where the refracted content is bright via 1 - smoothstep(0.3,0.6,tl)), `tir` (grazing Nr) and pathK. The macro lens is deliberately removed (tilt -= tiltMacro*(1-macroW)), so the section never bends the view. Thickness t comes from a half-res back-depth pass on T1+ and is the constant uBaseThickness 0.38 on T0 (backDepthScale 0), so T0\u0027s absorption cannot vary at all.",
+                          "implementation_plan":  "1) Section exit, in ring-frame mesh units (about metres). pR = vObjPos/uObjScale; s0 = (length(pR.xy) - uSectionRadius, pR.z). Move objRd = refract(-objV, objN, 1/uIor) above the body. ds = (dot(objRd.xy, normalize(pR.xy)), objRd.z). Per wall, tw = (sign(ds)*uSectionHalf - s0)/ds, and tExit = min(tw). The entry face is the larger of |vSec.x| and |vSec.y|. If the exit wall is perpendicular to the entry face, it is TIR when sinInc \u003e 1/uIor, with sinInc = sqrt(1 - c^2) and c the ds component along that wall\u0027s normal. Set secTIR = smoothstep(0.70, 0.80, sinInc).\n2) Shade the TIR band. Mirror objRd about that wall and take it to world space; this needs modelMatrix in the fragment stage, so redeclare uniform mat4 modelMatrix as is already done for projectionMatrix, or pass the ring axis as a varying. internal = envRadiance(dirW, 0.35)*exp(-uAbsorb*2*tExit). body = mix(body, internal*0.8 + vec3(0.10,0.21,0.45)*irrL*0.4, uSecTir*secTIR), starting at uSecTir 0.45. This produces bands along each tube that move with the view.\n3) Analytic path: tSlab = tExit (doubled inside a TIR band). On T0 use t = tSlab instead of uBaseThickness. On T1+ use t = min(t_backdepth, 1.2*tSlab), which also removes the half-res zipper. Keep tAbs capped at 0.9.\n4) Reduce the overlapping `tir` weight from 0.15-0.22 to 0.08-0.12.\n5) Hold the global value; the judges say do not darken globally, and the sculpture is already 179 vs F000\u0027s 187. Lift the clear up-facing faces: in-scatter mix(0.3,1.3,N.y) â†’ mix(0.3,1.45,Â·), and col *= 1.035 â†’ ~1.05. Targets: q00 sculpture mean \u003e= 183 with p10-p90 ~160-211; q03 ring side mean ~150, p10 110-120, sat \u003e= 0.25; q00 band A B-R 45-55.\n6) Revisit #65\u0027s x1.35 chroma afterwards. It may go back toward x1.2; x1.6 read as tinted acrylic.",
+                          "files":  [
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/hero/IceMaterial.ts"
+                                    ],
+                          "verify_poses":  [
+                                               "q00_rest",
+                                               "q01_loop15",
+                                               "q02_loop30",
+                                               "q03_eye",
+                                               "p04_expand_pop",
+                                               "p06_sustain",
+                                               "p08_release_home",
+                                               "ptr_orb",
+                                               "T0 q00/q03 + perf_probe",
+                                               "probe_icevar boxstats"
+                                           ],
+                          "risk":  "Medium-high. Ice has had 60+ variants. Refraction-direction tweaks never moved sd, but material terms did, and this is a material term driven by geometry. Crisp band edges read as painted stripes, and bands can flicker as the section crosses the critical angle during the tumble (keep soft smoothstep margins). Watch for global mean regressions. It adds about 40 ALU, so watch T0 frame time.",
+                          "expected_gain":  "ice +0.5-0.8; color +0.2-0.3; awwwards +0.15-0.25; composition +0.05. Overall â‰ˆ +0.17.",
+                          "needs_render_blend":  false
+                      },
+                      {
+                          "id":  "T10",
+                          "title":  "Orb plasma interior, colour zoning and hold contrast (re-measure #64 first)",
+                          "priority":  10,
+                          "lenses":  [
+                                         "orb_shards_light",
+                                         "color_grade_post",
+                                         "awwwards_jury",
+                                         "composition_motion"
+                                     ],
+                          "evidence_summary":  "Orb MAJOR (+0.8): a smooth white pearl. Share of pixels \u003e= 252 is 1.0 % at p05, 0.6 % at p06 and 3.9 % at q03, vs F402 15.2 %, F045 9.6 %, F000 10.7 %. The internal range is 215-255 vs 160-255, the smoke lanes (~162-184,182-204,212-213) are missing, and at q01 the orb reads as a marble with a sky band. Orb MAJOR (+0.4): no warm-neutral core, mint falloff or violet rim with an inner cyan fringe. Orb MAJOR (+0.3) and Color MAJOR (+0.2): the hold orb is a flat disc. Awwwards: a blown-out disc at hold and release. Composition: p07 orb is featureless. #64 replaced the sheet gate with an fbm smoke field after the captures, so the judges have not seen it.",
+                          "root_cause":  "In Orb.ts ORB_FRAG, both the self-luminous fill (mint x1.1 x coreK x smokeK) and the hot core (x2.6 inside 0.6-0.8 radius) are smooth radial terms. Smoke modulation is shallow: smokeK = max(mix(1,0.72,smoke)*..., mix(0.47,0.7,uRim)), i.e. at most -28 %, with a 0.7 floor in the hold. The core colour (0.85,1.0,0.97) is cyan, and the shell multiply (0.84,0.87,1.0) over 0.88-0.97 radius makes a ~9 px lavender fringe (G/B 0.93). refl = envRadiance(reflect(rd,N1))*fIn paints a sky band. The hold gain is (1+0.1e+0.1h)(1-0.3h), about 0.94x rest.",
+                          "implementation_plan":  "1) Re-measure with orbstats.py on the q00, q03, p05, p06 and p07 orb boxes: % of pixels \u003e= 252, p10/p50 inside the disc, the 55-85 % ring colour and the rim hue.\n2) Contrast: lane depth mix(1,0.72,smoke) â†’ mix(1,0.55,smoke); hold floor mix(0.47,0.7,uRim) â†’ mix(0.42,0.55,uRim). Multiply the hot core by (1 - 0.6*smoke) and raise it from 2.6 to 3.4, so lobes clip in small areas. Targets: 8-15 % of pixels \u003e= 252, lanes at L150-190 teal-grey.\n3) Colour zones: hot core vec3(0.85,1.0,0.97) â†’ (1.0,1.0,0.97). Keep the mint (0.80,1.0,0.95) at 0.55-0.85 radius. Narrow the shell band from 0.88-0.97 to 0.95-0.99 and change its colour to (0.86,0.82,1.0), giving a 2-3 px violet line with mint (G \u003e= B) inside it.\n4) Marble read: scale the shell reflection by 0.5 except in the outer 5 % of the radius.\n5) Hold: keep the mean exposure. T12 hides most of the disc. Add a tight halo on clipped lobes only by moving PostChain\u0027s orb band from prefilterBand(c,7.0,1.0) to (c,5.0,1.0); keep UP_WEIGHTS. Targets at p06: hero-box area \u003e= 232 at most 0.9 %; visible orb pixels \u003e= 252 at 8-15 %.",
+                          "files":  [
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/hero/Orb.ts",
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/pipeline/PostChain.ts"
+                                    ],
+                          "verify_poses":  [
+                                               "q00_rest",
+                                               "q01_loop15",
+                                               "q03_eye",
+                                               "p04_expand_pop",
+                                               "p05_expand",
+                                               "p06_sustain",
+                                               "p07_release_snap",
+                                               "sw_hold_L",
+                                               "T0 q00/q03 (8 steps, 2-octave smoke)"
+                                           ],
+                          "risk":  "Medium. The orb has flipped between \u0027flat clipped bulb\u0027 and \u0027dim pearl\u0027 in past rounds, and AgX bleaches near-white mint to neutral. A lower bloom threshold can spill haze over the adjacent ice (round 1). T0 shows less smoke.",
+                          "expected_gain":  "orb +0.5-0.8; color +0.1; awwwards +0.1-0.2; composition +0.05. Overall â‰ˆ +0.14.",
+                          "needs_render_blend":  false
+                      },
+                      {
+                          "id":  "T11",
+                          "title":  "Idle loop F12-F25: ring B\u0027s near rim is on the wrong side, so the orb reads as an egg in a bowl",
+                          "priority":  11,
+                          "lenses":  [
+                                         "composition_motion"
+                                     ],
+                          "evidence_summary":  "Composition MAJOR (+0.25). At q01_loop15, B\u0027s outer ellipse matches (x610-875 y290-455), but the orb\u0027s upper hemisphere sits in front of B\u0027s upper arc (x660-785 y305-350). F015 shows only a centred ~40 px slit (y335-375) with ice over the orb\u0027s top and bottom; crop_q01_loop15_hero.jpg confirms it. At sw_tau_0.75 vs F22, the reference shows the orb\u0027s lower half below B (y380-435), while the engine shows a thin crescent because B\u0027s near wall sits ~30 px lower. F0, F30 and F45 match. This is the default state most visitors see, every 4 s.",
+                          "root_cause":  "A Necker ambiguity in the 2D-fitted tumble. Ring B\u0027s track (ringMocap.ts, B = Ry(90t)Rx(-135t)) has the same silhouette under the image-plane mirror q\u0027 = (-x,-y,z,w), but with the opposite near rim. F0 (face-on) and F30 (t = 1, edge-on) are mirror-invariant, which is why those frames match. Rings.tune.loopTipDeg [5,2,8,8] at t 0.5 was tuned inside the current branch and cannot flip the near rim.",
+                          "implementation_plan":  "1) Low-risk try first: tip B with a cosine bump at loopTipAt 0.62. loopTipWidth is shared by all rings today, so make it per ring and set B to 0.35 s. Try tipDeg -8 and +8. Run probe_loopvar at tau 0.4, 0.5, 0.62, 0.75 and 0.85 against F12, F15, F19, F22 and F25. Metric: orb pixels above and below B, and B\u0027s near-rim y (F15 slit y335-375; F22 B lower edge ~y380).\n2) Experiment: add a Rings.tune.neckerB flag that applies q.set(-q.x,-q.y,q.z,q.w) after B\u0027s mocap slerp for the WHOLE loop. That is seamless by construction; a partial window is not, because at B\u0027s edge-on moment t = 2/3 the in-plane phase differs by ~120 deg. Set B\u0027s loopTip to 0 and try neckerCD as well. Compare all 8 sampled phases (sw_tau_0.25..3.75 vs F8..F113) plus q00-q03, and adopt only if F38-F113 do not get worse.\n3) Re-check the latches that read the tumble pose (popSign, holdSign, faceSign, cutSign) with probe_holdbounds (16 press moments) and probe_interact.",
+                          "files":  [
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/hero/Rings.ts"
+                                    ],
+                          "verify_poses":  [
+                                               "q01_loop15",
+                                               "sw_tau_0.25",
+                                               "sw_tau_0.75",
+                                               "sw_tau_1.25",
+                                               "sw_tau_1.75",
+                                               "sw_tau_2.25",
+                                               "sw_tau_2.75",
+                                               "sw_tau_3.25",
+                                               "sw_tau_3.75",
+                                               "q00_rest",
+                                               "q02_loop30",
+                                               "q03_eye",
+                                               "p04_expand_pop",
+                                               "p06_sustain",
+                                               "probe_interact",
+                                               "probe_holdbounds"
+                                           ],
+                          "risk":  "Low for the tip. Medium for the mirror: it changes every non-invariant phase, so it could break q03/F45 or the hold arrangement at some press moments.",
+                          "expected_gain":  "composition +0.15-0.25. Overall â‰ˆ +0.03, but highly visible.",
+                          "needs_render_blend":  false
+                      },
+                      {
+                          "id":  "T12",
+                          "title":  "Hold sustain: four separated arcs at F420\u0027s radii instead of the compact \u0027G\u0027; B\u0027s lens hides the orb",
+                          "priority":  12,
+                          "lenses":  [
+                                         "composition_motion",
+                                         "awwwards_jury",
+                                         "color_grade_post",
+                                         "orb_shards_light"
+                                     ],
+                          "evidence_summary":  "Composition MAJOR (+0.4). p06\u0027s extent is ~612x504 centred (774,389) vs F420\u0027s ~774x648 centred (738,371). The engine\u0027s top and right quarters chain into one ~150 deg arc from (560,150) to (1080,460), and the arcs rise like horns in sw_hold_R/T. F420 has four arcs ~255-325 px from the lens centre (top-left ~(576,142), right ~(990,380), bottom ~(873,610), left ~(410,385)), paired ~55-60 deg apart, with sky gaps at 1, 5 and 7 o\u0027clock, around a closed lens-shaped B (378-954, 290-506) that hides the orb except a slit at y~400-440 (crop_p06_sustain_hero.jpg). Awwwards MAJOR (+0.25): 22-25 % small and tangled. Color MAJOR (+0.2): hero-box area above luma 232 is 2.15 % vs 0.65 %. Orb (+0.3): a matte ping-pong ball.",
+                          "root_cause":  "Rings.tune pulls ring A in. holdCompact 0.78 scales each quarter\u0027s ~2.16 m rest offset to ~1.69 m, and aOutBase -0.22 tucks it further: the top quarter lands at ~1.6 m (â‰ˆ213 px at 133 px/m) vs ~2.3 m (â‰ˆ305 px) in F420. aOutH 0.35 pushes out only the side quarters. aSlotSlide [-24,24,-24,24] puts paired arc centres 42 deg apart, so 90 deg arcs overlap and chain; aSpinAmp 22 leans the side quarters into horns. B_SPLIT_HELD 0.35 keeps B\u0027s halves ~0.36 m (â‰ˆ48 px) apart, with the raised near half above the orb\u0027s equator, so the orb shows. All of these were tuned for worst-press-moment bounds (probe_holdbounds), not to match F420.",
+                          "implementation_plan":  "1) Tune at runtime with probe_holdvar, then bake into the constants: holdCompact 0.78 â†’ 0.97; aOutBase -0.22 â†’ -0.08; aOutAmp 0.15 â†’ 0.20 (keep aOutPhaseDeg 65); aOutH 0.35 â†’ 0.10; aSlotSlide Â±24 â†’ Â±16 (pair separation ~58 deg, as in F420); aSpinAmp 22 â†’ 10; start aLowerLift at 0.5 and retune it for the bottom bound.\n2) B lens: bSplitHeld 0.35 â†’ 0.12 and bowlLift 0 â†’ 0.04-0.08 m, but only if the near lip must rise. Keep bTiltDeg -94 and holdPitchDeg 20.\n3) Targets at p06: an AABB of ~760-790 x 620-660 px centred within Â±15 px of (738,371); open sky gaps of at least 40 px at ~1, 5 and 7 o\u0027clock; side-arc lean â‰¤ 15 deg; a 30-45 px slit of light between the lips; hero-box area \u003e= 232 at most 0.9 %.\n4) Bounds: run probe_holdbounds over 16 press moments, continuously into the press. The worst top must be \u003e= 10 px and the worst bottom â‰¤ 715 px. If the worst moment fails while p06 passes, raise the aPhaseOn tanh limit from 60 to 90 deg and confirm with probe_interact that the release unwinds at most 90 deg over 0.42 s.\n5) If the set stays more than 15 px right, add tune.holdShiftX â‰ˆ -0.2 m x camExpand to rings.root, the orb, the shards and uOrbCenter in HeroEngine, next to holdLift. Do NOT move the camera: it must stay on the hold plate pose.\n6) Fallback only: an orb hold scale \u003e= 0.9. p05\u0027s visible orb is already about F402\u0027s size.",
+                          "files":  [
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/hero/Rings.ts",
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/HeroEngine.ts"
+                                    ],
+                          "verify_poses":  [
+                                               "p06_sustain",
+                                               "p05_expand",
+                                               "sw_hold_L",
+                                               "sw_hold_R",
+                                               "sw_hold_T",
+                                               "sw_hold_B",
+                                               "sw_hold_BL",
+                                               "sw_hold_TR",
+                                               "p07_release_snap",
+                                               "probe_holdbounds",
+                                               "probe_interact",
+                                               "ui_rest overlap with \u0027Scroll to Explore\u0027 during hold"
+                                           ],
+                          "risk":  "Medium-high. Worst-press-moment bounds were the reason for the compaction. The lower arcs can meet the UI copy at the bottom. Releasing from a wider pose must stay continuous. A closed lens can read as a flat bullseye if B gets too face-on, and rounds have swung between \u0027open bowl\u0027 and \u0027thin ribbons\u0027. More ice on screen raises T0 hold frame time.",
+                          "expected_gain":  "composition +0.3-0.4; awwwards +0.15-0.25; color +0.1; orb +0.1. Overall â‰ˆ +0.12.",
+                          "needs_render_blend":  false
+                      },
+                      {
+                          "id":  "T13",
+                          "title":  "Hold and pop environment: finish the massif slate and fog bank after #69",
+                          "priority":  13,
+                          "lenses":  [
+                                         "environment",
+                                         "color_grade_post",
+                                         "awwwards_jury",
+                                         "glitch_hold_sweep"
+                                     ],
+                          "evidence_summary":  "Color MAJOR (+0.3): the p06 massif (x100-300 y360-450) is 172,183,200 (p10 138, chroma 10.5) vs F420\u0027s 154,169,193 (114, 14.9), and the p04 massif is 170,182,199 vs 150,165,187. Env MAJOR (+0.2): the hold fog is too low and uniform, the upper face is Y157 vs 147, and the mid band\u0027s range is 133-152 vs 110-163, missing the wisps. Hold-sweep minor: the glacier tongue\u0027s ruler-straight edge shows through the fog (p06 x195-350 y552-585). #69 shipped after the captures: it fixed upK, which never reached the face, set the bank top to 7Â±3 m with a 5 m edge, cap 0.88 and colour x1.08, and measured p06 upper/mid/bank at L157/132/154 (F420 153/117/162).",
+                          "root_cause":  "In PLATE_FRAG, upK = uHold*smoothstep(96,104,pz)*smoothstep(3,6,fp.y), followed by x1.4 chroma and x0.6. It is linear in uHold, so the pop (camExpand 0.761) gets 76 % of it. plateBank\u0027s top is fbm with 3 m amplitude and 2 octaves at 0.015/m, so its edge is smooth and featureless. The snowfield edge is baked into plate_hold.",
+                          "implementation_plan":  "1) Measure #69 at p04, p05, p06 and sw_hold_* with boxstats on the boxes above.\n2) If the mid face is still above 125 (target ~117-125), set upK\u0027s x0.6 â†’ 0.55 and its chroma 1.4 â†’ 1.5. Use sqrt(uHold) inside upK so the pop gets ~0.87. Target at p04: ~150,165,187, p10 ~121.\n3) Wisps: top = 7 + 4.5*fbm(p.xz*0.015 + drift, 2) + 1.2*fbm(p*0.08 + drift, 2), with the bank colour x0.95 where hgt is 0.3-0.7. GLSL_PLATE_MIST is shared, so the lake follows automatically.\n4) Glacier tongue: if it is still crisp, add +0.1 bank density at fp.y 0-2.5 m within d 90-130 m. Otherwise, apply a 3 px directional blur to that edge in plate_hold.",
+                          "files":  [
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/world/PlateEnvironment.ts",
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/world/Water.ts"
+                                    ],
+                          "verify_poses":  [
+                                               "p04_expand_pop",
+                                               "p05_expand",
+                                               "p06_sustain",
+                                               "sw_hold_L",
+                                               "sw_hold_R",
+                                               "sw_hold_T",
+                                               "sw_pop_B",
+                                               "p07_release_snap",
+                                               "p08_release_home",
+                                               "q00_rest (uHold 0, unchanged)",
+                                               "fog_stretch_check (no banding)"
+                                           ],
+                          "risk":  "Low. A massif that is too dark reads as dirty. Bank wisps can band; the IGN dither covers that. Keep the ridge above the bank.",
+                          "expected_gain":  "color +0.15-0.25; environment +0.1-0.15; awwwards +0.05; glitch_hold_sweep +0.05. Overall â‰ˆ +0.06.",
+                          "needs_render_blend":  false
+                      },
+                      {
+                          "id":  "T14",
+                          "title":  "Ice rim outlines and specular aliasing: weaker grazing Fresnel broken by frost, dark edges, wider spec AA",
+                          "priority":  14,
+                          "lenses":  [
+                                         "ice_material",
+                                         "awwwards_jury",
+                                         "glitch_hold_sweep"
+                                     ],
+                          "evidence_summary":  "Ice minor (+0.3): a 1-2 px bright line traces every ring edge (q03 x850-887 y200-417, inner ring x790-830), with stair-steps at 3x. The inner rings at rest read as nested glass tubes (q00 x620-840 y265-345 and y420-505). The reference edges are soft, broken and darker; F000\u0027s band A has dark top and bottom edge lines (y350-360, y412-422). Awwwards minor (+0.15): rim highlights break into dashes (rest_aliasing_4x). Hold-sweep minor (+0.15): dashed rims at sw_intro_3 x698-748 y288-291 and x658-675 y420-423, a checker pattern in the transmission at x630-647 y447-460, a stair-stepped lower silhouette at sw_hold_L x610-770 y193-217, and jagged lip lines at sw_hold_B x515-895 y420-510.",
+                          "root_cause":  "In IceMaterial, F = 0.02 + (max(1 - mix(0.12,0.45,frost), 0.02) - 0.02)*(1-NdotV)^5 peaks at ~0.88 on clear ice at grazing. It is evaluated on the chiselled N (per-facet NdotV), which gives a continuous bright rim that turns into dashes where facets alias; `sil` only removes the last 1-2 px. The roughness widening is only 0.35*nVar. There is no dark-edge term besides `tir`.",
+                          "implementation_plan":  "1) Grazing peak: replace max(1 - mix(0.12,0.45,frost), 0.02) with mix(0.50,0.30,frost). Take the Fresnel angle from mix(Ng, N, 0.35) so the rim stays continuous, and multiply F by mix(0.55,1.0,nA) to break it into segments.\n2) Dark edges: where NdotV \u003c 0.3 and sil \u003e 0.5, mix the body toward vec3(0.09,0.20,0.45)*irrL by 0.18*(1 - smoothstep(0.08,0.3,NdotV))*(1 - 0.5*frost). T09\u0027s TIR may already cover part of this.\n3) Spec AA: rSpec uses 0.7*nVar instead of 0.35*nVar; lower the spec cap from 2.5 to 2.0 where nVar is high.\n4) Highlights should come from sparse glints; T19\u0027s sparkle normal carries them.",
+                          "files":  [
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/hero/IceMaterial.ts"
+                                    ],
+                          "verify_poses":  [
+                                               "q00_rest",
+                                               "q03_eye",
+                                               "q01_loop15",
+                                               "sw_intro_3",
+                                               "sw_hold_L",
+                                               "sw_hold_B",
+                                               "p05_expand",
+                                               "ptr_orb",
+                                               "4x crops; sculpture mean unchanged Â±2"
+                                           ],
+                          "risk":  "Low. The rings can lose sparkle (keep the sun spec), and the mean drops slightly; compensate with a small lift.",
+                          "expected_gain":  "ice +0.2-0.3; awwwards +0.1; glitch_hold_sweep +0.1-0.15. Overall â‰ˆ +0.05.",
+                          "needs_render_blend":  false
+                      },
+                      {
+                          "id":  "T15",
+                          "title":  "p05 portal: B as a diagonal slab over the orb\u0027s upper half, and no arc tail into the lake",
+                          "priority":  15,
+                          "lenses":  [
+                                         "composition_motion"
+                                     ],
+                          "evidence_summary":  "Composition MAJOR (+0.2). In the engine at p05, A is a long thin arc from ~(370,440) to (870,105), with a right-arc tail down to ~(820-990,682) below the far shore (~y615). B runs horizontally and the orb is fully exposed (~195 px). F402 instead shows a chunky diagonal slab (735-1110, 177-530) passing in front of the orb\u0027s upper half and a block at the upper left; nothing goes below ~y614, and the silhouette is ~23 % wider with its mass on the right (cmp_p05_expand.jpg).",
+                          "root_cause":  "Rings: at the portal, bPortalSplit 0.6 parts B\u0027s halves further. An older code comment reads F402 as \u0027no band across the orb\u0027, which the current judge contradicts. The lower-right A quarter at spreadA 0.85 tilts down (aSlotTilt -55, aLowerTiltCap 18) below the shore.",
+                          "implementation_plan":  "1) Re-check ref_F402 directly before changing anything, because the code comment and the judge disagree.\n2) bPortalSplit 0.6 â†’ 0.15. Add tune.bPortalRollDeg (start at -30): rotate B\u0027s hold target N_B about the view axis by roll*portal before toward(), so B reads as an upper-left to lower-right slab over the orb\u0027s upper half. It blends in and out with `portal`, so there are no pops.\n3) During the portal, drop aLowerTiltCap from 18 to 10 and add a 0.15 m x portal lift to quarters with lower \u003e 0.5. Targets: nothing below y615, and the B slab\u0027s right edge at ~x1100.\n4) Run probe_holdbounds at portal moments and probe_interact.",
+                          "files":  [
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/hero/Rings.ts"
+                                    ],
+                          "verify_poses":  [
+                                               "p05_expand",
+                                               "p06_sustain",
+                                               "p04_expand_pop",
+                                               "sw_hold_T",
+                                               "sw_hold_B",
+                                               "probe_interact",
+                                               "probe_holdbounds"
+                                           ],
+                          "risk":  "Low-medium. It interacts with T12, so tune after it. The roll must not change the hold arrangement once the portal has decayed.",
+                          "expected_gain":  "composition +0.15-0.2. Overall â‰ˆ +0.03.",
+                          "needs_render_blend":  false
+                      },
+                      {
+                          "id":  "T16",
+                          "title":  "Lake: coherent concentric rings at rest (check #68), and a hold foreground swell with deeper water",
+                          "priority":  16,
+                          "lenses":  [
+                                         "environment",
+                                         "awwwards_jury",
+                                         "color_grade_post"
+                                     ],
+                          "evidence_summary":  "Env MAJOR (+0.3) and Awwwards MAJOR (+0.25): the rest ring is faint and grainy, and its near-side arc is missing (F000: bold troughs x410-1070 y573-590, a second band at y~602, the near arc at x840-1080 y660-680). #68 shipped after the captures: water box L180 sd 17.0 vs F000\u0027s 186 / 15.5. Env MAJOR (+0.25) and Color minor (+0.2): the hold\u0027s bottom 55 px are flat and pale (sat 9.7 vs 14; bottom rows x900-1440 y726-766 are 165,175,190 vs 140,156,179), and p04\u0027s right water is too bright (162.9 vs 151.8). Env minor: grain in the mid water (x880-1080 y500-590). Four hold-swell tries (watervar2-5) failed.",
+                          "root_cause":  "In Water.ts, ringSlope\u0027s envelope is smoothstep(0.4,1.8,r)*exp(-r/(0.7*uWaveReach))*(1 - smoothstep(0.8R,R,r)) with uWaveReach 8 m. From the hold camera (z 3.54), the frame bottom is water ~17.7 m away: r â‰ˆ 5.6 m on the FAR side of the ring at centre and ~9.4 m at the corners, so it is mostly flat. The crest ratio k is applied before the hero\u0027s live-reflection mix, so the near arc under the reflection is overwritten. The 4.2 m spacing gives thin bands. The 3-octave breeze fbmd aliases into grain at mid distance.",
+                          "implementation_plan":  "1) Rest: measure #68 first. Then set uWave.y 4.2 â†’ 5.0 m and uWave.x 0.26 â†’ 0.31, which keeps the slopes and widens the troughs. Re-apply 60 % of k after the reflection mix (col *= 1 + 0.6*k*plateW*refl.a*w). Restore the mean (L180 â†’ ~185) with a 1.13 base gain in the ring zone only. Beyond 25 m, use 2 breeze octaves and stretch the noise x0.6 horizontally.\n2) Hold: bisect which path writes the p06 bottom strip with debug tints (plateW, extraCover, live mirror, ring envelope). Then add a hold-only directional swell, not a concentric one: 3 plane waves within Â±25 deg of the camera\u0027s forward axis, wavelength 5-8 m, slope 0.10-0.14, random phases, broken up by the breeze, faded in by uHold and dist \u003c 30 m. Hold near-water colour: base *= mix(1, 0.88, uHold*(1 - smoothstep(14,26,dist))) and +30 % chroma there. Target bottom rows ~140,156,179, sat ~14.\n3) Avoid high-frequency sparkle at the frame edge.",
+                          "files":  [
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/world/Water.ts"
+                                    ],
+                          "verify_poses":  [
+                                               "q00_rest",
+                                               "q01_loop15",
+                                               "q02_loop30",
+                                               "q03_eye",
+                                               "ui_rest",
+                                               "p08_release_home",
+                                               "p04_expand_pop",
+                                               "p05_expand",
+                                               "p06_sustain",
+                                               "sw_hold_L",
+                                               "sw_hold_BL",
+                                               "probe_time (ripple phase)",
+                                               "T0 water cost"
+                                           ],
+                          "risk":  "Medium. Round 7 rejected bold rings as painted stripes, four swell tries failed, and swells must not tear against the near rocks\u0027 reflections (T04).",
+                          "expected_gain":  "environment +0.3-0.4; awwwards +0.15-0.25; color +0.1-0.2. Overall â‰ˆ +0.1.",
+                          "needs_render_blend":  false
+                      },
+                      {
+                          "id":  "T17",
+                          "title":  "Ice silhouettes and ends: decouple the lump displacement (3-5 px outline wobble) and chisel the caps",
+                          "priority":  17,
+                          "lenses":  [
+                                         "ice_material",
+                                         "awwwards_jury",
+                                         "composition_motion"
+                                     ],
+                          "evidence_summary":  "Ice MAJOR (+0.5): ring D\u0027s outline is an almost perfect ellipse with 1-2 px wobble, vs F015\u0027s 3-6 px bumps every 30-60 px (loop15_ring_2x; F000\u0027s top arc x600-850 y215-240 is lumpy). The ring ends are flat-faced slabs (l30_diag_top_3x). Awwwards (part of +0.7): the rings look like smooth tori. Composition minor (+0.1): q00\u0027s C/D read as thin washers vs a deep tunnel with chunky irregular rims.",
+                          "root_cause":  "In IceMaterial ICE_VERT, the displacement is (hg.x-0.5)*uDisplace with uDisplace 0.133 m on T1+. iceHeight\u0027s 3-octave fbmd has std ~0.3 x 0.42, so the outline moves only Â±0.017 m, â‰ˆ1-1.5 px at rest (80 px/m). The same uDisplace scales the normal perturbation (x0.18), so raising it makes the faces wavy; the \u0027melted wax\u0027 read is why it stayed low. The cap tangential field is 0.045 m.",
+                          "implementation_plan":  "1) Add a uLump uniform that multiplies only the position term (pos += dir*(hg.x-0.5)*uDisplace*uLump), starting at 2.0 on T1+. Keep the normal term at its current strength or x0.8. Target: 3-5 px bumps on ring D\u0027s outline every ~30-60 px.\n2) Caps: raise the tangential field from 0.045 to 0.07 m and add an octave (vnoise x2.1 at 0.02 m).\n3) Share uLump with createBackDepthMaterial, or the thickness pass will mismatch and leave halos at the silhouettes.\n4) Tunnel: if C\u0027s inner wall still reads thin after T08 and T09, add a per-ring `band` boost for C (0.25-0.38 â†’ 0.35-0.5).",
+                          "files":  [
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/hero/IceMaterial.ts",
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/hero/Rings.ts"
+                                    ],
+                          "verify_poses":  [
+                                               "q00_rest",
+                                               "q01_loop15",
+                                               "q02_loop30",
+                                               "q03_eye",
+                                               "p06_sustain",
+                                               "sw_tau_1.25",
+                                               "sw_tau_2.75",
+                                               "joint cracks at 4x",
+                                               "T0 unaffected (no ICE_SILHOUETTE)"
+                                           ],
+                          "risk":  "Low-medium. More displacement can reopen cracks at piece joints (the mesh-crack bug fixed on 11-11) and disturb the ice-behind-ice depth test. The shading must not get wavier.",
+                          "expected_gain":  "ice +0.25-0.4; awwwards +0.1; composition +0.05. Overall â‰ˆ +0.07.",
+                          "needs_render_blend":  false
+                      },
+                      {
+                          "id":  "T18",
+                          "title":  "Shards: check #67, then compress the facet contrast toward periwinkle, limit their size in the hold and add a motion smear",
+                          "priority":  18,
+                          "lenses":  [
+                                         "orb_shards_light",
+                                         "color_grade_post",
+                                         "awwwards_jury"
+                                     ],
+                          "evidence_summary":  "Orb MAJOR (+0.5): chalky white facets. At q00 the shard at x910-960 y220-300 clips over a third of its area, and at q01 a whole shard is a grey-white chip. The shards are razor-sharp, while F420 shows a 6-10 px smear. Color minor (+0.1): the bodies (84,119,209) are too dark and saturated vs 134,159,226. Awwwards minor (+0.1): facets alternate dark cobalt and near-white, which reads as low-poly plastic. Orb minor (+0.1): hold blades are 140-147 px long vs â‰¤100 px. #67 shipped after the captures and tinted the facet reflections, capped Fresnel at 0.35 and set the frosted share to 0.15.",
+                          "root_cause":  "In Shards.ts, body *= mix(0.45,1.12,fh.z) gives a ~2.5x value range from facet to facet, and the ridge edge light (0.12) draws hard light edges. There is no motion blur. SHARD_VERT shrinks shards only within 6-9 m of the camera (down to 0.65x), so hold blades at 8-10 m stay large.",
+                          "implementation_plan":  "1) Measure #67 with shardstats.py on q00, q01 and p06.\n2) Facet range mix(0.45,1.12) â†’ mix(0.66,1.06); lift the body ~12 %; overall chroma 0.85 â†’ 0.8. Target mean ~125,155,228, keeping the thin dark spine from the path term. Ridge light 0.12 â†’ 0.06.\n3) Hold size: change the shrink window from (6,9) to (8,12) m and the strength from 0.35 to 0.45 x mix(0.6,1,uContract).\n4) Smear: in SHARD_VERT, push vertices along the belt tangent on the trailing side by (0.04 + 0.08*uHold) m, weighted by their position along the long axis.",
+                          "files":  [
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/hero/Shards.ts"
+                                    ],
+                          "verify_poses":  [
+                                               "q00_rest",
+                                               "q01_loop15",
+                                               "q03_eye",
+                                               "p04_expand_pop",
+                                               "p06_sustain",
+                                               "sw_hold_BL",
+                                               "sw_hold_B"
+                                           ],
+                          "risk":  "Low-medium. The lenses disagree on light vs dark (see disagreements). The smear can read as stretched geometry at rest, so keep it hold-weighted.",
+                          "expected_gain":  "orb +0.3-0.4; color +0.05-0.1; awwwards +0.05-0.1. Overall â‰ˆ +0.07.",
+                          "needs_render_blend":  false
+                      },
+                      {
+                          "id":  "T19",
+                          "title":  "Ice surface: tangential frost streaks, blur through long paths, fine sparkle frost",
+                          "priority":  19,
+                          "lenses":  [
+                                         "ice_material",
+                                         "awwwards_jury"
+                                     ],
+                          "evidence_summary":  "Ice MAJOR (+0.6). Band A is covered in 15-40 px polygonal cells with grey lines, like crumpled paper (q02 x530-920 y332-405), where F030 shows clear blue faces with a few thin cracks. Sky clouds are recognisable inside band A (q00 x615-665 / x720-795; ptr_orb). The texture is isotropic hammering rather than tangential frost, and the p05 close-up is plastic-smooth. Awwwards: wants crinkle and sparkles.",
+                          "root_cause":  "chiselNormal uses isotropic Voronoi cells (CELL 9/1.975, ~0.22 m â‰ˆ 18 px at rest) with planar tilts of 0.16 and crisp borders, so the refraction breaks into a polygon mosaic. Clear patches use lod mix(0,1.6,rough) with rough = max(frost, 0.3*thick), so clouds stay legible through thick clear ice. There is no fine-scale detail.",
+                          "implementation_plan":  "1) Tangential streaks without a theta seam: streak = vnoise(vec3(length(p.xy)*25, p.z*25, 0) + 1.5*fbm(p*1.2,2)). Use it to modulate frost (+0.25) and add a weak tilt along its gradient (0.03).\n2) Chisel tilt 0.16 â†’ 0.10 on broad faces (keep 0.16 where frostE \u003e 0.5); widen the border fade from 0.04+aa to 0.08+aa.\n3) Long-path blur: rough = max(frost, 0.5*smoothstep(0.35,0.8,t)), with lod up to 2.2 for t \u003e 0.6 m. T08\u0027s analytic orb hit keeps the orb crisp.\n4) T1+ only: a 3-octave noise at ~35/m drives a separate specular normal (0.08 tilt), used only in ggxSpec.\n5) Do this after T08 and T09.",
+                          "files":  [
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/hero/IceMaterial.ts"
+                                    ],
+                          "verify_poses":  [
+                                               "q00_rest",
+                                               "q02_loop30",
+                                               "q01_loop15",
+                                               "q03_eye",
+                                               "p05_expand",
+                                               "ptr_orb",
+                                               "T0 cost"
+                                           ],
+                          "risk":  "Medium-high. Judges have flipped between \u0027hammered metal\u0027, \u0027melted wax\u0027 and \u0027crumpled paper\u0027. More blur risks bringing back the milky veil.",
+                          "expected_gain":  "ice +0.3-0.5; awwwards +0.1-0.2. Overall â‰ˆ +0.07.",
+                          "needs_render_blend":  false
+                      },
+                      {
+                          "id":  "T20",
+                          "title":  "Environment and grade polish in the shader: ridge-foot mist gradient, cloud undersides, iceberg tone, left floes, near-right snow",
+                          "priority":  20,
+                          "lenses":  [
+                                         "environment",
+                                         "color_grade_post"
+                                     ],
+                          "evidence_summary":  "Env MAJOR (part): the ridge base ends in a hard mist line (luma 67 â†’ 88 within ~15 px at y374-389), where F000 fades over ~60 px with gullies showing through. Env minors: clouds are flat (+0.05); the right iceberg is too light and speckled (146,168,193 vs 137,155,183; in the hold 127.6/19.6 vs 111.6/24.2); the near-left floes are too crisp (+0.1). Color minors: the left floes have 1.7x the reference\u0027s detail energy and their slab sides are 25 levels too dark (+0.15); the near-right snow p90 is 180 vs 152 (+0.05). Check #69\u0027s horizon-band change (bases +16, plain +19, far-right range +19).",
+                          "root_cause":  "In PLATE_FRAG, footGate and ridgeUp (smoothstep(0.3,3.5,fp.y)) plus the baked v7 mist top make a hard ~0.8 m step. CLOUD_FRAG lights the cards uniformly. The berg mask\u0027s pz gate (50-85 m) misses the berg (envvar38 moved it only from 146 to 144). Nothing softens or hazes the floes at 25-60 m.",
+                          "implementation_plan":  "1) Ridge foot: for ridgeBody, col = mix(col, footC*1.05, 0.35*(1 - smoothstep(0.5, 4.5 + 2.0*fbm(fp.xz*0.04 + uTime*0.01, 2), fp.y))).\n2) Clouds: lit *= mix(vec3(0.90,0.93,0.98), vec3(1.03), smoothstep(0.25,0.65,vUv.y)); v = 1 is the top of the card.\n3) Iceberg: read the berg\u0027s real pz with a depth debug view, fix the gate, then take its shaded face down 10-15 Y and up 20 % in chroma, with half the effect in the hold.\n4) Left floes: for d 25-60 m and restFrame x \u003c 0.45, use lodDof + 1, mix 12 % toward (168,181,199)/255 in linear, and multiply luma \u003c 0.12 by 1.2.\n5) Near-right snow: a highlight shoulder above luma 0.6 at restFrame x \u003e 0.85, y \u003c 0.25 (-10 %).\n6) Do not change the sky or the global grade.",
+                          "files":  [
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/world/PlateEnvironment.ts"
+                                    ],
+                          "verify_poses":  [
+                                               "q00_rest (region_stats)",
+                                               "q01_loop15",
+                                               "q03_eye",
+                                               "ui_rest",
+                                               "p06_sustain",
+                                               "ptr_left",
+                                               "ptr_right",
+                                               "sw_hold_L"
+                                           ],
+                          "risk":  "Low per item. Region masks are brittle under orbit, so anchor them to depth or world space, not the screen.",
+                          "expected_gain":  "environment +0.2-0.3; color +0.15-0.25. Overall â‰ˆ +0.07.",
+                          "needs_render_blend":  false
+                      },
+                      {
+                          "id":  "T21",
+                          "title":  "Pop and release: p04 height, size and continuous diagonal; p07 arc phase and closed B; p08 open inner ring",
+                          "priority":  21,
+                          "lenses":  [
+                                         "composition_motion"
+                                     ],
+                          "evidence_summary":  "p04 (+0.1): the tunnel centre is at (713,427) vs (723,390), ~35 px low, and its radius is 160 vs 176. The diagonal shows as two separate blocks, where F358 has one continuous bar from (500,167) to (933,613). p07 (+0.1): the gaps in A\u0027s ring sit at ~12:30, 4, 7 and 9:30 (a pinwheel), while F453 has them on the diagonals; B\u0027s split is not closed (splitB 0.1). p08 (+0.05): the inner ring spans y310-415 vs y300-460, and only two outer rings show vs three.",
+                          "root_cause":  "p04: the hero lift is holdLift 0.28 x camExpand 0.761 = 0.21 m, â‰ˆ24 px. The diagonal is ring B (POP_AXIS[1], 50 deg), and its halves have already parted (splitB 0.504 at p04; EXPAND_POP starts at 0.65 s, and `held` is ~1 because expandPose is 0.017). p07: A\u0027s in-plane phase comes from the hold (aPhaseDeg 22 + drift), and RELEASE_RETURN at t+0.08 leaves splitB at 0.1 at F453. p08: C uses Q_RES[2] (70 deg), shared with the press vortex, and dRelHomeDeg is 45.",
+                          "implementation_plan":  "1) p04: add tune.popLift 0.3 m x popPose in HeroEngine, applied to the same objects as holdLift. In Rings, set held *= 1 - 0.85*popPose for B\u0027s halves so they split as the pop decays (1.05-1.5 s). Optionally scale the hero +6 % x popPose.\n2) p07: add tune.aRelPhaseDeg (start at +40) as an in-plane rotation of A x gapA*alignA; the MAX_TURN guard stays. Move RELEASE_RETURN from t+0.08 to t+0.12.\n3) p08: give C a release-only residual that slerps from 70 to 60 deg by relW*bandInner, and set dRelHomeDeg 45 â†’ 38.",
+                          "files":  [
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/HeroEngine.ts",
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/hero/Rings.ts",
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/Choreography.ts"
+                                    ],
+                          "verify_poses":  [
+                                               "p04_expand_pop",
+                                               "sw_pop_T",
+                                               "sw_pop_B",
+                                               "p07_release_snap",
+                                               "p08_release_home",
+                                               "sw_rel_L",
+                                               "sw_rel_TR",
+                                               "probe_interact",
+                                               "probe_holdbounds at pop moments"
+                                           ],
+                          "risk":  "Low-medium. popLift must not push the top arc out of frame. The release rotation adds visible spin (â‰¤40 deg in ~0.3 s).",
+                          "expected_gain":  "composition +0.15-0.25. Overall â‰ˆ +0.03.",
+                          "needs_render_blend":  false
+                      },
+                      {
+                          "id":  "T22",
+                          "title":  "v8 environment re-bake of the team\u0027s reconstruction (Cycles CPU, ~2 h): ridge trim and streaks, massif rock, iceberg, floes, ice-sheet hole, welded proxies",
+                          "priority":  22,
+                          "lenses":  [
+                                         "environment",
+                                         "color_grade_post",
+                                         "awwwards_jury",
+                                         "glitch_cursor_orbit"
+                                     ],
+                          "evidence_summary":  "Env MAJOR (+0.3): the far-left ridge is ~50 px too wide. Its shoulder runs out to x~133 and drops at x133-157, vs F000\u0027s drop at x77-110, and it hides the massif\u0027s foothill. It is flat navy with no snow streaks (range 65-76 vs 42-79). Color MAJOR (+0.2): the ridge\u0027s tonal range is 18 levels vs 61, and the colour lens notes that darkening alone will not fix it; #69 already desaturated and darkened it in the shader. Env minors: the massif is too white with no rock streaks (+0.15), the iceberg is speckled (+0.1), and the floe cluster is 35 px too far right (+0.1). This bake also gives source fixes for the glitches in T05, T06 and T07.",
+                          "root_cause":  "These are geometry and material properties of the baked v7 plates (prep_v7.py on top of prep_v4b.py). A shader cannot add the hidden foothill or streak patterns consistently across 5 projectors. Note: the live plates are v7 (plate.json note), not v5.",
+                          "implementation_plan":  "1) Write prep_v8.py on top of prep_v7.py, on a copy of \u0027Home - EXPORT.blend\u0027:\n(a) trim or lower V2_Ridge\u0027s right shoulder so the flank falls at rest-frame x 80-110 px;\n(b) give the ridge a slate rock (~40,58,85 sRGB) with snow masked by slope and curvature into thin gully streaks;\n(c) lower the massif\u0027s snow slope threshold so rock shows on steep faces, with vertical streaks;\n(d) make the right iceberg smoother ice with a slight cyan SSS, 10-15 Y darker;\n(e) move the near-left floe cluster ~1 m left and sink the floes 3-5 cm;\n(f) close the foreground ice-sheet hole;\n(g) fix the stretched face behind the right white chunk (locate it with raycast_plate.py);\n(h) run Merge by Distance at 0.02 m on V2_Ridge and V2_Massif and export env_proxy.glb.\n2) Prove each change with render_plates_v3.py crop renders (2-5 min each) before the 2 h render_v8_all (rest, hold, orbN, orbP, tilt). Run the bake alone: no Chrome or Next on the 8 GB laptop.\n3) Finalize with v7 backed up to qc/backup, then run full QC and region_stats. Retune the PLATE_FRAG ridge terms (#69 slate, speck clamp) that were compensating for v7.",
+                          "files":  [
+                                        "C:/Users/fvldi/AppData/Local/Temp/claude/dc2ac90effee4131/570a569a-5122-4ff1-b51f-d34d42e5fde3/scratchpad/pipeline/prep_v7.py",
+                                        "C:/Users/fvldi/AppData/Local/Temp/claude/dc2ac90effee4131/570a569a-5122-4ff1-b51f-d34d42e5fde3/scratchpad/pipeline/render_v7_all.ps1",
+                                        "C:/Users/fvldi/AppData/Local/Temp/claude/dc2ac90effee4131/570a569a-5122-4ff1-b51f-d34d42e5fde3/scratchpad/pipeline/export_env_v3.py",
+                                        "E:/Retrux Hero R\u0026D/retrux-web/public/hero/plate_rest.webp",
+                                        "E:/Retrux Hero R\u0026D/retrux-web/public/hero/env_proxy.glb",
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/hero/engine/world/PlateEnvironment.ts"
+                                    ],
+                          "verify_poses":  [
+                                               "q00_rest",
+                                               "ptr_rest",
+                                               "ptr_left",
+                                               "ptr_right",
+                                               "ptr_top",
+                                               "ptr_bottom",
+                                               "ptr_bottom_left",
+                                               "ptr_bottom_right",
+                                               "ptr_orb",
+                                               "p06_sustain",
+                                               "sw_hold_L",
+                                               "sw_pop_B",
+                                               "sw_rel_TR",
+                                               "region_stats"
+                                           ],
+                          "risk":  "High cost, medium risk. It blocks every other heavy job for ~2 h. Past mesh edits baked new seams (the v2/v3 \u0027Z\u0027 ledge). Geometry edits can make proxies and plates mismatch, causing doubled rims, and shader terms tuned on v7 will need retuning.",
+                          "expected_gain":  "environment +0.4-0.6; color +0.15-0.2; awwwards +0.1; glitch_cursor_orbit +0.1. Overall â‰ˆ +0.12.",
+                          "needs_render_blend":  false
+                      },
+                      {
+                          "id":  "T23",
+                          "title":  "UI label weight: check Figma before changing anything",
+                          "priority":  23,
+                          "lenses":  [
+                                         "awwwards_jury"
+                                     ],
+                          "evidence_summary":  "Awwwards minor (+0.05): the nav labels Projects/Studio/Contact (x1130-1390 y45-75) and \u0027Scroll to Explore\u0027 (x645-795 y688-718) look like weight ~500-600, vs ~400 in Figma. Size, tracking and position match.",
+                          "root_cause":  "HeroOverlay.tsx uses font-medium (500) for the nav, \u0027Scroll to Explore\u0027 and \u0027Sound\u0027; hero-lab/index.html sets .menu, .scroll and .sound to 500. The body is already antialiased. The overlay was built from Figma values, so the judge\u0027s weight estimate may be wrong.",
+                          "implementation_plan":  "Read the Figma text styles of the three labels. If Figma says Regular 400, switch them to font-normal and set the lab CSS to 400. If it says 500, leave them as they are: white text over a bright sky simply renders heavier in Chrome on Windows.",
+                          "files":  [
+                                        "E:/Retrux Hero R\u0026D/retrux-web/app/components/HeroOverlay.tsx",
+                                        "E:/Retrux Hero R\u0026D/retrux-web/hero-lab/index.html"
+                                    ],
+                          "verify_poses":  [
+                                               "ui_rest"
+                                           ],
+                          "risk":  "Low.",
+                          "expected_gain":  "awwwards +0.03-0.05.",
+                          "needs_render_blend":  false
+                      }
+                  ],
+    "blocked":  [
+                    {
+                        "title":  "Frame-exact hold, pop and release arc keyframes (F331-F462)",
+                        "why":  "The reference hold is hand-keyed in the artist\u0027s render file. hero.glb carries only ring B\u0027s split keyframes. The engine reconstructs ring A\u0027s quarter offsets and tilts and the C/D poses from video, so p04-p08 can be approximated (T12, T15, T21) but not matched frame for frame."
+                    },
+                    {
+                        "title":  "Reference camera and compositor settings",
+                        "why":  "Several reference effects come from settings that live only in the render .blend: depth of field (f-stop, focus distance), the motion-blur shutter, compositor glare, and any lens dispersion. These drive the shard smear, the far-floe softness, the orb halo and the violet/cyan fringes, which the engine can only imitate."
+                    },
+                    {
+                        "title":  "Pixel-exact environment surface detail",
+                        "why":  "The exact snow-streak and rock patterns on the far-left ridge and the massif, the iceberg surface, and the floe placement of F000 and Figma come from the artist\u0027s scene. The v8 re-bake of the team\u0027s reconstruction (T22) approximates them but cannot match them pixel for pixel."
+                    },
+                    {
+                        "title":  "Render-file overrides on the orb",
+                        "why":  "The engine reproduces magick_ball_01.002 from EXPORT.blend. Any overrides in the render file (emission strength, sample clamp, light-path limits) are unknown, so the orb\u0027s exact tonal zoning stays a match by eye (T10)."
+                    }
+                ],
+    "disagreements":  "Context: deploys #64-#69 shipped after the round-10 captures were taken on #63. They changed the orb smoke field (#64), ice chroma x1.35 (#65), the crushed-black toe including the floe slit (#66), the shard facet tint (#67), ripple contrast (#68), and the hold massif and bank, far haze, low mist and ridge slate (#69). Several verdicts below are therefore partly addressed already; re-baseline on #69 before tuning.\n1) Orb in the hold. The orb lens wants 1.6-2x emission and a bloom halo; the colour lens measures 3.3x too much clipped area and wants less visible disc. My call: no gain increase. Hide most of the disc behind B\u0027s lens (T12) and add internal contrast: small clipped lobes and darker smoke lanes, with a tight halo on the lobes only (T10).\n2) Orb rim. The orb lens wants a violet dispersion rim. The colour lens says today\u0027s ~9 px fringe is lavender and should be mint, and earlier rounds removed lavender (see the RAMP_COL note). My call: a 2-3 px violet outermost line with mint (G \u003e= B) inside it.\n3) Bloom. Composition wants the orb bloom capped at 0.6x for q03 and p07; the orb and colour lenses want a halo in the hold. My call: no wide bloom; only a fine-mip halo on clipped lobes (orb band threshold 7 â†’ 5).\n4) Shards. The colour lens says they are too dark and saturated (84,119,209 vs 134,159,226). The orb lens says they show white chips and are not dark enough (wants 41,88,173). Awwwards says the mean matches but facet contrast is too high. My call: compress the facet range toward a lighter periwinkle mean, keep #67\u0027s white cap, and keep only a thin dark spine.\n5) Ice surface. The ice lens wants smooth clear faces, tangential streaks and MORE blur through thick ice; Awwwards wants high-frequency crinkle everywhere and SHARPER refraction. My call: tangential streak frost plus a fine sparkle normal for the speculars. Blur only the background through long paths; the analytic orb hit (T08) keeps the orb crisp.\n6) Ripples. Environment and Awwwards want bolder, darker troughs. Round 7 rejected bold rings as painted stripes, and #68 already lifted sd to 17.0 vs F000\u0027s 15.5, at L180 vs 186. My call: no more contrast. Use a wider wavelength and less grain, show the bands through the hero\u0027s reflection, and restore the mean.\n7) Ice end blocks. Round 9 rejected saturated cobalt caps (#63 lifted them); round 10 calls them opaque white. My call: keep them neutral but let the refracted horizon through (T01).\n8) TIR bars. Rounds 6-7 asked for F000\u0027s dark steel bars at the band ends; round 10\u0027s glitch hunter calls them seams and the ice judge calls them a ruler-straight stripe. My call: keep a darker band-end feature, but make it D-shaped, soft and noisy, and fade it on detached hold pieces.\n9) Ring B at F402. Older code comments read \u0027no band across the orb\u0027 (bPortalSplit); the current composition judge measures a diagonal slab over the orb\u0027s upper half. My call: check ref_F402 directly before changing it; follow the judge if it confirms (T15).\n10) Global grade. The colour lens proposes a -3 deg hue/white-balance shift and an S-curve with a lower black point. Yet its own sky values match within Â±1, and Awwwards says not to touch the grade. Its bottom-centre rocks read too light, while #66\u0027s data shows the bottom-left rocks\u0027 p1 darker than F000. My call: no global white-balance or curve change; local fixes only (T20).\n11) Hold size. Awwwards suggests a ~20 % closer dolly; composition suggests more radial spread or a ~5 % dolly. My call: radial placement only (T12). The camera must stay on the hold plate\u0027s pose, so no new parallax or doubled plates.\n12) Far-left ridge. Environment wants a re-bake (streaks and a trimmed silhouette); the colour lens says darkening alone will not do; #69 already made it slate in the shader. My call: keep #69, and do the silhouette and streaks only in the batched v8 re-bake (T22).\n13) Hold foreground swell. Environment wants it, but four attempts (watervar2-5) failed. My call: lower priority. Bisect the bottom-strip path first, then try a directional rather than concentric swell (T16).\n14) Idle loop at F12-F25. The judge\u0027s alternative (\u0027reduce the pitch\u0027) conflicts with the matching ellipse. The evidence points to a Necker near-rim flip. My call: try a loop tip first, then a full-loop mirror A/B; a partial mirror window cannot be made seamless (T11)."
+}

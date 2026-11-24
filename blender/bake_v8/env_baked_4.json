@@ -1,0 +1,131 @@
+{
+ "exposureStops": -2.158,
+ "objects": {
+  "rock_big_3.005": {
+   "node": "rock_big_3005",
+   "texture": "tex/rock_big_3_005.png",
+   "size": 1024,
+   "gain": [
+    1.0987,
+    1.0669,
+    1.0465
+   ],
+   "plateShare": 0.4475,
+   "seen": {
+    "plate_rest": 0.358,
+    "plate_tilt": 0.045,
+    "plate_hold": 0.0,
+    "plate_orbN": 0.051,
+    "plate_orbP": 0.025
+   },
+   "polys": 4614,
+   "screenArea": 0.06598,
+   "dist": 17.8
+  },
+  "rock_big_4.003": {
+   "node": "rock_big_4003",
+   "texture": "tex/rock_big_4_003.png",
+   "size": 1024,
+   "gain": [
+    1.0587,
+    1.0519,
+    1.0518
+   ],
+   "plateShare": 0.7089,
+   "seen": {
+    "plate_rest": 0.619,
+    "plate_tilt": 0.103,
+    "plate_hold": 0.076,
+    "plate_orbN": 0.069,
+    "plate_orbP": 0.04
+   },
+   "polys": 4999,
+   "screenArea": 0.03728,
+   "dist": 21.0
+  },
+  "rock_big_4.004": {
+   "node": "rock_big_4004",
+   "texture": "tex/rock_big_4_004.png",
+   "size": 512,
+   "gain": [
+    1.089,
+    1.084,
+    1.0806
+   ],
+   "plateShare": 0.7366,
+   "seen": {
+    "plate_rest": 0.66,
+    "plate_tilt": 0.078,
+    "plate_hold": 0.0,
+    "plate_orbN": 0.084,
+    "plate_orbP": 0.032
+   },
+   "polys": 4432,
+   "screenArea": 0.00983,
+   "dist": 15.5
+  },
+  "rock_big_4.005": {
+   "node": "rock_big_4005",
+   "texture": "tex/rock_big_4_005.png",
+   "size": 512,
+   "gain": [
+    1.1206,
+    1.1017,
+    1.0964
+   ],
+   "plateShare": 0.5477,
+   "seen": {
+    "plate_rest": 0.453,
+    "plate_tilt": 0.059,
+    "plate_hold": 0.029,
+    "plate_orbN": 0.093,
+    "plate_orbP": 0.033
+   },
+   "polys": 5000,
+   "screenArea": 0.01981,
+   "dist": 19.6
+  },
+  "rock_medium_1.001": {
+   "node": "rock_medium_1001",
+   "texture": "tex/rock_medium_1_001.png",
+   "size": 256,
+   "gain": [
+    0.9643,
+    0.9709,
+    0.9819
+   ],
+   "plateShare": 0.5092,
+   "seen": {
+    "plate_rest": 0.295,
+    "plate_tilt": 0.161,
+    "plate_hold": 0.277,
+    "plate_orbN": 0.084,
+    "plate_orbP": 0.04
+   },
+   "polys": 1506,
+   "screenArea": 0.00236,
+   "dist": 21.0
+  },
+  "rock_medium_2.001": {
+   "node": "rock_medium_2001",
+   "texture": "tex/rock_medium_2_001.png",
+   "size": 256,
+   "gain": [
+    0.9672,
+    0.9782,
+    0.9902
+   ],
+   "plateShare": 0.2582,
+   "seen": {
+    "plate_rest": 0.133,
+    "plate_tilt": 0.085,
+    "plate_hold": 0.0,
+    "plate_orbN": 0.173,
+    "plate_orbP": 0.038
+   },
+   "polys": 1803,
+   "screenArea": 0.00487,
+   "dist": 14.3
+  }
+ }
+}

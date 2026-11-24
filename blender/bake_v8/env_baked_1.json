@@ -1,0 +1,131 @@
+{
+ "exposureStops": -2.158,
+ "objects": {
+  "Retopo_Plane.005": {
+   "node": "Retopo_Plane005",
+   "texture": "tex/Retopo_Plane_005.png",
+   "size": 256,
+   "gain": [
+    1.0604,
+    1.0436,
+    1.0382
+   ],
+   "plateShare": 0.169,
+   "seen": {
+    "plate_rest": 0.099,
+    "plate_tilt": 0.013,
+    "plate_hold": 0.012,
+    "plate_orbN": 0.074,
+    "plate_orbP": 0.003
+   },
+   "polys": 3742,
+   "screenArea": 0.01671,
+   "dist": 58.2
+  },
+  "Retopo_Plane.006": {
+   "node": "Retopo_Plane006",
+   "texture": "tex/Retopo_Plane_006.png",
+   "size": 256,
+   "gain": [
+    1.018,
+    0.9913,
+    0.9744
+   ],
+   "plateShare": 0.0997,
+   "seen": {
+    "plate_rest": 0.077,
+    "plate_tilt": 0.004,
+    "plate_hold": 0.002,
+    "plate_orbN": 0.001,
+    "plate_orbP": 0.026
+   },
+   "polys": 3742,
+   "screenArea": 0.01876,
+   "dist": 61.2
+  },
+  "Retopo_Plane.007": {
+   "node": "Retopo_Plane007",
+   "texture": "tex/Retopo_Plane_007.png",
+   "size": 256,
+   "gain": [
+    1.4525,
+    1.3132,
+    1.2479
+   ],
+   "plateShare": 0.2255,
+   "seen": {
+    "plate_rest": 0.184,
+    "plate_tilt": 0.016,
+    "plate_hold": 0.012,
+    "plate_orbN": 0.018,
+    "plate_orbP": 0.005
+   },
+   "polys": 8000,
+   "screenArea": 0.02881,
+   "dist": 35.9
+  },
+  "Retopo_Plane.008": {
+   "node": "Retopo_Plane008",
+   "texture": "tex/Retopo_Plane_008.png",
+   "size": 256,
+   "gain": [
+    1.4583,
+    1.3548,
+    1.2797
+   ],
+   "plateShare": 0.4056,
+   "seen": {
+    "plate_rest": 0.388,
+    "plate_tilt": 0.053,
+    "plate_hold": 0.034,
+    "plate_orbN": 0.02,
+    "plate_orbP": 0.004
+   },
+   "polys": 1164,
+   "screenArea": 0.00219,
+   "dist": 53.8
+  },
+  "Retopo_Plane.009": {
+   "node": "Retopo_Plane009",
+   "texture": "tex/Retopo_Plane_009.png",
+   "size": 256,
+   "gain": [
+    1.3648,
+    1.2548,
+    1.1847
+   ],
+   "plateShare": 0.5238,
+   "seen": {
+    "plate_rest": 0.46,
+    "plate_tilt": 0.05,
+    "plate_hold": 0.04,
+    "plate_orbN": 0.017,
+    "plate_orbP": 0.005
+   },
+   "polys": 341,
+   "screenArea": 0.00782,
+   "dist": 46.3
+  },
+  "Retopo_Plane.010": {
+   "node": "Retopo_Plane010",
+   "texture": "tex/Retopo_Plane_010.png",
+   "size": 256,
+   "gain": [
+    1.5001,
+    1.3615,
+    1.2651
+   ],
+   "plateShare": 0.3546,
+   "seen": {
+    "plate_rest": 0.3,
+    "plate_tilt": 0.092,
+    "plate_hold": 0.072,
+    "plate_orbN": 0.076,
+    "plate_orbP": 0.073
+   },
+   "polys": 1164,
+   "screenArea": 0.00614,
+   "dist": 47.0
+  }
+ }
+}

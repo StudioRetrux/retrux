@@ -1,0 +1,131 @@
+{
+ "exposureStops": -2.158,
+ "objects": {
+  "Retopo_Plane.011": {
+   "node": "Retopo_Plane011",
+   "texture": "tex/Retopo_Plane_011.png",
+   "size": 256,
+   "gain": [
+    1.6481,
+    1.4397,
+    1.278
+   ],
+   "plateShare": 0.4146,
+   "seen": {
+    "plate_rest": 0.364,
+    "plate_tilt": 0.055,
+    "plate_hold": 0.04,
+    "plate_orbN": 0.022,
+    "plate_orbP": 0.006
+   },
+   "polys": 341,
+   "screenArea": 0.00361,
+   "dist": 52.9
+  },
+  "Retopo_Plane.012": {
+   "node": "Retopo_Plane012",
+   "texture": "tex/Retopo_Plane_012.png",
+   "size": 2048,
+   "gain": [
+    1.0589,
+    1.0359,
+    1.0163
+   ],
+   "plateShare": 0.7317,
+   "seen": {
+    "plate_rest": 0.184,
+    "plate_tilt": 0.084,
+    "plate_hold": 0.023,
+    "plate_orbN": 0.074,
+    "plate_orbP": 0.107
+   },
+   "polys": 7999,
+   "screenArea": 0.14676,
+   "dist": 17.3
+  },
+  "Rock.005": {
+   "node": "Rock005",
+   "texture": "tex/Rock_005.png",
+   "size": 256,
+   "gain": [
+    1.5492,
+    1.5506,
+    1.5677
+   ],
+   "plateShare": 0.7007,
+   "seen": {
+    "plate_rest": 0.563,
+    "plate_tilt": 0.247,
+    "plate_hold": 0.0,
+    "plate_orbN": 0.178,
+    "plate_orbP": 0.2
+   },
+   "polys": 1306,
+   "screenArea": 0.00775,
+   "dist": 13.1
+  },
+  "Rock.006": {
+   "node": "Rock006",
+   "texture": "tex/Rock_006.png",
+   "size": 256,
+   "gain": [
+    1.9653,
+    1.921,
+    1.8565
+   ],
+   "plateShare": 0.4403,
+   "seen": {
+    "plate_rest": 0.318,
+    "plate_tilt": 0.083,
+    "plate_hold": 0.0,
+    "plate_orbN": 0.057,
+    "plate_orbP": 0.132
+   },
+   "polys": 807,
+   "screenArea": 0.00341,
+   "dist": 12.7
+  },
+  "Rock.007": {
+   "node": "Rock007",
+   "texture": "tex/Rock_007.png",
+   "size": 512,
+   "gain": [
+    1.9187,
+    1.7271,
+    1.5707
+   ],
+   "plateShare": 0.609,
+   "seen": {
+    "plate_rest": 0.548,
+    "plate_tilt": 0.05,
+    "plate_hold": 0.0,
+    "plate_orbN": 0.063,
+    "plate_orbP": 0.046
+   },
+   "polys": 1666,
+   "screenArea": 0.00864,
+   "dist": 13.0
+  },
+  "Rock.008": {
+   "node": "Rock008",
+   "texture": "tex/Rock_008.png",
+   "size": 256,
+   "gain": [
+    1.338,
+    1.2618,
+    1.2117
+   ],
+   "plateShare": 0.2425,
+   "seen": {
+    "plate_rest": 0.168,
+    "plate_tilt": 0.062,
+    "plate_hold": 0.0,
+    "plate_orbN": 0.005,
+    "plate_orbP": 0.071
+   },
+   "polys": 1961,
+   "screenArea": 0.00754,
+   "dist": 13.9
+  }
+ }
+}

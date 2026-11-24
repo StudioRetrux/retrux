@@ -1,0 +1,125 @@
+{
+ "exposureStops": -2.158,
+ "objects": {
+  "BG.001": {
+   "node": "BG001",
+   "texture": "tex/BG_001.png",
+   "size": 256,
+   "gain": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "plateShare": 0.0,
+   "seen": {},
+   "polys": 2,
+   "screenArea": 1.0,
+   "dist": 371.8
+  },
+  "gfsw.001": {
+   "node": "gfsw001",
+   "texture": "tex/gfsw_001.png",
+   "size": 512,
+   "gain": [
+    0.9943,
+    0.9777,
+    0.9625
+   ],
+   "plateShare": 0.5786,
+   "seen": {
+    "plate_rest": 0.519,
+    "plate_tilt": 0.113,
+    "plate_hold": 0.099,
+    "plate_orbN": 0.09,
+    "plate_orbP": 0.089
+   },
+   "polys": 11999,
+   "screenArea": 0.02774,
+   "dist": 60.7
+  },
+  "Object_2.009": {
+   "node": "Object_2009",
+   "texture": "tex/Object_2_009.png",
+   "size": 512,
+   "gain": [
+    0.98,
+    0.9781,
+    0.974
+   ],
+   "plateShare": 0.5867,
+   "seen": {
+    "plate_rest": 0.521,
+    "plate_tilt": 0.063,
+    "plate_hold": 0.058,
+    "plate_orbN": 0.082,
+    "plate_orbP": 0.03
+   },
+   "polys": 14501,
+   "screenArea": 0.05404,
+   "dist": 191.4
+  },
+  "Object_2.010": {
+   "node": "Object_2010",
+   "texture": "tex/Object_2_010.png",
+   "size": 256,
+   "gain": [
+    1.034,
+    1.0207,
+    1.0162
+   ],
+   "plateShare": 0.5572,
+   "seen": {
+    "plate_rest": 0.449,
+    "plate_tilt": 0.048,
+    "plate_hold": 0.06,
+    "plate_orbN": 0.026,
+    "plate_orbP": 0.167
+   },
+   "polys": 8948,
+   "screenArea": 0.01506,
+   "dist": 270.3
+  },
+  "Plane.014": {
+   "node": "Plane014",
+   "texture": "tex/Plane_014.png",
+   "size": 256,
+   "gain": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "plateShare": 0.0,
+   "seen": {
+    "plate_rest": 0.0,
+    "plate_tilt": 0.0,
+    "plate_hold": 0.0,
+    "plate_orbN": 0.0,
+    "plate_orbP": 0.001
+   },
+   "polys": 1864,
+   "screenArea": 0.1217,
+   "dist": 78.6
+  },
+  "Plane.015": {
+   "node": "Plane015",
+   "texture": "tex/Plane_015.png",
+   "size": 512,
+   "gain": [
+    0.998,
+    1.0036,
+    1.0184
+   ],
+   "plateShare": 0.7813,
+   "seen": {
+    "plate_rest": 0.725,
+    "plate_tilt": 0.081,
+    "plate_hold": 0.076,
+    "plate_orbN": 0.067,
+    "plate_orbP": 0.045
+   },
+   "polys": 12000,
+   "screenArea": 0.03011,
+   "dist": 68.1
+  }
+ }
+}

@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Retrux — Hero Lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --w90: #ffffff;
+        --w100: #f7f9fe;
+        --pad: clamp(20px, 3.889vw, 56px);
+      }
+      html, body {
+        margin: 0;
+        height: 100%;
+        background: #bccadb;
+        color: var(--w90);
+        font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        overflow: hidden;
+      }
+      [data-hero-canvas] {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100dvh;
+        display: block;
+        outline: none;
+        touch-action: none;
+      }
+      .overlay {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background-image: linear-gradient(180deg, rgba(64, 95, 137, 0.16) 0%, rgba(64, 95, 137, 0) 15.953%, rgba(64, 95, 137, 0) 74.668%, rgba(64, 95, 137, 0.16) 100%);
+      }
+      .nav {
+        position: fixed;
+        inset: 0 0 auto 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: clamp(20px, 2.778vw, 40px) var(--pad) 0;
+        pointer-events: none;
+      }
+      .nav a, .nav img { pointer-events: auto; }
+      .nav .logo img { display: block; width: 32.976px; height: 38px; }
+      .menu { display: flex; gap: 33px; font-size: 16px; font-weight: 500; line-height: 1; }
+      /* 1 px lower than the line-height-1 box: on Figma's baselines (QC round 1). */
+      .menu a { position: relative; top: 1px; color: var(--w90); text-decoration: none; }
+      .hero-copy {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 0 0 var(--pad) var(--pad);
+        pointer-events: none;
+      }
+      .hero-copy h1 {
+        margin: 0;
+        width: min(614px, calc(100vw - 2 * var(--pad)));
+        /* 64 px at 1440 x 766; smaller on narrow or short (landscape phone) viewports. */
+        font-size: clamp(32px, min(4.4444vw, 8.36vh), 64px);
+        font-weight: 500;
+        line-height: 1;
+        color: var(--w90);
+      }
+      .hero-copy p {
+        margin: 0;
+        width: min(460.5px, calc(100vw - 2 * var(--pad)));
+        font-size: clamp(16px, 1.3889vw, 20px);
+        font-weight: 400;
+        line-height: 1;
+        color: var(--w100);
+      }
+      .scroll {
+        position: fixed;
+        left: 50%;
+        bottom: var(--pad);
+        transform: translate(-50%, 1px);
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 1;
+        pointer-events: none;
+      }
+      .sound {
+        position: fixed;
+        right: var(--pad);
+        bottom: var(--pad);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: var(--w90);
+        font: 500 16px/1 "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+        cursor: pointer;
+      }
+      .sound [data-sound-wave] { width: 24px; height: 15px; overflow: hidden; display: block; }
+      /* Static first-paint cover; main.ts removes it once the real loader has mounted. */
+      .lab-cover {
+        position: fixed;
+        inset: 0;
+        background: linear-gradient(180deg, #e9eef5, #bccadb);
+        z-index: 49;
+      }
+      .hud {
+        position: fixed;
+        top: 96px;
+        left: var(--pad);
+        font: 12px/1.4 ui-monospace, monospace;
+        background: rgba(10, 20, 35, 0.55);
+        padding: 8px 10px;
+        border-radius: 6px;
+        white-space: pre;
+        display: none;
+        z-index: 20;
+      }
+      @media (max-width: 720px) {
+        .menu { gap: 18px; font-size: 14px; }
+      }
+      @media (max-width: 640px) {
+        .scroll { display: none; }
+      }
+      /* Narrow screens: the copy sits above the bottom row (Sound button). */
+      @media (max-width: 640px) {
+        .hero-copy { padding-bottom: calc(var(--pad) + 40px); }
+      }
+      /* Otherwise the subline never reaches the centred "Scroll to Explore" (460.5 px at the Figma size). */
+      @media (min-width: 641px) {
+        .hero-copy p { width: min(460.5px, calc(50vw - var(--pad) - 90px)); }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas data-hero-canvas tabindex="0" aria-label="Ice sculpture above an arctic lake. Press and hold to look closer."></canvas>
+    <div class="overlay" aria-hidden="true"></div>
+    <header class="nav">
+      <a class="logo" href="/" aria-label="Retrux home" data-reveal="fade" draggable="false"><img src="/icons/retrux-logo.svg" alt="Retrux" draggable="false" /></a>
+      <nav class="menu">
+        <a href="#projects" data-reveal="fade" draggable="false">Projects</a>
+        <a href="#studio" data-reveal="fade" draggable="false">Studio</a>
+        <a href="#contact" data-reveal="fade" draggable="false">Contact</a>
+      </nav>
+    </header>
+    <section class="hero-copy">
+      <h1 data-reveal="lines">Ridiculously innovative studio for humankind</h1>
+      <p data-reveal="lines">Crafting immersive, interactive, impossibly alive digital experiences.</p>
+    </section>
+    <div class="scroll" data-reveal="fade">Scroll to Explore</div>
+    <button class="sound" type="button" aria-pressed="false" aria-label="Toggle sound" data-reveal="fade" data-sound-toggle>
+      <span data-sound-wave></span><span style="position: relative; top: 1px">Sound</span>
+    </button>
+    <div class="lab-cover" data-cover aria-hidden="true"></div>
+    <div class="hud" data-hud></div>
+    <script type="module" src="/dist/main.js"></script>
+    <script>
+      // Live reload only on the dev machine (or with ?live), so remote viewers are not interrupted.
+      if (location.hostname === "localhost" || new URLSearchParams(location.search).has("live")) {
+        try {
+          new EventSource("/__reload").onmessage = () => location.reload();
+        } catch (e) {}
+      }
+    </script>
+  </body>
+</html>

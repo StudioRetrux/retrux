@@ -1,0 +1,23 @@
+# dependencies / build output
+node_modules/
+.next/
+out/
+retrux-web/hero-lab/dist/
+*.tsbuildinfo
+__pycache__/
+*.pyc
+
+# secrets and machine-local links
+.env*
+.vercel/
+*.pem
+
+# Blender autosaves
+*.blend1
+*.blend2
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
