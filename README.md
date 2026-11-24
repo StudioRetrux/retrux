@@ -28,8 +28,8 @@ tried, what is still open), then `notes/qc/plan_round10.json` (the last scored Q
 2. Clone and install:
    ```powershell
    gh auth login --web       # or sign in when git asks
-   git clone https://github.com/fvldi/retrux-hero-rnd.git
-   cd retrux-hero-rnd\retrux-web
+   git clone https://github.com/StudioRetrux/retrux.git
+   cd retrux\retrux-web
    npm ci
    npm run hero:lab          # lab on http://localhost:5173 (also on the LAN)
    npm run dev               # or the full Next.js page
