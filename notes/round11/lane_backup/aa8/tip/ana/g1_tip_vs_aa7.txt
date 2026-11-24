@@ -1,0 +1,16 @@
+== medium (NEW masks, stride 2, vs BASE; TIP = final default, AA7 = recheck's final caps; GT 16-sample)
+  FS   MC32 TIP  -82.4 AA7  -82.4 GT  -68.2 | J32 TIP   -10 AA7   -10 GT    -9 | J48 TIP    -5 AA7    -5 GT    -1 | FS MCE TIP 2.117 AA7 2.117
+  WR   MC32 TIP  -68.3 AA7  -68.3 GT  -68.1 | J32 TIP   -20 AA7   -20 GT   -13 | J48 TIP   -21 AA7   -21 GT   -16
+  DR   MC32 TIP  -86.4 AA7  -86.4 GT  -73.4 | J32 TIP   -10 AA7   -10 GT    -8 | J48 TIP   -18 AA7   -18 GT   -10
+  FF   MC32 TIP  -85.3 AA7  -84.3 GT  -59.1 | J32 TIP   -45 AA7   -45 GT   -17 | J48 TIP   -69 AA7   -68 GT   -35
+  FR   MC32 TIP  -77.4 AA7  -72.6 GT  -65.6 | J32 TIP   -46 AA7   -44 GT   -17 | J48 TIP   -62 AA7   -61 GT   -34
+  RS   MC32 TIP  -90.8 AA7  -90.8 GT  -83.3 | J32 TIP   -37 AA7   -37 GT   -19 | J48 TIP   -34 AA7   -34 GT    -9
+  tot  MC32 TIP  -83.1 AA7  -82.0 GT  -62.2 | J32 TIP   -33 AA7   -33 GT   -14 | J48 TIP   -48 AA7   -47 GT   -25
+== reverse (NEW masks, stride 2, vs BASE; TIP = final default, AA7 = recheck's final caps; GT 16-sample)
+  FS   MC32 TIP  -19.5 AA7  -19.5 GT  -19.4 | J32 TIP    -5 AA7    -5 GT    -6 | J48 TIP    -4 AA7    -4 GT    +4 | FS MCE TIP 3.854 AA7 3.854
+  WR   MC32 TIP  -64.7 AA7  -64.7 GT  -52.4 | J32 TIP   -18 AA7   -18 GT   -14 | J48 TIP   -16 AA7   -16 GT   -16
+  DR   MC32 TIP  -74.4 AA7  -74.4 GT  -69.8 | J32 TIP    -6 AA7    -6 GT    -4 | J48 TIP    -4 AA7    -4 GT    +1
+  FF   MC32 TIP  -84.4 AA7  -83.5 GT  -52.1 | J32 TIP   -36 AA7   -35 GT   -10 | J48 TIP   -47 AA7   -47 GT   -21
+  FR   MC32 TIP  -77.7 AA7  -78.3 GT  -69.9 | J32 TIP    -6 AA7    -6 GT    +1 | J48 TIP    -3 AA7    -3 GT    +6
+  RS   MC32 TIP  -82.2 AA7  -82.2 GT  -68.5 | J32 TIP   -63 AA7   -63 GT   -33 | J48 TIP   -75 AA7   -75 GT   -47
+  tot  MC32 TIP  -74.5 AA7  -74.0 GT  -51.5 | J32 TIP   -22 AA7   -22 GT    -7 | J48 TIP   -26 AA7   -26 GT   -10

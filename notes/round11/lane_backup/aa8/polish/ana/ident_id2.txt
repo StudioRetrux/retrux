@@ -1,0 +1,8 @@
+AA8 lktaa0 vs AA7 lktaa0 (fresh :5197)         IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+AA8 ar0 vs AA7 ar0 (fresh :5197)               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+AA8 sf0 vs AA7 sf0 (fresh :5197)               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+AA8 nodbg vs AA7 nodbg (fresh :5197)           IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+AA8 ffblab vs AA7 ffblab (fresh :5197)         IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+AA8 no ?debug vs AA8 ?debug (default)          IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+AA7 no ?debug vs AA7 ?debug (recheck)          IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+AA8 ffb lab params vs AA8 default (live?)      DIFFER    final DIFF | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: walk,final | programs 16 differ: rx-water|ShaderMaterial,rx-water-walk|ShaderMaterial | logs 0/0

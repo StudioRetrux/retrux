@@ -1,0 +1,9 @@
+336a337
+>         const tc = lab ? Number(eq?.get("lktaaclip") ?? NaN) : NaN;
+339c340
+<           reflection: this.pipeline.reflection,
+---
+>           reflection: lab && eq?.get("lktaarefl") === "0" ? null : this.pipeline.reflection,
+342a344,345
+>           ...(tc >= 0 && tc <= 8 ? { clip: tc } : {}),
+>           ...(lab && [2, 3, 4].includes(Number(eq?.get("lktaafar"))) ? { far: Number(eq?.get("lktaafar")) } : {}),

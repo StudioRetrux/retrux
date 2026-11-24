@@ -1,0 +1,8 @@
+det      p04_tn    r<0.75R no crystals: off L10/50/90 252/253/255 sd 11.1 frac<215  3.7% | lane L10/50/90 252/253/255 sd  6.9 frac<215  0.6%
+det      p05_t3.3  r<0.75R no crystals: off L10/50/90 218/253/255 sd 19.1 frac<215  9.0% | lane L10/50/90 197/249/254 sd 23.1 frac<215 19.9%
+det      p06_t3.3  r<0.75R no crystals: off L10/50/90 241/253/255 sd  6.7 frac<215  0.0% | lane L10/50/90 241/253/255 sd  7.0 frac<215  0.0%
+det      q03_tn    r<0.75R no crystals: off L10/50/90 215/235/253 sd 16.5 frac<215  9.9% | lane L10/50/90 210/229/252 sd 18.3 frac<215 16.7%
+det      q00_tn    r<0.75R no crystals: off L10/50/90 210/226/253 sd 17.2 frac<215 16.8% | lane L10/50/90 208/226/252 sd 17.7 frac<215 18.7%
+detT2    p05_t3.3  r<0.75R no crystals: off L10/50/90 229/252/254 sd 10.2 frac<215  0.0% | lane L10/50/90 224/251/254 sd 12.0 frac<215  0.3%
+detT2    p06_t3.3  r<0.75R no crystals: off L10/50/90 248/253/255 sd 15.5 frac<215  6.5% | lane L10/50/90 221/253/255 sd 14.5 frac<215  8.0%
+detT2    q00_tn    r<0.75R no crystals: off L10/50/90 210/226/253 sd 17.2 frac<215 16.8% | lane L10/50/90 208/226/252 sd 17.7 frac<215 18.6%

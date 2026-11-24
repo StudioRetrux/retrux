@@ -1,0 +1,4 @@
+new pops (X flagged, ref not, X != ref): 303 px, 128 clusters, >= 6 px: 10
+  k76-83 x151-161 y547-552 n15 emax99
+  k9-9 x349-363 y520-522 n20 emax46
+  k100-100 x940-947 y474-477 n16 emax46

@@ -1,0 +1,27 @@
+[slot] p4hold:probecam waiting (load 3.2 / max 30, slots 3, holders [{"label":"judge_p4env:ident","pid":29544,"at":1795198789336,"slot":0},{"label":"!p4orb:fix-ab1","pid":29420,"at":1795198777869,"slot":1},{"label":"judge_p4ice:identA","pid":29644,"at":1795198795138,"slot":2}])
+[slot] p4hold:probecam: taken (load 5.8)
+== 5199
+{"name":"rest","camY":2.904,"camZ":11.791,"pitchDeg":0.02,"orb":[722.9,371.5],"camExpand":0,"spreadA":0,"splitB":0,"holdFit":1,"holdShare":0.8532}
+{"name":"p04","camY":2.43,"camZ":6.406,"pitchDeg":3.514,"orb":[723.1,391.3],"camExpand":0.7652,"spreadA":0.3237,"splitB":0.3237,"holdFit":1,"holdShare":0.8532}
+{"name":"p05","camY":2.356,"camZ":4.755,"pitchDeg":4.585,"orb":[723.3,393.1],"camExpand":0.9996,"spreadA":0.8722,"splitB":0.8722,"holdFit":1,"holdShare":0.8532}
+{"name":"p06","camY":2.356,"camZ":4.752,"pitchDeg":4.587,"orb":[723.4,393.2],"camExpand":1,"spreadA":0.9878,"splitB":0.9878,"holdFit":1,"holdShare":0.8532}
+{"name":"p07","camY":2.716,"camZ":10.085,"pitchDeg":1.131,"orb":[723.4,379.5],"camExpand":0.2426,"spreadA":0.1754,"splitB":0.1754,"holdFit":1,"holdShare":0.8532}
+{"name":"p08","camY":2.864,"camZ":11.453,"pitchDeg":0.242,"orb":[723.4,373.3],"camExpand":0.048,"spreadA":0,"splitB":0,"holdFit":1,"holdShare":0.8532}
+logs []
+== 5178
+{"name":"rest","camY":2.904,"camZ":11.791,"pitchDeg":0.02,"orb":[722.9,371.5],"camExpand":0,"spreadA":0,"splitB":0,"holdFit":1,"holdShare":0.8536}
+{"name":"p04","camY":2.268,"camZ":6.396,"pitchDeg":4.114,"orb":[723.1,391.3],"camExpand":0.7652,"spreadA":0.481,"splitB":0.481,"holdFit":1,"holdShare":0.8536}
+{"name":"p05","camY":2.166,"camZ":4.741,"pitchDeg":5.37,"orb":[723.3,393.2],"camExpand":0.9996,"spreadA":0.8778,"splitB":0.8778,"holdFit":1,"holdShare":0.8536}
+{"name":"p06","camY":2.166,"camZ":4.739,"pitchDeg":5.372,"orb":[723.4,393.2],"camExpand":1,"spreadA":0.9884,"splitB":0.9884,"holdFit":1,"holdShare":0.8536}
+{"name":"p07","camY":2.652,"camZ":10.083,"pitchDeg":1.322,"orb":[723.4,379.5],"camExpand":0.2426,"spreadA":0.1754,"splitB":0.1754,"holdFit":1,"holdShare":0.8536}
+{"name":"p08","camY":2.85,"camZ":11.453,"pitchDeg":0.28,"orb":[723.4,373.3],"camExpand":0.048,"spreadA":0,"splitB":0,"holdFit":1,"holdShare":0.8536}
+logs []
+== 5178 p4hold=0
+{"name":"rest","camY":2.904,"camZ":11.791,"pitchDeg":0.02,"orb":[722.9,371.5],"camExpand":0,"spreadA":0,"splitB":0,"holdFit":1,"holdShare":0.8532}
+{"name":"p04","camY":2.43,"camZ":6.406,"pitchDeg":3.514,"orb":[723.1,391.3],"camExpand":0.7652,"spreadA":0.3237,"splitB":0.3237,"holdFit":1,"holdShare":0.8532}
+{"name":"p05","camY":2.356,"camZ":4.755,"pitchDeg":4.585,"orb":[723.3,393.1],"camExpand":0.9996,"spreadA":0.8722,"splitB":0.8722,"holdFit":1,"holdShare":0.8532}
+{"name":"p06","camY":2.356,"camZ":4.752,"pitchDeg":4.587,"orb":[723.4,393.2],"camExpand":1,"spreadA":0.9878,"splitB":0.9878,"holdFit":1,"holdShare":0.8532}
+{"name":"p07","camY":2.716,"camZ":10.085,"pitchDeg":1.131,"orb":[723.4,379.5],"camExpand":0.2426,"spreadA":0.1754,"splitB":0.1754,"holdFit":1,"holdShare":0.8532}
+{"name":"p08","camY":2.864,"camZ":11.453,"pitchDeg":0.242,"orb":[723.4,373.3],"camExpand":0.048,"spreadA":0,"splitB":0,"holdFit":1,"holdShare":0.8532}
+logs []
+[slot] p4hold:probecam: freed (exit 0)

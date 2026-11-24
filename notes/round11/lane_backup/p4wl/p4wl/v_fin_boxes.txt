@@ -1,0 +1,9 @@
+box 0 480 1512 640
+v_main                       pops vs GT/frame 20552.8 (p90 26813) | blips seq 13325.9 GT 13215.2 excess 110.7 | |S-G| mean 2.46
+v_fin                        pops vs GT/frame 14504.2 (p90 17606) | blips seq 14319.3 GT 13215.2 excess 1104.1 | |S-G| mean 1.88
+box 880 480 1440 640
+v_main                       pops vs GT/frame 3911.7 (p90 6614) | blips seq 2475.1 GT 2583.8 excess -108.7 | |S-G| mean 2.23
+v_fin                        pops vs GT/frame 2633.0 (p90 3714) | blips seq 3100.1 GT 2583.8 excess 516.3 | |S-G| mean 1.58
+box 420 480 880 640
+v_main                       pops vs GT/frame 9936.8 (p90 12581) | blips seq 8513.7 GT 8934.7 excess -421.0 | |S-G| mean 2.85
+v_fin                        pops vs GT/frame 8950.4 (p90 11635) | blips seq 8784.9 GT 8934.7 excess -149.8 | |S-G| mean 2.52

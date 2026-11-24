@@ -1,0 +1,33 @@
+{
+ "note": "P4 round 1 lanes wf_140d6df2-fad (20 Nov 23:55)",
+ "args": {
+  "brief": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/briefs/p4r1_common.md",
+  "buildMin": 120,
+  "judgeMin": 50,
+  "fixMin": 60,
+  "rejudgeMin": 40,
+  "lanes": [
+   {
+    "key": "env",
+    "lane": "p4env",
+    "port": 5174,
+    "build": "LANE TASKS (from MAIN/notes/round11/p3/r11_1_plan.json; read each in full): G1 (priority 1, CRITICAL for the client: the translucent iceberg / far-peak double on the sky that every sideways pointer orbit reveals - the client explicitly banned doubled mountains when the camera moves), then G4 (orbit-exposed seams: 1-px bright hairlines on the far range face in left-orbit views, black slits in the dark ridge in right-orbit views, the hard-edged pale box on the far-left shelf that is visible even at rest), then G3 (dolly-only bake artefacts: untextured floe face in the bottom-left corner, grey water smudge at the bottom right, beige rim on the far peak). You own Blender this round (bake / repair / re-render on COPIES, ~20 min per full bake; prefer the narrowest repair: a targeted texture repair or geometry / card fix over a full re-bake when it fixes the evidence). Verify on all 10 pointer spots + the sweep at x1 and contrast-stretched zooms (the panel's zoom_glitch_cursor_orbit/*grid* images show how it was found), and that the REST frame (q00 vs ref_F000, region_stats) does not move except where a task says so.",
+    "judge": "LENSES to score: glitch_cursor_orbit, environment, glitch_hold_sweep, awwwards_jury. Check each G1 / G4 / G3 evidence spot in the lane's ptr/ and sweep/ captures at x1 and with contrast-stretched zooms like the panel's (e.g. ffmpeg eq=contrast=4:brightness=-0.3 on the crops), and the rest frame vs ref_F000 and vs MAIN (region_stats)."
+   },
+   {
+    "key": "ice",
+    "lane": "p4ice",
+    "port": 5175,
+    "build": "LANE TASKS (from MAIN/notes/round11/p3/r11_1_plan.json; read each in full): G5 (band-limit the ice: no contour isolines, stair-steps or pixel sparkle that boil while the rings turn - a glitch, do it first), Q3 (the ice reads as frosted carved ice, not cloud-printed resin: clarity variation stretched along the ring, no isotropic marble blobs - the panel's critical ice issue, ice_material 6.5), Q6 (crisp carved slabs: planar cut faces, sharp joint lines while joined, chamfered edges, no domed 'bone' caps), Q10 (hold close-up ice drama: far-wall dark line, refracted orb strip, facet glints; neutral rim with a steel-blue inner line; sparse cracks / scrape streaks; no residual cyan cast) and the ICE part of Q4 (orb light passing through the ice in front of it; in the hold a bright structured band over the orb). Files: hero/IceMaterial.ts mainly (Rings.ts only for uPieceCuts as Q6 says). Compare with REF ref_F000 / loop_F045 / ref_F420 / refs/hold_frames at matched poses, and with the round-11 Cycles twin renders where the ice handoff (MAIN/notes/round11/handoff_ice.md) points to them; where twin and reference disagree, the reference wins. Watch the tumble sweep for crawl (capture a few frames in a row at a turning ring and look at the frame-to-frame difference).",
+    "judge": "LENSES to score: ice_material, awwwards_jury, composition_motion, glitch_hold_sweep. Compare crops at q00, q01, q02, q03, p05, p06 with REF and with MAIN; look for crawl / boil on consecutive tumble frames; check that rings C/D and the joints still read like the reference at rest."
+   },
+   {
+    "key": "orb",
+    "lane": "p4orb",
+    "port": 5176,
+    "build": "LANE TASKS (from MAIN/notes/round11/p3/r11_1_plan.json; read each in full): Q2 (the orb as a refracting glass sphere: the screen lens on, internal plasma / wisp structure, a thin mint-violet rim, no clipped flat white plate in the hold), Q7 (shards read as translucent glass crystals: internal mosaic, lighter and less saturated bodies, a depth cue for far / behind-ice shards), and the ORB / POST part of Q4 (a visible charge in the hold: light build-up, bloom that widens when dollied in, glow hues as the reference: pale blue-white in the ice, mint at the orb edge, periwinkle not teal). Files: hero/Orb.ts, hero/Shards.ts, pipeline/PostChain.ts, HeroEngine.ts, quality.ts (tier gates). Do NOT edit hero/IceMaterial.ts (the ice lane owns it this round). Compare with REF ref_F000 / loop_F045 / ref_F420 crops at matched poses.",
+    "judge": "LENSES to score: orb_shards_light, color_grade_post, awwwards_jury, composition_motion. Compare the orb and shard crops at q00, q03, p04, p06 with REF and MAIN; check bloom / clipping numbers on the orb core; check shards in the sweep for flicker."
+   }
+  ]
+ }
+}

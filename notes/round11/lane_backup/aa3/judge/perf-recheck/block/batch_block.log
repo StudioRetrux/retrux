@@ -1,0 +1,7 @@
+[slot] judge-perf-recheck:block waiting (load 9.2 / max 24, slots 2, holders [{"label":"aa5a batch3","pid":57338,"at":1795165092267,"slot":1}], a priority waiter goes first)
+[slot] judge-perf-recheck:block waiting (load 10.1 / max 24, slots 2, holders [{"label":"!judge-perf-recheck:perf2","pid":57695,"at":1795165196020,"slot":0},{"label":"aa5a batch3","pid":57338,"at":1795165092267,"slot":1}])
+[slot] judge-perf-recheck:block waiting (load 8.6 / max 24, slots 2, holders [{"label":"!judge-perf-recheck:perf2","pid":57695,"at":1795165196020,"slot":0},{"label":"aa5a batch3","pid":57338,"at":1795165092267,"slot":1}])
+[slot] judge-perf-recheck:block waiting (load 8.2 / max 24, slots 2, holders [{"label":"judge-perf-recheck:g10","pid":59788,"at":1795165326123,"slot":0},{"label":"aa5a batch3","pid":57338,"at":1795165092267,"slot":1}])
+[slot] judge-perf-recheck:block waiting (load 7.6 / max 24, slots 2, holders [{"label":"judge-artifacts-recheck:R1","pid":54413,"at":1795165405485,"slot":0},{"label":"aa5a batch3","pid":57338,"at":1795165092267,"slot":1}])
+[slot] judge-perf-recheck:block waiting (load 6.5 / max 24, slots 2, holders [{"label":"judge-artifacts-recheck:R1","pid":54413,"at":1795165405485,"slot":0},{"label":"motion-recheck:A fix caps","pid":61054,"at":1795165481670,"slot":1}], a priority waiter goes first)
+block exit 143

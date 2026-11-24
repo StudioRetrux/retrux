@@ -1,0 +1,121 @@
+{
+ "lane": "p4ice",
+ "lab": ":5175 (final build 00:24:34)",
+ "judged_at": "2026-11-21 01:18-01:50 WIB",
+ "captures": {
+  "main": "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/p3/r11_1",
+  "lane": "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/p4ice/qc_final (shot 00:30, after the last source edit 00:24:28)"
+ },
+ "scores": {
+  "ice_material": {
+   "main": 6.5,
+   "lane": 7.4
+  },
+  "awwwards_jury": {
+   "main": 7.6,
+   "lane": 7.9
+  },
+  "composition_motion": {
+   "main": 8.6,
+   "lane": 8.7
+  },
+  "glitch_hold_sweep": {
+   "main": 8.0,
+   "lane": 8.3
+  }
+ },
+ "ident": {
+  "file": "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/ana/ident_judge.txt",
+  "result": "T1 ?p4ice=0, T2 ?p4ice=0 vs :5197 IDENTICAL (6 targets, 16 programs); T0 lane default IDENTICAL (2/12); ?envlake=plate&p4ice=0 IDENTICAL (2/12); negative control T1 lane default DIFFER only in reflection, final, rx-ice program; 0 console messages"
+ },
+ "perf": {
+  "file": "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/perf/ab_judge.json",
+  "move": "6 pairs, load 3.4-3.9, SLOT_BG=0, interleaved: paired 1.026 1.014 1.014 1.019 1.037 (2.072 = lane block throttled to 46 ms, void); median 1.022 (+2.2 %), per-pair median-interval diff +0.55 +0.3 +0.3 +0.4 +0.8 ms. Confirms the builder's +2.2 % / +0.475 ms.",
+  "rest": "run 1 rest pairs void: the lane page never entered the still-camera TAA hand-over (still 0 vs MAIN 132), a pointer/hover state left by the throttled move block; run 2 (perf/ab_judge2.json) the lane did go still (144..665 frames) but GPU contention swung both pages 20-110 ms: void. Builder's rest pairs (still engaged on both) 1.008 / 1.027 stand; cost is ALU-only so rest should track the move delta."
+ },
+ "crawl": {
+  "file": "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/ana/flicker.txt",
+  "note": "10 consecutive 60 fps frames per sequence, engine RAF disabled, h.frame(1/60) stepped, same seeds on both labs; ice mask = pixels where lane and MAIN differ. Temporal 2nd difference on ice: hold 6.43 -> 5.20, sustain 6.90 -> 5.74 (frac > 8 lv 28.8 -> 21.3 %, 32.5 -> 25.3 %); idle eye 19.3 -> 18.7, rest 20.6 -> 19.9 (p99 47.0 -> 51.8, 46.3 -> 48.4). Dotted isolines visibly gone in consecutive hold frames (img/hold_seq_zoom.png)."
+ },
+ "evidence_images": [
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/h3_q00.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/z_q00_band.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/h3_q01.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/z_q01_1x.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/z_q01_joints.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/h3_q02.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/z_q02_band.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/z_q02_ends.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/h3_q03.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/z_q03_1x.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/z_q03_right.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/z_q03_outerR4.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/f3_p05_expand.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/z_p05_rightarc.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/z_p05_toparc.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/f3_p06_sustain.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/z_p06_hero.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/z_p06_gaps.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/z_ref_caps.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/z_p04_hero.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/z_p04_spark5x.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/hold_seq_zoom.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/d2map_hold_s.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/ptr_1.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/ptr_2.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/sw_hold_1.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/sw_hold_2.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/sw_pop_1.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/z_p07p08.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/z_q00_upperCD.png",
+  "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice/img/z_q00_lower.png"
+ ],
+ "pass": false,
+ "findings": [
+  {
+   "id": "F1",
+   "severity": "minor",
+   "title": "G5 only partly done: soft agate / TIR-zone outlines remain in the hold arcs (p05)"
+  },
+  {
+   "id": "F2",
+   "severity": "minor",
+   "title": "Joint seams drawn as flat hard-edged dark collars (6-15 px) instead of the reference's 2-3 px seam / corner lines"
+  },
+  {
+   "id": "F3",
+   "severity": "minor",
+   "title": "q03 outer-ring steel band lighter than MAIN in the panel box (191.4 vs 182.9, F045 174.3); hue better"
+  },
+  {
+   "id": "F4",
+   "severity": "minor",
+   "title": "Hold drama not delivered: no refracted orb strip (0 vs 121 clipped px), cracks invisible but paid for every frame"
+  },
+  {
+   "id": "F5",
+   "severity": "minor",
+   "title": "Band faces smooth and low-texture (frosted-plastic read): no scrape grain, crisp TIR lines or frosted cut faces"
+  },
+  {
+   "id": "F6",
+   "severity": "nit",
+   "title": "Dotted aliased grazing-edge lines persist; isolated bright ice pixels up at p04 (7->37) and p06 (14->26)"
+  },
+  {
+   "id": "F7",
+   "severity": "nit",
+   "title": "Crack loop takes fwidth() after a per-fragment continue (non-uniform control flow)"
+  }
+ ],
+ "regressions": "none that reads worse at 1x; trade-offs listed under F3, F6 and in the summary",
+ "findings_detail": {
+  "F1": "p05 right arc lap 11.5->8.1 (F402 2.9), sd 32.9->27.5 (23.3); top arc sd 22.3->24.5, lf 19.6->22.1 (F402 3.4/3.1); img/z_p05_rightarc.png, img/z_p05_toparc.png",
+  "F2": "q01 x=805 y257-262 plateau L164-167 (6 px) vs F015 2-3 px V to 171, MAIN 5 px at 182; q02 row 375 x858-872 plateau 138-153 (15 px) vs F030 bright 2-3 px edge line 200-213 at x864-866; img/z_q01_joints.png, img/z_q02_ends.png",
+  "F3": "x800-830 y260-350 L191.4 vs MAIN 182.9 vs F045 174.3; x790-840 y230-330 176.7/171.7/165.2; x820-860 y300-380 172.7/172.6/157.0; B-G +28/+33/+35 vs MAIN +26/+30/+29, F045 +33/+35/+39",
+  "F4": "p06 clipped px outside orb 0 vs F420 121; lower strip L214.2 sd21.9 vs F420 206.5/16.7 (MAIN 201.7/18.9); cracks invisible in all poses but a 2-iteration loop per T1/T2 ice fragment",
+  "F5": "p04 log x680-880 y330-390 L222.4 sd19.5 (MAIN 218.6/20.7; F358 slab 203.8/28.5); band faces smooth; caps matte discs; img/z_q02_band.png, img/z_q00_band.png, img/z_p06_gaps.png, img/z_ref_caps.png",
+  "F6": "isolated px >25 lv vs all 8 neighbours on ice: p04 bright 7->37, p06 14->26, p08 2->6; q00 21->15, q01 36->21, q03 43->23, p05 65->47 (bright+dark); ana/sparkles.txt",
+  "F7": "crack block: fwidth(s0) after `if (disc <= 0.0) continue;` (patch hunk @@ -960,6 +1237,50 @@)"
+ }
+}

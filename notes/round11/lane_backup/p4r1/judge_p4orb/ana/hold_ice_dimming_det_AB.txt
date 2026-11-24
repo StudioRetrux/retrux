@@ -1,0 +1,9 @@
+hold, non-orb non-crystal px changed >4: 4.52% ; of those brighter 34.2% ; mean dL -4.43 ; p5/p95 dL -16.9/+10.5
+orb centre (crop) 446,289 -> frame 746,369  R~51
+  ring 1.00-1.10R  n    671  lane L  216.9  off L  218.1  dL -1.24  lane RGB [203. 220. 230.] off RGB [202. 221. 231.]
+  ring 1.10-1.20R  n    725  lane L  212.8  off L  213.9  dL -1.05  lane RGB [197. 216. 228.] off RGB [196. 218. 228.]
+  ring 1.25-1.50R  n   3569  lane L  207.1  off L  210.9  dL -3.73  lane RGB [190. 210. 226.] off RGB [193. 215. 228.]
+  ring 1.50-1.75R  n   4896  lane L  211.0  off L  215.2  dL -4.28  lane RGB [194. 214. 227.] off RGB [197. 219. 231.]
+  ring 2.00-2.50R  n  15417  lane L  212.4  off L  215.4  dL -3.04  lane RGB [198. 215. 229.] off RGB [201. 218. 232.]
+  ring 2.50-3.00R  n  16690  lane L  210.0  off L  212.2  dL -2.20  lane RGB [196. 212. 229.] off RGB [198. 215. 231.]
+  ring 3.00-3.50R  n  20822  lane L  207.7  off L  208.1  dL -0.42  lane RGB [193. 210. 229.] off RGB [194. 210. 229.]

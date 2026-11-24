@@ -1,0 +1,11 @@
+M      pM_a         N 150 dt p10/50/90 26.4/28.6/31.4 | lips 481 far 2466 | errs 0
+L      pL_a         N 150 dt p10/50/90 27.9/29.9/32.5 | lips 581 far 2782 | errs 0
+B      pB_a         N 150 dt p10/50/90 26.8/28.2/31.3 | lips 478 far 2319 | errs 0
+POOLED dt-controlled (both steps inside the band), blips / frame:
+dt   0-999 | M n 148 lips   481 far  2466 || L n 148 lips   581 far  2782 || B n 148 lips   478 far  2319
+dt  14-20  | M n   0 lips    -1 far    -1 || L n   0 lips    -1 far    -1 || B n   1 lips   189 far  1323
+dt  20-26  | M n   2 lips    20 far   543 || L n   1 lips     2 far   444 || B n   1 lips     7 far   433
+dt  26-30  | M n  87 lips   489 far  2745 || L n  58 lips   710 far  3156 || B n  91 lips   452 far  2408
+dt  28-34  | M n  73 lips   467 far  2143 || L n 111 lips   603 far  2899 || B n  56 lips   538 far  2203
+dt  30-36  | M n  28 lips   536 far  2043 || L n  51 lips   489 far  2632 || B n  24 lips   438 far  1992
+dt  26-40  | M n 135 lips   502 far  2554 || L n 137 lips   597 far  2837 || B n 135 lips   485 far  2366

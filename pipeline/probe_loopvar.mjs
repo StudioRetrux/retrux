@@ -7,10 +7,10 @@ import { execFileSync } from "node:child_process";
 import { pathToFileURL } from "node:url";
 import fs from "node:fs";
 import path from "node:path";
-const require = createRequire("E:/Retrux Hero R&D/hero-pipeline/tools/package.json");
+const require = createRequire("/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/hero-pipeline/tools/package.json");
 const { chromium } = require("playwright-core");
-const FF = "E:/Retrux Hero R&D/hero-pipeline/tools/node_modules/ffmpeg-static/ffmpeg.exe";
-const REF = "E:/Retrux Hero R&D/hero-pipeline/reference";
+const FF = (process.env.FFMPEG || "/opt/homebrew/bin/ffmpeg");
+const REF = "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/hero-pipeline/reference";
 const out = process.argv[2];
 const VARIANTS = (await import(pathToFileURL(path.resolve(process.argv[3])).href)).default;
 const pick = process.argv[4] || "all";
@@ -20,16 +20,16 @@ const names = ["none", ...(pick === "all" ? Object.keys(VARIANTS) : pick.split("
 const HERO = { x: 440, y: 130, width: 560, height: 420 };
 const P = { q00: [0, "ref_F000"], q01: [0.5, "loop_F015"], q02: [1.0, "loop_F030"], q03: [1.5, "loop_F045"], q35: [3.5, "loop_F105"] };
 const browser = await chromium.launch({
-  executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+  executablePath: (process.env.CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"),
   headless: true,
-  args: ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"],
+  args: [(process.platform === "win32" ? "--use-angle=d3d11" : "--use-angle=metal"), "--enable-gpu", "--ignore-gpu-blocklist"],
 });
 const shots = {};
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 766 } });
   page.on("pageerror", (e) => console.log("pageerror " + e.message));
   page.on("console", (m) => { if (m.type() === "error") console.log("console.error " + m.text().slice(0, 400)); });
-  await page.goto(`http://localhost:5173/?tier=T1&scale=1&debug=1`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${(process.env.LAB || "http://localhost:5173")}/?tier=T1&scale=1&debug=1`, { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => document.documentElement.dataset.heroReady === "1", null, { timeout: 180000 });
   await page.addStyleTag({ content: ".nav,.hero-copy,.scroll,.sound,.overlay,[data-hud]{visibility:hidden !important}" });
   await page.evaluate(() => {

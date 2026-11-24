@@ -1,0 +1,36 @@
+== MAIN 1440x766 t=0.9
+WORST {"top":81,"bottom":678,"left":406,"right":1060} (frame 0..1440 x 0..766; bounding boxes overestimate a little)
+== LANE 1440x766 t=0.9
+WORST {"top":69,"bottom":686,"left":398,"right":1070} (frame 0..1440 x 0..766; bounding boxes overestimate a little)
+== MAIN 1440x766 t=2.97
+WORST {"top":-21,"bottom":792,"left":301,"right":1137} (frame 0..1440 x 0..766; bounding boxes overestimate a little)
+== LANE 1440x766 t=2.97
+WORST {"top":-22,"bottom":790,"left":301,"right":1137} (frame 0..1440 x 0..766; bounding boxes overestimate a little)
+== MAIN 1280x800 t=0.9
+WORST {"top":111,"bottom":680,"left":344,"right":963} (frame 0..1440 x 0..766; bounding boxes overestimate a little)
+== LANE 1280x800 t=0.9
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+page.goto: Timeout 30000ms exceeded.
+Call log:
+  - navigating to "http://localhost:5178/?tier=T0&scale=0.5&debug=1", waiting until "domcontentloaded"
+
+    at /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4hold/tools/probe_holdboundsV.mjs:20:14 {
+  name: 'TimeoutError'
+}
+
+Node.js v24.13.0
+== MAIN 1280x800 t=2.97
+WORST {"top":2,"bottom":800,"left":227,"right":1051} (frame 0..1440 x 0..766; bounding boxes overestimate a little)
+== LANE 1280x800 t=2.97
+WORST {"top":2,"bottom":800,"left":227,"right":1051} (frame 0..1440 x 0..766; bounding boxes overestimate a little)
+== MAIN 1920x1080 t=0.9
+WORST {"top":119,"bottom":950,"left":525,"right":1432} (frame 0..1440 x 0..766; bounding boxes overestimate a little)
+== LANE 1920x1080 t=0.9
+WORST {"top":104,"bottom":963,"left":514,"right":1446} (frame 0..1440 x 0..766; bounding boxes overestimate a little)
+== MAIN 1920x1080 t=2.97
+WORST {"top":-34,"bottom":1118,"left":365,"right":1552} (frame 0..1440 x 0..766; bounding boxes overestimate a little)
+== LANE 1920x1080 t=2.97
+WORST {"top":-34,"bottom":1117,"left":365,"right":1552} (frame 0..1440 x 0..766; bounding boxes overestimate a little)

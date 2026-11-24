@@ -1,0 +1,9 @@
+[slot] judge-artifacts:live waiting (load 7.4 / max 24, slots 2, holders [{"label":"judge-motion:capD","pid":21515,"at":1795159356842,"slot":0},{"label":"judge-artifacts:resize","pid":21457,"at":1795159354101,"slot":1}])
+[slot] judge-artifacts:live waiting (load 6.5 / max 24, slots 2, holders [{"label":"judge-motion:capD","pid":21515,"at":1795159356842,"slot":0},{"label":"judge-artifacts:gov","pid":22044,"at":1795159465906,"slot":1}])
+[slot] judge-artifacts:live waiting (load 7.7 / max 24, slots 2, holders [{"label":"judge-motion:capD","pid":21515,"at":1795159356842,"slot":0},{"label":"judge-artifacts:gov","pid":22044,"at":1795159465906,"slot":1}], a priority waiter goes first)
+[slot] judge-artifacts:live waiting (load 17.3 / max 24, slots 2, holders [{"label":"!judge-perf:batch1","pid":22577,"at":1795159564174,"slot":0},{"label":"judge-artifacts:gov","pid":22044,"at":1795159465906,"slot":1}])
+[slot] judge-artifacts:live waiting (load 28.0 / max 24, slots 2, holders [{"label":"!judge-perf:batch1","pid":22577,"at":1795159564174,"slot":0},{"label":"judge-artifacts:tab","pid":22898,"at":1795159639952,"slot":1}])
+[slot] judge-artifacts:live: taken (load 22.8)
+[live] lane: 1936 frames, {"fps":39.545229856260164,"scale":0.7000000000000001,"tier":"T1"}, 0 errors/warnings
+  base: 1270 frames, {"fps":35.4310781178039,"scale":0.7000000000000001,"tier":"T1"}, 0 errors/warnings
+[slot] judge-artifacts:live: freed (exit 0)

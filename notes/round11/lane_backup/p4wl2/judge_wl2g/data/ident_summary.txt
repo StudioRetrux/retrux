@@ -1,0 +1,14 @@
+fresh5163_vs_builderref_T1                     IDENTICAL final SAME | targets 14 (mirror,walk,cache,cacheN,reflection,main,refraction,back,bloom0,bloom1,bloom2,bloom3,bloom4,final) differ: - | programs 16 differ: - | logs 0/0
+wl2g=0_vs_5163_T1                              IDENTICAL final SAME | targets 14 (mirror,walk,cache,cacheN,reflection,main,refraction,back,bloom0,bloom1,bloom2,bloom3,bloom4,final) differ: - | programs 16 differ: - | logs 0/0
+wl2g=0_vs_5163_T2                              IDENTICAL final SAME | targets 15 (mirror,walk,cache,cacheN,reflection,main,refraction,back,bloom0,bloom1,bloom2,bloom3,bloom4,bloom5,final) differ: - | programs 16 differ: - | logs 0/0
+wl2g=0_vs_5163_T0                              IDENTICAL final SAME | targets 10 (mirror,reflection,main,refraction,bloom0,bloom1,bloom2,bloom3,ldr,final) differ: - | programs 14 differ: - | logs 0/0
+wl2g=0_vs_5163_expand_2.97                     IDENTICAL final SAME | targets 14 (mirror,walk,cache,cacheN,reflection,main,refraction,back,bloom0,bloom1,bloom2,bloom3,bloom4,final) differ: - | programs 16 differ: - | logs 0/0
+wl2g=0_vs_5163_release_0.33                    IDENTICAL final SAME | targets 14 (mirror,walk,cache,cacheN,reflection,main,refraction,back,bloom0,bloom1,bloom2,bloom3,bloom4,final) differ: - | programs 16 differ: - | logs 0/0
+wl2g=0_vs_FRESH5163_T1                         IDENTICAL final SAME | targets 14 (mirror,walk,cache,cacheN,reflection,main,refraction,back,bloom0,bloom1,bloom2,bloom3,bloom4,final) differ: - | programs 16 differ: - | logs 0/0
+p4wl=0_vs_5162_T1                              IDENTICAL final SAME | targets 14 (mirror,walk,cache,cacheN,reflection,main,refraction,back,bloom0,bloom1,bloom2,bloom3,bloom4,final) differ: - | programs 16 differ: - | logs 0/0
+p4wl=0_vs_5162_T2                              IDENTICAL final SAME | targets 15 (mirror,walk,cache,cacheN,reflection,main,refraction,back,bloom0,bloom1,bloom2,bloom3,bloom4,bloom5,final) differ: - | programs 16 differ: - | logs 0/0
+p4wl=0_vs_5162_T0                              IDENTICAL final SAME | targets 10 (mirror,reflection,main,refraction,bloom0,bloom1,bloom2,bloom3,ldr,final) differ: - | programs 14 differ: - | logs 0/0
+p4wl=0_vs_5162_expand_2.97                     IDENTICAL final SAME | targets 14 (mirror,walk,cache,cacheN,reflection,main,refraction,back,bloom0,bloom1,bloom2,bloom3,bloom4,final) differ: - | programs 16 differ: - | logs 0/0
+p4wl=0_vs_5162_release_0.33                    IDENTICAL final SAME | targets 14 (mirror,walk,cache,cacheN,reflection,main,refraction,back,bloom0,bloom1,bloom2,bloom3,bloom4,final) differ: - | programs 16 differ: - | logs 0/0
+lane_on_vs_5163_T0                             IDENTICAL final SAME | targets 10 (mirror,reflection,main,refraction,bloom0,bloom1,bloom2,bloom3,ldr,final) differ: - | programs 14 differ: - | logs 0/0
+IDDONE

@@ -1,0 +1,10 @@
+# G8 on the final :5197 (fresh runs 22:17-22:22, identS.mjs 20 moving frames, scale 1)
+final ?mirrorcost=0 vs final default           DIFFER    final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 17 differ: rx-lake-sky|ShaderMaterial,rx-lake-sky-late|ShaderMaterial,rx-plate-baked-mirror|ShaderMaterial | logs 0/0
+final ?lkglide=0&mirrorcost=0 vs AA6 ?lkglide=0 IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+final all six off vs BASE T1                   IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 14 differ: - | logs 0/0
+final T2 all six off vs BASE T2                IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 14 differ: - | logs 0/0
+final ?envlake=plate vs BASE plate             IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+final T0 vs BASE T0                            IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+final ?mrows=0 vs final default (scale 1)      IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+# console lines per ident run (logs field)
+r5182_def.json: 0 r5182_plate.json: 0 r5182_t0.json: 0 r5182_t2.json: 0 r5196_g0.json: 0 r5197_all5.json: 0 r5197_all6.json: 0 r5197_def.json: 0 r5197_f0.json: 0 r5197_g0.json: 0 r5197_g0mc0.json: 0 r5197_mc0.json: 0 r5197_mr0.json: 0 r5197_plate.json: 0 r5197_s07.json: 0 r5197_s07f0.json: 0 r5197_s07mr0.json: 0 r5197_s09f0.json: 0 r5197_t0.json: 0 r5197_t2all6.json: 0 

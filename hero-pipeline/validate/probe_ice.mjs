@@ -9,7 +9,7 @@ import path from "node:path";
 const SP = fileURLToPath(new URL("..", import.meta.url)).replace(/[\\/]$/, ""); // hero-pipeline/
 const require = createRequire(SP + "/tools/package.json");
 const { chromium } = require("playwright-core");
-const FFMPEG = SP + "/tools/node_modules/ffmpeg-static/ffmpeg.exe";
+const FFMPEG = (process.env.FFMPEG || "/opt/homebrew/bin/ffmpeg");
 const out = process.argv[2];
 fs.mkdirSync(out, { recursive: true });
 const clip = { x: 540, y: 170, width: 260, height: 150 };
@@ -25,15 +25,15 @@ const VARIANTS = {
 };
 
 const browser = await chromium.launch({
-  executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+  executablePath: (process.env.CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"),
   headless: true,
-  args: ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"],
+  args: [(process.platform === "win32" ? "--use-angle=d3d11" : "--use-angle=metal"), "--enable-gpu", "--ignore-gpu-blocklist"],
 });
 const logs = [];
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 766 } });
   page.on("pageerror", (e) => logs.push("pageerror " + e.message));
-  await page.goto("http://localhost:5173/?tier=T1&scale=1", { waitUntil: "domcontentloaded" });
+  await page.goto(((process.env.LAB || "http://localhost:5173") + "/?tier=T1&scale=1"), { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => document.documentElement.dataset.heroReady === "1", null, { timeout: 180000 });
   await page.addStyleTag({ content: ".nav,.hero-copy,.scroll,.sound,.overlay,[data-hud]{visibility:hidden !important}" });
   await page.evaluate(() => {

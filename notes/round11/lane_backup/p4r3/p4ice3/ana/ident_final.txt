@@ -1,0 +1,9 @@
+FINAL T1 lane ?p4ice3=0 vs :5173               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+FINAL T2 lane ?p4ice3=0 vs :5173 T2            IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+FINAL T0 phone lane default vs :5173           IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+T1                                             IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+T2                                             IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+T0                                             IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+envlake=plate+p4ice3=0                         IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+T1                                             IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+NEG                                            DIFFER    final DIFF | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: reflection,final | programs 16 differ: rx-ice|ShaderMaterial,rx-ice-back|ShaderMaterial | logs 0/0

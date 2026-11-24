@@ -1,0 +1,7 @@
+## W fast: W: flagged px 1273, events >= 6 px: 43, px in them 555 
+## W reverse: W: flagged px 2380, events >= 6 px: 77, px in them 1217 
+## W slow: W: flagged px 1002, events >= 6 px: 31, px in them 217 
+## W medium: W: flagged px 1750, events >= 6 px: 57, px in them 701 
+## W diag: W: flagged px 1004, events >= 6 px: 31, px in them 452 
+## W leave: W: flagged px 1280, events >= 6 px: 44, px in them 476 
+DONE_W

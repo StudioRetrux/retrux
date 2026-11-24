@@ -1,0 +1,3 @@
+T0 t+90 int1 default vs 5199: max 8 n>2 78 n>8 0 of 329160 px; bbox (np.int64(349), np.int64(432), np.int64(389), np.int64(436))
+T0 t+90 int1 all-off vs 5199: max 0 n>2 0 n>8 0 of 329160 px; bbox None
+crop (np.int64(309), np.int64(392), 390, np.int64(476))

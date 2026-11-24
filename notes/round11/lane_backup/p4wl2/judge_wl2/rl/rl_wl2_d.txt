@@ -1,0 +1,1 @@
+rl/T1d2_wl2_d: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 32.7 p90 35.5 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p50 1.1/2.4/2.8 cap ms p50 0.0/0.1/0.2 gap p50/p90/max 32.7/35.5/53.5

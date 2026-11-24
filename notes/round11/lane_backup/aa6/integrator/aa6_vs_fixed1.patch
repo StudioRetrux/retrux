@@ -1,0 +1,352 @@
+diff -ruN a/retrux-web/app/hero/engine/HeroEngine.ts b/retrux-web/app/hero/engine/HeroEngine.ts
+--- a/retrux-web/app/hero/engine/HeroEngine.ts	2026-11-20 15:18:18
++++ b/retrux-web/app/hero/engine/HeroEngine.ts	2026-11-20 17:11:45
+@@ -51,6 +51,14 @@
+ const PANO_CLAMP = 64;
+ /** AA3: the lake-edge TAA's history weight while the camera moves (EnvEdge TAA_FRAG). */
+ const LAKE_EDGE_TAA_WEIGHT = 0.5;
++/**
++ * AA5a glide (EnvEdge EdgeGlideOptions), tuned on the slow / medium sweeps against the 16-sample reference: history 0.85 at
++ * <= 0.15 px per frame of the pixel's own motion (where the 4 samples' coverage steps are farthest apart in time and the
++ * Catmull-Rom resample blurs least) down to 0.7 at >= 0.5 px; AA3's clip and resample; no silhouette blur on the TAA's band
++ * pixels while it runs (sigma 0.3 px: neighbour weight 0.004; the GT's own edge is ~0.3 px, EnvEdge's 0.6 px came on top of
++ * the TAA's averaging), back to 0.6 px over the still tail. (AA3: 0.5 at any speed, 0.6 px blur.)
++ */
++const GLIDE = { wSlow: 0.85, wFast: 0.7, v0: 0.15, v1: 0.5, gamma: 1.25, clip: 0, sigmaBand: 0.3, sharp: -0.5 };
+ 
+ export class HeroEngine {
+   readonly state: HeroState = createHeroState();
+@@ -335,6 +343,26 @@
+         this.taaCrest = !(lab && eq?.get("lktaacrest") === "0");
+         this.taaRipple.set(WATER.rippleCenter[0], WATER.level, WATER.rippleCenter[2], 0);
+         const tc = lab ? Number(eq?.get("lktaaclip") ?? NaN) : NaN;
++        // AA5a glide (20 Nov): motion-adaptive history weight, clip, band blur, still-tail ramp (EnvEdge EdgeGlideOptions);
++        // `?lkglide=0` keeps AA3's TAA exactly. Lab only (with ?debug): lkgws / lkgwf / lkgv0 / lkgv1 (weights and their motion
++        // range, px per frame), lkggam / lkgclip (clip), lkgsb (band sigma), lkgres (history cubic, Keys a), lkgtail=0.
++        const gq = (k: string, d: number) => {
++          const v = lab ? Number(eq?.get(k)) : NaN;
++          return Number.isFinite(v) && eq?.get(k) !== null ? v : d;
++        };
++        const glide = eq?.get("lkglide") !== "0"
++          ? {
++              wSlow: gq("lkgws", GLIDE.wSlow),
++              wFast: gq("lkgwf", GLIDE.wFast),
++              v0: gq("lkgv0", GLIDE.v0),
++              v1: gq("lkgv1", GLIDE.v1),
++              gamma: gq("lkggam", GLIDE.gamma),
++              clip: gq("lkgclip", GLIDE.clip),
++              sigmaBand: gq("lkgsb", GLIDE.sigmaBand),
++              tail: !(lab && eq?.get("lkgtail") === "0"),
++              sharp: gq("lkgres", GLIDE.sharp),
++            }
++          : null;
+         edge.enableTAA({
+           camera: this.rig.camera,
+           reflection: lab && eq?.get("lktaarefl") === "0" ? null : this.pipeline.reflection,
+@@ -343,6 +371,7 @@
+           weight: tw > 0 && tw < 1 ? tw : LAKE_EDGE_TAA_WEIGHT,
+           ...(tc >= 0 && tc <= 8 ? { clip: tc } : {}),
+           ...(lab && [2, 3, 4].includes(Number(eq?.get("lktaafar"))) ? { far: Number(eq?.get("lktaafar")) } : {}),
++          glide,
+         });
+       }
+     }
+diff -ruN a/retrux-web/app/hero/engine/world/EnvEdge.ts b/retrux-web/app/hero/engine/world/EnvEdge.ts
+--- a/retrux-web/app/hero/engine/world/EnvEdge.ts	2026-11-20 15:31:14
++++ b/retrux-web/app/hero/engine/world/EnvEdge.ts	2026-11-20 17:11:45
+@@ -267,6 +267,83 @@
+ }
+ `;
+ 
++/**
++ * AA5a GLIDE (20 Nov, user: "make it smooth"): the lake-edge TAA tuned so the waterline GLIDES like the 16-sample reference
++ * instead of stepping through the 4 samples' coverage levels. Applied to AA3's sources by exact text replacement, only when
++ * on (`?lkglide=0`: AA3's TAA_FRAG / EDGE_FRAG text and uniforms, unchanged):
++ *   - the history weight follows the pixel's own reprojection motion: wSlow (slow / still: the coverage steps are farthest
++ *     apart in time and the history is most accurate) down to wFast (fast motion);
++ *   - the clip box (variance gamma; min / max intersected or not) as a parameter;
++ *   - the still tail ramps the weight to 0 (and the band's blur back to EnvEdge's sigma) over the 24 still frames, so the
++ *     hand-over to the plain resolve is seamless;
++ *   - band pixels are flagged by a negative alpha in the TAA output, so EnvEdge's silhouette blur can use its own sigma there.
++ */
++export type EdgeGlideOptions = {
++  /** History weight at / below v0 px per frame of reprojection motion, and at / above v1. */
++  wSlow: number;
++  wFast: number;
++  v0: number;
++  v1: number;
++  /** Variance clip gamma, and 0: variance box intersected with min / max (AA3), 1: variance only, 2: min / max only,
++   *  3: min / max intersected with +-gamma 4x-coverage steps (a quarter of the 3x3 range) around the current value. */
++  gamma: number;
++  clip: number;
++  /** Silhouette blur sigma on TAA band pixels while the TAA runs (EnvEdge.sigma elsewhere / at rest). */
++  sigmaBand: number;
++  /** Ramp the weight / band sigma out over the still tail (else AA3's constant weight until the hand-over). */
++  tail: boolean;
++  /** History resampling: Keys cubic parameter (-0.5 = AA3's Catmull-Rom; -0.75 / -1 sharper). */
++  sharp: number;
++};
++
++function glideReplace(src: string, pairs: [string, string][]) {
++  let o = src;
++  for (const [a, b] of pairs) {
++    if (o.split(a).length !== 2) throw new Error("EnvEdge glide: anchor not found once: " + a.slice(0, 60));
++    o = o.replace(a, b);
++  }
++  return o;
++}
++
++const TAA_FRAG_GLIDE = () =>
++  glideReplace(TAA_FRAG, [
++    ["uniform vec4 uRipple;\n", "uniform vec4 uRipple;\n// AA5a glide: (wSlow, wFast, v0, v1), (gamma, clip mode, tail scale, history cubic's Keys parameter a)\nuniform vec4 uGlideW;\nuniform vec4 uGlideC;\n"],
++    [
++      "  vec2 w0 = f * (-0.5 + f * (1.0 - 0.5 * f));\n  vec2 w1 = 1.0 + f * f * (-2.5 + 1.5 * f);\n  vec2 w2 = f * (0.5 + f * (2.0 - 1.5 * f));\n  vec2 w3 = f * f * (-0.5 + 0.5 * f);\n",
++      "  // Keys cubic, a = uGlideC.w (-0.5: Catmull-Rom; more negative: sharper, less blur accumulated by the history)\n" +
++        "  float ka = uGlideC.w;\n  vec2 g1 = 1.0 - f;\n  vec2 w0 = ka * f * g1 * g1;\n  vec2 w1 = ((ka + 2.0) * f - (ka + 3.0)) * f * f + 1.0;\n" +
++        "  vec2 w2 = ((ka + 2.0) * g1 - (ka + 3.0)) * g1 * g1 + 1.0;\n  vec2 w3 = ka * f * f * g1;\n",
++    ],
++    [
++      // (AA6: the anchor is the fix round's clip line; with glide on, the glide's own gamma / clip mode replace the lab's uClipG
++      // (AA3's clip, gamma 1.25 intersected with min / max, at the product defaults); the fix round's A-1 region checks and its
++      // 3-px far taps are earlier in TAA_FRAG and stay untouched)
++      "  h = uClipG > 0.0 ? clamp(h, max(mn, mu - uClipG * sd), min(mx, mu + uClipG * sd)) : clamp(h, mn, mx);\n  float w = uHistW;\n",
++      "  vec3 lo = mu - uGlideC.x * sd, hi = mu + uGlideC.x * sd;\n" +
++        "  if (uGlideC.y < 0.5) { lo = max(mn, lo); hi = min(mx, hi); } else if (uGlideC.y > 2.5) {\n" +
++        "    // step clamp: the history within kappa (= gamma) 4x-coverage steps of the local range around the current value\n" +
++        "    vec3 st = uGlideC.x * 0.25 * (mx - mn);\n" +
++        "    lo = max(mn, c.rgb - st); hi = min(mx, c.rgb + st);\n" +
++        "  } else if (uGlideC.y > 1.5) { lo = mn; hi = mx; }\n" +
++        "  h = clamp(h, lo, hi);\n" +
++        "  // the history weight follows this pixel's own reprojection motion (main-target px per frame)\n" +
++        "  float mv = length(puv * uSize - gl_FragCoord.xy);\n" +
++        "  float w = uHistW > 0.0 ? mix(uGlideW.x, uGlideW.y, smoothstep(uGlideW.z, uGlideW.w, mv)) * uGlideC.z : 0.0;\n",
++    ],
++    ["  gl_FragColor.rgb = mix(c.rgb, h, w);\n", "  gl_FragColor.rgb = mix(c.rgb, h, w);\n  // band flag for EnvEdge's blur (it reads |alpha|)\n  gl_FragColor.a = -c.a;\n"],
++  ]);
++
++const EDGE_FRAG_GLIDE = () =>
++  glideReplace(EDGE_FRAG, [
++    ["uniform vec2 uW;\n", "uniform vec2 uW;\n// AA5a glide: the weights on the TAA's band pixels (negative alpha)\nuniform vec2 uWb;\n"],
++    [
++      "  float dmin = min(",
++      "  bool gBand = c4.a < 0.0;\n  c0.a = abs(c0.a); c1.a = abs(c1.a); c2.a = abs(c2.a); c3.a = abs(c3.a); c4.a = abs(c4.a);\n  c5.a = abs(c5.a); c6.a = abs(c6.a); c7.a = abs(c7.a); c8.a = abs(c8.a);\n  vec2 gw = gBand ? uWb : uW;\n  float dmin = min(",
++    ],
++    ["  vec3 s = enc(c4.rgb) + uW.x * (enc(c1.rgb) + enc(c3.rgb) + enc(c5.rgb) + enc(c7.rgb))\n    + uW.y * (", "  vec3 s = enc(c4.rgb) + gw.x * (enc(c1.rgb) + enc(c3.rgb) + enc(c5.rgb) + enc(c7.rgb))\n    + gw.y * ("],
++    ["  gl_FragColor = vec4(dec(s / (1.0 + 4.0 * uW.x + 4.0 * uW.y)), c4.a);\n", "  gl_FragColor = vec4(dec(s / (1.0 + 4.0 * gw.x + 4.0 * gw.y)), c4.a);\n"],
++  ]);
++
+ /** Lake-edge TAA inputs (HeroEngine, see TAA_FRAG). */
+ export type EdgeTAAOptions = {
+   camera: THREE.PerspectiveCamera;
+@@ -281,6 +358,8 @@
+   clip?: number;
+   /** (lab) the band test's 4 far taps, px from the pixel (default 3). */
+   far?: number;
++  /** AA5a glide (null / absent: AA3 exactly). */
++  glide?: EdgeGlideOptions | null;
+ };
+ 
+ type SceneHook = {
+@@ -333,7 +412,11 @@
+     /** (lab) the last frame's history weight, -1 = pass skipped, and the frames the pass ran */
+     lastWeight: number;
+     runs: number;
++    /** AA5a glide: 1 while moving, ramping to 0 over the still tail (1 without glide's tail). */
++    tail: number;
+   } | null = null;
++  /** AA5a glide: band blur weights (EDGE_FRAG_GLIDE's uWb). */
++  private uWb = { value: new THREE.Vector2(0, 0) };
+   private tv = new THREE.Vector4();
+   private tc = new THREE.Vector3();
+   readonly uniforms = {
+@@ -424,10 +507,11 @@
+         magFilter: THREE.LinearFilter,
+         colorSpace: THREE.LinearSRGBColorSpace,
+       });
++    const g = opts.glide ?? null;
+     const material = new THREE.ShaderMaterial({
+       name: "rx-lake-edge-taa",
+       vertexShader: VERT,
+-      fragmentShader: TAA_FRAG,
++      fragmentShader: g ? TAA_FRAG_GLIDE() : TAA_FRAG,
+       uniforms: {
+         ...this.aaRead,
+         uCur: { value: null },
+@@ -447,11 +531,23 @@
+         uRipple: { value: opts.ripple },
+         uPrevAAPlane: { value: new THREE.Vector3(0, 0, 1) },
+         uPrevAAExc: { value: new THREE.Matrix3() },
++        ...(g
++          ? {
++              uGlideW: { value: new THREE.Vector4(g.wSlow, g.wFast, g.v0, Math.max(g.v1, g.v0 + 1e-3)) },
++              uGlideC: { value: new THREE.Vector4(g.gamma, g.clip, 1, g.sharp) },
++            }
++          : {}),
+       },
+       depthTest: false,
+       depthWrite: false,
+       blending: THREE.NoBlending,
+     });
++    if (g) {
++      // the silhouette blur reads |alpha| and uses its own weights on the TAA's band pixels
++      this.edge.fragmentShader = EDGE_FRAG_GLIDE();
++      this.edge.uniforms.uWb = this.uWb;
++      this.edge.needsUpdate = true;
++    }
+     const scene = new THREE.Scene();
+     const tri = new THREE.Mesh(this.quad.geometry, material);
+     tri.frustumCulled = false;
+@@ -473,6 +569,7 @@
+       pxPerCss: 1,
+       lastWeight: -1,
+       runs: 0,
++      tail: 1,
+     };
+   }
+ 
+@@ -528,6 +625,10 @@
+       return null;
+     }
+     const weight = t.valid && motion <= TAA_JUMP ? t.opts.weight : 0;
++    const g = t.opts.glide;
++    // AA5a glide: the still tail ramps the history out (seamless hand-over at TAA_TAIL)
++    t.tail = g && g.tail && !moving ? Math.max(0, 1 - t.still / TAA_TAIL) : 1;
++    if (g) ((u0) => (u0.uGlideC.value as THREE.Vector4).setZ(t.tail))(t.material.uniforms);
+     const out = t.targets[t.cur];
+     const hist = t.targets[1 - t.cur];
+     if (out.width !== main.width || out.height !== main.height) {
+@@ -575,6 +676,12 @@
+     this.main = main;
+     // AA3: the lake-edge TAA's output (its own target: no feedback loop either way) replaces the resolve as the source.
+     const taaOut = this.taa ? this.runTAA(renderer, main) : null;
++    if (this.taa?.opts.glide) {
++      // band sigma while the TAA runs, back to sigma over the still tail
++      const sb = this.sigma + (this.taa.opts.glide.sigmaBand - this.sigma) * (taaOut ? this.taa.tail : 0);
++      const b2 = 2 * sb * sb;
++      this.uWb.value.set(Math.exp(-1 / b2), Math.exp(-2 / b2));
++    }
+     if (taaOut) {
+       u.uSrc.value = taaOut;
+     } else if (this.tmp) {
+diff -ruN a/retrux-web/app/hero/engine/world/Water.ts b/retrux-web/app/hero/engine/world/Water.ts
+--- a/retrux-web/app/hero/engine/world/Water.ts	2026-11-19 02:02:17
++++ b/retrux-web/app/hero/engine/world/Water.ts	2026-11-20 17:09:16
+@@ -981,6 +981,52 @@
+  * and small sun glints.
+  */
+ 
++/**
++ * AA5b (20 Nov, the far-floe pale block; `?ffblock=0` = AA3 exactly: this text is not in the shader then). The walk's face
++ * colour is looked up in the mirror target LK_HMIN (5 cm) above the water at the face's entry X, with a filter footprint as tall
++ * as the band of heights its rays reach. Right under a face's foot the target shows the floe's INSIDE (the mirrored camera,
++ * under the water, looks into the floe through the oblique clip at the water line: the double-sided bake's sunlit insides).
++ * On T1's half-size target a far floe's face is 1-2 texel rows tall (~8 cm per row at 45 m), so the lookup's filter taps
++ * reached that row; as the camera moved, the foot line slid across the target's rows and every lake pixel reading that face
++ * texel turned pale at once (a block under the floe that pops in; the 2x render shows the same on thinner faces).
++ * Where a SMALL footprint (top within LK_FFB + 1..2 texels of X's foot) comes within LK_FFB texels of X's foot (X's foot
++ * projects onto the face, at or above its true foot), the lookup point stays where the walk puts it, but its two bracketing
++ * target rows are read separately and a row that lies farther than the front-most of the two (path length, the target's
++ * alpha; scale LK_FFBT m) takes the front-most row's colour: the face is the nearest surface there, the inside under its foot
++ * and whatever stands behind a short face over its top are farther. Both conditions fade over a texel (smoothstep): nothing
++ * switches. Taller footprints (the far faces' bands, many texels: averages a single row would change) are left as they were.
++ */
++const LK_FFB_ANCHOR = "        vec3 cF = textureGrad(uEnvMirror, clamp(uvM, vec2(0.0005), vec2(0.9995)), dxF, dyF).rgb;\n";
++const LK_FFB_GLSL = /* glsl */ `        {
++          // AA5b: a small footprint near X's foot: the face's two bracketing rows; a row behind the front-most one takes its colour.
++          vec2 uvFt = lkProj(X + vec3(0.0, y0, 0.0));
++          float aFt = length((uvM - uvFt) * uEnvMirrorSize);
++          float hFt = 0.5 * length(dyF * uEnvMirrorSize);
++          float gFt = (1.0 - smoothstep(LK_FFB, LK_FFB + 1.0, aFt - hFt)) * (1.0 - smoothstep(LK_FFB + 1.0, LK_FFB + 2.0, aFt + hFt));
++#ifdef LK_FFB_TOG
++          if (uLkFfbOn < 0.5) gFt = 0.0;
++#endif
++          if (gFt > 0.0) {
++            float vR = clamp(uvM.y, 0.0005, 0.9995) * uEnvMirrorSize.y - 0.5;
++            float j0 = floor(vR);
++            float ux = clamp(uvM.x, 0.0005, 0.9995);
++            vec4 r0 = textureGrad(uEnvMirror, vec2(ux, (j0 + 0.5) / uEnvMirrorSize.y), dxF, vec2(0.0));
++            vec4 r1 = textureGrad(uEnvMirror, vec2(ux, (j0 + 1.5) / uEnvMirrorSize.y), dxF, vec2(0.0));
++            float pm = min(r0.a, r1.a);
++            vec3 cN = r0.a <= r1.a ? r0.rgb : r1.rgb;
++            vec3 c0 = mix(cN, r0.rgb, exp(-(r0.a - pm) / LK_FFBT));
++            vec3 c1 = mix(cN, r1.rgb, exp(-(r1.a - pm) / LK_FFBT));
++            cF = mix(cF, mix(c0, c1, vR - j0), gFt);
++          }
++        }
++`;
++/** The water's fragment source with the AA5b face-lookup guard (throws if the anchor moved). */
++function waterFragFF(src: string) {
++  const i = src.indexOf(LK_FFB_ANCHOR);
++  if (i < 0 || src.indexOf(LK_FFB_ANCHOR, i + 1) >= 0) throw new Error("Water: AA5b anchor");
++  return src.slice(0, i + LK_FFB_ANCHOR.length) + LK_FFB_GLSL + src.slice(i + LK_FFB_ANCHOR.length);
++}
++
+ const WATER_VERT = /* glsl */ `
+ uniform mat4 uPlateViewProj;
+ uniform mat4 uMirrorViewProj;
+@@ -2108,6 +2154,8 @@
+     if (opts.shore && !opts.mirror) defines.SHORE_AA = "";
+     const mirrorUniforms: Record<string, { value: unknown }> = {};
+     let walkHalf = false;
++    // AA5b: the water's source (with the face-lookup guard when the r12 walk runs and `?ffblock` is not 0).
++    let frag = WATER_FRAG;
+     let lkCache = false;
+     if (opts.mirror) {
+       defines.BAKED_MIRROR = "";
+@@ -2178,6 +2226,20 @@
+           }
+           // (frame budget at rest / in the hold: the cached path skips the bump and the walk read; `?lkcachen=0` off)
+           this.cacheN = fix1 && lq?.get("lkcachen") !== "0";
++          // AA5b (the far-floe pale block, LK_FFB_GLSL): `?ffblock=0` = AA3 exactly (same source); lab `?debug&ffb=<texels>`.
++          if (lq?.get("ffblock") !== "0") {
++            frag = waterFragFF(WATER_FRAG);
++            const fb = lq?.has("debug") && lq.get("ffb") !== null ? Number(lq.get("ffb")) : NaN;
++            defines.LK_FFB = (fb >= 0 && fb <= 4 ? fb : 1).toFixed(3);
++            const ft = lq?.has("debug") && lq.get("ffbt") !== null ? Number(lq.get("ffbt")) : NaN;
++            defines.LK_FFBT = (ft > 0 && ft <= 10 ? ft : 0.3).toFixed(3);
++            // (lab, G7: `?debug&ffbtoggle=1` = a run-time switch uLkFfbOn for one-session A/B timing; not in the product source)
++            if (lq?.has("debug") && lq.get("ffbtoggle") === "1") {
++              defines.LK_FFB_TOG = "";
++              frag = "uniform float uLkFfbOn;\n" + frag;
++              mirrorUniforms.uLkFfbOn = { value: 1 };
++            }
++          }
+           mirrorUniforms.uLkHgt = { value: opts.mirror.height.texture };
+           mirrorUniforms.uLkHgtG = { value: opts.mirror.height.grid };
+           mirrorUniforms.uLkHgtTop = { value: opts.mirror.height.top };
+@@ -2221,7 +2283,7 @@
+     this.material = new THREE.ShaderMaterial({
+       name: "rx-water",
+       vertexShader: WATER_VERT,
+-      fragmentShader: WATER_FRAG,
++      fragmentShader: frag,
+       defines,
+       uniforms: {
+         ...(opts.projectors?.uniforms ?? {}),
+@@ -2293,7 +2355,7 @@
+       this.walkMaterial = new THREE.ShaderMaterial({
+         name: "rx-water-walk",
+         vertexShader: WATER_VERT,
+-        fragmentShader: WATER_FRAG,
++        fragmentShader: frag,
+         defines: wd,
+         uniforms: this.material.uniforms,
+         depthTest: false,
+@@ -2322,7 +2384,7 @@
+         this.cacheMaterial = new THREE.ShaderMaterial({
+           name: "rx-water-cache",
+           vertexShader: WATER_VERT,
+-          fragmentShader: WATER_FRAG,
++          fragmentShader: frag,
+           defines: cd,
+           uniforms: this.material.uniforms,
+           depthTest: false,
+@@ -2352,7 +2414,7 @@
+           this.cacheNMaterial = new THREE.ShaderMaterial({
+             name: "rx-water-cache-n",
+             vertexShader: WATER_VERT,
+-            fragmentShader: WATER_FRAG,
++            fragmentShader: frag,
+             defines: nd,
+             uniforms: this.material.uniforms,
+             depthTest: false,

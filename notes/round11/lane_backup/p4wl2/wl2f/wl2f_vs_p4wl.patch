@@ -1,0 +1,172 @@
+--- a/retrux-web/app/hero/engine/world/Water.ts
++++ b/retrux-web/app/hero/engine/world/Water.ts
+@@ -1700,6 +1700,114 @@
+ `,
+   },
+ ];
++/** wl2f: the lane switch (`?wl2f=0` off = p4wl exactly). */
++export function wl2fOn(lq: URLSearchParams | null) {
++  return lq?.get("wl2f") !== "0";
++}
++/**
++ * wl2f (22 Nov, re-judge WL-RJ1: the left shelf's dark reflection in the open water keeps a crenellated outline that takes a new
++ * shape every frame at T1). Root cause: each P4WL_BAND quarter tap stores a POINT sample of the walk at its texel centre, and the
++ * walk's "a face is met" is a step across the reflection's outline (inside: the face's foot colour at the lifted rays' share,
++ * outside: the far colour); the quarter grid lives in screen space, so every camera step slides it over new lake points and the
++ * bilinear read redraws the outline's 4 x 4 px staircase. Fix (the re-judge's option 2): each tap stores a FOOTPRINT-FILTERED
++ * value: WL2F_K sub-walks spread over the texel's own lake footprint (2 x 2 stratified at +-0.25 texel x WL2F_FP), each sub-walk's
++ * face weight soft over the first WL2F_EPS rad its horizon rises above the lifted horizon (continuous where the face sinks under
++ * it). The tap keeps the faces' share-weighted colour (rgb), their mean horizon and the covered fraction (a = 4 floor(1000 cov) +
++ * eT + 2, float32; no face: -0.2; footprint markers -1 / -0.5 as before); the water takes cov x its own rays' share under that
++ * horizon. A 1-texel camera shift now changes a tap by about one sub-walk's weight, continuous over the soft band: the outline
++ * moves with the lake instead of re-tiling. The walk target is RGBA float32 (nearest) while on. `?wl2f=0` = p4wl exactly.
++ */
++const WL2F: P4Edit[] = [
++  {
++    find:
++      "    vec4 wT = lkWalkTerm(dist0, V0, vec3(0.0, 1.0, 0.0), sg0, vWorldPos);   // p4wl: P4WL_BAND\n" +
++      "    gl_FragColor = lkHits > 0.5 ? vec4(wT.rgb / max(wT.a, 1e-4), lkWalkE) : vec4(0.0, 0.0, 0.0, -0.2);\n",
++    repl: /* glsl */ `    // wl2f: the tap's footprint-filtered walk (sub-walks over its lake footprint and the bump's slope spread, soft face weights)
++    float wlNJ = WL2F_NJ;
++    if (WL2F_DFAR > 0.0) wlNJ *= 1.0 - smoothstep(WL2F_DFAR, 1.5 * WL2F_DFAR, dist0);   // (lab: fade out beyond)
++    if (WL2F_DNEAR > 0.0) wlNJ *= smoothstep(WL2F_DNEAR, 1.5 * WL2F_DNEAR, dist0);   // (the near water keeps p4wl's walk)
++    if (WL2F_NEAR > 0.0) {
++      // (taps within WL2F_NEAR texels of a footprint keep p4wl's unbumped walk: they border the per-pixel walk at the waterlines)
++      vec2 rX = WL2F_NEAR * wDx0.xz, rY = WL2F_NEAR * wDy0.xz;
++      float hN = max(max(lkHgtAt(vWorldPos.xz + rX), lkHgtAt(vWorldPos.xz - rX)), max(lkHgtAt(vWorldPos.xz + rY), lkHgtAt(vWorldPos.xz - rY)));
++      wlNJ *= 1.0 - smoothstep(0.0, 0.02, hN);
++    }
++    vec4 wAcc = vec4(0.0);
++    float eAcc = 0.0;
++    float cAcc = 0.0;
++    for (int j = 0; j < WL2F_K; j++) {
++      vec2 o = WL2F_K == 1 ? vec2(0.0) : (WL2F_K == 2 ? (j == 0 ? vec2(-0.25, -0.25) : vec2(0.25, 0.25))
++        : vec2((j & 1) == 0 ? -0.25 : 0.25, (j & 2) == 0 ? -0.25 : 0.25)) * WL2F_FP;
++      vec3 Pj = vWorldPos + o.x * wDx0 + o.y * wDy0;
++      vec3 Vj = normalize(cameraPosition - Pj);
++      // (the bump's coherent slope spread is 0.07 sig per axis: the sub-walks also sample it at +-WL2F_NJ sigma)
++      vec2 oN = sign(o) * 0.07 * wlNJ;
++      vec3 Nj = wlNJ > 0.0 ? normalize(vec3(oN.x * sg0.x * WL2F_NJX, 1.0, oN.y * sg0.y * WL2F_NJZ)) : vec3(0.0, 1.0, 0.0);
++      vec4 wj = lkWalkTerm(distance(cameraPosition, Pj), Vj, Nj, sg0, Pj);
++      if (lkHits > 0.5) {
++        float eLj = asin(min(0.9 * clamp(Vj.y, 0.002, 0.99), 0.01));
++        float cw = WL2F_EPS > 0.0 ? smoothstep(0.0, WL2F_EPS, lkWalkE - eLj) : 1.0;
++        cAcc += cw;
++        eAcc += cw * lkWalkE;
++        wAcc += cw * wj;
++      }
++    }
++    if (cAcc < 1e-4) gl_FragColor = vec4(0.0, 0.0, 0.0, -0.2);
++    else gl_FragColor = vec4(wAcc.rgb / max(wAcc.a, 1e-5), 4.0 * floor(1000.0 * cAcc / float(WL2F_K) + 0.5) + clamp(eAcc / cAcc, -1.9, 1.9) + 2.0);
++`,
++  },
++  {
++    // the band read: decode the covered fraction and the horizon
++    find:
++      "  vec4 ta = vec4(t00.a, t10.a, t01.a, t11.a);\n" +
++      "  if (dot(wt, 1.0 - step(-0.35, ta)) > 0.01) return lkWalkTerm(dist, V, lkN, lkSig, vWorldPos);\n",
++    repl:
++      "  vec4 ta = vec4(t00.a, t10.a, t01.a, t11.a);\n" +
++      "#ifdef WL2F_DBG\n  if (dot(wt, 1.0 - step(-0.35, ta)) > 0.01) return vec4(3.0, 0.0, 0.0, 1.0);\n#endif\n" +
++      "  if (dot(wt, 1.0 - step(-0.35, ta)) > 0.01) return lkWalkTerm(dist, V, lkN, lkSig, vWorldPos);\n" +
++      "  vec4 wlFace = step(0.0, ta);   // wl2f\n" +
++      "  vec4 wlK = floor(max(ta, 0.0) * 0.25);\n" +
++      "  vec4 wlCov = wlFace * wlK * 0.001;\n" +
++      "  ta = mix(ta, ta - 4.0 * wlK - 2.0, wlFace);\n",
++  },
++  {
++    // the share AFTER the interpolation: P4WL_BAND took each tap's share Phi((eT - mu) / sE) and blended the four shares; on
++    // the glassy water sE is small, so each share is close to a step and the blend is the bilinear blend of a binary tap mask:
++    // the quarter grid's staircase along every contour where the horizon crosses the pixel's own elevation, re-tiled with each
++    // camera step. The horizon is smooth over the lake: interpolate it (and the colour, the covered fraction) over the face
++    // taps first, then take the pixel's own share under it once (lab ?wl2fi=0: per-tap shares with the coverage).
++    find:
++      "  vec4 F4 = step(-0.15, ta) * vec4(lkPhiT((ta.x - mu) / sE), lkPhiT((ta.y - mu) / sE), lkPhiT((ta.z - mu) / sE), lkPhiT((ta.w - mu) / sE));\n" +
++      "  vec4 a4 = wt * F4;\n" +
++      "  return vec4(t00.rgb * a4.x + t10.rgb * a4.y + t01.rgb * a4.z + t11.rgb * a4.w, a4.x + a4.y + a4.z + a4.w);\n",
++    repl: /* glsl */ `#if WL2F_INTERP == 1
++  vec4 w4 = wt * wlCov * step(-0.15, ta);   // wl2f: the face taps' weights (bilinear x covered fraction)
++  float wS = w4.x + w4.y + w4.z + w4.w;
++  if (wS < 1e-6) return vec4(0.0);
++  float eTi = dot(w4, ta) / wS;
++  vec3 cI = (t00.rgb * w4.x + t10.rgb * w4.y + t01.rgb * w4.z + t11.rgb * w4.w) / wS;
++  float Fi = lkPhiT((eTi - mu) / sE) * wS;
++#ifdef WL2F_DBG
++  return vec4(0.0, 3.0 * wS, 3.0 * Fi, 1.0);
++#endif
++  return vec4(cI * Fi, Fi);
++#else
++  vec4 F4 = step(-0.15, ta) * vec4(lkPhiT((ta.x - mu) / sE), lkPhiT((ta.y - mu) / sE), lkPhiT((ta.z - mu) / sE), lkPhiT((ta.w - mu) / sE));
++  vec4 a4 = wt * F4 * wlCov;   // wl2f
++  return vec4(t00.rgb * a4.x + t10.rgb * a4.y + t01.rgb * a4.z + t11.rgb * a4.w, a4.x + a4.y + a4.z + a4.w);
++#endif
++`,
++  },
++];
++const WL2F_GJ: P4Edit[] = [
++  {
++    // the P4 W2 glass guard (when built) reads the taps' spread: give it the decoded horizon (as p4wl's a), not the packed value
++    find: "  vec4 s = vec4(a.a, b.a, d.a, e.a);\n",
++    repl:
++      "  vec4 s = vec4(a.a, b.a, d.a, e.a);\n" +
++      "  s = mix(s, s - 4.0 * floor(max(s, 0.0) * 0.25) - 2.0, step(0.0, s));   // wl2f\n",
++  },
++];
+ /** (P4 water G6) The water reads the quarter-size walk (LK_HALF: lake v4, `?lkhalf` not 0). */
+ function walkHalfWanted(lq: URLSearchParams | null) {
+   return lq?.get("lkhalf") !== "0";
+@@ -3307,6 +3415,29 @@
+         } else if (p4wlOn(lq) && defines.LK_CACHEN !== undefined && defines.LK_HALF !== undefined && defines.LK_WALKSEL !== undefined && wlw !== "q") {
+           defines.LK_WALKPX = "";
+           frag = p4Apply(frag, P4WL_BAND, "WLB");
++          // wl2f: footprint-filtered quarter taps (WL2F). Defaults (22 Nov 18:50, same-pose sheets, LOG): 4 sub-walks over 4 x the
++          // texel's half footprint (+-1 texel), the bump's slope spread sampled at +-3 sigma on both axes (elevation is the key:
++          // azimuth-only left the blobs; elevation-only drew a dark wedge under the far slabs), soft face band 0.004 rad. (No
++          // near-footprint fade by default: ?wl2fnear= is a per-tap switch, i.e. a quarter-grid seam 3 texels off the waterlines.) Lab: ?wl2fk= 1 / 2 / 4, ?wl2ffp=, ?wl2fnj= (0 = unbumped sub-walks), ?wl2fnjx= / ?wl2fnjz=
++          // (axis factors), ?wl2fnear=, ?wl2fdnear= / ?wl2fdfar= (distance fades, m), ?wl2fe=, ?wl2fi=0 (per-tap shares),
++          // ?wl2fdbg=1 (debug colours: red = per-pixel fallback, green = face weight, blue = share).
++          if (wl2fOn(lq)) {
++            const k = Number(lq?.get("wl2fk"));
++            defines.WL2F_K = String(k === 1 || k === 2 || k === 4 ? k : 4);
++            defines.WL2F_FP = Number(lq?.get("wl2ffp") || 4).toFixed(4);
++            defines.WL2F_EPS = Number(lq?.get("wl2fe") ?? 0.004).toFixed(5);
++            defines.WL2F_INTERP = lq?.get("wl2fi") === "0" ? "0" : "1";
++            defines.WL2F_NJ = Number(lq?.get("wl2fnj") ?? 3).toFixed(4);
++            defines.WL2F_NEAR = Number(lq?.get("wl2fnear") || 0).toFixed(4);
++            defines.WL2F_NJZ = Number(lq?.get("wl2fnjz") ?? 1).toFixed(4);
++            defines.WL2F_NJX = Number(lq?.get("wl2fnjx") ?? 1).toFixed(4);
++            defines.WL2F_DFAR = Number(lq?.get("wl2fdfar") || 0).toFixed(4);
++            defines.WL2F_DNEAR = Number(lq?.get("wl2fdnear") || 0).toFixed(4);
++            if (lq?.get("wl2fdbg") === "1") defines.WL2F_DBG = "";
++            frag = p4Apply(frag, WL2F, "WL2F");
++            if (frag.includes(WL2F_GJ[0].find)) frag = p4Apply(frag, WL2F_GJ, "WL2FGJ");
++            this.walkFloat = true;
++          }
+         }
+         // (No far-water rest correction: it was a fit of the ENV lane's model to the plate.)
+       } else if (opts.mirror.corr) {
+@@ -3396,12 +3527,12 @@
+         depthWrite: false,
+       });
+       this.walkTarget = new THREE.WebGLRenderTarget(2, 2, {
+-        type: THREE.HalfFloatType,
++        type: this.walkFloat ? THREE.FloatType : THREE.HalfFloatType,   // wl2f: the packed tap (texelFetch only)
+         format: THREE.RGBAFormat,
+         depthBuffer: false,
+         generateMipmaps: false,
+-        minFilter: THREE.LinearFilter,
+-        magFilter: THREE.LinearFilter,
++        minFilter: this.walkFloat ? THREE.NearestFilter : THREE.LinearFilter,
++        magFilter: this.walkFloat ? THREE.NearestFilter : THREE.LinearFilter,
+         colorSpace: THREE.LinearSRGBColorSpace,
+       });
+       this.material.uniforms.uLkWalk.value = this.walkTarget.texture;
+@@ -3540,6 +3671,8 @@
+   walkDiv = 4;
+   /** p4wl: the water walks per pixel; the quarter-size walk pass is not drawn. */
+   walkPerPixel = false;
++  /** wl2f: the walk target holds the packed footprint-filtered tap (RGBA float32, nearest). */
++  walkFloat = false;
+ 
+   /** The main HDR target's size (px): the walk target is 1 / walkDiv of it. */
+   setWalkSize(width: number, height: number) {

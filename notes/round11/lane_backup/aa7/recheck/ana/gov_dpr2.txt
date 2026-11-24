@@ -1,0 +1,13 @@
+# DPR 2 (T1 caps the buffer at 1800x957, pixel ratio 1.25): mean |dF| rows 562-957 at the governor steps
+fin   k24 7.72  k25 6.99  k26 6.35  k49 7.34  k50 6.84  k51 6.25  k74 3.58  k75 3.72  k76 2.36  k99 3.46  k100 4.68  k101 2.66
+mr0   k24 7.72  k25 7.17  k26 6.31  k49 7.31  k50 7.07  k51 6.33  k74 3.60  k75 4.31  k76 2.38  k99 3.44  k100 4.98  k101 2.66
+base  k24 7.92  k25 7.31  k26 6.28  k49 7.51  k50 7.22  k51 6.32  k74 3.82  k75 4.49  k76 2.36  k99 3.69  k100 5.06  k101 2.65
+# fin vs mr0 > 20 lv rows 562-957 per window
+s1 k0-24: total A>B 0  A<B 0
+s0.9 k26-49: total A>B 1962  A<B 4019
+s0.8 k51-74: total A>B 3878  A<B 8378
+s0.7 k76-99: total A>B 4721  A<B 11246
+s1b k101-119: total A>B 0  A<B 0
+# band under the near far floe (x50-375 y615-640): final / pre-fix brighter than both other variants by > 15 lv
+total brighter-than-both 696  darker-than-both 7054
+total brighter-than-both 355  darker-than-both 681

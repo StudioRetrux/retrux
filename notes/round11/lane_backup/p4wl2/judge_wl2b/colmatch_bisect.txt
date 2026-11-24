@@ -1,0 +1,5 @@
+REF x1213  10.4 | T1_5163 x1208   9.0 T1_5166 x1207   5.6 T1_cap4 x1208   8.6 T1_nolip x1207   6.1
+T1_5163  sum excess 16.3 vs REF 77.6  (ratio 0.21)  mean |build-REF| 6.77
+T1_5166  sum excess 15.6 vs REF 77.6  (ratio 0.20)  mean |build-REF| 6.91
+T1_cap4  sum excess 16.7 vs REF 77.6  (ratio 0.21)  mean |build-REF| 6.74
+T1_nolip sum excess 15.1 vs REF 77.6  (ratio 0.19)  mean |build-REF| 6.96

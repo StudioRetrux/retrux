@@ -1,0 +1,71 @@
+[slot] aa4y perf3 waiting (load 5.9 / max 24, slots 2, holders [{"label":"aa4x batch7","pid":40662,"at":1795161916914,"slot":0},{"label":"aa3fix bisect1","pid":39962,"at":1795161781907,"slot":1}])
+[slot] aa4y perf3: taken (load 5.4)
+{
+ "path": "medium",
+ "summ": {
+  "full": {
+   "med": 24.77,
+   "max": 27.57,
+   "n": 72,
+   "ratioMed": 1.026,
+   "pairedRatioMed": 1.053,
+   "pairedRatios": [
+    1.039,
+    1.059,
+    1.062,
+    1.054,
+    1.053,
+    1.029,
+    0.978,
+    1.039,
+    1.044,
+    0.946,
+    1.077,
+    1.053
+   ]
+  },
+  "fullM0": {
+   "med": 25.3,
+   "max": 31.41,
+   "n": 72,
+   "ratioMed": 1.048,
+   "pairedRatioMed": 1.071,
+   "pairedRatios": [
+    1.084,
+    1.071,
+    1.118,
+    1.075,
+    1.085,
+    1.036,
+    1.052,
+    1.065,
+    1.023,
+    1.058,
+    1.081,
+    1.048
+   ]
+  },
+  "none": {
+   "med": 24.14,
+   "max": 29.81,
+   "n": 72,
+   "ratioMed": 1,
+   "pairedRatioMed": 1,
+   "pairedRatios": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ]
+  }
+ }
+}
+[slot] aa4y perf3: freed (exit 0)

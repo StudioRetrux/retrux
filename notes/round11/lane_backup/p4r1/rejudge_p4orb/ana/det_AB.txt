@@ -1,0 +1,74 @@
+== p04_t3.3  orb (722,391) R 89.9  clock 4.53/4.53  lane-orb (722,391)
+  OFF   box>=248   4.5% >=250   3.8% | disc L10/50/90 201/225/253 sd 21.4 | rim(0.85-1.02R) L 212 RGB [194. 216. 229.] B-R +35 (L>200 +30) | skirt 1.1-1.4R L 206 B-R +34 | bright r 57 | p99 237 p99.9 254
+  LANE  box>=248   4.1% >=250   2.7% | disc L10/50/90 206/225/252 sd 18.2 | rim(0.85-1.02R) L 214 RGB [198. 218. 230.] B-R +32 (L>200 +29) | skirt 1.1-1.4R L 207 B-R +34 | bright r 59 | p99 238 p99.9 253
+  inner disc (r<0.8R, L>225 both) n 9008 lane-off RGB [ 0.2 -0.2 -0.4]
+  ice annuli dL (lane-off, crystals masked): 1.02-1.25R +0.46 | 1.25-1.50R +0.32 | 1.50-2.00R +0.60 | 2.00-2.50R +0.62 | 2.50-3.50R +0.06
+  far (r>3.5R, no crystals) px changed>2: 0.01%  max 22
+== p04_tn  orb (720,391) R 89.9  clock 11.76/11.76  lane-orb (720,391)
+  OFF   box>=248  16.8% >=250  12.3% | disc L10/50/90 246/253/255 sd 10.1 | rim(0.85-1.02R) L 201 RGB [185. 203. 227.] B-R +42 (L>200 +39) | skirt 1.1-1.4R L 188 B-R +49 | bright r 79 | p99 253 p99.9 255
+  LANE  box>=248  17.8% >=250  12.9% | disc L10/50/90 247/253/255 sd  6.4 | rim(0.85-1.02R) L 224 RGB [214. 225. 237.] B-R +23 (L>200 +23) | skirt 1.1-1.4R L 191 B-R +44 | bright r 81 | p99 253 p99.9 255
+  inner disc (r<0.8R, L>225 both) n 15639 lane-off RGB [ 0.4 -0.2 -0.2]
+  ice annuli dL (lane-off, crystals masked): 1.02-1.25R +2.76 | 1.25-1.50R +1.02 | 1.50-2.00R +0.38 | 2.00-2.50R +0.11 | 2.50-3.50R +0.12
+  far (r>3.5R, no crystals) px changed>2: 0.00%  max 19
+== p05_t3.3  orb (717,391) R 100.4  clock 3.68/3.68  lane-orb (717,391)
+  OFF   box>=248  10.7% >=250   8.8% | disc L10/50/90 163/247/254 sd 36.8 | rim(0.85-1.02R) L 180 RGB [160. 181. 221.] B-R +61 (L>200 +41) | skirt 1.1-1.4R L 190 B-R +46 | bright r 70 | p99 248 p99.9 255
+  LANE  box>=248  11.7% >=250   9.2% | disc L10/50/90 191/248/254 sd 26.9 | rim(0.85-1.02R) L 219 RGB [208. 220. 235.] B-R +28 (L>200 +25) | skirt 1.1-1.4R L 192 B-R +44 | bright r 72 | p99 248 p99.9 255
+  main(:5197) vs off: max abs diff 173 (DIFFER)
+  inner disc (r<0.8R, L>225 both) n 14210 lane-off RGB [ 0.6 -0.4 -0.6]
+  ice annuli dL (lane-off, crystals masked): 1.02-1.25R +1.45 | 1.25-1.50R +0.67 | 1.50-2.00R +0.23 | 2.00-2.50R +0.22 | 2.50-3.50R +0.09
+  far (r>3.5R, no crystals) px changed>2: 0.03%  max 18
+== p05_tn  orb (716,391) R 100.4  clock 10.01/10.01  lane-orb (716,391)
+  OFF   box>=248   2.6% >=250   1.7% | disc L10/50/90 178/221/229 sd 28.7 | rim(0.85-1.02R) L 204 RGB [185. 207. 227.] B-R +41 (L>200 +29) | skirt 1.1-1.4R L 194 B-R +46 | bright r 34 | p99 228 p99.9 253
+  LANE  box>=248   1.0% >=250   0.0% | disc L10/50/90 181/221/229 sd 26.3 | rim(0.85-1.02R) L 206 RGB [189. 209. 227.] B-R +38 (L>200 +30) | skirt 1.1-1.4R L 196 B-R +44 | bright r 34 | p99 228 p99.9 250
+  inner disc (r<0.8R, L>225 both) n 6950 lane-off RGB [-0.8 -0.8 -0.8]
+  ice annuli dL (lane-off, crystals masked): 1.02-1.25R +0.18 | 1.25-1.50R +0.40 | 1.50-2.00R +0.22 | 2.00-2.50R +0.05 | 2.50-3.50R +0.05
+  far (r>3.5R, no crystals) px changed>2: 0.01%  max 31
+== p06_t3.3  orb (717,391) R 100.4  clock 3.68/3.68  lane-orb (717,391)
+  OFF   box>=248  18.5% >=250  15.7% | disc L10/50/90 240/253/255 sd  6.5 | rim(0.85-1.02R) L 187 RGB [167. 189. 223.] B-R +56 (L>200 +40) | skirt 1.1-1.4R L 190 B-R +46 | bright r 84 | p99 253 p99.9 255
+  LANE  box>=248  21.6% >=250  17.0% | disc L10/50/90 243/253/255 sd  6.4 | rim(0.85-1.02R) L 225 RGB [215. 227. 238.] B-R +23 (L>200 +23) | skirt 1.1-1.4R L 193 B-R +42 | bright r 87 | p99 253 p99.9 255
+  main(:5197) vs off: max abs diff 169 (DIFFER)
+  inner disc (r<0.8R, L>225 both) n 20006 lane-off RGB [ 0.9 -0.1 -0.2]
+  ice annuli dL (lane-off, crystals masked): 1.02-1.25R +2.01 | 1.25-1.50R +0.97 | 1.50-2.00R +0.26 | 2.00-2.50R +0.21 | 2.50-3.50R +0.09
+  far (r>3.5R, no crystals) px changed>2: 0.02%  max 13
+== p06_tn  orb (719,391) R 100.4  clock 10.01/10.01  lane-orb (719,391)
+  OFF   box>=248   2.8% >=250   2.1% | disc L10/50/90 175/223/228 sd 30.5 | rim(0.85-1.02R) L 209 RGB [191. 213. 228.] B-R +37 (L>200 +29) | skirt 1.1-1.4R L 195 B-R +44 | bright r 34 | p99 227 p99.9 253
+  LANE  box>=248   1.3% >=250   0.0% | disc L10/50/90 178/223/228 sd 27.3 | rim(0.85-1.02R) L 211 RGB [193. 214. 229.] B-R +36 (L>200 +29) | skirt 1.1-1.4R L 196 B-R +43 | bright r 34 | p99 227 p99.9 250
+  inner disc (r<0.8R, L>225 both) n 6507 lane-off RGB [-0.9 -0.9 -0.9]
+  ice annuli dL (lane-off, crystals masked): 1.02-1.25R +0.17 | 1.25-1.50R +0.42 | 1.50-2.00R +0.25 | 2.00-2.50R +0.05 | 2.50-3.50R +0.04
+  far (r>3.5R, no crystals) px changed>2: 0.05%  max 10
+== p07_t3.3  orb (721,377) R 72.6  clock 4.12/4.12  lane-orb (721,377)
+  OFF   box>=248  10.7% >=250   7.7% | disc L10/50/90 235/253/254 sd 13.9 | rim(0.85-1.02R) L 207 RGB [191. 210. 227.] B-R +36 (L>200 +33) | skirt 1.1-1.4R L 201 B-R +40 | bright r 66 | p99 245 p99.9 254
+  LANE  box>=248  10.8% >=250   7.5% | disc L10/50/90 235/253/254 sd 11.7 | rim(0.85-1.02R) L 213 RGB [198. 215. 229.] B-R +31 (L>200 +29) | skirt 1.1-1.4R L 202 B-R +39 | bright r 66 | p99 246 p99.9 254
+  inner disc (r<0.8R, L>225 both) n 9807 lane-off RGB [-0.1 -0.3 -0.3]
+  ice annuli dL (lane-off, crystals masked): 1.02-1.25R +1.33 | 1.25-1.50R +0.33 | 1.50-2.00R +0.19 | 2.00-2.50R +0.13 | 2.50-3.50R +0.03
+  far (r>3.5R, no crystals) px changed>2: 0.01%  max 4
+== p07_tn  orb (721,378) R 72.6  clock 10.91/10.91  lane-orb (721,378)
+  OFF   box>=248   0.1% >=250   0.0% | disc L10/50/90 199/225/226 sd 15.3 | rim(0.85-1.02R) L 212 RGB [195. 215. 229.] B-R +34 (L>200 +30) | skirt 1.1-1.4R L 195 B-R +44 | bright r 18 | p99 227 p99.9 238
+  LANE  box>=248   0.0% >=250   0.0% | disc L10/50/90 199/225/226 sd 15.2 | rim(0.85-1.02R) L 213 RGB [196. 216. 229.] B-R +34 (L>200 +30) | skirt 1.1-1.4R L 195 B-R +44 | bright r 18 | p99 227 p99.9 238
+  inner disc (r<0.8R, L>225 both) n 3752 lane-off RGB [-0.3 -0.1 -0.2]
+  ice annuli dL (lane-off, crystals masked): 1.02-1.25R -0.18 | 1.25-1.50R -0.30 | 1.50-2.00R -0.02 | 2.00-2.50R +0.02 | 2.50-3.50R +0.01
+  far (r>3.5R, no crystals) px changed>2: 0.01%  max 13
+== p08_t3.3  orb (720,373) R 67.8  clock 4.54/4.54  lane-orb (720,373)
+  OFF   box>=248   1.8% >=250   0.7% | disc L10/50/90 168/225/253 sd 27.3 | rim(0.85-1.02R) L 214 RGB [194. 218. 230.] B-R +36 (L>200 +32) | skirt 1.1-1.4R L 205 B-R +33 | bright r 40 | p99 228 p99.9 253
+  LANE  box>=248   1.3% >=250   0.1% | disc L10/50/90 175/225/251 sd 25.3 | rim(0.85-1.02R) L 214 RGB [194. 219. 230.] B-R +36 (L>200 +32) | skirt 1.1-1.4R L 205 B-R +33 | bright r 40 | p99 228 p99.9 251
+  inner disc (r<0.8R, L>225 both) n 4251 lane-off RGB [-0.6 -0.4 -0.5]
+  ice annuli dL (lane-off, crystals masked): 1.02-1.25R -0.02 | 1.25-1.50R +0.03 | 1.50-2.00R +0.05 | 2.00-2.50R +0.03 | 2.50-3.50R +0.00
+  far (r>3.5R, no crystals) px changed>2: 0.01%  max 18
+== p08_tn  orb (718,373) R 67.8  clock 11.77/11.77  lane-orb (718,373)
+  OFF   box>=248   6.5% >=250   5.0% | disc L10/50/90 231/253/254 sd 10.1 | rim(0.85-1.02R) L 205 RGB [190. 207. 227.] B-R +38 (L>200 +32) | skirt 1.1-1.4R L 182 B-R +53 | bright r 57 | p99 236 p99.9 254
+  LANE  box>=248   6.3% >=250   4.2% | disc L10/50/90 226/252/253 sd 10.9 | rim(0.85-1.02R) L 207 RGB [193. 209. 228.] B-R +35 (L>200 +31) | skirt 1.1-1.4R L 184 B-R +51 | bright r 56 | p99 235 p99.9 253
+  inner disc (r<0.8R, L>225 both) n 8408 lane-off RGB [-1.2 -0.9 -0.9]
+  ice annuli dL (lane-off, crystals masked): 1.02-1.25R +0.15 | 1.25-1.50R +0.02 | 1.50-2.00R +0.01 | 2.00-2.50R +0.01 | 2.50-3.50R +0.01
+  far (r>3.5R, no crystals) px changed>2: 0.00%  max 6
+== q00_tn  orb (723,387) R 74.7  clock 4.74/4.74  lane-orb (723,387)
+  OFF   box>=248   3.3% >=250   2.4% | disc L10/50/90 204/225/253 sd 24.1 | rim(0.85-1.02R) L 206 RGB [189. 209. 228.] B-R +39 (L>200 +32) | skirt 1.1-1.4R L 198 B-R +41 | bright r 37 | p99 228 p99.9 253
+  LANE  box>=248   2.6% >=250   0.1% | disc L10/50/90 203/225/252 sd 21.4 | rim(0.85-1.02R) L 207 RGB [190. 209. 228.] B-R +38 (L>200 +33) | skirt 1.1-1.4R L 199 B-R +40 | bright r 36 | p99 228 p99.9 252
+  inner disc (r<0.8R, L>225 both) n 6192 lane-off RGB [-1.  -0.8 -0.9]
+  ice annuli dL (lane-off, crystals masked): 1.02-1.25R -0.19 | 1.25-1.50R -0.13 | 1.50-2.00R -0.03 | 2.00-2.50R -0.00 | 2.50-3.50R -0.00
+  far (r>3.5R, no crystals) px changed>2: 0.00%  max 10
+== q03_tn  orb (723,387) R 74.7  clock 12.39/12.39  lane-orb (723,387)
+  OFF   box>=248   3.6% >=250   2.9% | disc L10/50/90 203/231/253 sd 22.9 | rim(0.85-1.02R) L 205 RGB [184. 210. 227.] B-R +44 (L>200 +38) | skirt 1.1-1.4R L 194 B-R +47 | bright r 60 | p99 239 p99.9 253
+  LANE  box>=248   3.4% >=250   2.1% | disc L10/50/90 201/227/252 sd 21.8 | rim(0.85-1.02R) L 206 RGB [184. 210. 227.] B-R +43 (L>200 +38) | skirt 1.1-1.4R L 195 B-R +46 | bright r 60 | p99 239 p99.9 252
+  inner disc (r<0.8R, L>225 both) n 6605 lane-off RGB [-2.2 -1.3 -1.1]
+  ice annuli dL (lane-off, crystals masked): 1.02-1.25R -0.82 | 1.25-1.50R -0.40 | 1.50-2.00R -0.09 | 2.00-2.50R -0.01 | 2.50-3.50R -0.01
+  far (r>3.5R, no crystals) px changed>2: 0.01%  max 10

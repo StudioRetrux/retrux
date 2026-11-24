@@ -1,0 +1,35 @@
+a8 vs a7: frames 240 (240/240), frames differing 207, px > 8: 997, max 12, first 0, pose mismatches 0, W 1440/1440 rows 380-766/380-766
+A7: flagged px 14905, events >= 6 px: 412, px in them 12798
+A8: flagged px 15371, events >= 6 px: 432, px in them 13169
+-- A7 top 6
+  k202-213 x18-81 y639-665 n530 emax103 frames 202/69/103/-89 203/72/103/-85 204/74/101/-82 205/54/97/-78 ...
+  k186-201 x104-192 y555-578 n544 emax100 frames 186/8/52/-39 187/12/53/-43 188/1/44/-46 188/2/41/-42 ...
+  k77-83 x8-64 y650-663 n357 emax110 frames 77/76/100/-77 78/72/110/-78 79/2/45/-51 79/28/71/-62 ...
+  k200-214 x160-211 y592-616 n338 emax100 frames 200/4/53/-47 201/7/72/55 202/70/100/-75 203/11/59/-72 ...
+  k64-72 x109-147 y586-601 n259 emax82 frames 64/13/47/-37 65/16/53/-42 66/16/56/-46 67/13/53/-47 ...
+  k226-227 x88-148 y567-569 n187 emax109 frames 226/115/109/-68 227/72/83/60
+-- A8 top 6
+  k186-201 x104-192 y555-578 n547 emax100 frames 186/8/53/-39 187/12/53/-43 188/1/44/-46 188/2/41/-41 ...
+  k202-213 x18-81 y639-665 n531 emax103 frames 202/70/103/-88 203/72/103/-85 204/74/101/-82 205/54/97/-78 ...
+  k77-83 x8-64 y650-663 n357 emax110 frames 77/76/101/-77 78/72/110/-78 79/2/46/-51 79/28/71/-62 ...
+  k200-214 x160-211 y592-616 n339 emax99 frames 200/4/53/-47 201/7/72/55 202/71/99/-75 203/11/62/-74 ...
+  k64-72 x109-147 y586-601 n258 emax82 frames 64/13/47/-37 65/16/53/-42 66/16/56/-46 67/13/53/-46 ...
+  k226-227 x88-148 y567-569 n187 emax110 frames 226/115/110/-68 227/72/83/60
+-- popnew A8 vs A7
+new pops (X flagged, ref not, X != ref): 0 px, 0 clusters, >= 6 px: 0
+-- popnew A7 vs A8
+new pops (X flagged, ref not, X != ref): 0 px, 0 clusters, >= 6 px: 0
+-- v3err A8 vs A7 thr 8 (gt none)
+frames 240 thr 8: lake+band px-frames 67997883; |X-R|>thr 729
+-- dark: px 729, events >= 6 px: 19
+  k0-33 (34f) x104-115 y530-530 n172 nmax11 dmean-8 dmax10
+  k0-37 (38f) x1329-1330 y516-518 n70 nmax2 dmean-9 dmax10
+  k0-25 (26f) x468-469 y579-579 n29 nmax2 dmean-9 dmax9
+  k16-26 (11f) x631-632 y573-573 n21 nmax2 dmean-10 dmax11
+  k27-33 (7f) x435-442 y586-586 n19 nmax3 dmean-8 dmax8
+  k49-59 (11f) x1325-1325 y520-524 n19 nmax2 dmean-9 dmax10
+-- bright: px 0, events >= 6 px: 0
+-- v3err A8 vs A7 thr 20 (gt none)
+frames 240 thr 20: lake+band px-frames 67997883; |X-R|>thr 0
+-- dark: px 0, events >= 6 px: 0
+-- bright: px 0, events >= 6 px: 0

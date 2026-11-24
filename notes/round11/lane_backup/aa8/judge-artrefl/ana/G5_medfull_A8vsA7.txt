@@ -1,0 +1,17 @@
+frames 0-59, t 2: topmost changed row hero 446 lake 471 other 447; max d {"hero":10,"lake":10,"other":12}
+  rows 416-447: {"hero":1,"lake":0,"other":1}
+  rows 448-479: {"hero":290,"lake":208,"other":1127}
+  rows 480-511: {"hero":379,"lake":6460,"other":1971}
+  rows 512-543: {"hero":147,"lake":8113,"other":754}
+  rows 544-575: {"hero":575,"lake":17973,"other":42}
+  rows 576-607: {"hero":0,"lake":4626,"other":185}
+  rows 608-639: {"hero":0,"lake":3842,"other":766}
+  rows 640-671: {"hero":0,"lake":1162,"other":1056}
+  rows 672-703: {"hero":0,"lake":2240,"other":848}
+  rows 704-735: {"hero":184,"lake":7988,"other":374}
+  rows 736-767: {"hero":951,"lake":8534,"other":299}
+wrote /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/artrefl/img/g5_medfull_A8vsA7_map.png
+heroOverLake: px-frames 3182594, >2 lv 1708, >4 lv 591, max 10
+heroOverNonLake: px-frames 3554074, >2 lv 819, >4 lv 120, max 8
+solid: px-frames 42929993, >2 lv 7423, >4 lv 1261, max 12
+lake: px-frames 16515739, >2 lv 61146, >4 lv 18804, max 10

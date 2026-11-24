@@ -1,0 +1,2 @@
+wl2fj=0 (d2_F0) vs pre-fix wl2 (judge d2_G4 = wl2g = wl2): 120/120 frames byte-identical
+fix ON (d2_F) vs d2_G4: 0/120 identical

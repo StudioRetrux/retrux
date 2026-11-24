@@ -1,0 +1,2 @@
+slow_FINAL vs slow_K06: frames 160 (160/160), frames differing 0, px > 0: 0, max 0, first -1, pose mismatches 0, W 1440/1440 rows 380-766/380-766
+slow_FINAL vs slow_K10: frames 160 (160/160), frames differing 160, px > 0: 5423978, max 12, first 0, pose mismatches 0, W 1440/1440 rows 380-766/380-766

@@ -1,0 +1,4 @@
+fast_F
+  ALL: redraw 7.98 other 0.00 | cnt>32 by k%3 368056/376012/373703 k%2 555507/562264 | f=1/3: 0.9x, f=1/2: 0.7x median
+  FF: redraw 7.99 other 0.00 | cnt>32 by k%3 78275/80167/80134 k%2 119102/119474 | f=1/3: 1.1x, f=1/2: 0.7x median
+  RF: redraw 6.74 other 0.00 | cnt>32 by k%3 19421/19679/19653 k%2 29068/29685 | f=1/3: 0.7x, f=1/2: 0.8x median

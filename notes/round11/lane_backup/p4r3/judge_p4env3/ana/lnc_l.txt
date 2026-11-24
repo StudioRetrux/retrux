@@ -1,0 +1,91 @@
+late150_bottom_left.png  IDENTICAL(>2) max 0
+late150_left.png         IDENTICAL(>2) max 0
+late150_rest.png         IDENTICAL(>2) max 0
+late150_right.png        IDENTICAL(>2) max 0
+late150_top_right.png    IDENTICAL(>2) max 0
+late90_bottom_left.png   n>2    183 n>8    94 max   76 clusters 1
+      px   183 box x64-176 y160-224 max 76 mean dLuma -14.3
+late90_left.png          n>2    219 n>8    89 max   79 clusters 2
+      px   215 box x48-208 y192-272 max 79 mean dLuma -13.2
+      px     4 box x112-128 y544-560 max 4 mean dLuma -2.1
+late90_rest.png          n>2    176 n>8    95 max   83 clusters 1
+      px   176 box x192-320 y192-256 max 83 mean dLuma -15.2
+late90_right.png         n>2    268 n>8   110 max   75 clusters 1
+      px   268 box x320-464 y192-272 max 75 mean dLuma -9.4
+late90_top_right.png     n>2    247 n>8   117 max   76 clusters 1
+      px   247 box x320-464 y224-304 max 76 mean dLuma -11.8
+ptr_bottom.png           n>2     87 n>8     8 max   10 clusters 2
+      px    86 box x224-352 y176-240 max 10 mean dLuma -2.7
+      px     1 box x192-208 y224-240 max 4 mean dLuma -1.6
+ptr_bottom_left.png      n>2    209 n>8    65 max   15 clusters 2
+      px   208 box x48-176 y160-256 max 15 mean dLuma -3.8
+      px     1 box x192-208 y208-224 max 3 mean dLuma -1.3
+ptr_bottom_right.png     n>2    346 n>8    88 max   14 clusters 2
+      px   343 box x368-528 y176-288 max 14 mean dLuma -3.3
+      px     3 box x0-16 y192-208 max 3 mean dLuma -1.6
+ptr_left.png             n>2     13 n>8     0 max    4 clusters 2
+      px     8 box x176-208 y224-256 max 4 mean dLuma -1.7
+      px     5 box x64-96 y320-336 max 3 mean dLuma -1.4
+ptr_orb.png              n>2     92 n>8    23 max   12 clusters 4
+      px    76 box x272-336 y240-304 max 12 mean dLuma -3.0
+      px    14 box x224-256 y240-256 max 11 mean dLuma -3.5
+      px     1 box x352-368 y320-336 max 3 mean dLuma -1.4
+      px     1 box x176-192 y304-320 max 4 mean dLuma -2.2
+ptr_rest.png             n>2     11 n>8     0 max    4 clusters 1
+      px    11 box x304-352 y224-272 max 4 mean dLuma -1.5
+ptr_right.png            n>2    279 n>8    68 max   14 clusters 2
+      px   214 box x416-480 y208-288 max 14 mean dLuma -3.7
+      px    65 box x304-336 y320-352 max 3 mean dLuma -1.9
+ptr_top.png              n>2     54 n>8     4 max    9 clusters 2
+      px    53 box x256-320 y224-272 max 9 mean dLuma -2.7
+      px     1 box x160-176 y368-384 max 3 mean dLuma -1.4
+ptr_top_left.png         n>2    197 n>8    56 max   14 clusters 2
+      px   191 box x48-160 y224-304 max 14 mean dLuma -3.6
+      px     6 box x176-208 y256-272 max 3 mean dLuma -1.6
+ptr_top_right.png        n>2    342 n>8    86 max   16 clusters 1
+      px   342 box x352-512 y224-336 max 16 mean dLuma -3.1
+sw_hold_B.png            n>2    203 n>8    65 max   15 clusters 3
+      px   117 box x256-288 y336-384 max 15 mean dLuma -4.5
+      px    69 box x304-352 y384-432 max 5 mean dLuma -1.9
+      px    17 box x208-240 y336-352 max 13 mean dLuma -3.5
+sw_hold_BL.png           n>2    166 n>8    52 max   15 clusters 2
+      px   157 box x224-304 y336-432 max 15 mean dLuma -3.7
+      px     9 box x176-208 y336-352 max 9 mean dLuma -3.0
+sw_hold_L.png            n>2    162 n>8    48 max   14 clusters 2
+      px   154 box x224-304 y336-416 max 14 mean dLuma -3.4
+      px     8 box x176-208 y336-352 max 13 mean dLuma -3.4
+sw_hold_R.png            n>2    232 n>8    77 max   15 clusters 1
+      px   232 box x240-368 y336-432 max 15 mean dLuma -3.7
+sw_hold_T.png            n>2    189 n>8    64 max   14 clusters 3
+      px   116 box x256-288 y336-384 max 14 mean dLuma -4.8
+      px    64 box x304-352 y384-432 max 5 mean dLuma -2.0
+      px     9 box x208-240 y336-352 max 11 mean dLuma -3.6
+sw_hold_TR.png           n>2    225 n>8    61 max   14 clusters 1
+      px   225 box x240-368 y336-432 max 14 mean dLuma -3.4
+sw_pop_B.png             IDENTICAL(>2) max 1
+sw_pop_BL.png            IDENTICAL(>2) max 1
+sw_pop_L.png             n>2     65 n>8     1 max    9 clusters 3
+      px    50 box x240-272 y304-352 max 9 mean dLuma -2.1
+      px     8 box x192-224 y304-320 max 8 mean dLuma -2.5
+      px     7 box x288-304 y352-384 max 3 mean dLuma -1.5
+sw_pop_R.png             n>2     51 n>8     5 max   11 clusters 3
+      px    35 box x288-320 y320-352 max 8 mean dLuma -2.0
+      px    15 box x240-272 y304-320 max 11 mean dLuma -3.2
+      px     1 box x336-352 y368-384 max 3 mean dLuma -1.4
+sw_pop_T.png             n>2      4 n>8     0 max    5 clusters 1
+      px     4 box x224-240 y304-320 max 5 mean dLuma -2.1
+sw_pop_TR.png            IDENTICAL(>2) max 1
+sw_rel_B.png             n>2      8 n>8     0 max    5 clusters 2
+      px     5 box x272-288 y224-240 max 5 mean dLuma -2.2
+      px     3 box x176-192 y272-304 max 4 mean dLuma -1.7
+sw_rel_BL.png            n>2     11 n>8     2 max    9 clusters 2
+      px     7 box x240-272 y224-240 max 9 mean dLuma -2.4
+      px     4 box x144-160 y272-304 max 9 mean dLuma -3.2
+sw_rel_L.png             n>2      3 n>8     0 max    5 clusters 2
+      px     2 box x144-160 y288-304 max 5 mean dLuma -2.2
+      px     1 box x160-176 y256-272 max 5 mean dLuma -3.1
+sw_rel_R.png             IDENTICAL(>2) max 2
+sw_rel_T.png             n>2      2 n>8     0 max    3 clusters 1
+      px     2 box x176-192 y288-304 max 3 mean dLuma -2.0
+sw_rel_TR.png            n>2     42 n>8     8 max   13 clusters 1
+      px    42 box x272-320 y240-272 max 13 mean dLuma -3.1

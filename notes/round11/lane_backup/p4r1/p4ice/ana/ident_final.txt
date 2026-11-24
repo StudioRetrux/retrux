@@ -1,0 +1,7 @@
+# final build 00:24 (21 Nov), identS 20 moving frames
+T1 ?p4ice=0 vs :5197                           IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+T2 ?p4ice=0 vs :5197                           IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+T0 (lane default) vs :5197                     IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+envlake=plate&p4ice=0 vs :5197                 IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+T1 lane default vs :5197 (ice only)            DIFFER    final DIFF | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: reflection,final | programs 16 differ: rx-ice|ShaderMaterial | logs 0/0
+T2 lane default vs :5197 (ice only)            DIFFER    final DIFF | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: reflection,final | programs 16 differ: rx-ice|ShaderMaterial | logs 0/0

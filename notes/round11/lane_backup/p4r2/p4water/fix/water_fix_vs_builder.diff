@@ -1,0 +1,199 @@
+--- /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/p4water/Water.ts.builder_final	2026-11-21 04:06:09
++++ /Users/muhamadrifaldi/RetruxR11Work/lanes/p4water/retrux-web/app/hero/engine/world/Water.ts	2026-11-21 05:35:02
+@@ -1054,8 +1054,8 @@
+  *   nothing to act on: the nearest visible water is 13 m away at rest and 16.5 m in the hold.)
+  * - Q8 (`?lkring=r11` off): the rest ring as physical waves: a phase-steepened (Gerstner-like) profile, narrow deep troughs and
+  *   broad crests, amplitude x(1 +- 0.3) around the ring from 3- and 5-lobe terms, the crest clamp raised; the orb's glint on the
+- *   ring zone anisotropic (wider across the view) and cyan-white.
+- * - Q9 (`?lkglass=0` off): the bump's alias guard beyond ~30-40 m: an octave whose footprint reaches 0.15..0.45 lattice cells
++ *   ring zone cyan-white (MAIN's luma) and x1.3 (its GGX lobe can be anisotropic: uLkP4G.xy; default MAIN's isotropic alpha).
++ * - Q9 (OFF by default since the fix round; `?lkglass=1` on): the bump's alias guard beyond ~30-40 m: an octave whose footprint reaches 0.15..0.45 lattice cells
+  *   (x the DOF) gives up its coherent share (the pixel-centre sample of a sub-pixel wavelet aliases into 1-2 px row stripes, the
+  *   'corduroy'); its variance joins the incoherent spread (lkBump's own bookkeeping: Tr^2 - c^2), so the rays' spread and the
+  *   columns keep the Cycles-fitted slope variance.
+@@ -1205,14 +1205,28 @@
+ uniform vec4 uLkP4C;
+ uniform vec4 uLkP4CF;
+ uniform float uLkP4K;
++// P4 water fix (judge W3 / W4 / W5): x / y the octaves' band limit (footprint x frequency; was 0.2-0.45: the finer octaves aliased
++// into 1-2 px streaks that flickered in the press and the hold), z the third octave's share (was 0.42), w the slope's soft limit
++// (the deepest tilts mirrored the uniform deep-blue sky: flat-filled, hard-edged, over-saturated troughs).
++uniform vec4 uLkP4B;
++// P4 water fix: x the chop's own slope change per px at which it is damped (judge W3; 0 off), y the onset feather (m) inside the
++// crest train's hard cuts (its front at R and the |x|, |z| 14.85 m square; judge W5: a stepped edge where the chop began).
++uniform vec4 uLkP4D;
+ vec2 lkChop(vec3 P, float dist, vec2 fp, float kDof) {
+   float w = smoothstep(0.0, 1.0, uHold) * (1.0 - smoothstep(uLkP4C.z, uLkP4C.w, dist));
+   if (w <= 0.0) return vec2(0.0);
+-  float L = max(fp.x, fp.y) * mix(1.0, kDof, uLkP4K);   // (uLkP4K: the share of the lake's DOF blur in the band limit)
+-  float a1 = uLkP4C.x * (1.0 - smoothstep(0.2, 0.45, L * uLkP4CF.x));
+-  float a2 = uLkP4C.y * (1.0 - smoothstep(0.2, 0.45, L * uLkP4CF.y));
++  {
++    float R = mix(8.2, 21.5, smoothstep(0.0, 1.0, uHold));
++    float rP = length(vec2(P.x, P.z + 8.6));
++    float mP = max(abs(P.x), abs(P.z));
++    w *= (1.0 - smoothstep(R - 0.5 - uLkP4D.y, R - 0.5, rP)) * (1.0 - smoothstep(14.55 - uLkP4D.y, 14.55, mP));
++    if (w <= 0.0) return vec2(0.0);
++  }
++  float L = max(fp.x, fp.y) * mix(1.0, kDof, uLkP4K);   // (uLkP4K: the share of the lake's DOF blur in the band limit)
++  float a1 = uLkP4C.x * (1.0 - smoothstep(uLkP4B.x, uLkP4B.y, L * uLkP4CF.x));
++  float a2 = uLkP4C.y * (1.0 - smoothstep(uLkP4B.x, uLkP4B.y, L * uLkP4CF.y));
+   float f3 = 2.4 * uLkP4CF.y;
+-  float a3 = uLkP4C.y * 0.42 * (1.0 - smoothstep(0.2, 0.45, L * f3));
++  float a3 = uLkP4C.y * uLkP4B.z * (1.0 - smoothstep(uLkP4B.x, uLkP4B.y, L * f3));
+   vec4 n1 = noised(vec3(P.xz * uLkP4CF.x + vec2(uLkP4CF.z, 0.3 * uLkP4CF.z) * uTime * uLkP4CF.x, 0.21 * uTime));
+   const float CS = 0.7986355;   // cos 37 deg
+   const float SN = 0.6018150;
+@@ -1228,6 +1242,7 @@
+     vec4 n3 = noised(vec3(q3 * f3 + vec2(0.5 * uLkP4CF.w, -uLkP4CF.z) * uTime * f3, 11.7 + 0.55 * uTime));
+     s += w * a3 * f3 * vec2(C3 * n3.y - S3 * n3.z, S3 * n3.y + C3 * n3.z);
+   }
++  if (uLkP4B.w > 0.0) s *= inversesqrt(1.0 + dot(s, s) / (uLkP4B.w * uLkP4B.w));   // (fix W4: soft limit)
+   return s;
+ }
+ // P4 water G2 (4): the strata lookups' screen footprint along the target's rows, at least LK_P4FP texels on the tilted water.
+@@ -1256,7 +1271,15 @@
+       "  // walk keeps the train's tilt alone (lkP4Wt: a normal coherent across the pixels; the chop's made the walks diverge).\n" +
+       "  // Measured: the chop cost +0.83 ms per hold frame with both, ~0 with its amplitude at 0 (WORK/LOG.md 03:21).\n" +
+       "  vec2 lkP4Wt = lkWv;\n" +
+-      "  if (lkWv.x != 0.0 || lkWv.y != 0.0) lkWv += lkChop(vWorldPos, dist, lkP4Fp, kDof);\n" +
++      "  vec2 lkP4Ch = lkChop(vWorldPos, dist, lkP4Fp, kDof);   // (every pixel: its derivatives below)\n" +
++      "  if (uLkP4D.x > 0.0) {\n" +
++      "    // P4 water fix W3: where the chop's own slope changes by more than ~uLkP4D.x per px, the reflection's lookups alias\n" +
++      "    // (frame-to-frame sign-reversal flicker in the press and the hold): its amplitude falls there.\n" +
++      "    vec2 lkP4Dc = fwidth(lkP4Ch);\n" +
++      "    float lkP4Q = max(lkP4Dc.x, lkP4Dc.y) / uLkP4D.x;\n" +
++      "    lkP4Ch *= inversesqrt(1.0 + lkP4Q * lkP4Q);\n" +
++      "  }\n" +
++      "  if (lkWv.x != 0.0 || lkWv.y != 0.0) lkWv += lkP4Ch;\n" +
+       "  vec2 lkP4Dw = fwidth(lkWv);   // P4 water G2 (6)\n",
+     count: 2,
+   },
+@@ -1399,7 +1422,8 @@
+     find: "    col += vec3(0.7, 0.88, 1.0) * uOrbGlow * 0.5 * ggxSpec(Ns, V, lO, 0.28) * (0.6 + 0.4 * spark) * zone;\n",
+     repl:
+       "    // P4 water Q8: the glint anisotropic and cyan-white (F000 / loop F030: a wide band, ~200,235,245 at its core).\n" +
+-      "    col += mix(vec3(0.7, 0.88, 1.0), vec3(0.58, 0.83, 0.91), uLkP4G.z) * uOrbGlow * 0.5 * p4GgxAniso(Ns, V, lO, uLkP4G.x, uLkP4G.y) * (0.6 + 0.4 * spark) * zone;\n",
++      "    // (fix W1: the cyan-white keeps MAIN's tint's luma, 0.850; uLkP4G.w a gain on the glint: the lane's first lobe was dimmer than MAIN's)\n" +
++      "    col += mix(vec3(0.7, 0.88, 1.0), vec3(0.630, 0.901, 0.989), uLkP4G.z) * (uOrbGlow * 0.5 * uLkP4G.w) * p4GgxAniso(Ns, V, lO, uLkP4G.x, uLkP4G.y) * (0.6 + 0.4 * spark) * zone;\n",
+   },
+ ];
+ const P4_Q9: P4Edit[] = [
+@@ -1407,9 +1431,10 @@
+     find: "vec3 lkBump(vec3 Pw, vec3 dPx, vec3 dPy, float kDof, out vec2 sig) {\n",
+     repl:
+       "uniform vec4 uLkP4Gl;   // P4 water Q9: the alias guard's footprint band (lattice cells), and the distance band it fades in over (m)\n" +
++      "float lkP4GJw = 0.0;   // P4 water fix W2: the guard's step-back at this pixel (lkP4GlassJump; 0 in the walk pass)\n" +
+       "vec3 lkBump(vec3 Pw, vec3 dPx, vec3 dPy, float kDof, out vec2 sig) {\n" +
+       "  // (the ring zone, 13-28 m at rest, keeps its wavelets: F000's rings are agitated)\n" +
+-      "  float lkGd = smoothstep(uLkP4Gl.z, uLkP4Gl.w, distance(cameraPosition, Pw));\n",
++      "  float lkGd = smoothstep(uLkP4Gl.z, uLkP4Gl.w, distance(cameraPosition, Pw)) * (1.0 - lkP4GJw);\n",
+   },
+   {
+     find: "    float cx = lkCoh(Lx * kDof) * lkAvg(Ly * kDof);\n    float cy = lkCoh(Ly * kDof) * lkAvg(Lx * kDof);\n",
+@@ -1421,6 +1446,43 @@
+       "    cx *= lkGa;\n" +
+       "    cy *= lkGa;\n",
+   },
++  {
++    // fix W2 (judge: Q9's glassier far water unmasked the orbit ghost, a quarter-size walk texel interpolated over 4 x 4 px, that
++    // MAIN's corduroy hid): where the walk's four taps disagree (G6's measure) the guard steps back to MAIN's bump.
++    find: "#if defined(LAKE_R12) && defined(LK_CACHEN) && defined(LK_HALF) && defined(LK_WALKREPROJ)\n",
++    repl: /* glsl */ `#if defined(LAKE_R12) && defined(LK_CACHEN) && defined(LK_HALF) && defined(LK_WALKREPROJ) && !defined(LK_WALKPASS)
++// P4 water fix W2: smoothstep(uLkP4GJ.x, uLkP4GJ.y) of the walk taps' spread at this pixel (share-weighted luma + 0.25 x the
++// share spread); uLkP4GJ.z 0 turns it off.
++uniform vec4 uLkP4GJ;
++float lkP4GlassJump() {
++  if (uLkP4GJ.z <= 0.0) return 0.0;
++  vec4 c = uLkWalkVP * vec4(vWorldPos, 1.0);
++  vec2 wsz = vec2(textureSize(uLkWalk, 0));
++  vec2 q = (c.xy / c.w * 0.5 + 0.5) * wsz - 0.5;
++  ivec2 i0 = ivec2(floor(q));
++  ivec2 mx = ivec2(wsz) - 1;
++  vec4 a = texelFetch(uLkWalk, clamp(i0, ivec2(0), mx), 0);
++  vec4 b = texelFetch(uLkWalk, clamp(i0 + ivec2(1, 0), ivec2(0), mx), 0);
++  vec4 d = texelFetch(uLkWalk, clamp(i0 + ivec2(0, 1), ivec2(0), mx), 0);
++  vec4 e = texelFetch(uLkWalk, clamp(i0 + ivec2(1, 1), ivec2(0), mx), 0);
++  vec4 l = vec4(dot(a.rgb, LUMA), dot(b.rgb, LUMA), dot(d.rgb, LUMA), dot(e.rgb, LUMA));
++  vec4 s = vec4(a.a, b.a, d.a, e.a);
++  float dl = max(max(l.x, l.y), max(l.z, l.w)) - min(min(l.x, l.y), min(l.z, l.w));
++  float ds = max(max(s.x, s.y), max(s.z, s.w)) - min(min(s.x, s.y), min(s.z, s.w));
++  return uLkP4GJ.z * smoothstep(uLkP4GJ.x, uLkP4GJ.y, dl + 0.25 * ds);
++}
++#endif
++#if defined(LAKE_R12) && defined(LK_CACHEN) && defined(LK_HALF) && defined(LK_WALKREPROJ)
++`,
++  },
++  {
++    find: "    lkN = lkBump(vWorldPos, lkDPx, lkDPy, kDof, lkSig);\n",
++    repl:
++      "#if defined(LK_HALF) && defined(LK_WALKREPROJ) && !defined(LK_WALKPASS)\n" +
++      "    lkP4GJw = lkP4GlassJump();   // P4 water fix W2\n" +
++      "#endif\n" +
++      "    lkN = lkBump(vWorldPos, lkDPx, lkDPy, kDof, lkSig);\n",
++  },
+ ];
+ /** (P4 water G6) The water reads the quarter-size walk (LK_HALF: lake v4, `?lkhalf` not 0). */
+ function walkHalfWanted(lq: URLSearchParams | null) {
+@@ -1432,7 +1494,11 @@
+   return {
+     g2: on && lq?.get("lkchop") !== "0",
+     q8: on && lq?.get("lkring") !== "r11",
+-    q9: on && lq?.get("lkglass") !== "0",
++    // Q9 is OFF by default since the fix round (`?lkglass=1` turns it on, with the W2 gate; `&lkglassj=0` without it): its glassier
++    // far water unmasked the orbit ghost (judge W2, ptr_left / ptr_right) that MAIN's corduroy hides, and gated off where the
++    // quarter-size walk's taps disagree (the judge's fallback) it keeps ~10 % of its gain: the taps disagree over most of the far
++    // water (q00 right floes lap MAIN 9.05, Q9 5.84, gated 8.23 / 8.99 with the 0.01-0.04 / 0.004-0.016 band). WORK/LOG.md fix round.
++    q9: on && lq?.get("lkglass") === "1",
+     // G6 is OFF by default (`?lkwalkj=1` turns it on): it removes the orbit ghost, but the pixel's own walk it blends in flickers
+     // at the far floes' feet where the quarter-size walk's bilinear read was steady: 5 new pop clusters >= 6 px over the six
+     // AA paths (fast 1, reverse 2, leave 2; none with it off), which the waterline AA gate does not allow (WORK/LOG.md 03:47).
+@@ -2699,17 +2765,21 @@
+             }
+           }
+         }
+-        // P4 water (`?p4water=0` = MAIN exactly: no text, no define, no uniform; per task `?lkchop=0`, `?lkring=r11`, `?lkglass=0`;
+-        // G6 only with `?lkwalkj=1`). The knobs are live uniforms (lab: __hero.water.material.uniforms.uLkP4*), shared by the walk /
++        // P4 water (`?p4water=0` = MAIN exactly: no text, no define, no uniform; per task `?lkchop=0`, `?lkring=r11` off; Q9 only
++        // with `?lkglass=1`, G6 only with `?lkwalkj=1`). The knobs are live uniforms (lab: __hero.water.material.uniforms.uLkP4*), shared by the walk /
+         // cache passes.
+         const p4 = p4WaterTasks(lq);
+         if (p4.g2) {
+           frag = p4Apply(frag, P4_G2, "G2");
+           defines.LK_P4FP = "1.500";
+           // chop: slope per unit noise gradient (octave 1, 2), fade-out band from the camera (m); frequencies (1/m), drift (m/s)
+-          mirrorUniforms.uLkP4C = { value: new THREE.Vector4(0.55, 0.22, 19.0, 26.0) };
++          mirrorUniforms.uLkP4C = { value: new THREE.Vector4(0.85, 0.36, 19.0, 26.0) };
+           mirrorUniforms.uLkP4K = { value: 0.0 };
+-          mirrorUniforms.uLkP4CF = { value: new THREE.Vector4(0.45, 1.0, 0.35, 0.6) };
++          mirrorUniforms.uLkP4CF = { value: new THREE.Vector4(0.3, 0.65, 0.35, 0.6) };
++          // fix (judge W3 / W4 / W5): band limit 0.1-0.25 (was 0.2-0.45), no third octave (was 0.42), slope soft limit; the chop's
++          // AA (its slope change per px) and the onset feather (m)
++          mirrorUniforms.uLkP4B = { value: new THREE.Vector4(0.1, 0.25, 0.0, 0.3) };
++          mirrorUniforms.uLkP4D = { value: new THREE.Vector4(0.07, 2.0, 0, 0) };
+           // the train: phase (m), amplitude share, noise frequency (1/m); the specular AA's share of the tilt's change per pixel
+           mirrorUniforms.uLkP4W = { value: new THREE.Vector4(0.25, 0.25, 0.33, 0.3) };
+           // the tilted reflection's floor (x the flat water's elevation)
+@@ -2720,7 +2790,11 @@
+           // (lab, with the engine's debug option: `lkringq=<Q>` the profile's steepening)
+           const rq = opts.debug && lq && lq.get("lkringq") !== null ? Number(lq.get("lkringq")) : NaN;
+           mirrorUniforms.uLkP4R = { value: new THREE.Vector4(rq >= -0.9 && rq <= 0.9 ? rq : -0.35, 0.3, 0.48, 0.55) };
+-          mirrorUniforms.uLkP4G = { value: new THREE.Vector4(0.16, 0.078, 0.6, 0) };
++          // the glint: GGX alpha across / along the view, cyan-white share, gain. Fix (judge W1): the builder's anisotropic lobe
++          // (0.16 x 0.078) spread MAIN's glint (alpha 0.0784 = ggxSpec's 0.28^2) sideways and its tint lost 8 % luma: the near
++          // glint was dimmer than MAIN (centre column x680-760 y640-700, frozen same-time A/B: MAIN 192.0, builder 188.4, F000 200.3).
++          // Now MAIN's isotropic lobe, a cyan-white of MAIN's luma, x1.3: 196.5 (glint box x515-865 y665-710 190.7, F000 190.5).
++          mirrorUniforms.uLkP4G = { value: new THREE.Vector4(0.0784, 0.0784, 0.6, 1.3) };
+         }
+         if (p4.g6 && walkHalfWanted(lq)) {
+           frag = p4Apply(frag, P4_G6, "G6");
+@@ -2733,6 +2807,9 @@
+           const gg = opts.debug && lq?.get("lkglassg") ? (lq.get("lkglassg") as string).split(",").map(Number) : [];
+           // (distance band 30-40 m: with 24-34 m the near far floes' waterlines at ~33 m got two new 6 px pops, fast / leave paths)
+           mirrorUniforms.uLkP4Gl = { value: gg.length === 2 && gg[0] >= 0 && gg[1] > gg[0] ? new THREE.Vector4(gg[0], gg[1], 30, 40) : new THREE.Vector4(0.15, 0.45, 30, 40) };
++          // fix W2: the guard steps back where the quarter-size walk's taps disagree (band of their spread; z 1 on)
++          // (lab `?lkglassj=0`: off, the builder's Q9)
++          mirrorUniforms.uLkP4GJ = { value: new THREE.Vector4(0.01, 0.04, lq?.get("lkglassj") === "0" ? 0 : 1, 0) };
+         }
+         // (No far-water rest correction: it was a fit of the ENV lane's model to the plate.)
+       } else if (opts.mirror.corr) {

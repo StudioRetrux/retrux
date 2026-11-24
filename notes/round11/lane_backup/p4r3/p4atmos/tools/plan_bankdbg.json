@@ -1,0 +1,4 @@
+[
+ {"name":"p06_fog1","pose":["expand",2.97],"t":40},
+ {"name":"p06_fog0","pose":["expand",2.97],"t":40,"js":"__hero.choreo.drivers.fogHold=0; window.__p4fog=1"}
+]

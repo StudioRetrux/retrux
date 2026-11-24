@@ -1,0 +1,2 @@
+hold_main  n 330 | hold L 1522 | hold C 3998 | hold R 1536 | release L 11272 | release C 12699 | release R 14218
+hold_lane  n 330 | hold L 1512 | hold C 3987 | hold R 1529 | release L 11283 | release C 12562 | release R 14182 | vs first: frames with px>16: 330, max 95, mean 0.411

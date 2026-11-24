@@ -1,0 +1,33 @@
+frames 240 thr 20: lake+band px-frames 59387349; |X-R|>thr 306055; toward GT 173607, AWAY from GT 34686
+-- dark (away from GT): px 31353, events >= 6 px: 329
+  k71-182 (112f) x1003-1051 y487-491 n3510 nmax55 dmean-31 dmax58
+  k61-171 (111f) x0-69 y493-504 n2004 nmax42 dmean-24 dmax55
+  k62-160 (99f) x1179-1205 y661-670 n1235 nmax16 dmean-30 dmax62
+  k127-177 (51f) x172-230 y499-502 n885 nmax34 dmean-32 dmax58
+  k90-160 (71f) x189-230 y541-544 n845 nmax13 dmean-52 dmax90
+  k150-203 (54f) x917-968 y751-762 n819 nmax35 dmean-47 dmax110
+  k53-159 (107f) x1289-1349 y675-680 n788 nmax16 dmean-29 dmax40
+  k73-123 (51f) x222-269 y499-499 n775 nmax24 dmean-47 dmax62
+  k53-132 (80f) x291-316 y541-546 n674 nmax24 dmean-28 dmax44
+  k167-202 (36f) x561-593 y491-498 n600 nmax67 dmean-28 dmax56
+  k75-127 (53f) x867-890 y470-470 n597 nmax15 dmean-24 dmax32
+  k64-108 (45f) x272-290 y502-508 n569 nmax23 dmean-23 dmax29
+  k205-224 (20f) x538-597 y496-510 n528 nmax60 dmean-31 dmax54
+  k31-49 (19f) x577-634 y494-506 n515 nmax47 dmean-35 dmax66
+  k75-94 (20f) x604-628 y490-494 n510 nmax32 dmean-29 dmax43
+-- bright (away from GT): px 3333, events >= 6 px: 34
+  k47-175 (129f) x151-176 y538-551 n1440 nmax22 dmean42 dmax138
+  k100-154 (55f) x1147-1162 y513-523 n456 nmax15 dmean25 dmax39
+  k198-225 (28f) x97-134 y542-561 n289 nmax31 dmean38 dmax120
+  k21-39 (19f) x116-143 y547-563 n175 nmax22 dmean42 dmax140
+  k210-214 (5f) x322-334 y508-527 n163 nmax64 dmean21 dmax26
+  k0-18 (19f) x85-111 y562-577 n137 nmax13 dmean55 dmax133
+  k63-73 (11f) x1152-1158 y516-520 n84 nmax14 dmean23 dmax27
+  k228-239 (12f) x74-90 y559-564 n54 nmax8 dmean66 dmax138
+  k98-115 (18f) x1151-1151 y487-490 n47 nmax4 dmean22 dmax25
+  k168-173 (6f) x1136-1141 y515-521 n45 nmax12 dmean22 dmax27
+  k37-43 (7f) x1145-1149 y519-528 n42 nmax11 dmean23 dmax34
+  k0-7 (8f) x1131-1137 y543-548 n34 nmax8 dmean23 dmax29
+  k175-182 (8f) x1130-1136 y516-519 n22 nmax5 dmean21 dmax25
+  k22-25 (4f) x1141-1144 y530-536 n15 nmax12 dmean26 dmax40
+  k163-164 (2f) x1142-1143 y515-519 n14 nmax10 dmean24 dmax29

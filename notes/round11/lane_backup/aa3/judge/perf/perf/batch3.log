@@ -1,0 +1,4 @@
+[slot] !judge-perf:sep1440 waiting (load 28.6 / max 24, slots 2, holders [{"label":"!judge-perf:hitch","pid":23460,"at":1795159844809,"slot":1}])
+[slot] !judge-perf:sep1440 waiting (load 26.3 / max 24, slots 2, holders [{"label":"!judge-perf:hitch","pid":23460,"at":1795159844809,"slot":1}])
+[slot] !judge-perf:sep1440: taken (load 22.9)
+[slot] !judge-perf:sep1440: freed (exit 0)

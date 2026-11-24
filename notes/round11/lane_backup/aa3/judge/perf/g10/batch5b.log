@@ -1,0 +1,3 @@
+[slot] !judge-perf:g10x2 waiting (load 13.4 / max 24, slots 2, holders [{"label":"judge-motion:realloop","pid":29967,"at":1795160482175,"slot":0},{"label":"judge-perf:ctxloss","pid":26646,"at":1795160481954,"slot":1}])
+[slot] !judge-perf:g10x2: taken (load 10.3)
+[slot] !judge-perf:g10x2: freed (exit 0)

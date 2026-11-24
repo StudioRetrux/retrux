@@ -209,3 +209,35 @@ vec3 envIrradiance(vec3 n) {
   return textureCubeUV(uEnvMap, n, 1.0).rgb * uEnvIntensity;
 }
 `;
+
+/**
+ * Tone-compressed MSAA resolve (`?aaresolve`, 19 Nov: "the water's edge by the ice looks like low-quality anti-aliasing when
+ * the camera moves"). The 4x resolve averaged scene-linear HDR: bright water against a dark floe is ~10:1 there, so after AgX
+ * the first covered sample moved a waterline pixel ~60 % of the way and the outline stepped like 1-2 AA levels. Below the
+ * horizon line the environment pass now writes x = c / (K + luma c) per sample, the hardware resolve averages x, and the
+ * readers expand c = K x / (1 - luma x), which is sum(c w) / sum(w) with w = 1 / (K + luma c) (Karis' weighting): a
+ * perceptual average at an edge, the exact inverse wherever a pixel's samples agree. K (uAAKnee, HeroEngine) is 0.5 without
+ * the waterline TAA's glide (the plate lake, `?lkglide=0`) and 0.6 with it (the T1 / T2 mirror lake), not Karis' 1: the lake is
+ * 0.5-1.5 here and the dark faces 0.015-0.2, where 1 + luma still left ~50 % of a waterline pixel's change in its first covered
+ * sample (linear: ~60 %). Display-even steps would need K ~ 0.18 (AgX's mid grey), but that also darkens every 1-sample sliver
+ * of a thin dark line, which then flickers more; in same-session sweeps K = 0.5 cut the waterline jumps > 48 levels by 65-74 %
+ * and > 32 by 26-37 % (K = 1: 40-49 / 20-29 %, K = 0.18: flicker energy up 0-9 %). Those sweeps predate the waterline TAA.
+ * With the TAA and its glide, AA6 raised K to 1.0 (0.5 darkened thin dark features beyond BASE and the 16-sample GT); the AA8
+ * knee study (K 0.6-1.0 on the six G1 paths) settled on 0.6: the only value that keeps every G1 / L4 cell >= 1 point inside its
+ * bar (1.0 missed the slow-path J48 floor), with the lowest summed GT error on thin dark features and waterline lines.
+ * The region (set per frame by RenderPipeline) is decided once per
+ * pixel centre, the same way in every writer and reader, so no pixel mixes the two spaces: below the horizon line
+ * (uAAPlane, a half-plane in pixels) and outside the box where a cloud card reaches below it (uAAExc: inside where all three
+ * half-planes, its columns, are >= 0). Nothing blended draws there, so blending keeps working in scene-linear values.
+ */
+export const GLSL_AA_RESOLVE = /* glsl */ `
+uniform vec3 uAAPlane;
+uniform mat3 uAAExc;
+uniform float uAAKnee;
+bool aaIn(vec2 px) {
+  vec3 q = vec3(px, 1.0);
+  return dot(q, uAAPlane) < 0.0 && !all(greaterThanEqual(q * uAAExc, vec3(0.0)));
+}
+vec3 aaCompress(vec3 c) { return c / (uAAKnee + max(dot(c, vec3(0.2126, 0.7152, 0.0722)), 0.0)); }
+vec3 aaExpand(vec3 x) { return uAAKnee * x / max(1.0 - max(dot(x, vec3(0.2126, 0.7152, 0.0722)), 0.0), 1.0 / 4096.0); }
+`;

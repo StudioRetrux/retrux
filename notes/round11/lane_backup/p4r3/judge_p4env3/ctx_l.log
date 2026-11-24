@@ -1,0 +1,9 @@
+[slot] judge_p4env3:ctxloss3 waiting (load 13.5 / max 30, slots 2, holders [{"label":"p4atmos:fix-batchA","pid":44320,"at":1795220941961,"slot":0},{"label":"p4ice3fix:dbg","pid":42727,"at":1795220877155,"slot":1}])
+[slot] judge_p4env3:ctxloss3: taken (load 9.5)
+L console.warning [hero] WebGL context lost
+L restored, lost=false
+N_t1 t=9.533
+N_t2_ptrTR t=12.05
+L_t1 t=9.533
+L_t2_ptrTR t=12.05
+[slot] judge_p4env3:ctxloss3: freed (exit 0)

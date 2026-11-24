@@ -1,0 +1,4 @@
+[slot] !judge-perfcode ident a7 waiting (load 19.1 / max 30, slots 3, holders [{"label":"!g3-i1-ident","pid":12729,"at":1795183560431,"slot":0},{"label":"judge-artrefl b6 AA6 hold/holdre/full","pid":12304,"at":1795183696419,"slot":1},{"label":"!g3-c2a","pid":15606,"at":1795183682021,"slot":2}])
+[slot] !judge-perfcode ident a7: taken (load 16.3)
+{"qs":"","port":"5197","knee":1,"taa":{"weight":0.5,"runs":22,"still":0,"valid":true},"targets":{"mirror":{"w":720,"h":383,"hash":"deec68b669048fc5"},"walk":{"w":360,"h":192,"hash":"7b445184c381223b"},"cache":{"w":1440,"h":766,"hash":"70ec0dc59d13b006"},"cacheN":{"w":1440,"h":766,"hash":"956455c51cc2cc06"},"reflection":{"w":720,"h":383,"hash":"b79c0123c7a4f688"},"final":{"w":1440,"h":766,"hash":"7031a3b7c5fd084c"}},"counts":{"frames":21,"mirror":21,"walk":21,"cache":0,"cacheOn":0},"nprog":16,"logs":[]}
+[slot] !judge-perfcode ident a7: freed (exit 0)

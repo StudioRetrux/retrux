@@ -1,0 +1,4 @@
+MAIN vs p4atmos=0 p04                          IDENTICAL final SAME | targets 14 (mirror,walk,cache,cacheN,reflection,main,refraction,back,bloom0,bloom1,bloom2,bloom3,bloom4,final) differ: - | programs 18 differ: - | logs 0/0
+MAIN vs p4atmos=0 p06                          IDENTICAL final SAME | targets 14 (mirror,walk,cache,cacheN,reflection,main,refraction,back,bloom0,bloom1,bloom2,bloom3,bloom4,final) differ: - | programs 18 differ: - | logs 0/0
+MAIN vs p4atmos=0 p07                          IDENTICAL final SAME | targets 14 (mirror,walk,cache,cacheN,reflection,main,refraction,back,bloom0,bloom1,bloom2,bloom3,bloom4,final) differ: - | programs 18 differ: - | logs 0/0
+MAIN vs p4atmos=0 p08                          IDENTICAL final SAME | targets 14 (mirror,walk,cache,cacheN,reflection,main,refraction,back,bloom0,bloom1,bloom2,bloom3,bloom4,final) differ: - | programs 18 differ: - | logs 0/0

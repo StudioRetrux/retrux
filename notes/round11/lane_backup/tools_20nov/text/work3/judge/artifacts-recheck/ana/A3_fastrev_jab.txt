@@ -1,0 +1,2 @@
+caps/fastrev/lane {"frames":120,"n":7010,"dark":6968,"max":43,"perFrame":58.4}
+caps/fastrev/off {"frames":120,"n":8352,"dark":8253,"max":52,"perFrame":69.6}

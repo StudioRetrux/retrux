@@ -1,0 +1,6 @@
+[
+ {"name": "x0", "js": ""},
+ {"name": "x1", "js": "__hero.orb.holdCut=0.95"},
+ {"name": "x2", "js": "(()=>{__hero.orb.holdCut=0.95;__hero.post.orbThr=3.5;__hero.post.holdGlowK=4;})()"},
+ {"name": "x3", "js": "(()=>{__hero.orb.holdCut=0.95;__hero.post.orbThr=3.5;__hero.post.holdGlowK=7;})()"}
+]

@@ -1,0 +1,6 @@
+L console.warning [hero] WebGL context lost
+L restored, lost=false
+N_t1 t=9.533
+N_t2_ptrTR t=12.05
+L_t1 t=9.533
+L_t2_ptrTR t=12.05

@@ -1,0 +1,18 @@
+04:19:19 ident A done
+04:19:59 fair fast done
+04:24:50 st d2_A [slot] wl3a:st-d2_A: freed (exit 0)
+04:24:57 fair reverse done
+04:24:59 CHAIN D DONE
+04:25:13 ident B done
+04:25:26 st d1_A [slot] wl3a:st-d1_A: freed (exit 0)
+04:26:05 st d2_W [slot] wl3a:st-d2_W: freed (exit 0)
+04:26:42 st d1_W [slot] wl3a:st-d1_W: freed (exit 0)
+04:26:42 CHAIN C DONE
+04:29:17 fair slow done
+04:32:36 fair medium done
+04:35:04 fair diag done
+04:38:49 fair leave done
+04:38:49 CHAIN B DONE
+04:42:48 rl e2 done
+04:45:13 rl e1 done
+04:48:15 rl t2 done

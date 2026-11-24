@@ -1,0 +1,11 @@
+pair 0 A 20.4 B 19.9 B/A 0.975 VALID others []/[] load 2.3..2.4
+pair 1 A 20.4 B 19.6 B/A 0.961 VALID others []/[] load 2.6..2.7
+pair 2 A 20.5 B 20.2 B/A 0.985 VALID others []/[] load 3..3.2
+pair 3 A 19.7 B 20.1 B/A 1.020 VALID others []/[] load 2.8..2.7
+pair 4 A 20.3 B 20.2 B/A 0.995 VALID others []/[] load 3.1..3
+pair 5 A 21.2 B 20.3 B/A 0.958 VALID others []/[] load 3.2..3.1
+pair 6 A 19.3 B 20.3 B/A 1.052 VALID others []/[] load 2.9..2.6
+pair 7 A 21.2 B 20.0 B/A 0.943 VALID others []/[] load 2.7..2.7
+valid 8 | paired median B/A 0.980 (lower 0.975 upper 0.985) mean 0.986 | A med 20.4 B med 20.1
+  A modes (split 20.8 ms): low 20.4 (n 6) | high 21.2 (n 2)
+  B modes (split 20.8 ms): low 20.1 (n 8) | high - (n 0)

@@ -1,0 +1,1 @@
+rl/T2d2_main_a: 150 frames 720x270 buf 2268,1290 pipe 2268,1290 scale 1 dt p50 40.2 p90 43.1 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p50 1.2/2.5/2.8 cap ms p50 0.0/0.1/0.2 gap p50/p90/max 40.2/43.0/68.7

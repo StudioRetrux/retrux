@@ -1,0 +1,1 @@
+rl/T1d2_d1main_b: 150 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 23.4 p90 26.8 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p50 0.8/2.3/2.9 cap ms p50 0.0/0.1/0.1 gap p50/p90/max 23.4/26.8/45.8

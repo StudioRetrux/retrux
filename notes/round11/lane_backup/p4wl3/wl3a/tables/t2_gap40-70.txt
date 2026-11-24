@@ -1,0 +1,42 @@
+M      t2_M1      n 120 dtp50 44.6 | left all 730 band 750 | shelf all 704 band 727 | right all 1342 band 1341
+M      t2_M2      n 143 dtp50 43.7 | left all 716 band 736 | shelf all 651 band 668 | right all 1319 band 1320
+M      t2_M3      n 142 dtp50 44.9 | left all 739 band 759 | shelf all 716 band 732 | right all 1354 band 1363
+L      t2_L1      n 123 dtp50 47.6 | left all 664 band 671 | shelf all 657 band 665 | right all 1433 band 1358
+L      t2_L2      n 125 dtp50 47.0 | left all 677 band 683 | shelf all 676 band 674 | right all 1468 band 1513
+L      t2_L3      n 104 dtp50 49.2 | left all 769 band 805 | shelf all 832 band 823 | right all 1548 band 1502
+POOLED dt 40-70:
+  M      n  405 dt mean 48.72 | left 748 | shelf 708 | right 1341
+  L      n  352 dt mean 48.94 | left 715 | shelf 715 | right 1455
+1-ms bins left (vs M):
+  40-41  M n   0   -1  L n   1   -1
+  41-42  M n   1   -1  L n   0   -1
+  42-43  M n  16  835  L n   0   -1
+  43-44  M n  73  908  L n   1   -1
+  44-45  M n 107  673  L n  13  499
+  45-46  M n  75  711  L n  19  689
+  46-47  M n  29  554  L n  40  649
+  47-48  M n   4   -1  L n  96  672
+  48-49  M n   8   -1  L n  71  786
+  49-50  M n   3   -1  L n  32  826
+  50-51  M n   0   -1  L n  18  515
+  51-52  M n   1   -1  L n  17  647
+  52-53  M n   1   -1  L n  11  665
+  53-54  M n   1   -1  L n   4   -1
+  54-55  M n   5   -1  L n   3   -1
+  55-56  M n   6   -1  L n   6   -1
+  56-57  M n   2   -1  L n   5   -1
+  57-58  M n   1   -1  L n   2   -1
+  58-59  M n   2   -1  L n   2   -1
+  59-60  M n   2   -1  L n   2   -1
+  60-61  M n   4   -1  L n   3   -1
+  61-62  M n  11  923  L n   3   -1
+  62-63  M n   4   -1  L n   0   -1
+  63-64  M n   4   -1  L n   1   -1
+  64-65  M n   4   -1  L n   1   -1
+  65-66  M n   5   -1  L n   0   -1
+  66-67  M n  15  863  L n   0   -1
+  67-68  M n  11  951  L n   1   -1
+  68-69  M n   4   -1  L n   0   -1
+  69-70  M n   6   -1  L n   0   -1
+dt-matched (weights M):  left M 670 | L 587 (-12 %, n 211)  shelf M 656 | L 575 (-12 %, n 211)  right M 1323 | L 1298 (-2 %, n 211)
+dt-matched (weights L):  left M 617 | L 632 (+2 %, n 72)  shelf M 595 | L 601 (+1 %, n 72)  right M 1310 | L 1314 (+0 %, n 72)

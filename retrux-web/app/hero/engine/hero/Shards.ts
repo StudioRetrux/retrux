@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { HERO_CENTER, ORB_RADIUS, SHARD_BELT_NAMES, WATER } from "../config";
 import { clamp, lerp, smoothstep } from "../math";
+import { laneSource } from "../quality";
 import { GLSL_COMMON, GLSL_ENV } from "../shaders/chunks";
 import { LAYER, type QualityProfile } from "../types";
 import type { SharedUniforms } from "../uniforms";
@@ -20,6 +21,20 @@ import type { SharedUniforms } from "../uniforms";
  */
 
 const TAU = Math.PI * 2;
+
+/**
+ * P4 round 1, lane orb, Q7 (panel P3: "flat-shaded, opaque, low-poly gems, darker and more saturated than the reference's
+ * translucent glassy crystals"): `?shard2=r11` (or `?p4orb=0`) keeps the round-11 crystals exactly. T1 / T2 only (HeroEngine).
+ */
+const P4_SHARD = typeof location === "undefined" || (() => {
+  const q = new URLSearchParams(location.search);
+  return q.get("p4orb") !== "0" && q.get("shard2") !== "r11";
+})();
+/** P4 round 3, lane orb (F4, the brightest facets): with Q7 only; `?p4orb3=0` (all of round 3) or `?shardtop=0` off. */
+const P4_SHARD3 = typeof location === "undefined" || (() => {
+  const q = new URLSearchParams(location.search);
+  return q.get("p4orb3") !== "0" && q.get("shardtop") !== "0";
+})();
 
 /**
  * Belt speed: one turn per 4.03 s reference loop (the ring speeds are commensurate with it). The dense
@@ -100,6 +115,8 @@ uniform float uClock;
 uniform float uHold;
 uniform float uShatter;
 uniform float uContract;   // camera dolly progress (0 at rest)
+uniform vec3 uOut[3];      // round 11 P2b: widening of each belt (x, y, z) while ring A is opened (0 at rest and in older builds)
+uniform float uOutF[3];    // rings fix round 2: each belt's depth widening in front of its origin (= uOut[].z: symmetric, as before)
 uniform vec2 uResolution;
 attribute vec3 aPivot;   // crystal centre relative to its orbit origin, phase 0
 attribute vec3 aAxis;    // long axis
@@ -161,6 +178,15 @@ void main() {
   // As the camera dollies in the belt tightens around the sculpture (QC round 1: at full dolly it spread
   // across the frame and the nearest crystals filled it).
   cen *= 1.0 - 0.18 * uContract;
+  // Round 11 P2b: the belts widen (all three axes) as ring A's quarters move out, so the crystals stay outside the opened arcs
+  // (the reference's hold: the shards ring just outside A); x 1.0 exactly at rest.
+  // (Rings fix round 1: per belt and per axis, e.g. more in depth than across the view; equal components = the uniform widening.)
+  // (Rings fix round 2: the depth share may differ in front of the belt origin (+z, towards the camera; uOutF) and behind it
+  // (uOut.z), blended C1 over the 0.5 m behind the origin; with uOutF == uOut.z the line is exactly the uniform one.)
+  vec3 wo = uOut[orbit];
+  float wf = uOutF[orbit];
+  if (wf == wo.z) cen *= 1.0 + wo;
+  else cen *= vec3(1.0 + wo.xy, 1.0 + mix(wf, wo.z, 1.0 - smoothstep(-0.5, 0.0, cen.z)));
   cen += normalize(cen) * vec3(1.0, 0.8, 0.5) * (burst * (0.8 + 1.1 * h.z));
   cen += axisO * (0.035 * sin(uClock * BOB_W + seed * 31.0) + burst * (h.x - 0.5) * 0.7);
   vec3 cw = (modelMatrix * vec4(uBeltOrigin[orbit] + cen, 1.0)).xyz;
@@ -197,6 +223,24 @@ uniform vec3 uSunColor;
 uniform float uReflPass;
 uniform vec3 uTint;        // transmission colour of one pass (Blender base colour)
 uniform vec3 uTintAlt;     // per-crystal variation towards this
+#ifdef SHARD_R11
+// Round 11 (with the round-11 ice; ?ice=r10, ?ice=r11a and T0 compile the round-10 constants): x chroma kept, y / z the
+// facets' value range (round 10: 0.85, 0.45, 1.12).
+uniform vec3 uR11Sh;
+#endif
+#ifdef SHARD_P4
+// P4 Q7: x the body's luminance cap (1 before), y the share of the scene behind that thin tips and silhouettes pass unabsorbed,
+// z the internal mosaic's share of the transmitted light, w the far crystals' haze (0.45 before).
+uniform vec4 uP4Sh;
+// P4 Q7: x the internal facets' value spread (0 = none), y their internal reflection (the pale sub-facets), z the absorption
+// density scale (1 = uDensity as before), w the share of internal facets that reflect.
+uniform vec4 uP4ShB;
+#endif
+#ifdef SHARD_P4R3
+// P4 round 3 (F4): the brightest facets (the top of the facet value range, fh.z from x) lifted by y with their chroma pushed by z
+// (AgX desaturates a brighter blue: a plain lift left the B-R >= 85 mask's p95 where it was).
+uniform vec4 uP4ShC;
+#endif
 uniform float uDensity;
 uniform float uIor;
 uniform float uRoughness;
@@ -232,7 +276,12 @@ void main() {
   float grain = vnoise(vLocal * 7.0 + seed * 37.0);
   float path = (0.22 + 1.3 * radial) * (0.55 + 0.45 * cosT) * (1.0 + 0.2 * grain);
   vec3 tint = mix(uTint, uTintAlt, vShard.w);
+#ifdef SHARD_P4
+  // (Q7: uP4ShB.z scales the absorption: lighter, less saturated bodies, as the reference's translucent crystals.)
+  vec3 T = pow(tint, vec3(uDensity * uP4ShB.z * path));
+#else
   vec3 T = pow(tint, vec3(uDensity * path));
+#endif
 
   // Exit ray, bent towards the prism base, plus a per-facet tilt standing in for the far facet.
   vec3 ex = normalize(refract(-V, N, 1.0 / uIor) - N * 0.4 + (fh - 0.5) * 0.55);
@@ -256,6 +305,35 @@ void main() {
   // A crystal in front of the orb sampled the orb's bright copy and AgX bleached it grey-white (QC round 7, T07): the
   // light behind is capped before absorption, so it stays a backlit cobalt.
   behind *= min(1.0, 0.9 / max(luma(behind), 1e-3));
+#ifdef SHARD_P4
+  // Q7: the scene straight behind the crystal (the blurred copy; it holds no crystals), for the thin edges and the far haze.
+  vec3 thru = uReflPass < 0.5 ? textureLod(uRefraction, gl_FragCoord.xy / uResolution, uRefrLod).rgb : behind;
+  thru *= min(1.0, 1.2 / max(luma(thru), 1e-3));
+  // Q7: an internal refraction mosaic (F000 / F420: many small light and dark sub-facets inside each face). Three cut planes per
+  // crystal, fixed in its own frame (vLocal), split it into eight internal facets: each side of each plane adds its own share to
+  // the facet's value, internal normal and reflection (hi), so every face carries patches of sky and lake that shift as the
+  // crystal turns. The sides blend over about a pixel (fwidth), so the internal lines are anti-aliased: a hard step there is a
+  // shading edge MSAA does not touch, and it crawled on the slowly turning hold crystals.
+  vec3 hi = vec3(0.5);
+  vec3 mo = vec3(0.0);
+  {
+    float rr = 1.0 / vShard.y;
+    vec3 code = vec3(0.0);
+    for (int k = 0; k < 3; k++) {
+      vec3 hk = hash33(vec3(seed * 53.0 + float(k) * 11.0, float(k) * 5.3 + 2.0, seed * 29.0 + 7.0)) - 0.5;
+      float dk = dot(vLocal, normalize(hk + 1e-4)) - hk.x * rr;
+      float sk = smoothstep(-1.0, 1.0, dk / max(fwidth(dk), 1e-6)) - 0.5;
+      code += sk * (hash33(vec3(seed * 71.0 + float(k) * 3.7, float(k) * 1.3 + 5.0, seed * 17.0 + float(k))) - 0.5) * 2.0;
+    }
+    hi = saturate(0.5 + code * 0.8);
+    vec3 m1 = envRadiance(reflect(ex, normalize(N + code * 1.2)), 0.1);
+    vec3 m2 = envRadiance(reflect(ex, normalize(-N + code.zxy * 1.2)), 0.1);
+    mo = mix(m1, m2, hi.z);
+    mo /= 1.0 + 0.06 * luma(mo);
+    mo *= min(1.0, 0.9 / max(luma(mo), 1e-3));
+    behind = mix(behind, mo, uP4Sh.z);
+  }
+#endif
 
   // Inside: transmitted scene, sky light scattered inside (absorbed twice), the low sun behind the swarm
   // (broad forward scatter plus a flash when the exit ray finds it), the orb as a sphere light.
@@ -269,14 +347,34 @@ void main() {
     + uSunColor * T * (0.05 * back + 1.2 * flash)
     + uOrbColor * T * (uOrbRadius * uOrbRadius / d2) * (0.35 + 0.65 * orbWrap) * 0.5;
   // The body's luminance capped at ~1 scene-linear, chroma kept (the glints and specular below stay uncapped).
+#ifdef SHARD_P4
+  // (Q7: uP4Sh.x, 1.15: the bodies sat 13-27 L below the reference's, median 122-131 vs 135-158.)
+  body *= min(1.0, uP4Sh.x / max(luma(body), 1e-3));
+#else
   body *= min(1.0, 1.0 / max(luma(body), 1e-3));
+#endif
   // Each facet its own value (the far facets differ in path and light): flat-shaded plastic otherwise.
   // (QC round 4: no facet went below B ~205, every crystal the same neon royal blue; the reference's shadow facets
   // sit at ~60,100,175: a deeper low end. Round 7: 0.38-1.2 read as random low-poly facets -> 0.62-1.12, plus a lighter
   // core and darker rims.)
   // (0.62 floor until QC round 9: the palette sat in light periwinkle; the reference's dark facets reach ~50,105,195.)
+#ifdef SHARD_R11
+  body *= mix(uR11Sh.y, uR11Sh.z, fh.z);
+#else
   body *= mix(0.45, 1.12, fh.z);
+#endif
   body *= mix(0.75, 1.1, NdotV);
+#ifdef SHARD_P4R3
+  // (F4, rejudge p4orb: the brightest crystal facets sat 15-20 L under the reference's, p95 of the blue-dominant px 147-156 vs
+  // 168-178 at q03 / p04 / p06, at matching saturation.)
+  float topK = smoothstep(uP4ShC.x, 1.0, fh.z);
+  vec3 lifted = body * (1.0 + uP4ShC.y * topK);
+  body = max(vec3(luma(lifted)) + (lifted - vec3(luma(lifted))) * (1.0 + uP4ShC.z * topK), 0.0);
+#endif
+#ifdef SHARD_P4
+  // Q7: each internal facet its own value around 1 (the mosaic's light and dark patches inside a face).
+  body *= 1.0 + uP4ShB.x * (hi.x - 0.5);
+#endif
   // Per crystal: a value / hue jitter (+-12 %, a touch towards violet) and one in five frosted, catching the sky
   // as a pale lavender-white shard (reference F000 x878-910: near-white frosted crystals among the cobalt ones).
   float cr = fract(seed * 7.13 + 0.37);
@@ -307,6 +405,11 @@ void main() {
   float Fc = min(F, 0.35);
   refl *= mix(vec3(1.0), normalize(tint + 1e-3) * 1.45, 0.55);
   vec3 col = body * (1.0 - Fc) + refl * Fc + uSunColor * glint;
+#ifdef SHARD_P4
+  // Q7: a share of the internal facets sends the sky back out (total internal reflection after a short path): pale periwinkle
+  // sub-facets inside the cobalt, the reference's light patches and streaks.
+  col += mix(vec3(luma(mo)), mo, 0.5) * sqrt(T) * uP4ShB.y * smoothstep(0.9 - uP4ShB.w, 1.1 - uP4ShB.w, hi.y);
+#endif
   // A tight sun lobe as well: 1-3 px white glints on the facets that turn into the sun (the reference's tips flash
   // white, L 243-255; ours peaked at 220-237).
   col += uSunColor * min(ggxSpec(N, V, L, max(0.07, sqrt(fwidth(N.x) + fwidth(N.y)) * 0.5)), 40.0) * 0.06 * (1.0 - frosty);
@@ -316,13 +419,27 @@ void main() {
   // white streak, ours only scattered facet glints (QC round 7, T07).
   float thK = dot(ax, H);
   col += uSunColor * pow(sqrt(max(1.0 - thK * thK, 0.0)), 90.0) * 0.5 * smoothstep(0.0, 0.2, dot(N, L)) * (1.0 - frosty);
+#ifdef SHARD_P4
+  // Q7: thin tips and grazing silhouettes pass part of the scene behind unabsorbed (the reference's paler translucent edges).
+  col = mix(col, thru, uP4Sh.y * smoothstep(0.25, 1.0, max(1.0 - radial, pow(1.0 - NdotV, 2.0))));
+#endif
   // 15 % less chroma overall (the reference cobalt is a cornflower / periwinkle, not electric ultramarine).
+#ifdef SHARD_R11
+  col = mix(vec3(luma(col)), col, uR11Sh.x);
+#else
   col = mix(vec3(luma(col)), col, 0.85);
+#endif
   // Depth cue: crystals behind the orb lose some chroma and lift towards the haze (QC round 5: far shards were as
   // crisp and saturated as near ones). Relative to the orb's distance, so it holds at rest and in the hold.
   float orbDist = length(cameraPosition - vOrbPos);
   float haze = smoothstep(1.04, 1.3, length(cameraPosition - vWorldPos) / max(orbDist, 1e-3));
+#ifdef SHARD_P4
+  // (Q7: the far side's crystals go pale and see-through, the reference's L50 163-169 behind the rings: part of the haze is the
+  // scene behind them, and it reaches uP4Sh.w.)
+  col = mix(col, mix(mix(vec3(luma(col)), col, 0.55) * 0.92 + vec3(0.06, 0.07, 0.09), thru, 0.4), haze * uP4Sh.w);
+#else
   col = mix(col, mix(vec3(luma(col)), col, 0.55) * 0.92 + vec3(0.06, 0.07, 0.09), haze * 0.45);
+#endif
   gl_FragColor = vec4(min(col, vec3(24.0)), 1.0);
 }
 `;
@@ -931,6 +1048,8 @@ export class Shards {
   private readonly uHold = { value: 0 };
   private readonly uShatter = { value: 0 };
   private readonly uContract = { value: 0 };
+  private readonly uOut = { value: [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()] };
+  private readonly uOutF = { value: [0, 0, 0] };
   private readonly uReflPass = { value: 0 };
   private readonly phase = ORBITS.map((o) => o.phase);
   private clock = 0;
@@ -939,8 +1058,18 @@ export class Shards {
    * @param gltfScene hero GLB scene (reads nodes SHARD_BELT_NAMES; the source meshes are left untouched)
    * @param envDefines cubeUVDefines() of the PMREM environment
    * @param quality target crystal count (the 18 authored ones are always kept)
+   * @param opts.r11 the round-11 ice is on (IceMaterial.iceR11 and not ?ice=r11a): the crystals take its look (uR11Sh)
+   * @param opts.p4 P4 lane orb on this tier (T1 / T2; HeroEngine): Q7's glass crystals (with r11 only; `?shard2=r11` off)
    */
-  constructor(gltfScene: THREE.Object3D, shared: SharedUniforms, envDefines: Record<string, string>, quality: QualityProfile["shards"]) {
+  constructor(
+    gltfScene: THREE.Object3D,
+    shared: SharedUniforms,
+    envDefines: Record<string, string>,
+    quality: QualityProfile["shards"],
+    opts: { r11?: boolean; p4?: boolean } = {},
+  ) {
+    const p4 = !!opts.r11 && !!opts.p4 && P4_SHARD;
+    const p4r3 = p4 && P4_SHARD3;
     const center = new THREE.Vector3().fromArray(HERO_CENTER);
     gltfScene.updateMatrixWorld(true);
     const rand = mulberry32(0x9e3779b9);
@@ -1015,9 +1144,29 @@ export class Shards {
     this.material = new THREE.ShaderMaterial({
       name: "rx-shards",
       vertexShader: SHARD_VERT,
-      fragmentShader: SHARD_FRAG,
-      defines: { ...envDefines },
+      // (P4: off, the SHARD_P4 blocks are resolved away, so the source is MAIN's byte for byte; round 3 likewise.)
+      fragmentShader: laneSource(laneSource(SHARD_FRAG, "SHARD_P4R3", p4r3), "SHARD_P4", p4),
+      defines: { ...envDefines, ...(opts.r11 ? { SHARD_R11: "" } : {}), ...(p4 ? { SHARD_P4: "" } : {}), ...(p4r3 ? { SHARD_P4R3: "" } : {}) },
       uniforms: {
+        // Round 11 (fix round 2, judge 1: the crystals 9-13 B-R bluer and flatter than the twin / F000, B-R 104-108 vs 95-97,
+        // sd 15 vs 21-23): x chroma kept, y / z the facets' value range (round 10 0.85, 0.45, 1.12). Batch g15, twin-index
+        // mask at q00: B-R 103.5 -> 97 (twin 94.6). Only with SHARD_R11.
+        // (P4 Q7: chroma 0.75 -> 0.68 and the darkest facets 0.4 -> 0.55: median saturation 0.52-0.57 vs the reference's
+        // 0.43-0.51, bodies 13-27 L too dark.)
+        ...(opts.r11 ? { uR11Sh: { value: p4 ? new THREE.Vector3(0.68, 0.55, 1.22) : new THREE.Vector3(0.75, 0.4, 1.22) } } : {}),
+        // P4 Q7 (SHARD_P4): body cap, thin see-through share, mosaic share, far haze.
+        ...(p4 ? { uP4Sh: { value: new THREE.Vector4(1.15, 0.2, 0.4, 0.5) } } : {}),
+        // P4 Q7: internal facets' value spread, their internal reflection, absorption density scale, reflecting share.
+        // (Batches v4-v12, B-R >= 85 pixels, MAIN -> lane: q00 hero box L med / p95 / sat 130-133 / 160 / 0.52-0.55 -> 137 / 161 /
+        // 0.47 (F000 149 / 175 / 0.46), q01 125-134 -> 142 / 163 / 0.45 (F015 144 / 174 / 0.48), p04 132 -> 134 / 0.48 (F358 152 /
+        // 0.45); hue 223 deg unchanged. Reflection 0.7 / density 0.55 / haze 0.6 / see-through 0.25 (v6-v11) turned the far and
+        // intro crystals paper-white (qc sweep intro frames, the QC round 9 complaint); v12 s1 keeps them periwinkle.)
+        ...(p4 ? { uP4ShB: { value: new THREE.Vector4(0.8, 0.35, 0.7, 0.4) } } : {}),
+        // P4 round 3 (F4): top facets from fh.z x, lift y, chroma push z. (Batch e11, paired, B-R >= 85 px p95 off -> on / REF:
+        // q00 150.9 -> 163.1 / F000 163.5, q03 153.5 -> 162.9 / F045 168.4, p04 164.1 -> 172.7 / F358 177.7, p06 160.8 -> 174.1 /
+        // F420 170.2; median saturation within 0.017 of off (0.477 vs 0.483 at p04). (0.6, 0.35, 0.25): +6..+8 L; (0.55, 0.65,
+        // 0.5): p06 177.6, over the reference.)
+        ...(p4r3 ? { uP4ShC: { value: new THREE.Vector4(0.5, 0.5, 0.35, 0) } } : {}),
         uBeltAxis: { value: axes },
         uBeltOrigin: { value: origins },
         uBeltSpread: { value: new THREE.Vector3(ORBITS[0].spread, ORBITS[1].spread, ORBITS[2].spread) },
@@ -1026,6 +1175,8 @@ export class Shards {
         uHold: this.uHold,
         uShatter: this.uShatter,
         uContract: this.uContract,
+        uOut: this.uOut,
+        uOutF: this.uOutF,
         uReflPass: this.uReflPass,
         uResolution: shared.uResolution,
         uRefraction: shared.uRefraction,
@@ -1064,10 +1215,16 @@ export class Shards {
    * @param hold 0..1 press-and-hold: spreads the swarm out (x1.36-1.45 across the view) and slows it
    * @param shatter 0..1: outward burst with per-crystal delay and extra spin
    * @param contract 0..1 camera dolly progress: the belt tightens around the sculpture
+   * @param rateGiven true: `spin` already includes the hold's slow motion (HOLD_SLOW is skipped)
+   * @param out extra widening of the belts (round 11 P2b: with ring A's opening), 0 = none: one share for every belt and axis,
+   *   or (rings fix round 1) per belt [belt A across the view (x, y), belt A in depth (z), belt B across, belt B in depth]
+   *   (the outer swirl takes belt B's), or (rings fix round 2) the same four plus each belt's depth share in front of its origin
+   *   [..., belt A in front, belt B in front] (the depth share above is then the one behind the origin)
    */
-  update(dt: number, spin: number, hold: number, shatter: number, contract = 0) {
+  update(dt: number, spin: number, hold: number, shatter: number, contract = 0, rateGiven = false, out: number | readonly number[] = 0) {
     const h = clamp(hold);
-    const step = clamp(dt, 0, 0.25) * spin * lerp(1, HOLD_SLOW, smoothstep(0, 1, h));
+    // (rateGiven, round 11 P2b: the caller's spin already carries the hold's slow motion, so the hold factor is not applied again.)
+    const step = clamp(dt, 0, 0.25) * spin * (rateGiven ? 1 : lerp(1, HOLD_SLOW, smoothstep(0, 1, h)));
     this.clock = wrap(this.clock + step, CLOCK_PERIOD);
     for (let i = 0; i < ORBITS.length; i++) {
       this.phase[i] = wrap(this.phase[i] + step * BELT_RATE * ORBITS[i].rate, TAU);
@@ -1077,6 +1234,24 @@ export class Shards {
     this.uHold.value = h;
     this.uShatter.value = clamp(shatter);
     this.uContract.value = clamp(contract);
+    const o = this.uOut.value;
+    const of = this.uOutF.value;
+    if (typeof out === "number") {
+      const u = Math.max(0, out);
+      for (const v of o) v.set(u, u, u);
+      of[0] = of[1] = of[2] = u;
+    } else {
+      // (per belt a share may be negative, a belt drawn in; never below -0.5)
+      const ax = Math.max(-0.5, out[0]), az = Math.max(-0.5, out[1]), bx = Math.max(-0.5, out[2]), bz = Math.max(-0.5, out[3]);
+      o[0].set(ax, ax, az);
+      o[1].set(bx, bx, bz);
+      o[2].set(bx, bx, bz);
+      // (rings fix round 2: the depth share in front of each belt's origin; without it the same as behind, i.e. symmetric)
+      const fa = out.length > 5 ? Math.max(-0.5, out[4]) : az, fb = out.length > 5 ? Math.max(-0.5, out[5]) : bz;
+      of[0] = fa;
+      of[1] = fb;
+      of[2] = fb;
+    }
   }
 
   /** Mirror-camera pass for the water reflection: the screen-space scene copy is not valid there. */

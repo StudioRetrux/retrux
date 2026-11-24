@@ -1,0 +1,19 @@
+[slot] judge-artrefl b6 AA6 hold/holdre/full waiting (load 80.0 / max 30, slots 3, holders [{"label":"judge-artrefl b3 AA7 fast/diag/leave/rest","pid":8220,"at":1795183005855,"slot":0}], a priority waiter goes first)
+[slot] judge-artrefl b6 AA6 hold/holdre/full waiting (load 39.5 / max 30, slots 3, holders [], a priority waiter goes first)
+[slot] judge-artrefl b6 AA6 hold/holdre/full waiting (load 31.8 / max 30, slots 3, holders [{"label":"!g3-i1-ident","pid":12729,"at":1795183560431,"slot":0},{"label":"!g3-c1-gov","pid":11752,"at":1795183562848,"slot":1},{"label":"judge-perfcode g8a1","pid":13049,"at":1795183563211,"slot":2}])
+[slot] judge-artrefl b6 AA6 hold/holdre/full waiting (load 24.5 / max 30, slots 3, holders [{"label":"!g3-i1-ident","pid":12729,"at":1795183560431,"slot":0},{"label":"judge-perfcode g8b2","pid":13048,"at":1795183641007,"slot":1},{"label":"judge-perfcode g8b1","pid":13047,"at":1795183623082,"slot":2}])
+[slot] judge-artrefl b6 AA6 hold/holdre/full: taken (load 22.6)
+[cap] /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work7/artrefl/caps/hold_A6: 420 frames; 0 errors/warnings
+hold t 74s
+[jcap holdre] a7: 1 seg, 0 errors/warnings
+  a6: 1 seg, 0 errors/warnings
+  base: 1 seg, 0 errors/warnings
+holdre t 295s
+[cap] /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work7/artrefl/caps/medfull_A6: 60 frames; 0 errors/warnings
+medfull t 319s
+[cap] /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work7/artrefl/caps/restfull_A6: 12 frames; 0 errors/warnings
+restfull t 334s
+[cap] /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work7/artrefl/caps/medfull_bmask: 60 frames; 0 errors/warnings
+medfull mask t 381s
+[slot] judge-artrefl b6 AA6 hold/holdre/full: freed (exit 0)
+CHAIN_Y_DONE

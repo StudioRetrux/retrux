@@ -1,0 +1,10 @@
+[slot] fixer-e fixA-exp: taken (load 15.3)
+[jcap holdre] fin: 1 seg, 0 errors/warnings
+  fxa: 1 seg, 0 errors/warnings
+  base: 1 seg, 0 errors/warnings
+holdre 80s
+medium 122s
+reverse 149s
+rest fxa 166s
+rest fin 184s
+[slot] fixer-e fixA-exp: freed (exit 0)

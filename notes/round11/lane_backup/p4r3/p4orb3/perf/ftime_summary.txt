@@ -1,0 +1,16 @@
+== rest
+   lane {'blocks': 8, 'mean': 86.48, 'med': 88.1}
+   main {'blocks': 8, 'mean': 83.08, 'med': 84.1}
+   pairedMeanRatios [0.978, 0.988, 1.302, 1.017, 0.994, 1.215, 0.976, 0.954]
+   pairedMeanRatioMed 0.994
+   pairedMedRatios [1, 0.983, 1.303, 1.011, 1.006, 1.26, 0.991, 0.967]
+   pairedMedRatioMed 1.006
+   loadMax 8.35
+== hold
+   lane {'blocks': 8, 'mean': 71.48, 'med': 70.8}
+   main {'blocks': 8, 'mean': 71.58, 'med': 71.8}
+   pairedMeanRatios [1.055, 0.978, 0.986, 0.977, 0.819, 0.988, 1.123, 1.036]
+   pairedMeanRatioMed 0.988
+   pairedMedRatios [1.03, 0.968, 1, 0.949, 0.784, 0.977, 1.108, 1.103]
+   pairedMedRatioMed 1
+   loadMax 7.12

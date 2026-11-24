@@ -1,0 +1,12 @@
+hold: ice px 79583
+   main d2 mean 5.28 p95 15.3 p99 24.2 frac(d2>8) 22.08% | d1 mean 3.94 | lap 7.87
+   lane d2 mean 5.20 p95 15.2 p99 23.6 frac(d2>8) 21.00% | d1 mean 3.89 | lap 7.70
+sus: ice px 122402
+   main d2 mean 5.13 p95 15.0 p99 22.3 frac(d2>8) 21.80% | d1 mean 3.95 | lap 11.81
+   lane d2 mean 5.12 p95 15.5 p99 22.8 frac(d2>8) 21.42% | d1 mean 3.91 | lap 11.81
+eye: ice px 58462
+   main d2 mean 20.58 p95 38.4 p99 47.3 frac(d2>8) 92.66% | d1 mean 12.37 | lap 9.74
+   lane d2 mean 20.83 p95 40.6 p99 52.0 frac(d2>8) 91.97% | d1 mean 12.52 | lap 9.41
+rest: ice px 45247
+   main d2 mean 20.86 p95 39.0 p99 47.7 frac(d2>8) 91.30% | d1 mean 13.03 | lap 8.89
+   lane d2 mean 21.58 p95 42.4 p99 53.7 frac(d2>8) 90.43% | d1 mean 13.46 | lap 8.80

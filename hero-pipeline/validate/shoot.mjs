@@ -9,16 +9,16 @@ import path from "node:path";
 const require = createRequire(SP + "/tools/package.json");
 const { chromium } = require("playwright-core");
 
-const url = process.argv[2] ?? "http://localhost:5173/?debug=1";
+const url = process.argv[2] ?? ((process.env.LAB || "http://localhost:5173") + "/?debug=1");
 const out = process.argv[3] ?? ".";
 const tag = process.argv[4] ?? "shot";
 fs.mkdirSync(out, { recursive: true });
 
 const browser = await chromium.launch({
-  executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+  executablePath: (process.env.CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"),
   headless: true,
   // Playwright's temp profile path contains "playwright", which the RAM watchdog matches.
-  args: ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist", "--disable-gpu-sandbox"],
+  args: [(process.platform === "win32" ? "--use-angle=d3d11" : "--use-angle=metal"), "--enable-gpu", "--ignore-gpu-blocklist", "--disable-gpu-sandbox"],
 });
 const page = await browser.newPage({ viewport: { width: 1440, height: 766 }, deviceScaleFactor: 1 });
 const logs = [];

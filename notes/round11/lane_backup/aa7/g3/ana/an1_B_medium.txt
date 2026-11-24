@@ -1,0 +1,48 @@
+== medium scale 0.7
+TOTAL med_s07_a7 -> med_s07_a7ms k0-119 box 0,380,1440,766 thr 4: 4909173 px in 120 frames (brighter 2044292, darker 2864881)
+a7: flagged px 1164, events >= 6 px: 16, px in them 739
+B: flagged px 1100, events >= 6 px: 16, px in them 655
+-- new pops of B vs AA7:
+new pops (X flagged, ref not, X != ref): 108 px, 41 clusters, >= 6 px: 4
+  k19-19 x113-114 y562-564 n5 emax113
+  k13-13 x218-226 y529-529 n9 emax57
+  k25-25 x972-977 y489-490 n9 emax48
+  k16-16 x220-227 y526-526 n8 emax49
+  k110-110 x176-177 y539-541 n6 emax64
+  k17-17 x109-110 y563-564 n3 emax84
+-- pops of AA7 that B removes:
+new pops (X flagged, ref not, X != ref): 99 px, 40 clusters, >= 6 px: 1
+  k46-47 x150-151 y543-546 n4 emax116
+  k20-21 x243-248 y536-537 n8 emax53
+== medium scale 0.8
+TOTAL med_s08_a7 -> med_s08_a7ms k0-119 box 0,380,1440,766 thr 4: 4207588 px in 120 frames (brighter 2499960, darker 1707628)
+a7: flagged px 1309, events >= 6 px: 35, px in them 842
+B: flagged px 1224, events >= 6 px: 32, px in them 724
+-- new pops of B vs AA7:
+new pops (X flagged, ref not, X != ref): 167 px, 52 clusters, >= 6 px: 9
+  k23-23 x339-346 y517-518 n12 emax60
+  k23-24 x572-581 y561-562 n12 emax59
+  k25-25 x971-978 y489-490 n12 emax52
+  k35-38 x256-262 y510-513 n9 emax51
+  k79-79 x918-922 y470-472 n9 emax49
+  k13-15 x103-107 y565-567 n5 emax77
+-- pops of AA7 that B removes:
+new pops (X flagged, ref not, X != ref): 182 px, 62 clusters, >= 6 px: 9
+  k29-32 x159-170 y511-516 n20 emax60
+  k21-21 x863-868 y491-492 n10 emax53
+== medium scale 0.9
+TOTAL med_s09_a7 -> med_s09_a7ms k0-119 box 0,380,1440,766 thr 4: 5764447 px in 120 frames (brighter 3616878, darker 2147569)
+a7: flagged px 1112, events >= 6 px: 29, px in them 616
+B: flagged px 1137, events >= 6 px: 38, px in them 653
+-- new pops of B vs AA7:
+new pops (X flagged, ref not, X != ref): 230 px, 62 clusters, >= 6 px: 10
+  k23-27 x571-592 y558-562 n30 emax60
+  k16-19 x549-559 y566-569 n21 emax66
+  k23-24 x339-353 y516-518 n18 emax65
+  k35-36 x256-269 y511-514 n15 emax62
+  k25-25 x971-977 y489-490 n14 emax59
+  k14-17 x106-111 y564-567 n6 emax77
+-- pops of AA7 that B removes:
+new pops (X flagged, ref not, X != ref): 189 px, 69 clusters, >= 6 px: 5
+  k20-25 x547-560 y561-567 n26 emax58
+  k34-35 x1265-1270 y677-678 n7 emax82

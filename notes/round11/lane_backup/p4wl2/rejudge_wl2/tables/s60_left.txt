@@ -1,0 +1,2 @@
+left_main        n=40 (200, 560) | leftwater blips/fr 2.1 max 6 mean|dL| 0.404 p99 1.93 | shelfwater blips/fr 0.2 max 1 mean|dL| 0.366 p99 1.00
+left_wl2         n=40 (200, 560) | leftwater blips/fr 2.2 max 6 mean|dL| 0.380 p99 1.93 | shelfwater blips/fr 0.2 max 1 mean|dL| 0.341 p99 1.00

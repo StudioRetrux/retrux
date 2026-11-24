@@ -1,0 +1,7 @@
+G8a final ?mirrorcost=0 vs final default       DIFFER    final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 17 differ: rx-lake-sky|ShaderMaterial,rx-lake-sky-late|ShaderMaterial,rx-plate-baked-mirror|ShaderMaterial | logs 0/0
+G8b final ?lkglide=0&mirrorcost=0 vs AA6 ?lkglide=0 IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+G8c final all six off vs BASE T1               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 14 differ: - | logs 0/0
+G8d final T2 all six off vs BASE T2            IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 14 differ: - | logs 0/0
+G8e final plate vs BASE plate                  IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+G8f final T0 vs BASE T0                        IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+determinism: ident vs identS final default     IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0

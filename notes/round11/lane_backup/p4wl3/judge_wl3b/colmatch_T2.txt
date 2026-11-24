@@ -1,0 +1,16 @@
+rows 510-585 mean excess per column (REF x: build x matched within 8 px)
+REF x 906  10.9 | T2_main x 914  10.5 T2_lane x 914  15.9
+REF x 940  12.1 | T2_main x 948  13.9 T2_lane x 947  21.7
+REF x 948  12.8 | T2_main x 952  13.6 T2_lane x 947  21.7
+REF x1004   8.6 | T2_main x1005  -0.5 T2_lane x1012  -0.9
+REF x1026  15.7 | T2_main x1028   8.1 T2_lane x1028  13.4
+REF x1087  19.4 | T2_main x1087  -1.0 T2_lane x1088   6.1
+REF x1105  11.8 | T2_main x1103  -6.1 T2_lane x1103   0.4
+REF x1114   8.2 | T2_main x1118  -4.6 T2_lane x1118  -0.8
+REF x1118   6.6 | T2_main x1118  -4.6 T2_lane x1118  -0.8
+REF x1151   4.5 | T2_main x1151   3.0 T2_lane x1152  12.2
+REF x1213  10.4 | T2_main x1208   9.4 T2_lane x1208  13.8
+REF x1363 -27.5 | T2_main x1368 -26.1 T2_lane x1368 -27.2
+REF x1377 -15.8 | T2_main x1369 -26.6 T2_lane x1369 -27.4
+T2_main  sum excess -10.9 vs REF 77.6  (ratio -0.14)  mean |build-REF| 7.44
+T2_lane  sum excess 48.3 vs REF 77.6  (ratio 0.62)  mean |build-REF| 7.64

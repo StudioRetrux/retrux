@@ -1,0 +1,707 @@
+{
+ "version": "v9",
+ "exposureStops": -2.158,
+ "encoding": "srgb(linear * 2^exposureStops), 8-bit ED dither, WebP q92",
+ "objects": {
+  "BG.001": {
+   "node": "BG001",
+   "texture": "baked/BG_001.webp",
+   "size": [
+    1720,
+    1720
+   ],
+   "bytes": 23556,
+   "shares": {
+    "plate_rest": 0.3374,
+    "plate_tilt": 0.0327,
+    "plate_hold": 0.0642,
+    "plate_orbN": 0.0269,
+    "plate_orbP": 0.0123
+   },
+   "fill": 0.5265,
+   "gap_of_seen": 0.0521,
+   "textureWithWisp": "baked/BG_001_v9g.webp",
+   "bytesWithWisp": 25934
+  },
+  "gfsw.001": {
+   "node": "gfsw001",
+   "texture": "baked/gfsw_001.webp",
+   "size": [
+    488,
+    500
+   ],
+   "bytes": 28172,
+   "shares": {
+    "plate_rest": 0.749,
+    "plate_tilt": 0.0131,
+    "plate_hold": 0.0028,
+    "plate_orbN": 0.0077,
+    "plate_orbP": 0.006
+   },
+   "fill": 0.2214,
+   "gap_of_seen": 0.0671
+  },
+  "Object_2.009": {
+   "node": "Object_2009",
+   "texture": "baked/Object_2_009_f1.webp",
+   "size": [
+    704,
+    692
+   ],
+   "bytes": 58316,
+   "shares": {
+    "plate_rest": 0.3845,
+    "plate_tilt": 0.0119,
+    "plate_hold": 0.0072,
+    "plate_orbN": 0.0279,
+    "plate_orbP": 0.003,
+    "plate_rest^": 0.0095,
+    "plate_tilt^": 0.0037,
+    "plate_hold^": 0.002,
+    "plate_orbN^": 0.0053,
+    "plate_orbP^": 0.0016,
+    "plate_rest~": 0.0476,
+    "plate_tilt~": 0.0022,
+    "plate_hold~": 0.0017,
+    "plate_orbN~": 0.0042,
+    "plate_orbP~": 0.0008
+   },
+   "fill": 0.4869,
+   "gap_of_seen": 0.0462,
+   "textureS2": "baked/Object_2_009.webp"
+  },
+  "Object_2.010": {
+   "node": "Object_2010",
+   "texture": "baked/Object_2_010_f1.webp",
+   "size": [
+    460,
+    504
+   ],
+   "bytes": 28652,
+   "shares": {
+    "plate_rest": 0.2665,
+    "plate_tilt": 0.0154,
+    "plate_hold": 0.0389,
+    "plate_orbN": 0.0273,
+    "plate_orbP": 0.0979,
+    "plate_rest^": 0.0152,
+    "plate_tilt^": 0.0036,
+    "plate_hold^": 0.0057,
+    "plate_orbN^": 0.005,
+    "plate_orbP^": 0.0106,
+    "plate_rest~": 0.0317,
+    "plate_tilt~": 0.0017,
+    "plate_hold~": 0.0084,
+    "plate_orbN~": 0.0028,
+    "plate_orbP~": 0.0089
+   },
+   "fill": 0.4605,
+   "gap_of_seen": 0.0887,
+   "textureS2": "baked/Object_2_010.webp"
+  },
+  "Plane.014": {
+   "node": "Plane014",
+   "texture": "baked/Plane_014.webp",
+   "size": [
+    2048,
+    2048
+   ],
+   "bytes": 101590,
+   "shares": {
+    "plate_rest": 0.4813,
+    "plate_tilt": 0.0037,
+    "plate_hold": 0.0045,
+    "plate_orbN": 0.0762,
+    "plate_orbP": 0.0881
+   },
+   "fill": 0.3461,
+   "gap_of_seen": 0.0846
+  },
+  "Plane.015": {
+   "node": "Plane015",
+   "texture": "baked/Plane_015.webp",
+   "size": [
+    588,
+    588
+   ],
+   "bytes": 27070,
+   "shares": {
+    "plate_rest": 0.7694,
+    "plate_tilt": 0.0165,
+    "plate_hold": 0.0076,
+    "plate_orbN": 0.0154,
+    "plate_orbP": 0.004
+   },
+   "fill": 0.1871,
+   "gap_of_seen": 0.0658
+  },
+  "Retopo_Plane.005": {
+   "node": "Retopo_Plane005",
+   "texture": "baked/Retopo_Plane_005.webp",
+   "size": [
+    1112,
+    1120
+   ],
+   "bytes": 42324,
+   "shares": {
+    "plate_rest": 0.7237,
+    "plate_tilt": 0.0052,
+    "plate_hold": 0.0028,
+    "plate_orbN": 0.1499,
+    "plate_orbP": 0.0013
+   },
+   "fill": 0.1171,
+   "gap_of_seen": 0.0154
+  },
+  "Retopo_Plane.006": {
+   "node": "Retopo_Plane006",
+   "texture": "baked/Retopo_Plane_006.webp",
+   "size": [
+    1288,
+    1324
+   ],
+   "bytes": 76568,
+   "shares": {
+    "plate_rest": 0.7388,
+    "plate_tilt": 0.002,
+    "plate_hold": 0.0032,
+    "plate_orbN": 0.0105,
+    "plate_orbP": 0.0871
+   },
+   "fill": 0.1583,
+   "gap_of_seen": 0.1039
+  },
+  "Retopo_Plane.007": {
+   "node": "Retopo_Plane007",
+   "texture": "baked/Retopo_Plane_007.webp",
+   "size": [
+    984,
+    1012
+   ],
+   "bytes": 44298,
+   "shares": {
+    "plate_rest": 0.8462,
+    "plate_tilt": 0.0109,
+    "plate_hold": 0.0171,
+    "plate_orbN": 0.0082,
+    "plate_orbP": 0.0016
+   },
+   "fill": 0.1161,
+   "gap_of_seen": 0.0446
+  },
+  "Retopo_Plane.008": {
+   "node": "Retopo_Plane008",
+   "texture": "baked/Retopo_Plane_008.webp",
+   "size": [
+    296,
+    296
+   ],
+   "bytes": 5954,
+   "shares": {
+    "plate_rest": 0.8736,
+    "plate_tilt": 0.0075,
+    "plate_hold": 0.0026,
+    "plate_orbN": 0.0012,
+    "plate_orbP": 0.0009
+   },
+   "fill": 0.1141,
+   "gap_of_seen": 0.0108
+  },
+  "Retopo_Plane.009": {
+   "node": "Retopo_Plane009",
+   "texture": "baked/Retopo_Plane_009.webp",
+   "size": [
+    396,
+    396
+   ],
+   "bytes": 9308,
+   "shares": {
+    "plate_rest": 0.8235,
+    "plate_tilt": 0.009,
+    "plate_hold": 0.0039,
+    "plate_orbN": 0.0021,
+    "plate_orbP": 0.0005
+   },
+   "fill": 0.1609,
+   "gap_of_seen": 0.0043
+  },
+  "Retopo_Plane.010": {
+   "node": "Retopo_Plane010",
+   "texture": "baked/Retopo_Plane_010.webp",
+   "size": [
+    404,
+    396
+   ],
+   "bytes": 10626,
+   "shares": {
+    "plate_rest": 0.7929,
+    "plate_tilt": 0.0099,
+    "plate_hold": 0.0044,
+    "plate_orbN": 0.0058,
+    "plate_orbP": 0.0034
+   },
+   "fill": 0.1835,
+   "gap_of_seen": 0.0612
+  },
+  "Retopo_Plane.011": {
+   "node": "Retopo_Plane011",
+   "texture": "baked/Retopo_Plane_011.webp",
+   "size": [
+    296,
+    296
+   ],
+   "bytes": 6472,
+   "shares": {
+    "plate_rest": 0.802,
+    "plate_tilt": 0.0132,
+    "plate_hold": 0.0041,
+    "plate_orbN": 0.0072,
+    "plate_orbP": 0.0017
+   },
+   "fill": 0.1719,
+   "gap_of_seen": 0.0161
+  },
+  "Retopo_Plane.012": {
+   "node": "Retopo_Plane012",
+   "texture": "baked/Retopo_Plane_012.webp",
+   "size": [
+    2048,
+    2048
+   ],
+   "bytes": 125870,
+   "shares": {
+    "plate_rest": 0.8252,
+    "plate_tilt": 0.0047,
+    "plate_hold": 0.0242,
+    "plate_orbN": 0.0042,
+    "plate_orbP": 0.0191
+   },
+   "fill": 0.1226,
+   "gap_of_seen": 0.006
+  },
+  "Rock.005": {
+   "node": "Rock005",
+   "texture": "baked/Rock_005.webp",
+   "size": [
+    296,
+    288
+   ],
+   "bytes": 8324,
+   "shares": {
+    "plate_rest": 0.7908,
+    "plate_tilt": 0.0251,
+    "plate_hold": 0.0,
+    "plate_orbN": 0.024,
+    "plate_orbP": 0.0059
+   },
+   "fill": 0.1541,
+   "gap_of_seen": 0.0405
+  },
+  "Rock.006": {
+   "node": "Rock006",
+   "texture": "baked/Rock_006.webp",
+   "size": [
+    192,
+    192
+   ],
+   "bytes": 3580,
+   "shares": {
+    "plate_rest": 0.7509,
+    "plate_tilt": 0.0121,
+    "plate_hold": 0.0,
+    "plate_orbN": 0.0687,
+    "plate_orbP": 0.007
+   },
+   "fill": 0.1612,
+   "gap_of_seen": 0.0171
+  },
+  "Rock.007": {
+   "node": "Rock007",
+   "texture": "baked/Rock_007.webp",
+   "size": [
+    296,
+    296
+   ],
+   "bytes": 6480,
+   "shares": {
+    "plate_rest": 0.7791,
+    "plate_tilt": 0.0307,
+    "plate_hold": 0.0,
+    "plate_orbN": 0.0355,
+    "plate_orbP": 0.0144
+   },
+   "fill": 0.1402,
+   "gap_of_seen": 0.0364
+  },
+  "Rock.008": {
+   "node": "Rock008",
+   "texture": "baked/Rock_008.webp",
+   "size": [
+    192,
+    192
+   ],
+   "bytes": 3388,
+   "shares": {
+    "plate_rest": 0.3,
+    "plate_tilt": 0.1145,
+    "plate_hold": 0.0,
+    "plate_orbN": 0.0009,
+    "plate_orbP": 0.1536
+   },
+   "fill": 0.431,
+   "gap_of_seen": 0.2012
+  },
+  "Rock.009": {
+   "node": "Rock009",
+   "texture": "baked/Rock_009.webp",
+   "size": [
+    300,
+    288
+   ],
+   "bytes": 7684,
+   "shares": {
+    "plate_rest": 0.635,
+    "plate_tilt": 0.031,
+    "plate_hold": 0.0,
+    "plate_orbN": 0.0224,
+    "plate_orbP": 0.0244
+   },
+   "fill": 0.2871,
+   "gap_of_seen": 0.0602
+  },
+  "rock_big_1.001": {
+   "node": "rock_big_1001",
+   "texture": "baked/rock_big_1_001.webp",
+   "size": [
+    384,
+    404
+   ],
+   "bytes": 13978,
+   "shares": {
+    "plate_rest": 0.7756,
+    "plate_tilt": 0.016,
+    "plate_hold": 0.0,
+    "plate_orbN": 0.0152,
+    "plate_orbP": 0.012
+   },
+   "fill": 0.1813,
+   "gap_of_seen": 0.0446
+  },
+  "rock_big_2.002": {
+   "node": "rock_big_2002",
+   "texture": "baked/rock_big_2_002.webp",
+   "size": [
+    192,
+    192
+   ],
+   "bytes": 4592,
+   "shares": {
+    "plate_rest": 0.7305,
+    "plate_tilt": 0.0234,
+    "plate_hold": 0.0137,
+    "plate_orbN": 0.0093,
+    "plate_orbP": 0.0019
+   },
+   "fill": 0.2214,
+   "gap_of_seen": 0.0805
+  },
+  "rock_big_2.003": {
+   "node": "rock_big_2003",
+   "texture": "baked/rock_big_2_003.webp",
+   "size": [
+    192,
+    192
+   ],
+   "bytes": 4658,
+   "shares": {
+    "plate_rest": 0.7478,
+    "plate_tilt": 0.026,
+    "plate_hold": 0.0091,
+    "plate_orbN": 0.0125,
+    "plate_orbP": 0.0112
+   },
+   "fill": 0.1933,
+   "gap_of_seen": 0.1041
+  },
+  "rock_big_3.003": {
+   "node": "rock_big_3003",
+   "texture": "baked/rock_big_3_003.webp",
+   "size": [
+    184,
+    172
+   ],
+   "bytes": 4440,
+   "shares": {
+    "plate_rest": 0.8094,
+    "plate_tilt": 0.0201,
+    "plate_hold": 0.0096,
+    "plate_orbN": 0.0074,
+    "plate_orbP": 0.0017
+   },
+   "fill": 0.1518,
+   "gap_of_seen": 0.0558
+  },
+  "rock_big_3.004": {
+   "node": "rock_big_3004",
+   "texture": "baked/rock_big_3_004.webp",
+   "size": [
+    1120,
+    1112
+   ],
+   "bytes": 62254,
+   "shares": {
+    "plate_rest": 0.6959,
+    "plate_tilt": 0.0136,
+    "plate_hold": 0.0,
+    "plate_orbN": 0.0641,
+    "plate_orbP": 0.0134
+   },
+   "fill": 0.213,
+   "gap_of_seen": 0.104
+  },
+  "rock_big_3.005": {
+   "node": "rock_big_3005",
+   "texture": "baked/rock_big_3_005.webp",
+   "size": [
+    1112,
+    1112
+   ],
+   "bytes": 57492,
+   "shares": {
+    "plate_rest": 0.7431,
+    "plate_tilt": 0.0217,
+    "plate_hold": 0.0,
+    "plate_orbN": 0.0328,
+    "plate_orbP": 0.0215
+   },
+   "fill": 0.1809,
+   "gap_of_seen": 0.0863
+  },
+  "rock_big_4.003": {
+   "node": "rock_big_4003",
+   "texture": "baked/rock_big_4_003.webp",
+   "size": [
+    908,
+    908
+   ],
+   "bytes": 37792,
+   "shares": {
+    "plate_rest": 0.76,
+    "plate_tilt": 0.0111,
+    "plate_hold": 0.0165,
+    "plate_orbN": 0.0072,
+    "plate_orbP": 0.0125
+   },
+   "fill": 0.1927,
+   "gap_of_seen": 0.0533
+  },
+  "rock_big_4.004": {
+   "node": "rock_big_4004",
+   "texture": "baked/rock_big_4_004.webp",
+   "size": [
+    396,
+    396
+   ],
+   "bytes": 15832,
+   "shares": {
+    "plate_rest": 0.752,
+    "plate_tilt": 0.0202,
+    "plate_hold": 0.0,
+    "plate_orbN": 0.0379,
+    "plate_orbP": 0.0108
+   },
+   "fill": 0.1792,
+   "gap_of_seen": 0.0453
+  },
+  "rock_big_4.005": {
+   "node": "rock_big_4005",
+   "texture": "baked/rock_big_4_005.webp",
+   "size": [
+    600,
+    600
+   ],
+   "bytes": 23090,
+   "shares": {
+    "plate_rest": 0.6336,
+    "plate_tilt": 0.016,
+    "plate_hold": 0.0273,
+    "plate_orbN": 0.0279,
+    "plate_orbP": 0.0072
+   },
+   "fill": 0.2881,
+   "gap_of_seen": 0.105
+  },
+  "rock_medium_1.001": {
+   "node": "rock_medium_1001",
+   "texture": "baked/rock_medium_1_001.webp",
+   "size": [
+    192,
+    184
+   ],
+   "bytes": 3148,
+   "shares": {
+    "plate_rest": 0.619,
+    "plate_tilt": 0.0292,
+    "plate_hold": 0.0404,
+    "plate_orbN": 0.0108,
+    "plate_orbP": 0.0165
+   },
+   "fill": 0.284,
+   "gap_of_seen": 0.0828
+  },
+  "rock_medium_2.001": {
+   "node": "rock_medium_2001",
+   "texture": "baked/rock_medium_2_001.webp",
+   "size": [
+    200,
+    192
+   ],
+   "bytes": 1936,
+   "shares": {
+    "plate_rest": 0.3748,
+    "plate_tilt": 0.0322,
+    "plate_hold": 0.0,
+    "plate_orbN": 0.0848,
+    "plate_orbP": 0.0006
+   },
+   "fill": 0.5076,
+   "gap_of_seen": 0.2312
+  },
+  "rock_medium_3.002": {
+   "node": "rock_medium_3002",
+   "texture": "baked/rock_medium_3_002.webp",
+   "size": [
+    192,
+    192
+   ],
+   "bytes": 3848,
+   "shares": {
+    "plate_rest": 0.637,
+    "plate_tilt": 0.0258,
+    "plate_hold": 0.0,
+    "plate_orbN": 0.0055,
+    "plate_orbP": 0.0736
+   },
+   "fill": 0.2581,
+   "gap_of_seen": 0.0569
+  },
+  "rock_medium_3.003": {
+   "node": "rock_medium_3003",
+   "texture": "baked/rock_medium_3_003.webp",
+   "size": [
+    192,
+    192
+   ],
+   "bytes": 4956,
+   "shares": {
+    "plate_rest": 0.7871,
+    "plate_tilt": 0.0135,
+    "plate_hold": 0.0,
+    "plate_orbN": 0.0126,
+    "plate_orbP": 0.0087
+   },
+   "fill": 0.1781,
+   "gap_of_seen": 0.0167
+  },
+  "V2_Massif": {
+   "node": "V2_Massif",
+   "texture": "baked/V2_Massif_f1.webp",
+   "size": [
+    788,
+    792
+   ],
+   "bytes": 58468,
+   "shares": {
+    "plate_rest": 0.5091,
+    "plate_tilt": 0.006,
+    "plate_hold": 0.0035,
+    "plate_orbN": 0.0086,
+    "plate_orbP": 0.0293,
+    "plate_rest^": 0.0064,
+    "plate_tilt^": 0.0021,
+    "plate_hold^": 0.0009,
+    "plate_orbN^": 0.002,
+    "plate_orbP^": 0.0033,
+    "plate_rest~": 0.0287,
+    "plate_tilt~": 0.0012,
+    "plate_hold~": 0.0005,
+    "plate_orbN~": 0.0009,
+    "plate_orbP~": 0.0043
+   },
+   "fill": 0.3933,
+   "gap_of_seen": 0.0266,
+   "textureWithWisp": "baked/V2_Massif_v9g.webp",
+   "bytesWithWisp": 46700,
+   "textureS2": "baked/V2_Massif.webp"
+  },
+  "V2_Ridge": {
+   "node": "V2_Ridge",
+   "texture": "baked/V2_Ridge_f1.webp",
+   "size": [
+    1196,
+    1524
+   ],
+   "bytes": 87410,
+   "shares": {
+    "plate_rest": 0.5513,
+    "plate_tilt": 0.0069,
+    "plate_hold": 0.0054,
+    "plate_orbN": 0.0059,
+    "plate_orbP": 0.1303,
+    "plate_rest^": 0.0078,
+    "plate_tilt^": 0.0023,
+    "plate_hold^": 0.0017,
+    "plate_orbN^": 0.0011,
+    "plate_orbP^": 0.0091,
+    "plate_rest~": 0.0355,
+    "plate_tilt~": 0.0013,
+    "plate_hold~": 0.0007,
+    "plate_orbN~": 0.0012,
+    "plate_orbP~": 0.0157
+   },
+   "fill": 0.2237,
+   "gap_of_seen": 0.0246,
+   "textureS2": "baked/V2_Ridge.webp"
+  }
+ },
+ "textureBytes": 1002126,
+ "wisp": {
+  "card": "wisp_card.exr",
+  "size": [
+   183,
+   121
+  ],
+  "quad": [
+   [
+    -41.50039728885433,
+    9.809860865996498,
+    -104.24438140461388
+   ],
+   [
+    -31.40907758280759,
+    9.809860865471887,
+    -104.36278293380158
+   ],
+   [
+    -41.5004635001171,
+    16.48272154971475,
+    -104.25002456408156
+   ],
+   [
+    -31.40914379406436,
+    16.482721548689145,
+    -104.36842609326892
+   ]
+  ],
+  "restBox": [
+   134.4,
+   184.4,
+   280.8,
+   281.2
+  ],
+  "alphaMax": 0.5371,
+  "bytes": 87087,
+  "note": "premultiplied scene-linear RGBA, alpha = 1 - transmittance; composited over the baked texel before the grade"
+ },
+ "fixRound": "2026-11-15: back-facing texels of the 4 photogrammetry mountains take the rest plate's colour along their rest ray (tools4/patch_backfaces.py); textureS2 = step 2's texture (?envtex=s2 or ?envfix=0)"
+}

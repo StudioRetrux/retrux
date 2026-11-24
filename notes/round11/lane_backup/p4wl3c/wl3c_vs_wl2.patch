@@ -1,0 +1,100 @@
+--- a/retrux-web/app/hero/engine/world/Water.ts
++++ b/retrux-web/app/hero/engine/world/Water.ts
+@@ -1854,6 +1854,57 @@
+         `  float sE = max(2.0 * 0.07 * sqrt(mix(lkSig.y * lkSig.y, wlSig4.y * wlSig4.y, ${S})), 1e-4);\n`,
+     },
+   ];
++}
++/**
++ * wl3a (round 3 of the water lane, 23 Nov; re-judge WL2-RJ1: the water in front of the left ice sheets still popped ~10 % more
++ * than MAIN in the real loop at T1 DPR 2). `?wl3a=0` = wl2 exactly. Bisected same-pose at the real loop's step (dt 1/30, rl's
++ * pointer circle, T1 DPR 2; WORK tools/capdt.mjs): the share's mu is NOT the cause any more (a flat mu, or WL2FJ_Q 8 / 16: no
++ * change); the excess sat in the near open water (CSS y 575-620, x 0-100) where the band walk's taps held NO face. Root cause:
++ * P4WL_BAND's walk pass walks with the flat normal and records a face only where its share of the FLAT reflection exceeds 0.002
++ * (lkWalkTerm's gate); the low floes in front of the near water sit far below that reflection, so the taps said "no face" while
++ * the pixel's own rays (rippled, wide spread) do reach them; those rays went to the remainder (lkReflect4's strata, looked up
++ * with the pixel's full-resolution normal). MAIN's quarter walk used the bumped normal, so its taps recorded those faces
++ * (near-water zone blips MAIN 146 | wl2 202 | gate 0: 179). Fix at the source: (W) the walk pass records every face that rises above its horizon ray (share
++ * gate 0; the read's own Phi gives the pixel's share), (E) the marked taps' per-pixel walk takes the band-limited normal /
++ * spread (WL2FJ's wlN4 / wlSig4) instead of the pixel's own, (S) the read's share takes the pixel's own spread (WL2FJ's mu kept).
++ * Sub-switches `?wl3aw=0`, `?wl3ae=0`, `?wl3as=0` (each part off).
++ */
++export function wl3aOn(lq: URLSearchParams | null) {
++  return lq?.get("wl3a") !== "0";
++}
++function wl3aReadEdits(lq: URLSearchParams | null): P4Edit[] {
++  const e: P4Edit[] = [];
++  if (lq?.get("wl3ae") !== "0")
++    e.push({
++      find: "  if (dot(wt, 1.0 - step(-0.35, ta)) > 0.01) return lkWalkTerm(dist, V, lkN, lkSig, vWorldPos);\n",
++      repl: "  if (dot(wt, 1.0 - step(-0.35, ta)) > 0.01) return lkWalkTerm(dist, V, wlN4, wlSig4, vWorldPos);   // wl3a (E)\n",
++    });
++  return e;
++}
++/**
++ * wl3a (W): the walk pass records every face above its horizon ray (lkWalkTerm's share gate 0.002 -> 0), walk pass only.
++ * wl3c (round 3c, judge WL3A-J1): with gate 0 alone the far column at x ~1334 shortened (T1 rest 67 -> 44 px). lkWalkTerm stops
++ * after 4 recorded faces (hits > 3.5): the tiny-share faces in front of the far slabs used up that cap before the bright slab face,
++ * so the stored horizon / colour ended early. The cap now has its own counter: a face counts when its share under wl2's own
++ * first-face rule exceeds WL3C_G (wl2: 0.002). Measured (same pose, dt 1/30, T1 DPR 2): the left water's gain comes from the early
++ * stop itself (WL3C_G 0.002: left 364 = W off; 0: 332 but the column cut), the column needs the cap to skip faces of share
++ * < ~0.0004 (0.0003: cut); 0.0004: column 67, left 347 (MAIN 340, wl2 394). A camera-distance or walk-distance rule cannot separate
++ * the two (same camera distance ~30-35 m; both sets of tiny faces lie 15-25 m along the walk). `?wl3c=0` = the round-3 wl3a (one
++ * counter, gate 0); `?wl3cg=<g>` moves WL3C_G (lab).
++ */
++const WL3C_G = 0.0004;
++function wl3aWalkFrag(src: string, capC: boolean, g = WL3C_G) {
++  const e: P4Edit[] = [{ find: "      if (share > 0.002) {\n", repl: "      if (share > 0.0) {   // wl3a (W)\n" }];
++  if (capC)
++    e.push(
++      { find: "  float hits = 0.0;\n", repl: "  float hits = 0.0;\n  float hitsC = 0.0;   // wl3c: the 4-face cap's own counter\n" },
++      {
++        find: "      float share = first ? FN : FN - Fc;\n",
++        repl: `      float share = first ? FN : FN - Fc;\n      if ((hitsC < 0.5 ? FN : FN - Fc) > ${g.toFixed(5)}) hitsC += 1.0;   // wl3c\n`,
++      },
++      { find: "      if (Fc > 0.995 || hits > 3.5) break;\n", repl: "      if (Fc > 0.995 || hitsC > 3.5) break;   // wl3c\n" },
++    );
++  return p4Apply(src, e, "WL3AW");
+ }
+ /** wl2g: the walk pass's vertex shader (the lake through the anchor view-projection uLkWalkAP). */
+ function wl2gWalkVert(src: string) {
+@@ -3479,7 +3530,17 @@
+             if (lq?.get("wl2fj") !== "0") {
+               const qq = Number(lq?.get("wl2fjq"));
+               const sq2 = Number(lq?.get("wl2fjs"));
+-              frag = p4Apply(frag, wl2fjEdits(qq >= 1 && qq <= 16 ? qq : WL2FJ_Q, lq?.get("wl2fjs") != null && sq2 >= 0 && sq2 <= 1 ? sq2 : WL2FJ_S), "WL2FJ");
++              // wl3a (S): the share's spread is the pixel's own (= `?wl2fjs=0`); `?wl3a=0` / `?wl3as=0` keep WL2FJ_S
++              const w3 = wl3aOn(lq);
++              const s3 = w3 && lq?.get("wl3as") !== "0" ? 0 : WL2FJ_S;
++              frag = p4Apply(frag, wl2fjEdits(qq >= 1 && qq <= 16 ? qq : WL2FJ_Q, lq?.get("wl2fjs") != null && sq2 >= 0 && sq2 <= 1 ? sq2 : s3), "WL2FJ");
++              if (w3) {
++                frag = p4Apply(frag, wl3aReadEdits(lq), "WL3A");
++                this.wl3aWalk = lq?.get("wl3aw") !== "0";
++                this.wl3aCap = lq?.get("wl3c") !== "0";
++                const cg = Number(lq?.get("wl3cg"));
++                if (lq?.get("wl3cg") != null && cg >= 0 && cg <= 0.01) this.wl3aCapG = cg;
++              }
+             }
+             const gq = Number(lq?.get("wl2gg"));
+             if (gq >= 1 && gq <= 2) this.walkGuard = gq;
+@@ -3577,7 +3638,7 @@
+       this.walkMaterial = new THREE.ShaderMaterial({
+         name: "rx-water-walk",
+         vertexShader: this.walkAnchored ? wl2gWalkVert(WATER_VERT) : WATER_VERT,
+-        fragmentShader: wlAz ? wl2gWalkFrag(frag) : frag,
++        fragmentShader: this.wl3aWalk ? wl3aWalkFrag(wlAz ? wl2gWalkFrag(frag) : frag, this.wl3aCap, this.wl3aCapG) : wlAz ? wl2gWalkFrag(frag) : frag,
+         defines: wd,
+         uniforms: this.material.uniforms,
+         depthTest: false,
+@@ -3730,6 +3791,11 @@
+   walkPerPixel = false;
+   /** wl2g: the walk pass rasterises the lake through a fixed anchor (lake-space texels); its guard and scale tolerance. */
+   walkAnchored = false;
++  /** wl3a (W): the walk pass records every face above its horizon ray (wl3aWalkFrag). */
++  wl3aWalk = false;
++  /** wl3c: (W)'s 4-face cap counts only the faces whose wl2-rule share exceeds wl3aCapG (wl3aWalkFrag). */
++  wl3aCap = false;
++  wl3aCapG = WL3C_G;
+   walkGuard = WL2G_GUARD;
+   walkTol = WL2G_TOL;
+   walkOver = WL2G_OVER;

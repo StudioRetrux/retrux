@@ -3,7 +3,7 @@
 //   node probe_water.mjs <outDir> <nx> <ny> <variant,variant,...>
 import { createRequire } from "node:module";
 import path from "node:path";
-const require = createRequire("E:/Retrux Hero R&D/hero-pipeline/tools/package.json");
+const require = createRequire("/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/hero-pipeline/tools/package.json");
 const { chromium } = require("playwright-core");
 const out = process.argv[2];
 const nx = +(process.argv[3] || 0.98);
@@ -25,15 +25,15 @@ const VARIANTS = {
   ],
 };
 const browser = await chromium.launch({
-  executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+  executablePath: (process.env.CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"),
   headless: true,
-  args: ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"],
+  args: [(process.platform === "win32" ? "--use-angle=d3d11" : "--use-angle=metal"), "--enable-gpu", "--ignore-gpu-blocklist"],
 });
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 766 } });
   page.on("pageerror", (e) => console.log("pageerror " + e.message));
   page.on("console", (m) => { if (m.type() === "error") console.log("console.error " + m.text().slice(0, 300)); });
-  await page.goto("http://localhost:5173/?tier=T1&scale=1&debug=1", { waitUntil: "domcontentloaded" });
+  await page.goto(((process.env.LAB || "http://localhost:5173") + "/?tier=T1&scale=1&debug=1"), { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => document.documentElement.dataset.heroReady === "1", null, { timeout: 180000 });
   await page.addStyleTag({ content: ".nav,.hero-copy,.scroll,.sound,.overlay,[data-hud]{visibility:hidden !important}" });
   await page.evaluate(([x, y]) => {

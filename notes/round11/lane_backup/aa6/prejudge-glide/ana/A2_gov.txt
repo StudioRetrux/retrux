@@ -1,0 +1,10 @@
+== a6 vs raw
+scale 1: frames 45 | 3x3 39 px (0.87/frame, max 17, darker 28) | 5x5 20 (0.44/frame, max 11) | 7x7 8 (0.18/frame, max 10)
+scale 0.9: frames 25 | 3x3 281 px (11.24/frame, max 20, darker 276) | 5x5 91 (3.64/frame, max 19) | 7x7 38 (1.52/frame, max 14)
+scale 0.8: frames 25 | 3x3 283 px (11.32/frame, max 14, darker 246) | 5x5 54 (2.16/frame, max 13) | 7x7 36 (1.44/frame, max 13)
+scale 0.7: frames 25 | 3x3 948 px (37.92/frame, max 18, darker 635) | 5x5 105 (4.20/frame, max 13) | 7x7 67 (2.68/frame, max 11)
+== g0 vs raw
+scale 1: frames 45 | 3x3 23 px (0.51/frame, max 17, darker 13) | 5x5 9 (0.20/frame, max 11) | 7x7 4 (0.09/frame, max 8)
+scale 0.9: frames 25 | 3x3 100 px (4.00/frame, max 16, darker 99) | 5x5 45 (1.80/frame, max 13) | 7x7 21 (0.84/frame, max 9)
+scale 0.8: frames 25 | 3x3 81 px (3.24/frame, max 10, darker 67) | 5x5 24 (0.96/frame, max 10) | 7x7 17 (0.68/frame, max 9)
+scale 0.7: frames 25 | 3x3 275 px (11.00/frame, max 11, darker 89) | 5x5 21 (0.84/frame, max 8) | 7x7 10 (0.40/frame, max 7)

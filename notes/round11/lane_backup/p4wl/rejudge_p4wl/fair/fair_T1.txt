@@ -1,0 +1,4 @@
+## fast M: M: flagged px 1834, events >= 6 px: 63, px in them 748 
+## fast L: L: flagged px 1235, events >= 6 px: 39, px in them 535 
+## reverse M: M: flagged px 3129, events >= 6 px: 103, px in them 1427 
+## reverse L: L: flagged px 2529, events >= 6 px: 81, px in them 1241 

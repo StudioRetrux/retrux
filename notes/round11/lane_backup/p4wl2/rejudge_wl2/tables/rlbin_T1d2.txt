@@ -1,0 +1,15 @@
+MAIN  T1d2_main_a    all 308 | dt28-34 n 138 mean 324
+MAIN  T1d2_main_b    all 317 | dt28-34 n 137 mean 311
+MAIN  T1d2_main_c    all 324 | dt28-34 n 137 mean 334
+WL2   T1d2_wl2_a     all 369 | dt28-34 n 136 mean 356
+WL2   T1d2_wl2_b     all 377 | dt28-34 n 128 mean 384
+WL2   T1d2_wl2_c     all 388 | dt28-34 n 134 mean 385
+1-ms bins (dt = the larger of the two steps), n and mean blips:
+  29-30  MAIN n 121 303 | WL2 n  22 286  (-6 %)
+  30-31  MAIN n 142 336 | WL2 n  97 345  (+3 %)
+  31-32  MAIN n  74 356 | WL2 n 119 434  (+22 %)
+  32-33  MAIN n  37 307 | WL2 n 123 353  (+15 %)
+  fit at dt 29 ms: MAIN 292 | WL2 280 (-4 %)
+  fit at dt 30 ms: MAIN 313 | WL2 318 (+2 %)
+  fit at dt 31 ms: MAIN 334 | WL2 356 (+7 %)
+  fit at dt 32 ms: MAIN 356 | WL2 394 (+11 %)

@@ -1,0 +1,20 @@
+### diag
+A8: flagged px 1719, events >= 6 px: 48, px in them 620
+LANE: flagged px 1716, events >= 6 px: 48, px in them 620
+-- A8 top 3
+  k89-116 x87-146 y544-551 n116 emax135 frames 89/3/85/119 90/2/61/101 91/3/83/91 92/5/130/94 ...
+  k1-12 x115-140 y559-566 n28 emax132 frames 1/1/52/-135 2/2/76/-107 3/2/101/-115 4/2/53/-99 ...
+  k82-91 x922-935 y758-763 n41 emax71 frames 82/1/41/34 83/3/49/35 84/3/42/-66 85/3/52/38 ...
+-- LANE top 3
+  k89-116 x87-146 y544-551 n116 emax135 frames 89/3/85/119 90/2/61/101 91/3/83/91 92/5/130/94 ...
+  k1-12 x115-140 y559-566 n28 emax132 frames 1/1/52/-135 2/2/76/-107 3/2/101/-115 4/2/53/-99 ...
+  k82-91 x922-935 y758-763 n40 emax71 frames 82/1/42/33 83/3/48/35 84/3/41/-66 85/2/53/40 ...
+-- popnew LANE vs A8
+new pops (X flagged, ref not, X != ref): 2 px, 2 clusters, >= 6 px: 0
+  k23-23 x438-438 y720-720 n1 emax45
+  k62-62 x1211-1211 y678-678 n1 emax42
+-- popnew A8 vs LANE
+new pops (X flagged, ref not, X != ref): 6 px, 5 clusters, >= 6 px: 0
+  k11-11 x527-529 y756-757 n2 emax42
+  k8-8 x532-532 y760-760 n1 emax47
+  k110-110 x998-998 y760-760 n1 emax47

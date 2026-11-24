@@ -1,0 +1,45 @@
+{
+ "lane": "water",
+ "lab": ":5177",
+ "judge": "judge_p4water",
+ "time": "21 Nov 2026 04:30-05:20 WIB",
+ "pass": false,
+ "scores": [
+  {
+   "lens": "environment",
+   "main": 7.8,
+   "lane": 8.0
+  },
+  {
+   "lens": "glitch_hold_sweep",
+   "main": 8.0,
+   "lane": 8.2
+  },
+  {
+   "lens": "glitch_cursor_orbit",
+   "main": 7.3,
+   "lane": 7.2
+  },
+  {
+   "lens": "color_grade_post",
+   "main": 8.3,
+   "lane": 8.2
+  },
+  {
+   "lens": "awwwards_jury",
+   "main": 7.6,
+   "lane": 7.8
+  }
+ ],
+ "verified": {
+  "ident": "own re-run (ana/ident_summary.txt): T1 and T2 ?p4water=0 vs :5199 IDENTICAL (final, 6 targets, 16 programs); HOLD pose expand 2.97 + 20 moving frames ?p4water=0 IDENTICAL (18 programs); lane default HOLD differs (walk, cache, cacheN, final); T0 lane default IDENTICAL; 0 console lines",
+  "perf": "run2 (perf/ab2.json, interleaved, 6/8/6 pairs, load < 5.3): move 1.003, rest 0.930, hold 0.986, all < 5 %; run1 (perf/ab.json) contended and bimodal, invalid for rest",
+  "patch": "sha256 eeb37e42... matches; lane app/ differs from aa8 only in Water.ts"
+ },
+ "findings_file": "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4water/judge_p4water.json",
+ "majors": [
+  "Q8 glint dimmer at q00/q03 (centre column L 182.1 -> 176.4, ref 200.3)",
+  "Q9 unmasks the pre-existing orbit ghost at ptr_left/ptr_right (G6 off)",
+  "G2 raises bottom-strip temporal flicker: press 4.76->6.55 %, sustain 0.69->1.06 %"
+ ]
+}

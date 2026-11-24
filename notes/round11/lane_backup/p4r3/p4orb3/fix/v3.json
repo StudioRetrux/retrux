@@ -1,0 +1,11 @@
+[
+{"name":"c1","js":"var u=__hero.orb.material.uniforms;u.uP4HitC.value.set(1,1.68,0.5,0);u.uP4Hit.value.z=5.5;u.uP4Hit.value.w=8;u.uP4HitB.value.z=0.45;u.uP4HitB.value.w=0.67"}
+,
+{"name":"c2","js":"var u=__hero.orb.material.uniforms;u.uP4HitC.value.set(1,1.68,0.5,0);u.uP4Hit.value.z=6;u.uP4Hit.value.w=8;u.uP4HitB.value.z=0.45;u.uP4HitB.value.w=0.67"}
+,
+{"name":"c3","js":"var u=__hero.orb.material.uniforms;u.uP4HitC.value.set(1,1.68,0.5,0);u.uP4Hit.value.z=5;u.uP4Hit.value.w=8;u.uP4HitB.value.z=0.45;u.uP4HitB.value.w=0.67"}
+,
+{"name":"c4","js":"var u=__hero.orb.material.uniforms;u.uP4HitC.value.set(1,1.68,0.5,0);u.uP4Hit.value.z=5.5;u.uP4Hit.value.w=12;u.uP4HitB.value.z=0.45;u.uP4HitB.value.w=0.67"}
+,
+{"name":"c5","js":"var u=__hero.orb.material.uniforms;u.uP4HitC.value.set(0.75,1.68,0.5,0);u.uP4Hit.value.z=7;u.uP4Hit.value.w=8;u.uP4HitB.value.z=0.45;u.uP4HitB.value.w=0.67"}
+]

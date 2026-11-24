@@ -1,0 +1,12 @@
+q00_tn    OFF  n  11672 L med 102.8 p95 151.2 sat 0.620
+          LANE n   8616 L med  83.2 p95 150.7 sat 0.657
+          REF  n  12540 L med  89.7 p95 163.5 sat 0.629
+q03_tn    OFF  n  12605 L med  98.4 p95 147.7 sat 0.614
+          LANE n   9436 L med  86.2 p95 153.6 sat 0.637
+          REF  n  14686 L med 115.0 p95 168.4 sat 0.565
+p04_tn    OFF  n  10559 L med 120.4 p95 156.3 sat 0.551
+          LANE n   6202 L med 123.5 p95 154.6 sat 0.510
+          REF  n   8304 L med 152.2 p95 177.7 sat 0.447
+p06_t3.3  OFF  n  17580 L med 118.3 p95 147.4 sat 0.551
+          LANE n   8917 L med 122.8 p95 156.4 sat 0.503
+          REF  n  18945 L med 136.7 p95 170.2 sat 0.506

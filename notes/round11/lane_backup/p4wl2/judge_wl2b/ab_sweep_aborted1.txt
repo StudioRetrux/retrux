@@ -1,0 +1,2 @@
+[slot] judge_wl2b:perf-sweep: taken (load 5.1)
+0 A {"held":null,"n":281,"med":21.100000000000364,"mean":21.274733096085413,"p95":35.100000000000364,"boot":3703,"waited":61,"load0":3.1,"load1":3.1,"others":["wl2g:perf-sweep"]} load 3.1

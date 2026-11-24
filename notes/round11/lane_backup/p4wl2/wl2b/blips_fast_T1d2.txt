@@ -1,0 +1,8 @@
+left fast_p4wl: N 60 box 525x187 | blips total 74934 mean/frame 1292.0
+left fast_lane: N 60 box 525x187 | blips total 82034 mean/frame 1414.4
+leftfar fast_p4wl: N 60 box 262x62 | blips total 1715 mean/frame 29.6
+leftfar fast_lane: N 60 box 262x62 | blips total 3910 mean/frame 67.4
+shelf fast_p4wl: N 60 box 250x100 | blips total 18094 mean/frame 312.0
+shelf fast_lane: N 60 box 250x100 | blips total 18122 mean/frame 312.4
+far fast_p4wl: N 60 box 700x200 | blips total 79610 mean/frame 1372.6
+far fast_lane: N 60 box 700x200 | blips total 84537 mean/frame 1457.5

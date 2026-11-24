@@ -1,0 +1,592 @@
+diff -ruN a/retrux-web/app/hero/engine/HeroEngine.ts b/retrux-web/app/hero/engine/HeroEngine.ts
+--- a/retrux-web/app/hero/engine/HeroEngine.ts	2026-11-20 13:41:43
++++ b/retrux-web/app/hero/engine/HeroEngine.ts	2026-11-20 14:30:16
+@@ -342,6 +342,12 @@
+           weight: tw > 0 && tw < 1 ? tw : LAKE_EDGE_TAA_WEIGHT,
+         });
+       }
++      // AA4X (20 Nov): geometry-buffer AA of the contact waterline in EnvEdge's triangle (GBAA_GLSL), on the mirror lake;
++      // `?gbaa=0` off (exactly AA3). Lab only (with ?debug): `?gbaa=1` also on the plate lake, `?gbaadbg=1` tints its pixels.
++      const gbQ = eq?.get("gbaa");
++      if (aaResolve && edges && (mirror ? gbQ !== "0" : lab && gbQ === "1")) {
++        edge.enableGBAA(this.rig.camera, { near: WATER.level, far: WATER.far.min[1], farZ: WATER.near.min[2] }, lab && eq?.get("gbaadbg") === "1");
++      }
+     }
+ 
+     this.rings = new Rings(assets.hero.scene, this.shared, envDefines, { ...this.profile.ice, split: this.profile.iceBehindIce });
+diff -ruN a/retrux-web/app/hero/engine/world/EnvEdge.ts b/retrux-web/app/hero/engine/world/EnvEdge.ts
+--- a/retrux-web/app/hero/engine/world/EnvEdge.ts	2026-11-20 13:20:30
++++ b/retrux-web/app/hero/engine/world/EnvEdge.ts	2026-11-20 15:11:37
+@@ -48,6 +48,332 @@
+ }
+ `;
+ 
++/**
++ * AA4X (20 Nov, user: "priority benerin anti aliasing water yaa, ensure everything perfect"): geometry-buffer AA of the CONTACT
++ * waterline, where a floe's, slab's or rock's surface goes under the lake plane.
++ *
++ * That outline is the contour h = 0 of the solid's height above the plane. The environment pass already stores each pixel's
++ * view distance in alpha (BAKED_EDGE), so for every pixel whose 4 samples all lie on the solid the height of its centre is
++ * exact: h = camera.y + ray.y x distance - level (half-float distance: ~0.03 % noise, i.e. a few hundredths of a pixel after
++ * the fit below). On a pixel the contour crosses, the 4x resolve only knows 5 coverage levels, which is what crawls when the
++ * camera moves. Here:
++ *   - a plane h = h0 + g.x x + g.y y is fitted (least squares) over the solid pixels of the 5x5 that are near the lake point's
++ *     depth, then again over only the ones the first fit puts wholly above the contour (a mixed pixel's h is its coverage x
++ *     the solid's h, too low);
++ *   - the centre's signed distance to the contour is h0 / |g| px, its normal g / |g|, and its exact area coverage follows
++ *     (gbCov: the unit pixel cut by a straight line);
++ *   - the pure solid and lake colours come from the 5x5 pixels the fit puts wholly on either side; the pixel's own colour then
++ *     moves along (solid - lake) from its resolved coverage (its projection on that axis) to the exact one, in the resolve's
++ *     compressed space (texture across that axis kept), clamped to the 3x3 range.
++ * Per frame and per pixel: nothing to ghost, and the outline moves continuously with the camera. Silhouettes (a floe's top edge
++ * against the lake behind it: a depth jump) are not contours of h and keep the AA3 path (TAA + EnvEdge's blur). `?gbaa=0` off.
++ */
++const GBAA_GLSL = /* glsl */ `
++// the world ray through pixel px: uGbRayO + px.x uGbRayX + px.y uGbRayY (unnormalized); camera position
++uniform vec3 uGbRayO;
++uniform vec3 uGbRayX;
++uniform vec3 uGbRayY;
++uniform vec3 uGbCam;
++// x: near lake plane y, y: far lake plane y, z: world z below which the far plane is the lake, w: lab debug view
++uniform vec4 uGbLvl;
++// (uGbRaw, declared by the including pass: the environment pass's own resolve, this frame's samples only)
++vec3 gbRay(vec2 px) { return normalize(uGbRayO + px.x * uGbRayX + px.y * uGbRayY); }
++float gbLevel(float z) { return z < uGbLvl.z ? uGbLvl.y : uGbLvl.x; }
++// One unit in the last place of a half-float distance. Measured (hdrcap, open lake): this GPU truncates when it writes the
++// target, so a stored distance lies up to 1 ulp BELOW the true one (h then reads 0 .. +1 ulp x |ray.y| on the flat lake).
++float gbUlp(float a) { return exp2(floor(log2(a)) - 10.0); }
++// height above the lake plane of the tap's centre ray at distance a (centred on the truncation), and its noise bound;
++// x < -1e8: above the horizon or nothing drawn
++vec2 gbH(vec2 px, float a) {
++  vec3 r = gbRay(px);
++  if (a <= 1.0 || r.y > -1e-5) return vec2(-1e9, 0.0);
++  float u = gbUlp(a);
++  vec3 P = uGbCam + r * (a + 0.5 * u);
++  return vec2(P.y - gbLevel(P.z), -r.y * u);
++}
++// a lake tap and a solid tap in the 3x3 (cheap test before the 5x5 fit)
++bool gbaaPre(float a0, float a1, float a2, float a3, float a4, float a5, float a6, float a7, float a8) {
++  bool l = false, s = false;
++  for (int i = 0; i < 9; i++) {
++    float a = i == 0 ? a0 : i == 1 ? a1 : i == 2 ? a2 : i == 3 ? a3 : i == 4 ? a4 : i == 5 ? a5 : i == 6 ? a6 : i == 7 ? a7 : a8;
++    vec2 h = gbH(gl_FragCoord.xy + vec2(float(i - (i / 3) * 3 - 1), float(i / 3 - 1)), a);
++    if (h.x < -1e8) continue;
++    l = l || abs(h.x) <= h.y;
++    s = s || h.x > h.y;
++  }
++  return l && s;
++}
++// the same from the resolve itself
++bool gbaaPreFetch() {
++  ivec2 ip = ivec2(gl_FragCoord.xy), nmax = textureSize(uGbRaw, 0) - 1;
++  bool l = false, s = false;
++  for (int i = 0; i < 9; i++) {
++    ivec2 q = clamp(ip + ivec2(i - (i / 3) * 3 - 1, i / 3 - 1), ivec2(0), nmax);
++    vec2 h = gbH(vec2(q) + 0.5, texelFetch(uGbRaw, q, 0).a);
++    if (h.x < -1e8) continue;
++    l = l || abs(h.x) <= h.y;
++    s = s || h.x > h.y;
++  }
++  return l && s;
++}
++// the unit pixel's area on the side n.x > -s of a line (n unit) at signed distance s from its centre
++float gbCov(float s, vec2 n) {
++  float a = max(abs(n.x), abs(n.y)), b = min(abs(n.x), abs(n.y));
++  float m = 0.5 * (a + b), k = 0.5 * (a - b), u = abs(s), c;
++  if (u >= m) c = 1.0;
++  else if (u <= k) c = 0.5 + u / a;
++  else {
++    float v = m - u;
++    c = 1.0 - v * v / (2.0 * a * b);
++  }
++  return s >= 0.0 ? c : 1.0 - c;
++}
++// the centre pixel's colour (compressed space) with the contact waterline's exact coverage; applied: its weight (0: none)
++vec3 gbaa(vec3 c, vec3 mn, vec3 mx, out float applied) {
++  applied = 0.0;
++  ivec2 ip = ivec2(gl_FragCoord.xy);
++  ivec2 nmax = textureSize(uGbRaw, 0) - 1;
++  vec3 r0 = gbRay(gl_FragCoord.xy);
++  if (r0.y > -1e-4) return c;
++  float tp = (uGbCam.y - uGbLvl.x) / -r0.y;
++  float hq[25];
++  vec3 cq[25];
++  int kq[25];
++  bool use[25];
++  int nl = 0, ns = 0;
++  for (int q = 0; q < 25; q++) {
++    ivec2 o = ivec2(q - (q / 5) * 5 - 2, q / 5 - 2);
++    ivec2 tq = clamp(ip + o, ivec2(0), nmax);
++    vec4 t = texelFetch(uGbRaw, tq, 0);
++    vec2 h = gbH(vec2(tq) + 0.5, t.a);
++    cq[q] = t.rgb;
++    hq[q] = h.x;
++    kq[q] = 0;
++    // 1: lake (h within its noise of 0), 2: solid near the lake point's depth (the fit's candidates)
++    if (h.x < -1e8) {
++    } else if (abs(h.x) <= h.y) {
++      kq[q] = 1;
++      nl++;
++    } else if (h.x > h.y && abs(t.a - tp) < 0.08 * tp) {
++      kq[q] = 2;
++      ns++;
++    }
++    use[q] = kq[q] == 2;
++  }
++  if (nl == 0 || ns < 3) return c;
++  vec3 fit = vec3(0.0);
++  float gl = 0.0;
++  for (int pass = 0; pass < 2; pass++) {
++    float s1 = 0.0, sx = 0.0, sy = 0.0, sxx = 0.0, syy = 0.0, sxy = 0.0, sh = 0.0, shx = 0.0, shy = 0.0;
++    for (int q = 0; q < 25; q++) {
++      if (!use[q]) continue;
++      float x = float(q - (q / 5) * 5 - 2), y = float(q / 5 - 2), h = hq[q];
++      s1 += 1.0;
++      sx += x;
++      sy += y;
++      sxx += x * x;
++      syy += y * y;
++      sxy += x * y;
++      sh += h;
++      shx += h * x;
++      shy += h * y;
++    }
++    mat3 A = mat3(s1, sx, sy, sx, sxx, sxy, sy, sxy, syy);
++    if (s1 < 3.0 || determinant(A) < 0.5) return c;
++    fit = inverse(A) * vec3(sh, shx, shy);
++    gl = length(fit.yz);
++    if (gl < 1e-7) return c;
++    if (pass == 1) break;
++    vec2 n1 = fit.yz / gl;
++    float m1 = 0.5 * (abs(n1.x) + abs(n1.y)) + 0.05;
++    for (int q = 0; q < 25; q++) {
++      float x = float(q - (q / 5) * 5 - 2), y = float(q / 5 - 2);
++      use[q] = kq[q] == 2 && (fit.x + fit.y * x + fit.z * y) / gl >= m1;
++    }
++  }
++  // the fit must resolve the contour to a fraction of a pixel (a tap's h is good to +-0.5 ulp x |ray.y|)
++  if (gl < 2.0 * (-r0.y * gbUlp(tp))) return c;
++  vec2 n = fit.yz / gl;
++  float m = 0.5 * (abs(n.x) + abs(n.y));
++  float sd = fit.x / gl;
++  if (abs(sd) > m + 0.25) return c;
++  // the fitted plane must explain its own taps (one surface; no second solid in the window)
++  float res = 0.0, cnt = 0.0;
++  vec3 S = vec3(0.0), L = vec3(0.0);
++  float ws = 0.0, wl = 0.0;
++  for (int q = 0; q < 25; q++) {
++    float x = float(q - (q / 5) * 5 - 2), y = float(q / 5 - 2);
++    float sq = (fit.x + fit.y * x + fit.z * y) / gl;
++    float w = 1.0 / (0.25 + x * x + y * y);
++    if (use[q]) {
++      float e = hq[q] / gl - sq;
++      res += e * e;
++      cnt += 1.0;
++    }
++    if (kq[q] == 2 && sq >= m + 0.05) {
++      S += w * cq[q];
++      ws += w;
++    } else if (kq[q] == 1 && sq <= -m - 0.05) {
++      L += w * cq[q];
++      wl += w;
++    }
++  }
++  if (cnt < 3.0 || res / cnt > 0.04 || ws <= 0.0 || wl <= 0.0) return c;
++  float wfit = 1.0 - smoothstep(0.02, 0.04, res / cnt);
++  S /= ws;
++  L /= wl;
++  vec3 d = S - L;
++  float dd = dot(d, d);
++  if (dd < 1e-8) return c;
++  // this frame's own colour and 3x3 range (AA3's TAA output is replaced where the fit holds)
++  vec3 cr = cq[12];
++  mn = min(min(min(cq[6], cq[7]), min(cq[8], cq[11])), min(min(cq[12], cq[13]), min(min(cq[16], cq[17]), cq[18])));
++  mx = max(max(max(cq[6], cq[7]), max(cq[8], cq[11])), max(max(cq[12], cq[13]), max(max(cq[16], cq[17]), cq[18])));
++  float f = clamp(dot(cr - L, d) / dd, 0.0, 1.0);
++  float cv = gbCov(sd, n);
++  // the 4x resolve is never off by more than ~1/4: a larger step means the two-colour model does not hold here (faded out, so
++  // nothing switches from one frame to the next)
++  applied = wfit * (1.0 - smoothstep(0.2, 0.3, abs(cv - f)));
++  return clamp(cr + (cv - f) * d, mn, mx);
++}
++// d gbCov / d s (the pixel's width profile across the line)
++float gbPdf(float s, vec2 n) {
++  float a = max(abs(n.x), abs(n.y)), b = min(abs(n.x), abs(n.y));
++  float m = 0.5 * (a + b), k = 0.5 * (a - b), u = abs(s);
++  if (u >= m) return 0.0;
++  if (u <= k) return 1.0 / a;
++  return (m - u) / (a * b);
++}
++// SILHOUETTES (the lake seen behind a solid: no contour of h there). The 4x resolve's lake fraction of each 5x5 tap (its colour
++// projected on lake - solid, both from the taps the depths call pure) is fitted by one straight edge with the exact area model
++// (Gauss-Newton on angle and offset, Gaussian tap weights sigma 1.25 px): the 25 taps' 100 samples pin the line far better than
++// the centre's 4 (offline, straight edges: mean coverage error 0.030 vs the 16-sample reference's 0.027 and the 4x resolve's
++// 0.076). Lake taps count as all lake and solid taps in the near 15 % of the depth jump as all solid (the lake's ripple texture
++// otherwise reads as +-0.1-0.2 coverage noise: hdrcap FS slab end, misfit 0.105-0.14); curved or crowded windows (RMS misfit
++// > 0.12) keep the AA3 path. applied: the weight of the returned colour over the AA3 one (0: none).
++vec3 gbaaSil(vec3 c, vec3 mn, vec3 mx, out float applied) {
++  applied = 0.0;
++  ivec2 ip = ivec2(gl_FragCoord.xy);
++  ivec2 nmax = textureSize(uGbRaw, 0) - 1;
++  vec3 cq[25];
++  float aq[25];
++  int kq[25];
++  float dmin = 1e9;
++  for (int q = 0; q < 25; q++) {
++    ivec2 tq = clamp(ip + ivec2(q - (q / 5) * 5 - 2, q / 5 - 2), ivec2(0), nmax);
++    vec4 t = texelFetch(uGbRaw, tq, 0);
++    vec2 h = gbH(vec2(tq) + 0.5, t.a);
++    cq[q] = t.rgb;
++    aq[q] = t.a;
++    kq[q] = h.x < -1e8 ? 0 : abs(h.x) <= h.y ? 1 : h.x > h.y ? 2 : 0;
++    if (kq[q] == 2) dmin = min(dmin, t.a);
++  }
++  vec3 S = vec3(0.0), L = vec3(0.0);
++  float ws = 0.0, wl = 0.0;
++  for (int q = 0; q < 25; q++) {
++    float x = float(q - (q / 5) * 5 - 2), y = float(q / 5 - 2);
++    float w = 1.0 / (0.25 + x * x + y * y);
++    if (kq[q] == 2 && aq[q] <= dmin * 1.02 + 0.02) {
++      S += w * cq[q];
++      ws += w;
++    } else if (kq[q] == 1) {
++      L += w * cq[q];
++      wl += w;
++    }
++  }
++  if (ws <= 0.0 || wl <= 0.0) return c;
++  S /= ws;
++  L /= wl;
++  vec3 d = L - S;
++  float dd = dot(d, d);
++  if (dd < 4e-4) return c;
++  float fq[25];
++  float wq[25];
++  float tl[25];
++  bool ps[25];
++  // the lake distance along each tap's ray; pure solid taps: within the near 15 % of the depth jump
++  float s1 = 0.0, sx = 0.0, sy = 0.0, sxx = 0.0, syy = 0.0, sxy = 0.0, sd = 0.0, sdx = 0.0, sdy = 0.0;
++  for (int q = 0; q < 25; q++) {
++    float x = float(q - (q / 5) * 5 - 2), y = float(q / 5 - 2);
++    vec3 rq = gbRay(vec2(clamp(ip + ivec2(int(x), int(y)), ivec2(0), nmax)) + 0.5);
++    tl[q] = rq.y < -1e-5 ? (uGbCam.y - uGbLvl.x) / -rq.y : 1e9;
++    ps[q] = kq[q] == 2 && aq[q] <= dmin + 0.15 * (tl[q] - dmin);
++    if (ps[q]) {
++      s1 += 1.0; sx += x; sy += y; sxx += x * x; syy += y * y; sxy += x * y; sd += aq[q]; sdx += aq[q] * x; sdy += aq[q] * y;
++    }
++  }
++  // the solid's distance field (affine over the pure solid taps; their mean with fewer than 3 in general position)
++  vec3 dfit = vec3(sd / max(s1, 1.0), 0.0, 0.0);
++  mat3 Ad = mat3(s1, sx, sy, sx, sxx, sxy, sy, sxy, syy);
++  if (s1 >= 3.0 && determinant(Ad) >= 0.5) dfit = inverse(Ad) * vec3(sd, sdx, sdy);
++  float gx = 0.0, gy = 0.0;
++  for (int q = 0; q < 25; q++) {
++    float x = float(q - (q / 5) * 5 - 2), y = float(q / 5 - 2);
++    // a lake tap is all lake and a pure solid tap all solid; the taps in between: their distance between the solid's and the
++    // lake's (the resolve averaged the samples' distances), else their colour
++    float dsq = dfit.x + dfit.y * x + dfit.z * y;
++    float jump = tl[q] - dsq;
++    fq[q] = kq[q] == 1 ? 1.0 : ps[q] ? 0.0 : jump > 0.04 * tl[q] ? clamp((aq[q] - dsq) / jump, 0.0, 1.0) : clamp(dot(cq[q] - S, d) / dd, 0.0, 1.0);
++    wq[q] = exp(-(x * x + y * y) / (2.0 * 1.25 * 1.25));
++    if (abs(x) <= 1.0 && abs(y) <= 1.0) {
++      gx += x * fq[q];
++      gy += y * fq[q];
++    }
++  }
++  if (gx * gx + gy * gy < 1e-6) return c;
++  float th = atan(gy, gx);
++  vec2 n = vec2(cos(th), sin(th));
++  float cc = (fq[12] - 0.5) * (abs(n.x) + abs(n.y));
++  for (int it = 0; it < 6; it++) {
++    n = vec2(cos(th), sin(th));
++    vec2 nt = vec2(-n.y, n.x);
++    float j00 = 1e-3, j01 = 0.0, j11 = 1e-3, r0 = 0.0, r1 = 0.0;
++    for (int q = 0; q < 25; q++) {
++      vec2 x = vec2(float(q - (q / 5) * 5 - 2), float(q / 5 - 2));
++      float s = dot(n, x) + cc;
++      float p = gbPdf(s, n);
++      float dth = p * dot(nt, x);
++      float r = gbCov(s, n) - fq[q];
++      float w = wq[q];
++      j00 += w * dth * dth;
++      j01 += w * dth * p;
++      j11 += w * p * p;
++      r0 += w * dth * r;
++      r1 += w * p * r;
++    }
++    float det = j00 * j11 - j01 * j01;
++    th -= clamp((j11 * r0 - j01 * r1) / det, -0.3, 0.3);
++    cc -= clamp((j00 * r1 - j01 * r0) / det, -0.5, 0.5);
++  }
++  n = vec2(cos(th), sin(th));
++  float res = 0.0, wsum = 0.0;
++  for (int q = 0; q < 25; q++) {
++    vec2 x = vec2(float(q - (q / 5) * 5 - 2), float(q / 5 - 2));
++    float e = gbCov(dot(n, x) + cc, n) - fq[q];
++    res += wq[q] * e * e;
++    wsum += wq[q];
++  }
++  if (res > 0.0144 * wsum) return c;
++  float rms = sqrt(res / wsum), m = 0.5 * (abs(n.x) + abs(n.y));
++  // only the pixels the fitted edge crosses (faded out at its border and with the misfit: nothing switches between frames)
++  float wfit = (1.0 - smoothstep(0.08, 0.12, rms)) * (1.0 - smoothstep(m - 0.1, m + 0.1, abs(cc)));
++  if (wfit <= 0.0) return c;
++  // this frame's own colour and 3x3 range; its lake fraction as the fit saw it (distance, else colour)
++  vec3 cr = cq[12];
++  mn = min(min(min(cq[6], cq[7]), min(cq[8], cq[11])), min(min(cq[12], cq[13]), min(min(cq[16], cq[17]), cq[18])));
++  mx = max(max(max(cq[6], cq[7]), max(cq[8], cq[11])), max(max(cq[12], cq[13]), max(max(cq[16], cq[17]), cq[18])));
++  float cv = gbCov(cc, n);
++  // the fitted line must agree with the pixel's own 4 samples (a 4x coverage is within ~0.2 of the true area on a straight
++  // edge): a larger step is a bend or a corner the line cannot follow
++  applied = wfit * (1.0 - smoothstep(0.15, 0.22, abs(cv - fq[12])));
++  return clamp(cr + (cv - fq[12]) * d, mn, mx);
++}
++`;
++
++/** AA4X: a shader with its GBAA blocks (between //<gbaa> and //</gbaa> lines) kept or removed: off, the source is AA3's. */
++const gbSrc = (src: string, on: boolean) =>
++  on ? src.replace(/^\/\/<\/?gbaa>\n/gm, "") : src.replace(/^\/\/<gbaa>\n[\s\S]*?^\/\/<\/gbaa>\n/gm, "");
++
+ const EDGE_FRAG = /* glsl */ `
+ uniform sampler2D uSrc;
+ uniform vec2 uTexel;
+@@ -62,6 +388,14 @@
+ ${GLSL_AA_RESOLVE}
+ vec3 aaTap(vec3 c, vec2 o) { return aaIn(gl_FragCoord.xy + o) ? aaExpand(c) : c; }
+ #endif
++//<gbaa>
++#ifdef GBAA
++uniform sampler2D uGbRaw;
++// 1: this triangle applies the GBAA (no TAA pass this frame), 0: the TAA pass already did
++uniform float uGbEdge;
++${GBAA_GLSL}
++#endif
++//</gbaa>
+ vec3 enc(vec3 c) {
+   vec3 x = max(c / uGain, 0.0);
+   return mix(x * 12.92, 1.055 * pow(x, vec3(1.0 / 2.4)) - 0.055, step(0.0031308, x));
+@@ -88,11 +422,50 @@
+ #endif
+     // Not a silhouette: the expanded resolve where the environment wrote compressed samples, nothing elsewhere.
+     if (!aaIn(gl_FragCoord.xy)) discard;
++//<gbaa>
++#ifdef GBAA
++    // AA4X: a pixel the contact waterline crosses takes its exact coverage (gbaa, below).
++    vec3 gmn = min(min(min(c0.rgb, c1.rgb), min(c2.rgb, c3.rgb)), min(min(c4.rgb, c5.rgb), min(min(c6.rgb, c7.rgb), c8.rgb)));
++    vec3 gmx = max(max(max(c0.rgb, c1.rgb), max(c2.rgb, c3.rgb)), max(max(c4.rgb, c5.rgb), max(max(c6.rgb, c7.rgb), c8.rgb)));
++    float gW = 0.0, gSil = 0.0;
++    vec3 gc = c4.rgb;
++    if (uGbEdge > 0.5 && gbaaPre(c0.a, c1.a, c2.a, c3.a, c4.a, c5.a, c6.a, c7.a, c8.a)) {
++      gc = gbaa(c4.rgb, gmn, gmx, gW);
++      // (an outline whose depth jump is below the blur's threshold: the silhouette fit)
++      if (gW <= 0.0) {
++        gc = gbaaSil(c4.rgb, gmn, gmx, gW);
++        gSil = 1.0;
++      }
++    }
++    gl_FragColor = vec4(aaExpand(mix(c4.rgb, gc, gW)), c4.a);
++    if (uGbLvl.w > 0.5 && gW > 0.0) gl_FragColor.rgb = mix(gl_FragColor.rgb, gSil > 0.5 ? vec3(1.0, 0.8, 0.0) : vec3(1.0, 0.0, 1.0), 0.6 * gW);
++    return;
++#else
++//</gbaa>
+     gl_FragColor = vec4(aaExpand(c4.rgb), c4.a);
+     return;
++//<gbaa>
++#endif
++//</gbaa>
+ #ifdef EDGE_BLUR
+   }
+ #endif
++//<gbaa>
++#ifdef GBAA
++  // AA4X: a solid's outline against the lake behind it takes the fitted edge's coverage (gbaaSil) over the blur (mixed below).
++  float sW = 0.0, sSil = 0.0;
++  vec3 sc = vec3(0.0);
++  if (uGbEdge > 0.5 && aaIn(gl_FragCoord.xy) && gbaaPre(c0.a, c1.a, c2.a, c3.a, c4.a, c5.a, c6.a, c7.a, c8.a)) {
++    vec3 smn = min(min(min(c0.rgb, c1.rgb), min(c2.rgb, c3.rgb)), min(min(c4.rgb, c5.rgb), min(min(c6.rgb, c7.rgb), c8.rgb)));
++    vec3 smx = max(max(max(c0.rgb, c1.rgb), max(c2.rgb, c3.rgb)), max(max(c4.rgb, c5.rgb), max(max(c6.rgb, c7.rgb), c8.rgb)));
++    sc = gbaa(c4.rgb, smn, smx, sW);
++    if (sW <= 0.0) {
++      sc = gbaaSil(c4.rgb, smn, smx, sW);
++      sSil = 1.0;
++    }
++  }
++#endif
++//</gbaa>
+   // A silhouette: every tap expanded where it was compressed (the alpha distances are not), then blurred as before.
+   c0.rgb = aaTap(c0.rgb, vec2(-1.0, -1.0));
+   c1.rgb = aaTap(c1.rgb, vec2(0.0, -1.0));
+@@ -109,6 +482,14 @@
+   vec3 s = enc(c4.rgb) + uW.x * (enc(c1.rgb) + enc(c3.rgb) + enc(c5.rgb) + enc(c7.rgb))
+     + uW.y * (enc(c0.rgb) + enc(c2.rgb) + enc(c6.rgb) + enc(c8.rgb));
+   gl_FragColor = vec4(dec(s / (1.0 + 4.0 * uW.x + 4.0 * uW.y)), c4.a);
++//<gbaa>
++#if defined(GBAA) && defined(AA_RESOLVE)
++  if (sW > 0.0) {
++    gl_FragColor.rgb = mix(gl_FragColor.rgb, aaExpand(sc), sW);
++    if (uGbLvl.w > 0.5) gl_FragColor.rgb = mix(gl_FragColor.rgb, sSil > 0.5 ? vec3(1.0, 0.8, 0.0) : vec3(1.0, 0.0, 1.0), 0.6 * sW);
++  }
++#endif
++//</gbaa>
+ }
+ `;
+ 
+@@ -151,6 +532,12 @@
+ uniform float uReflOn;
+ uniform vec4 uRipple;
+ ${GLSL_AA_RESOLVE}
++//<gbaa>
++#ifdef GBAA
++#define uGbRaw uCur
++${GBAA_GLSL}
++#endif
++//</gbaa>
+ vec3 taaRay(vec2 px) {
+   return uRayO + px.x * uRayX + px.y * uRayY;
+ }
+@@ -192,6 +579,17 @@
+   ivec2 ip = ivec2(gl_FragCoord.xy);
+   ivec2 n = ivec2(uSize) - 1;
+   vec4 c = texelFetch(uCur, ip, 0);
++//<gbaa>
++#ifdef GBAA
++  // AA4X: this frame's colour takes its GBAA coverage first (gbaa / gbaaSil, weighted), then the history blend below
++  if (aaIn(gl_FragCoord.xy) && gbaaPreFetch()) {
++    float gW = 0.0;
++    vec3 gc = gbaa(c.rgb, c.rgb, c.rgb, gW);
++    if (gW <= 0.0) gc = gbaaSil(c.rgb, c.rgb, c.rgb, gW);
++    c.rgb = mix(c.rgb, gc, gW);
++  }
++#endif
++//</gbaa>
+   gl_FragColor = c;
+   if (uHistW <= 0.0 || !aaIn(gl_FragCoord.xy)) return;
+   bool lake = false;
+@@ -313,6 +711,8 @@
+   } | null = null;
+   private tv = new THREE.Vector4();
+   private tc = new THREE.Vector3();
++  /** AA4X contact-waterline GBAA (enableGBAA): its camera and the edge material's ray uniforms, or null. */
++  private gb: { camera: THREE.PerspectiveCamera; vp: THREE.Matrix4; inv: THREE.Matrix4; u: Record<string, { value: unknown }> } | null = null;
+   readonly uniforms = {
+     uSrc: { value: null as THREE.Texture | null },
+     uTexel: { value: new THREE.Vector2(1, 1) },
+@@ -332,7 +732,7 @@
+     this.copy = new THREE.ShaderMaterial({ name: "rx-env-edge-copy", fragmentShader: COPY_FRAG, uniforms: { uSrc: this.uniforms.uSrc }, ...common });
+     this.edge = new THREE.ShaderMaterial({
+       name: "rx-env-edge",
+-      fragmentShader: EDGE_FRAG,
++      fragmentShader: gbSrc(EDGE_FRAG, false),
+       uniforms: aa ? { ...this.uniforms, ...aa.uniforms } : this.uniforms,
+       ...(aa ? { defines: aa.edges ? { AA_RESOLVE: "", EDGE_BLUR: "" } : { AA_RESOLVE: "" } } : {}),
+       ...common,
+@@ -404,7 +804,7 @@
+     const material = new THREE.ShaderMaterial({
+       name: "rx-lake-edge-taa",
+       vertexShader: VERT,
+-      fragmentShader: TAA_FRAG,
++      fragmentShader: gbSrc(TAA_FRAG, false),
+       uniforms: {
+         ...this.aaRead,
+         uCur: { value: null },
+@@ -449,6 +849,54 @@
+     };
+   }
+ 
++  /**
++   * AA4X: the contact waterline's geometry-buffer AA in the edge triangle (GBAA_GLSL; needs aaresolve and the silhouette pass,
++   * i.e. the constructor's `aa` with `edges`). `levels`: the lake planes' heights and the world z below which the far one is
++   * the lake; `debug` (lab) tints the pixels it changed. Call before the first render.
++   */
++  enableGBAA(camera: THREE.PerspectiveCamera, levels: { near: number; far: number; farZ: number }, debug = false) {
++    const m = this.edge;
++    if (!this.aaRead || this.gb || m.defines?.EDGE_BLUR === undefined) return;
++    const u = {
++      uGbRayO: { value: new THREE.Vector3() },
++      uGbRayX: { value: new THREE.Vector3() },
++      uGbRayY: { value: new THREE.Vector3() },
++      uGbCam: { value: new THREE.Vector3() },
++      uGbLvl: { value: new THREE.Vector4(levels.near, levels.far, levels.farZ, debug ? 1 : 0) },
++      uGbRaw: { value: null as THREE.Texture | null },
++      uGbEdge: { value: 1 },
++    };
++    Object.assign(m.uniforms, u);
++    m.fragmentShader = gbSrc(EDGE_FRAG, true);
++    m.defines.GBAA = "";
++    m.needsUpdate = true;
++    if (this.taa) {
++      // (the TAA pass applies it to the current frame before its history blend; it then also runs at rest, see runTAA)
++      const tm = this.taa.material;
++      Object.assign(tm.uniforms, { uGbRayO: u.uGbRayO, uGbRayX: u.uGbRayX, uGbRayY: u.uGbRayY, uGbCam: u.uGbCam, uGbLvl: u.uGbLvl });
++      tm.fragmentShader = gbSrc(TAA_FRAG, true);
++      tm.defines.GBAA = "";
++      tm.needsUpdate = true;
++    }
++    this.gb = { camera, vp: new THREE.Matrix4(), inv: new THREE.Matrix4(), u };
++  }
++
++  /** AA4X: this frame's camera rays for the GBAA (pixel centre px -> O + px.x X + px.y Y, relative to the camera). */
++  private gbaaFrame(main: THREE.WebGLRenderTarget) {
++    const g = this.gb!;
++    const cam = g.camera;
++    const camPos = (g.u.uGbCam.value as THREE.Vector3).setFromMatrixPosition(cam.matrixWorld);
++    g.vp.multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse);
++    g.inv.copy(g.vp).invert();
++    const ray = (px: number, py: number, o: THREE.Vector3) => {
++      const v = this.tv.set((px / main.width) * 2 - 1, (py / main.height) * 2 - 1, 1, 1).applyMatrix4(g.inv);
++      return o.set(v.x / v.w - camPos.x, v.y / v.w - camPos.y, v.z / v.w - camPos.z);
++    };
++    const rO = ray(0, 0, g.u.uGbRayO.value as THREE.Vector3);
++    ray(1, 0, g.u.uGbRayX.value as THREE.Vector3).sub(rO);
++    ray(0, 1, g.u.uGbRayY.value as THREE.Vector3).sub(rO);
++  }
++
+   /** Per frame, before the pipeline renders: the simulation step (s; 0 when frozen) and main-target px per CSS px. */
+   taaFrame(dt: number, pxPerCss: number) {
+     if (!this.taa) return;
+@@ -495,12 +943,14 @@
+     const per60 = t.dt > 1e-6 ? css / (t.dt * 60) : css;
+     const moving = Number.isFinite(motion) && per60 > TAA_STILL;
+     t.still = moving ? 0 : t.still + 1;
+-    if (!moving && t.still > TAA_TAIL) {
++    const rest = !moving && t.still > TAA_TAIL;
++    if (rest && !this.gb) {
+       t.valid = false;
+       t.lastWeight = -1;
+       return null;
+     }
+-    const weight = t.valid && motion <= TAA_JUMP ? t.opts.weight : 0;
++    // (AA4X: at rest the pass still applies the GBAA, without history: the frame converged on it during the tail)
++    const weight = t.valid && motion <= TAA_JUMP && !rest ? t.opts.weight : 0;
+     const out = t.targets[t.cur];
+     const hist = t.targets[1 - t.cur];
+     if (out.width !== main.width || out.height !== main.height) {
+@@ -543,18 +993,22 @@
+     u.uW.value.set(Math.exp(-1 / s2), Math.exp(-2 / s2));
+     u.uTexel.value.set(1 / main.width, 1 / main.height);
+     this.main = main;
++    if (this.gb) this.gbaaFrame(main);
+     // AA3: the lake-edge TAA's output (its own target: no feedback loop either way) replaces the resolve as the source.
+     const taaOut = this.taa ? this.runTAA(renderer, main) : null;
+-    if (taaOut) {
+-      u.uSrc.value = taaOut;
+-    } else if (this.tmp) {
++    // (AA4X: the GBAA also reads the environment pass's own resolve, copied first where it is the draw target's attachment)
++    let raw: THREE.Texture = main.texture;
++    if (this.tmp && (!taaOut || this.gb)) {
+       if (this.tmp.width !== main.width || this.tmp.height !== main.height) this.tmp.setSize(main.width, main.height);
+       u.uSrc.value = main.texture;
+       renderer.setRenderTarget(this.tmp);
+       renderer.render(this.copyScene, this.copyCamera);
+-      u.uSrc.value = this.tmp.texture;
+-    } else {
+-      u.uSrc.value = main.texture;
++      raw = this.tmp.texture;
++    }
++    u.uSrc.value = taaOut ?? raw;
++    if (this.gb) {
++      this.gb.u.uGbRaw.value = raw;
++      this.gb.u.uGbEdge.value = taaOut ? 0 : 1;
+     }
+     this.armed = true;
+   }

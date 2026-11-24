@@ -1,0 +1,307 @@
+--- a/retrux-web/app/hero/engine/hero/IceMaterial.ts
++++ b/retrux-web/app/hero/engine/hero/IceMaterial.ts
+@@ -27,6 +27,32 @@
+ const P4_CAP = !!P4Q && P4Q.get("icecap") !== "0";
+ const P4_ORB = !!P4Q && P4Q.get("orbice") !== "r11";
+ const P4_HOLD = !!P4Q && P4Q.get("icehold") !== "r11";
++/**
++ * P4 round 3 (lane p4ice3, on top of round 1): `?p4ice3=0` restores MAIN (round 1, int1) exactly: no ICE_P4R3 define, its
++ * `#ifdef ICE_P4R3` blocks stripped from both stages (their `#else` parts kept), no new uniforms. Needs the round-1 lane
++ * (`?p4ice=0` turns both off). Sub-switches, uniform-level: `?icegeo=0` (F5: the GLB's L2 section, not the artist's L1
++ * octagon), `?iceedge=0` (F5: MAIN's entry corner rounding in the dolly), `?icejoint=r1` (R1: round 1's V seams), `?icetir=0`
++ * (F3: the exit tilt everywhere, F6: round 1's rim line), `?icehold3=0` (F4s / N1: round 1's hold clamp and chroma).
++ */
++const P4R3 = P4ICE && !!P4Q && P4Q.get("p4ice3") !== "0";
++const P4R3_GEO = !!P4Q && P4Q.get("icegeo") !== "0";
++const P4R3_EDGE = !!P4Q && P4Q.get("iceedge") !== "0";
++const P4R3_JOINT = !!P4Q && P4Q.get("icejoint") !== "r1";
++const P4R3_TIR = !!P4Q && P4Q.get("icetir") !== "0";
++const P4R3_HOLD = !!P4Q && P4Q.get("icehold3") !== "0";
++/** The source without the `#ifdef <name>` blocks (their `#else` parts kept); no nested conditionals inside those blocks. */
++function stripDef(src: string, name: string) {
++  const out: string[] = [];
++  let mode = 0;
++  for (const line of src.split("\n")) {
++    const t = line.trim();
++    if (mode === 0 && t === "#ifdef " + name) mode = 1;
++    else if (mode === 1 && t === "#else") mode = 2;
++    else if (mode !== 0 && t === "#endif") mode = 0;
++    else if (mode !== 1) out.push(line);
++  }
++  return out.join("\n");
++}
+ function p4On(quality: { marchSteps: number }) {
+   return P4ICE && iceR11(quality) && quality.marchSteps >= 4;
+ }
+@@ -159,11 +185,46 @@
+   return mix(0.5 * (h1 + h2), h1, k) - 0.5;
+ }
+ 
++#ifdef ICE_P4R3
++// Round 3 (F5): the octagon the fragment shader traces (R11_OCT), outward normal and offset in units of the radial half-width.
++uniform vec4 uP4L;
++const vec3 R3_OCT[8] = vec3[8](
++  vec3(0.98404, 0.17791, 0.98404), vec3(0.61500, 0.78855, 1.63782),
++  vec3(-0.61500, 0.78855, 1.63782), vec3(-0.98404, 0.17791, 0.98404),
++  vec3(-0.98404, -0.17791, 0.98404), vec3(-0.61500, -0.78855, 1.63782),
++  vec3(0.61500, -0.78855, 1.63782), vec3(0.98404, -0.17791, 0.98404));
++#endif
+ void main() {
+   vec3 pr = position + uNoiseOffset;
+   vec3 n = normalize(normal);
+   vec3 pos = position;
+   vSec = vec2(0.0);
++#ifdef ICE_P4R3
++  // (Round 3, F5 / the panel's composition issue 1: the artist renders the rings at SubD level 1 - an 8-point octagon section
++  // with hard corners (Smooth by Angle 30) and flat octagonal caps - while hero.glb carries level 2, a rounder 16-point section
++  // whose surface bulges up to 0.13 w outside that octagon between its corners, and 16-gon caps: the soft 'log' silhouettes and
++  // domed ends in the dolly. Every point outside the octagon moves radially in the section onto it (uP4L.x share); points inside
++  // it - the caps' interiors - stay. Position only, so split vertices stay welded; the fragment shader already traces this
++  // octagon, so the outline and the shading now agree.)
++  if (uP4L.x > 0.0 && uSectionHalf.y > 0.0) {
++    float rl0 = length(pr.xy);
++    if (rl0 > 1e-4) {
++      float w0 = uSectionHalf.y / 2.077;
++      vec2 q = vec2(rl0 - uSectionRadius, pr.z) / w0;
++      float k = 1e9;
++      for (int i = 0; i < 8; i++) {
++        float dn = dot(R3_OCT[i].xy, q);
++        if (dn > 1e-6) k = min(k, R3_OCT[i].z / dn);
++      }
++      if (k < 1.0) {
++        vec2 q2 = q * mix(1.0, k, uP4L.x);
++        vec3 prN = vec3(pr.xy / rl0 * (uSectionRadius + q2.x * w0), q2.y * w0);
++        pos += prN - pr;
++        pr = prN;
++      }
++    }
++  }
++#endif
+   if (uDisplace > 0.0) {
+     // Along the cross-section's outward direction (position only: split vertices stay welded).
+     float rl = length(pr.xy);
+@@ -415,7 +476,20 @@
+                     // noise), y / z / w spare
+ uniform vec4 uP4J;  // Q6 fix round, joints: x 1 = V profile (0 = the round-1 / MAIN collar formula with uP4D.y metres), y its depth
+                     // share, z spare, w bright far-wall line gain
++#ifdef ICE_P4R3
++uniform vec4 uP4K;  // R1 (round 3), joints face-on to their cut plane: x / y ramp on |V . n_cut| (lo / hi), z the V's flat core (full
++                    // depth from this V value on: a trapezoid; 0 = the tent), w the floor of the TIR mix there (round 1: 0.12)
++uniform vec4 uP4L;  // F5 (round 3): x share of the L1 octagon section (vertex, 0 = the GLB's L2 section), y the entry corners' rounding
++                    // capped at this many pixel footprints at full hold (0 = MAIN's uR11F.z everywhere), z the same cap at rest, w spare
++uniform vec4 uP4M;  // F3 / F4s / F6 (round 3): x share of the exit wall's facet tilt kept deep inside total reflection (1 = MAIN), y / z
++                    // its ramp below the critical angle's cosine (full tilt within y of it, x from z on), w the direct orb paths'
++                    // clamp scale at full hold (x uP4C.x; 1 = round 1)
++uniform vec4 uP4N;  // F5 (round 3): x / y the material roughness ramp at full hold (round 1: uP4B.x / y everywhere), z / w spare
++#endif
+ uniform float uHold;
++#ifdef ICE_P4R3
++vec3 gR3J = vec3(0.0);  // debug 8 (round 3): |V . n_cut|, the V value, the TIR share of the strongest joint crossing
++#endif
+ float gP4Direct = 0.0;  // 1 while the trace looks up a first exit after <= 1 internal wall (Q4)
+ float gP4OrbMod = 1.0;  // orb-through modulation after the clamp (Q4: variation, hold charge)
+ 
+@@ -723,7 +797,13 @@
+       // the orb keeps its lift and its structure. The ramp keeps the switch continuous. Then the orb's light keeps a
+       // periwinkle hue inside the ice (luma-neutral) and its variation / hold charge, gP4OrbMod.)
+       vec3 thrO = uR11Tint * 0.92;
++#ifdef ICE_P4R3
++      // (F4s, round 3: in the hold the direct paths' clamp rises to uP4C.x x uP4M.w, so the band over the orb's lower half passes
++      // F420's bright refracted orb strip; at rest it stays round 1's.)
++      float lim = uR11M.x * mix(1.0, uP4C.x * mix(1.0, uP4M.w, uHold), dK);
++#else
+       float lim = uR11M.x * mix(1.0, uP4C.x, dK);
++#endif
+       vec3 cO = orbL * uR11D.w;
+       float sO = dot(cO * thrO, vec3(1.0));
+       if (uR11M.x > 0.0 && sO > lim) cO *= lim / sO;
+@@ -871,7 +951,16 @@
+   }
+   // (Fix round: the entry corners rounded over uR11K.y pixel footprints, so the entry face never switches inside a pixel.)
+   float pixE = max(length(fwidth(vWorldPos)), 1e-4);
++#ifdef ICE_P4R3
++  // (Round 3, F5: Cycles' L1 octagon has hard corners (Smooth by Angle 30); uR11F.z rounds them over 0.15 w against exit-wall
++  // flips inside a pixel at rest, which is 10-20 px of soft shoulder once the camera dollies in: the slab edges read as a tube.
++  // The rounding is capped at uP4L.z pixel footprints at rest (4 px > 0.15 w there: unchanged) easing to uP4L.y in the hold
++  // (uHold), where the camera dollies in: crisp slab edges.)
++  float cornerW = uP4L.y > 0.0 ? min(uR11F.z, mix(uP4L.z, uP4L.y, uHold) * pixE / w) : uR11F.z;
++  vec2 n2 = r11OctNormalW(face, qe, cornerW + uR11K.y * pixE / w);
++#else
+   vec2 n2 = r11OctNormalW(face, qe, uR11F.z + uR11K.y * pixE / w);
++#endif
+   vec3 Nmac = normalize(n2.x * er + (n2.y / ky) * ea);
+   // Keep the entry face towards the camera (the fallback face of a ray that misses the octagon may not be).
+   Nmac = normalize(mix(Ng, Nmac, smoothstep(0.02, 0.15, dot(Nmac, V))));
+@@ -918,7 +1007,13 @@
+     ? p4FbmRing(vObjPos, 4.2 / 1.975, uP4B.z, 0.5, FROST_OCTAVES, pix, lowPixT, uP4A.z, uP4B.w, nA, gALow)
+     : p4FbmGrad(p + 4.0 / (4.2 / 1.975), 4.2 / 1.975, 0.5, FROST_OCTAVES, pix, lowPixT, uP4A.z, uP4B.w, nA, gALow);
+   float frostLin = clamp((nA - 0.5423) / (0.7657 - 0.5423) + (uFrost - 0.6) * 0.8, 0.0, 1.0);
++#ifdef ICE_P4R3
++  // (F5, round 3: in the hold the material roughness ramp eases to uP4N.x .. y (round 1: uP4B's 0.45 .. 0.9 everywhere): the
++  // dollied-in slabs read as frosted plastic where F358 / F420 show clear ice with frosted patches.)
++  float rough = mix(mix(uP4B.x, uP4N.x, uHold), mix(uP4B.y, uP4N.y, uHold), frostLin);
++#else
+   float rough = mix(uP4B.x, uP4B.y, frostLin);
++#endif
+   // (The trace's lobe keeps its own, narrower ramp: with the compressed material roughness (floor 0.45) its critical-angle
+   // ramp and lobe growth washed out the oblique bands' dark steel-blue TIR zones, q03 outer ring lf 20 -> 10 vs F045 23.5.)
+   float roughT = mix(uP4H.x, uP4H.y, frostLin);
+@@ -1052,7 +1147,13 @@
+       float rH = max(length(rpH), 1e-4);
+       q = vec2((rH - uSectionRadius) / w, aH / w);
+       // (Fix round, uR11J.z: near a corner the rough lobe straddles both walls; its footprint there is about alpha x path.)
++#ifdef ICE_P4R3
++      // (F5, round 3: the internal walls' corners too ease from uR11F.z to uP4L.w in the hold: crisp TIR lines along the slab edges.)
++      float cF = uP4L.w > 0.0 ? mix(uR11F.z, uP4L.w, uHold) : uR11F.z;
++      float cw = uR11J.z > 0.0 ? min(cF + uR11J.z * rb * rb * s / w + uR11N.y * pxSpread * s / w, 0.6) : cF;
++#else
+       float cw = uR11J.z > 0.0 ? min(uR11F.z + uR11J.z * rb * rb * s / w + uR11N.y * pxSpread * s / w, 0.6) : uR11F.z;
++#endif
+       vec2 m2 = r11OctNormalW(fi, q, cw);
+       nW = normalize(m2.x * (rpH / rH) + m2.y * ea);
+     } else {
+@@ -1081,7 +1182,17 @@
+         nW = normalize(nW - (gX - nW * dot(gX, nW)));
+       } else {
+         vec3 t2W = toW * tilt2O;
++#ifdef ICE_P4R3
++        // (F3, round 3: deep inside total reflection - F045's steel-blue band along the oblique outer ring - the exit wall's smooth
++        // facet tilt (0.4 m blobs, up to ~7 deg) pushed patches back under the critical angle: exit windows, the white ovals in the
++        // dark band, which also boiled with the tumble (uR11H.z 0 removes them, batch f3b). The tilt eases out where the untilted
++        // incidence lies more than uP4M.y below the critical angle's cosine and is uP4M.x at uP4M.z below; the zone's own edge keeps
++        // its full wobble.)
++        float tK = mix(uP4M.x, 1.0, smoothstep(cosC - uP4M.z, cosC - uP4M.y, dot(d, nW)));
++        nW = normalize(nW + (t2W - nW * dot(t2W, nW)) * uR11A.y * uR11H.z * tK);
++#else
+         nW = normalize(nW + (t2W - nW * dot(t2W, nW)) * uR11A.y * uR11H.z);
++#endif
+       }
+     }
+     vec3 dt = refract(d, -nW, ior);
+@@ -1257,7 +1368,14 @@
+   if (uP4F.y > 0.0) {
+     // (Q10: F045's steel-blue line 3-5 px inside the silhouette, where the side face turns away: L 173-179, B-G 34-37.)
+     float ndvG = dot(Ng, V);
++#ifdef ICE_P4R3
++    // (F6, round 3: at a grazing edge dot(Ng, V) crosses the line's band inside a pixel - a dotted line of isolated bright pixels at
++    // p04; the band's edges widen by the pixel's own change of dot(Ng, V), so it never gets thinner than ~1.5 px.)
++    float fR = fwidth(ndvG) * 0.75;
++    float lk = smoothstep(0.08 - fR, 0.16 + fR, ndvG) * (1.0 - smoothstep(0.22 - fR, 0.34 + fR, ndvG)) * (1.0 - capK);
++#else
+     float lk = smoothstep(0.08, 0.16, ndvG) * (1.0 - smoothstep(0.22, 0.34, ndvG)) * (1.0 - capK);
++#endif
+     col *= mix(vec3(1.0), vec3(0.74, 0.83, 1.0), lk * uP4F.y);
+   }
+ #endif
+@@ -1287,6 +1405,9 @@
+       vec3 rc = toW * vec3(cos(ang), sin(ang), 0.0);
+       if (dot(e0, rc) <= 0.0) continue;
+       float se = dot(e0, nc) + wob, sx = dot(e1, nc) + wob;
++#ifdef ICE_P4R3
++      float jFloor = 0.12;
++#endif
+ #ifdef ICE_P4
+       float crossK;
+       if (uP4J.x > 0.5) {
+@@ -1299,7 +1420,17 @@
+         float tC = abs(se) / max(abs(se) + abs(sx), 1e-6);
+         float vK = se * sx < 0.0 ? 1.0 - abs(2.0 * tC - 1.0) : 0.0;
+         jLine = max(jLine, (1.0 - smoothstep(0.0, uP4D.y * fX, abs(sx))) * smoothstep(fS, 3.0 * fS, abs(se)));
++#ifdef ICE_P4R3
++        // (R1, round 3: face-on to the cut plane - q00's band ends, q03's straps - the band of crossing rays is wide and the tent
++        // peaks on one pixel, so the seam vanished where F000 / F045 show crisp dark slits; there the V gets a flat core (a
++        // trapezoid, full depth from vK = uP4K.z) and the steep crossing's floor rises to uP4K.w. Oblique views keep the tent.)
++        float fo = smoothstep(uP4K.x, uP4K.y, abs(dot(V, nc)));
++        crossK = uP4J.y * mix(vK, smoothstep(0.0, max(uP4K.z, 1e-3), vK), fo);
++        jFloor = mix(0.12, uP4K.w, fo);
++        if (vK > gR3J.y) gR3J = vec3(abs(dot(V, nc)), vK, 1.0 - smoothstep(0.62, 0.8, abs(dot(d1, nc))));
++#else
+         crossK = uP4J.y * vK;
++#endif
+       } else {
+         crossK = se * sx < 0.0 ? 1.0 : 1.0 - smoothstep(0.0, uP4D.y, min(abs(se), abs(sx)));
+       }
+@@ -1307,7 +1438,11 @@
+       float crossK = se * sx < 0.0 ? 1.0 : 1.0 - smoothstep(0.0, 0.012, min(abs(se), abs(sx)));
+ #endif
+       float tirK = 1.0 - smoothstep(0.62, 0.8, abs(dot(d1, nc)));  // cos 41.8 deg = 0.745
++#ifdef ICE_P4R3
++      jk = max(jk, crossK * mix(jFloor, 1.0, tirK));
++#else
+       jk = max(jk, crossK * mix(0.12, 1.0, tirK));
++#endif
+     }
+ #ifdef ICE_P4
+     col *= (1.0 - uR11B.z * jk) * (1.0 + uP4J.w * jLine);
+@@ -1336,6 +1471,9 @@
+     else if (uR11Dbg < 4.5) col = refl * Fe + spec * Fe;
+     else if (uR11Dbg < 5.5) col = Lt;
+     else if (uR11Dbg < 6.5) col = vec3(0.4);
++#ifdef ICE_P4R3
++    else if (uR11Dbg > 7.5) col = gR3J;
++#endif
+     else col = dmin0 < 0.0 ? vec3(0.0, 0.0, 1.0) : dmin0 < 0.15 ? vec3(0.0, 1.0, 0.0) : dmin0 < 0.35 ? vec3(1.0, 1.0, 0.0)
+       : dmin0 < 0.6 ? vec3(1.0, 0.35, 0.0) : vec3(1.0, 0.0, 0.0);
+   }
+@@ -1755,10 +1893,13 @@
+   if (r11) defines.ICE_R11 = "";
+   const p4 = p4On(quality);
+   if (p4) defines.ICE_P4 = "";
++  const r3 = p4 && P4R3;
++  if (r3) defines.ICE_P4R3 = "";
++  const frag = r3 ? ICE_FRAG : stripDef(ICE_FRAG, "ICE_P4R3");
+   const mat = new THREE.ShaderMaterial({
+     name: "rx-ice",
+-    vertexShader: ICE_VERT,
+-    fragmentShader: p4 ? ICE_FRAG : stripP4(ICE_FRAG),
++    vertexShader: r3 ? ICE_VERT : stripDef(ICE_VERT, "ICE_P4R3"),
++    fragmentShader: p4 ? frag : stripP4(frag),
+     defines,
+     uniforms: {
+       uRefraction: shared.uRefraction,
+@@ -1820,9 +1961,35 @@
+     },
+   });
+   if (p4) p4Uniforms(mat);
++  if (r3) p4r3Uniforms(mat);
+   return mat;
+ }
+ 
++/** P4 round 3 (lane p4ice3) uniforms; each sub-switch restores round 1's values (MAIN = int1). */
++function p4r3Uniforms(mat: THREE.ShaderMaterial) {
++  const u = mat.uniforms;
++  // R1: the joint V gets a flat core (trapezoid, full depth from vK 0.6: the middle 40 % of the crossing band) and a TIR-mix floor
++  // of 1 (round 1: tent, 0.12), depth uP4J.y 1 (0.8) x uR11B.z 0.7 (0.6). The face-on ramp (x / y) is open (-1 / 0): |V . n_cut|
++  // reads 0.67-0.76 (display) at the q00 / q01 / q02 / q03 seams alike, so it cannot separate rest from loop (batch d8).
++  u.uP4K = { value: P4R3_JOINT ? new THREE.Vector4(-1, 0, 0.6, 1) : new THREE.Vector4(2, 3, 0, 0.12) };
++  if (P4R3_JOINT && P4_CAP) {
++    u.uP4J.value.y = 1;
++    u.uR11B.value.z = 0.7;
++  }
++  // F5: the artist's L1 octagon section (vertex remap, share 1); entry corners rounded over at most 4 pixel footprints at rest
++  // (= MAIN's 0.15 w there) and 1.5 in the hold. The internal walls' corners stay MAIN's (w 0): 0.04 w in the hold drew crisper
++  // TIR lines (batch b5 'xw') but isolated pixels along the arcs at p06 (27 vs 7 bright, batch spk2; 0.08: 17, 0.10: 12). A live knob.
++  u.uP4L = { value: new THREE.Vector4(P4R3_GEO ? 1 : 0, P4R3_EDGE ? 1.5 : 0, 4, 0) };
++  // F3: the exit tilt eases out deep inside total reflection (x 0 from 0.12 below the critical angle's cosine, full within 0.02);
++  // F4s: the direct orb paths' clamp x2 at full hold.
++  u.uP4M = { value: new THREE.Vector4(P4R3_TIR ? 0 : 1, 0.02, 0.12, P4R3_HOLD ? 2 : 1) };
++  // F5: in the hold the roughness ramp stays round 1's (uP4N = uP4B): MAIN's 0.233 .. 1 there (batch b5 'rg') darkened the frost
++  // blotches, N1's complaint. A live knob.
++  u.uP4N = { value: new THREE.Vector4(u.uP4B.value.x, u.uP4B.value.y, 0, 0) };
++  // N1: the hold's chroma 0.92 -> 0.86 (p06 band sat 0.187 vs F420 0.162).
++  if (P4R3_HOLD && P4_HOLD) u.uP4E.value.w = 0.86;
++}
++
+ /** P4 ice lane uniforms (runtime-tunable through `__hero.rings.materials[i].uniforms`); each sub-switch restores MAIN's values. */
+ function p4Uniforms(mat: THREE.ShaderMaterial) {
+   const u = mat.uniforms;
+@@ -1957,7 +2124,8 @@
+ export function createBackDepthMaterial(front: THREE.ShaderMaterial) {
+   return new THREE.ShaderMaterial({
+     name: "rx-ice-back",
+-    vertexShader: ICE_VERT,
++    // (The front's vertex source: ICE_VERT, without the round-3 blocks when that lane is off.)
++    vertexShader: front.vertexShader,
+     fragmentShader: BACK_FRAG,
+     // Same displacement as the front faces.
+     defines: {

@@ -1,0 +1,19 @@
+M   a1_M1    dt p50 25.1 gap p50 25.1 | left 87 | region 480 | shelf28 2 | near 53
+M   a1_M2    dt p50 25.6 gap p50 25.6 | left 172 | region 685 | shelf28 2 | near 114
+L   a1_L1    dt p50 26.8 gap p50 26.8 | left 131 | region 610 | shelf28 2 | near 87
+L   a1_L2    dt p50 26.6 gap p50 26.7 | left 105 | region 534 | shelf28 2 | near 69
+== dt-matched on engine dt (1-ms bins, both n>=10): M weights / L weights
+  left0-160              matched n 166 | 182 : M 99 vs L 123 (+24 %) | L-weighted 62 vs 123 (+97 %)
+  region                 matched n 166 | 182 : M 507 vs L 548 (+8 %) | L-weighted 439 vs 561 (+28 %)
+  shelf280-480x440-520   matched n 166 | 182 : M 3 vs L 1 (-60 %) | L-weighted 3 vs 2 (-51 %)
+  near0-100x575-620      matched n 166 | 182 : M 65 vs L 86 (+31 %) | L-weighted 41 vs 84 (+104 %)
+== dt-matched on real gap (1-ms bins, both n>=10): M weights / L weights
+  left0-160              matched n 162 | 185 : M 100 vs L 121 (+21 %) | L-weighted 56 vs 127 (+126 %)
+  region                 matched n 162 | 185 : M 506 vs L 539 (+7 %) | L-weighted 430 vs 566 (+32 %)
+  shelf280-480x440-520   matched n 162 | 185 : M 3 vs L 1 (-61 %) | L-weighted 3 vs 2 (-41 %)
+  near0-100x575-620      matched n 162 | 185 : M 66 vs L 83 (+27 %) | L-weighted 36 vs 87 (+142 %)
+== pooled engine-dt band 20-30 ms
+  left0-160              M n 214 mean 100 dtmean 25.6 | L n 251 mean 115 dtmean 27.1
+  region                 M n 214 mean 504 dtmean 25.6 | L n 251 mean 556 dtmean 27.1
+  shelf280-480x440-520   M n 214 mean 2 dtmean 25.6 | L n 251 mean 2 dtmean 27.1
+  near0-100x575-620      M n 214 mean 65 dtmean 25.6 | L n 251 mean 77 dtmean 27.1

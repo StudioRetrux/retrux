@@ -1,0 +1,528 @@
+diff -ruN a/retrux-web/app/hero/engine/HeroEngine.ts b/retrux-web/app/hero/engine/HeroEngine.ts
+--- a/retrux-web/app/hero/engine/HeroEngine.ts	2026-11-19 00:29:44
++++ b/retrux-web/app/hero/engine/HeroEngine.ts	2026-11-19 01:28:28
+@@ -11,7 +11,7 @@
+ import { Shards } from "./hero/Shards";
+ import { clamp, ease, smoothstep } from "./math";
+ import { DEFAULT_POST, PostChain, type PostParams } from "./pipeline/PostChain";
+-import { RenderPipeline, type PassHooks } from "./pipeline/RenderPipeline";
++import { createAAUniforms, RenderPipeline, type PassHooks } from "./pipeline/RenderPipeline";
+ import { AdaptiveScale, detectTier, PROFILES } from "./quality";
+ import { createHeroState, LAYER, type HeroState, type QualityProfile, type TierName } from "./types";
+ import { createSharedUniforms, cubeUVDefines } from "./uniforms";
+@@ -252,14 +252,33 @@
+     // T0 is protected). The afterEnv hook only arms it: its full-screen triangle (in the scene) is drawn first inside the next
+     // render into the main target, so it adds no render pass of its own. `?envedge=0` or `?envfix=0` keeps step 2's edges.
+     const eq = typeof location !== "undefined" ? new URLSearchParams(location.search) : null;
+-    if (this.env.bakedMaterials.length && this.profile.msaa > 0 && eq?.get("envedge") !== "0" && eq?.get("envfix") !== "0") {
+-      const edge = new EnvEdge(this.renderer, this.scene, this.env.plateGain);
++    const msaaBaked = this.env.bakedMaterials.length > 0 && this.profile.msaa > 0 && eq?.get("envfix") !== "0";
++    const edges = msaaBaked && eq?.get("envedge") !== "0";
++    // aaresolve (19 Nov, user: "the water's edge by the ice looks like low-quality anti-aliasing when the camera moves"): the
++    // floes' and rocks' outlines against the bright lake are resolved from tone-compressed samples (chunks.ts GLSL_AA_RESOLVE,
++    // RenderPipeline); EnvEdge's triangle writes the expanded resolve back. Not with the mirror lake (its pass draws the same
++    // materials). `?aaresolve=0` keeps the linear resolve exactly.
++    const aaResolve = msaaBaked && !mirror && eq?.get("aaresolve") !== "0";
++    if (edges || aaResolve) {
++      // (The compression's knee, chunks.ts GLSL_AA_RESOLVE; a uniform so it can be tuned live: __hero.pipeline.aa.read.uAAKnee.)
++      const aaKnee = { value: 0.5 };
++      const aaRead = createAAUniforms(aaKnee);
++      const edge = new EnvEdge(this.renderer, this.scene, this.env.plateGain, aaResolve ? { uniforms: aaRead, edges } : undefined);
+       edge.setSize(this.pipeline.size.width, this.pipeline.size.height);
+       this.envEdge = edge;
+-      this.env.setEdgeAlpha(true);
+-      this.water.material.defines.BAKED_EDGE = "";
+-      this.water.material.needsUpdate = true;
++      if (edges) {
++        this.env.setEdgeAlpha(true);
++        this.water.material.defines.BAKED_EDGE = "";
++        this.water.material.needsUpdate = true;
++      }
+       this.hooks.afterEnv = (main) => edge.arm(this.renderer, main);
++      if (aaResolve) {
++        const aaWrite = createAAUniforms(aaKnee);
++        this.env.setAAResolve(aaWrite);
++        this.water.setAAResolve(aaWrite);
++        const env = this.env;
++        this.pipeline.enableAAResolve(aaWrite, aaRead, (cam, box) => env.cloudDip(cam, box));
++      }
+     }
+ 
+     this.rings = new Rings(assets.hero.scene, this.shared, envDefines, { ...this.profile.ice, split: this.profile.iceBehindIce });
+diff -ruN a/retrux-web/app/hero/engine/pipeline/RenderPipeline.ts b/retrux-web/app/hero/engine/pipeline/RenderPipeline.ts
+--- a/retrux-web/app/hero/engine/pipeline/RenderPipeline.ts	2026-11-19 00:29:44
++++ b/retrux-web/app/hero/engine/pipeline/RenderPipeline.ts	2026-11-19 01:22:23
+@@ -1,5 +1,6 @@
+ import * as THREE from "three";
+ import { iceR11 } from "../hero/IceMaterial";
++import { GLSL_AA_RESOLVE } from "../shaders/chunks";
+ import { LAYER, type QualityProfile } from "../types";
+ import type { SharedUniforms } from "../uniforms";
+ 
+@@ -15,6 +16,12 @@
+  *                   (T1+: far half, copy main -> `refraction`, near half: the front refracts the back)
+  *   8. shards     : cobalt crystals, depth-tested against ice + orb -> `main`
+  *   9. post       : bloom + AgX + grade                            -> screen
++ *
++ * aaresolve (MSAA tiers, `?aaresolve=0` off; chunks.ts GLSL_AA_RESOLVE): during step 2 the environment writes its samples
++ * below the horizon line tone-compressed, so the 4x resolve averages them perceptually. Two readers expand that resolve
++ * before anything else sees it, without a render pass of their own: the first copy into `refraction` (each texel expanded,
++ * then filtered) and EnvEdge's triangle at the start of the next render into `main`, which writes the expanded resolve back
++ * into every one of those pixels before the first hero object. From there on `main` is scene-linear as before.
+  */
+ 
+ export type PassHooks = {
+@@ -46,9 +53,30 @@
+ const BLIT_FRAG = /* glsl */ `
+ uniform sampler2D uSrc;
+ uniform float uKnee;
++#ifdef AA_RESOLVE
++${GLSL_AA_RESOLVE}
++// 1 for the first copy after the environment pass (its resolve is compressed below the horizon line)
++uniform float uAAExpand;
++uniform vec2 uSrcSize;
++vec4 aaFetch(ivec2 q) {
++  q = clamp(q, ivec2(0), ivec2(uSrcSize) - 1);
++  vec4 c = texelFetch(uSrc, q, 0);
++  if (aaIn(vec2(q) + 0.5)) c.rgb = aaExpand(c.rgb);
++  return c;
++}
++#endif
+ varying vec2 vUv;
+ void main() {
+   vec4 c = texture2D(uSrc, vUv);
++#ifdef AA_RESOLVE
++  if (uAAExpand > 0.5) {
++    // Each texel expanded first, then the bilinear footprint the sampler would have taken.
++    vec2 st = vUv * uSrcSize - 0.5;
++    vec2 f = fract(st);
++    ivec2 q = ivec2(floor(st));
++    c = mix(mix(aaFetch(q), aaFetch(q + ivec2(1, 0)), f.x), mix(aaFetch(q + ivec2(0, 1)), aaFetch(q + ivec2(1, 1)), f.x), f.y);
++  }
++#endif
+   float m = max(max(c.r, c.g), c.b);
+   const float K = 0.8;
+   if (uKnee > K && m > K) c.rgb *= K * sqrt(m / K) / m;
+@@ -56,6 +84,13 @@
+ }
+ `;
+ 
++/** aaresolve's region uniforms (chunks.ts GLSL_AA_RESOLVE). */
++export type AAUniforms = { uAAPlane: { value: THREE.Vector3 }; uAAExc: { value: THREE.Matrix3 }; uAAKnee: { value: number } };
++/** Where the blended surfaces reach below the eye (ray-slope box; see PlateEnvironment.cloudDip). */
++export type AADip = (cam: THREE.Vector3, box: { x0: number; x1: number; y: number }) => boolean;
++/** `knee`: the compression's K (one object shared by the writers and the readers). */
++export const createAAUniforms = (knee: { value: number }): AAUniforms => ({ uAAPlane: { value: new THREE.Vector3(0, 0, 1) }, uAAExc: { value: new THREE.Matrix3() }, uAAKnee: knee });
++
+ /** Ceiling of the soft knee in the refraction copies (scene-linear). */
+ const REFRACTION_KNEE = 1.5;
+ 
+@@ -75,6 +110,14 @@
+   private clearColor = new THREE.Color(0, 0, 0);
+   private tmpFwd = new THREE.Vector3();
+   private tmpOrb = new THREE.Vector3();
++  /** aaresolve: the environment materials' region (off outside step 2), the readers' copy of it and where the cloud cards
++   *  reach below the eye (see enableAAResolve). */
++  private aa: { write: AAUniforms; read: AAUniforms; dip: AADip } | null = null;
++  private aaBox = { x0: 0, x1: 0, y: 0 };
++  private aaV = new THREE.Vector3();
++  private aaE = [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()];
++  /** aaresolve: how far below the horizon line (px at the frame centre) the compressed region starts. */
++  aaMarginPx = 2;
+ 
+   constructor(
+     private renderer: THREE.WebGLRenderer,
+@@ -171,12 +214,69 @@
+     this.mirrorViewProj.multiplyMatrices(m.projectionMatrix, m.matrixWorldInverse);
+   }
+ 
+-  private blit(src: THREE.Texture, dst: THREE.WebGLRenderTarget | null) {
+-    this.blitMaterial.uniforms.uSrc.value = src;
++  private blit(src: THREE.Texture, dst: THREE.WebGLRenderTarget | null, aaExpand = false) {
++    const u = this.blitMaterial.uniforms;
++    u.uSrc.value = src;
++    if (this.aa) {
++      u.uAAExpand.value = aaExpand ? 1 : 0;
++      u.uSrcSize.value.set(this.width, this.height);
++    }
+     this.renderer.setRenderTarget(dst);
+     this.renderer.render(this.blitScene, this.blitCamera);
+   }
+ 
++  /**
++   * aaresolve (before the first render): `write` goes to every environment material (PlateEnvironment / Water.setAAResolve),
++   * `read` to EnvEdge, which must be armed after the environment pass (hooks.afterEnv) to expand the resolve. `dip(camera
++   * position, box)`: where the cloud cards (the only blended surfaces of that pass) reach below the eye, in ray-slope space.
++   */
++  enableAAResolve(write: AAUniforms, read: AAUniforms, dip: AADip) {
++    this.aa = { write, read, dip };
++    write.uAAPlane.value.set(0, 0, 1);
++    const m = this.blitMaterial;
++    m.defines.AA_RESOLVE = "";
++    Object.assign(m.uniforms, read, { uAAExpand: { value: 0 }, uSrcSize: { value: new THREE.Vector2(1, 1) } });
++    m.needsUpdate = true;
++  }
++
++  /**
++   * The compressed region in `main`'s pixels (gl_FragCoord), for this frame's camera: the pixel centre's ray points below the
++   * horizon by aaMarginPx, and outside the slope box of the cloud cards that hang below the eye (with the same margin). Each
++   * bound is a world-space condition dot(d, v) on the ray d, i.e. a half-plane in pixels (aaHalf).
++   */
++  private aaRegion(camera: THREE.PerspectiveCamera, dip: AADip, out: AAUniforms) {
++    camera.updateMatrixWorld();
++    const p = camera.projectionMatrix.elements;
++    const m = (this.aaMarginPx * 2) / (this.height * p[5]);
++    // below the horizon: d.y < -m (-d.z)  <=>  dot(d, (0, 1, -m)) < 0
++    this.aaHalf(camera, this.aaV.set(0, 1, -m), out.uAAPlane.value);
++    const b = this.aaBox, [e0, e1, e2] = this.aaE;
++    if (dip(this.tmpFwd.setFromMatrixPosition(camera.matrixWorld), b)) {
++      // out of the region (all >= 0): above the cards' bottom, right of their left edge, left of their right edge
++      this.aaHalf(camera, this.aaV.set(0, 1, b.y - m), e0);
++      if (Number.isFinite(b.x0)) this.aaHalf(camera, this.aaV.set(1, 0, b.x0 - m), e1);
++      else e1.set(0, 0, 1);
++      if (Number.isFinite(b.x1)) this.aaHalf(camera, this.aaV.set(-1, 0, -(b.x1 + m)), e2);
++      else e2.set(0, 0, 1);
++    } else {
++      e0.set(0, 0, -1);
++      e1.set(0, 0, -1);
++      e2.set(0, 0, -1);
++    }
++    out.uAAExc.value.set(e0.x, e1.x, e2.x, e0.y, e1.y, e2.y, e0.z, e1.z, e2.z);
++  }
++
++  /** The sign of dot(d, v) for the world ray d through the pixel centre (px, py) is that of dot((px, py, 1), out). */
++  private aaHalf(camera: THREE.PerspectiveCamera, v: THREE.Vector3, out: THREE.Vector3) {
++    const e = camera.matrixWorld.elements;
++    const p = camera.projectionMatrix.elements;
++    // v in view space; the view ray through NDC (nx, ny) is ((nx + p8) / p0, (ny + p9) / p5, -1).
++    const ux = e[0] * v.x + e[1] * v.y + e[2] * v.z;
++    const uy = e[4] * v.x + e[5] * v.y + e[6] * v.z;
++    const uz = e[8] * v.x + e[9] * v.y + e[10] * v.z;
++    out.set((2 * ux) / (this.width * p[0]), (2 * uy) / (this.height * p[5]), (ux * (p[8] - 1)) / p[0] + (uy * (p[9] - 1)) / p[5] - uz);
++  }
++
+   private pass(scene: THREE.Scene, camera: THREE.Camera, layers: number[]) {
+     camera.layers.disableAll();
+     for (const l of layers) camera.layers.enable(l);
+@@ -203,9 +303,16 @@
+     }
+ 
+     // 2. Environment. (The shards come after the rings, step 8.)
++    const aa = this.aa && hooks.afterEnv ? this.aa : null;
++    if (aa) {
++      this.aaRegion(camera, aa.dip, aa.write);
++      aa.read.uAAPlane.value.copy(aa.write.uAAPlane.value);
++      aa.read.uAAExc.value.copy(aa.write.uAAExc.value);
++    }
+     r.setRenderTarget(this.main);
+     r.clear(true, true, false);
+     this.pass(scene, camera, [LAYER.ENV]);
++    if (aa) aa.write.uAAPlane.value.set(0, 0, 1);
+     if (hooks.afterEnv) {
+       hooks.afterEnv(this.main);
+       r.setRenderTarget(this.main);
+@@ -230,7 +337,7 @@
+       // along its exit rays), copy, near half (refracting all of it, as before: the front rings bend the back of the cage
+       // and the orb). The far half no longer sees the orb in its copy: it lies behind the orb's centre plane.
+       backPass();
+-      this.blit(this.main.texture, this.refraction);
++      this.blit(this.main.texture, this.refraction, !!aa);
+       split.set(1, -this.tmpOrb.copy(this.shared.uOrbCenter.value).applyMatrix4(camera.matrixWorldInverse).z);
+       r.setRenderTarget(this.main);
+       this.pass(scene, camera, [LAYER.RINGS]);
+@@ -246,7 +353,7 @@
+     } else {
+       // 3-4. Orb over a copy of the environment; 5. copy again so the ice refracts the glowing orb too; 6-7. back depth,
+       // rings.
+-      this.blit(this.main.texture, this.refraction);
++      this.blit(this.main.texture, this.refraction, !!aa);
+       r.setRenderTarget(this.main);
+       this.pass(scene, camera, [LAYER.ORB]);
+       this.blit(this.main.texture, this.refraction);
+diff -ruN a/retrux-web/app/hero/engine/shaders/chunks.ts b/retrux-web/app/hero/engine/shaders/chunks.ts
+--- a/retrux-web/app/hero/engine/shaders/chunks.ts	2026-11-19 00:29:44
++++ b/retrux-web/app/hero/engine/shaders/chunks.ts	2026-11-19 01:28:28
+@@ -209,3 +209,31 @@
+   return textureCubeUV(uEnvMap, n, 1.0).rgb * uEnvIntensity;
+ }
+ `;
++
++/**
++ * Tone-compressed MSAA resolve (`?aaresolve`, 19 Nov: "the water's edge by the ice looks like low-quality anti-aliasing when
++ * the camera moves"). The 4x resolve averaged scene-linear HDR: bright water against a dark floe is ~10:1 there, so after AgX
++ * the first covered sample moved a waterline pixel ~60 % of the way and the outline stepped like 1-2 AA levels. Below the
++ * horizon line the environment pass now writes x = c / (K + luma c) per sample, the hardware resolve averages x, and the
++ * readers expand c = K x / (1 - luma x), which is sum(c w) / sum(w) with w = 1 / (K + luma c) (Karis' weighting): a
++ * perceptual average at an edge, the exact inverse wherever a pixel's samples agree. K (uAAKnee, HeroEngine) is 0.5, not
++ * Karis' 1: the lake is 0.5-1.5 here and the dark faces 0.015-0.2, where 1 + luma still left ~50 % of a waterline pixel's
++ * change in its first covered sample (linear: ~60 %). Display-even steps would need K ~ 0.18 (AgX's mid grey), but that also
++ * darkens every 1-sample sliver of a thin dark line, which then flickers more; in same-session sweeps K = 0.5 cut the
++ * waterline jumps > 48 levels by 65-74 % and > 32 by 26-37 % (K = 1: 40-49 / 20-29 %, K = 0.18: flicker energy up 0-9 %).
++ * The region (set per frame by RenderPipeline) is decided once per
++ * pixel centre, the same way in every writer and reader, so no pixel mixes the two spaces: below the horizon line
++ * (uAAPlane, a half-plane in pixels) and outside the box where a cloud card reaches below it (uAAExc: inside where all three
++ * half-planes, its columns, are >= 0). Nothing blended draws there, so blending keeps working in scene-linear values.
++ */
++export const GLSL_AA_RESOLVE = /* glsl */ `
++uniform vec3 uAAPlane;
++uniform mat3 uAAExc;
++uniform float uAAKnee;
++bool aaIn(vec2 px) {
++  vec3 q = vec3(px, 1.0);
++  return dot(q, uAAPlane) < 0.0 && !all(greaterThanEqual(q * uAAExc, vec3(0.0)));
++}
++vec3 aaCompress(vec3 c) { return c / (uAAKnee + max(dot(c, vec3(0.2126, 0.7152, 0.0722)), 0.0)); }
++vec3 aaExpand(vec3 x) { return uAAKnee * x / max(1.0 - max(dot(x, vec3(0.2126, 0.7152, 0.0722)), 0.0), 1.0 / 4096.0); }
++`;
+diff -ruN a/retrux-web/app/hero/engine/world/EnvEdge.ts b/retrux-web/app/hero/engine/world/EnvEdge.ts
+--- a/retrux-web/app/hero/engine/world/EnvEdge.ts	2026-11-19 00:29:44
++++ b/retrux-web/app/hero/engine/world/EnvEdge.ts	2026-11-19 01:39:02
+@@ -1,4 +1,5 @@
+ import * as THREE from "three";
++import { GLSL_AA_RESOLVE } from "../shaders/chunks";
+ 
+ /**
+  * Round 11 fix round (ENV lane, baked environment only): soft environment silhouettes, as the plates had them.
+@@ -24,6 +25,11 @@
+  * the image is first copied into a target of its own (the first version's copy).
+  *
+  * Per frame and screen-space: nothing can ghost when the camera moves. `?envedge=0` (or `?envfix=0`) turns it off.
++ *
++ * aaresolve (19 Nov, chunks.ts GLSL_AA_RESOLVE): below the horizon line the environment pass resolved tone-compressed samples,
++ * so the same triangle also writes the expanded resolve into every pixel there (still before any hero object, still inside
++ * an existing render pass); a silhouette pixel blurs the expanded taps as before. Without the edge blur (`?envedge=0`) it
++ * only expands.
+  */
+ 
+ const VERT = /* glsl */ `
+@@ -52,6 +58,10 @@
+ // the plates' gain (HDR = decoded plate x gain)
+ uniform float uGain;
+ varying vec2 vUv;
++#ifdef AA_RESOLVE
++${GLSL_AA_RESOLVE}
++vec3 aaTap(vec3 c, vec2 o) { return aaIn(gl_FragCoord.xy + o) ? aaExpand(c) : c; }
++#endif
+ vec3 enc(vec3 c) {
+   vec3 x = max(c / uGain, 0.0);
+   return mix(x * 12.92, 1.055 * pow(x, vec3(1.0 / 2.4)) - 0.055, step(0.0031308, x));
+@@ -72,7 +82,30 @@
+   float dmin = min(min(min(c0.a, c1.a), min(c2.a, c3.a)), min(min(c4.a, c5.a), min(min(c6.a, c7.a), c8.a)));
+   float dmax = max(max(max(c0.a, c1.a), max(c2.a, c3.a)), max(max(c4.a, c5.a), max(max(c6.a, c7.a), c8.a)));
+   // alpha 0 = nothing drawn there (never in the env pass: the sky card covers the frame); <= 1 = a surface without BAKED_EDGE
++#ifdef AA_RESOLVE
++#ifdef EDGE_BLUR
++  if (dmin <= 1.0 || dmax < dmin * (1.0 + uEdge.x) + uEdge.y) {
++#endif
++    // Not a silhouette: the expanded resolve where the environment wrote compressed samples, nothing elsewhere.
++    if (!aaIn(gl_FragCoord.xy)) discard;
++    gl_FragColor = vec4(aaExpand(c4.rgb), c4.a);
++    return;
++#ifdef EDGE_BLUR
++  }
++#endif
++  // A silhouette: every tap expanded where it was compressed (the alpha distances are not), then blurred as before.
++  c0.rgb = aaTap(c0.rgb, vec2(-1.0, -1.0));
++  c1.rgb = aaTap(c1.rgb, vec2(0.0, -1.0));
++  c2.rgb = aaTap(c2.rgb, vec2(1.0, -1.0));
++  c3.rgb = aaTap(c3.rgb, vec2(-1.0, 0.0));
++  c4.rgb = aaTap(c4.rgb, vec2(0.0));
++  c5.rgb = aaTap(c5.rgb, vec2(1.0, 0.0));
++  c6.rgb = aaTap(c6.rgb, vec2(-1.0, 1.0));
++  c7.rgb = aaTap(c7.rgb, vec2(0.0, 1.0));
++  c8.rgb = aaTap(c8.rgb, vec2(1.0, 1.0));
++#else
+   if (dmin <= 1.0 || dmax < dmin * (1.0 + uEdge.x) + uEdge.y) discard;
++#endif
+   vec3 s = enc(c4.rgb) + uW.x * (enc(c1.rgb) + enc(c3.rgb) + enc(c5.rgb) + enc(c7.rgb))
+     + uW.y * (enc(c0.rgb) + enc(c2.rgb) + enc(c6.rgb) + enc(c8.rgb));
+   gl_FragColor = vec4(dec(s / (1.0 + 4.0 * uW.x + 4.0 * uW.y)), c4.a);
+@@ -108,11 +141,21 @@
+     uGain: { value: 1 },
+   };
+ 
+-  constructor(renderer: THREE.WebGLRenderer, scene: THREE.Scene, plateGain: number) {
++  /**
++   * `aa`: aaresolve's reader plane (RenderPipeline.enableAAResolve) and whether the silhouette blur runs too (`edges`); without
++   * it the triangle is exactly the round 11 edge pass.
++   */
++  constructor(renderer: THREE.WebGLRenderer, scene: THREE.Scene, plateGain: number, aa?: { uniforms: Record<string, { value: unknown }>; edges: boolean }) {
+     this.uniforms.uGain.value = plateGain;
+     const common = { vertexShader: VERT, depthTest: false, depthWrite: false, blending: THREE.NoBlending };
+     this.copy = new THREE.ShaderMaterial({ name: "rx-env-edge-copy", fragmentShader: COPY_FRAG, uniforms: { uSrc: this.uniforms.uSrc }, ...common });
+-    this.edge = new THREE.ShaderMaterial({ name: "rx-env-edge", fragmentShader: EDGE_FRAG, uniforms: this.uniforms, ...common });
++    this.edge = new THREE.ShaderMaterial({
++      name: "rx-env-edge",
++      fragmentShader: EDGE_FRAG,
++      uniforms: aa ? { ...this.uniforms, ...aa.uniforms } : this.uniforms,
++      ...(aa ? { defines: aa.edges ? { AA_RESOLVE: "", EDGE_BLUR: "" } : { AA_RESOLVE: "" } } : {}),
++      ...common,
++    });
+     const geo = new THREE.BufferGeometry();
+     geo.setAttribute("position", new THREE.Float32BufferAttribute([-1, -1, 0, 3, -1, 0, -1, 3, 0], 3));
+     this.quad = new THREE.Mesh(geo, this.edge);
+diff -ruN a/retrux-web/app/hero/engine/world/PlateEnvironment.ts b/retrux-web/app/hero/engine/world/PlateEnvironment.ts
+--- a/retrux-web/app/hero/engine/world/PlateEnvironment.ts	2026-11-19 00:29:44
++++ b/retrux-web/app/hero/engine/world/PlateEnvironment.ts	2026-11-19 01:16:20
+@@ -1,7 +1,7 @@
+ import * as THREE from "three";
+ import { CLOUDS, HERO_CENTER, PLATE, REF_ASPECT, REST_CAMERA } from "../config";
+ import { CAM_TARGETS } from "../curves";
+-import { GLSL_COMMON, GLSL_ENV } from "../shaders/chunks";
++import { GLSL_AA_RESOLVE, GLSL_COMMON, GLSL_ENV } from "../shaders/chunks";
+ import type { SharedUniforms } from "../uniforms";
+ import {
+   ATMOS_BANK_HI_MIST3,
+@@ -577,6 +577,9 @@
+ #ifdef ATMOS_CARDLIGHT
+ ${GLSL_CARD_LIGHT_FRAG}
+ #endif
++#ifdef AA_RESOLVE
++${GLSL_AA_RESOLVE}
++#endif
+ uniform sampler2D uPlate;
+ uniform float uPlateGain;
+ uniform float uDofBlur;     // max extra mip level while the camera is dollied in
+@@ -1085,6 +1088,10 @@
+ #else
+   gl_FragColor = vec4(mix(col, mix(MIST_COLOR * vec3(0.81, 0.9, 1.0), footC, ridgeFoot), min(mist, 0.85)), 1.0);
+ #endif
++#ifdef AA_RESOLVE
++  // aaresolve: below the horizon line the 4x resolve averages tone-compressed samples (chunks.ts GLSL_AA_RESOLVE).
++  if (aaIn(gl_FragCoord.xy)) gl_FragColor.rgb = aaCompress(gl_FragColor.rgb);
++#endif
+ }
+ `;
+ 
+@@ -1164,6 +1171,9 @@
+ varying vec2 vUv;
+ varying float vSeed;
+ varying vec3 vCloudWorld;
++#ifdef AA_RESOLVE
++${GLSL_AA_RESOLVE}
++#endif
+ void main() {
+   // A card behind a mountain proxy showed through the proxy's mesh cracks as white ticks and hairlines on the
+   // far-left ridge: where the projector saw a nearer surface, the cloud is hidden behind it.
+@@ -1222,6 +1232,11 @@
+   }
+ #endif
+   gl_FragColor = vec4(lit * t.a, t.a) * (1.0 - occ);
++#ifdef AA_RESOLVE
++  // (aaresolve: the region is below the horizon line, where the cards do not draw. Should one reach it, it blends over
++  // compressed samples with the compression of its own radiance: exact where it is as bright as what it covers.)
++  if (aaIn(gl_FragCoord.xy)) gl_FragColor.rgb = aaCompress(lit) * gl_FragColor.a;
++#endif
+ }
+ `;
+ 
+@@ -1538,6 +1553,8 @@
+       // (CLOUD_F000: the artist's six cards registered to F000 at the end of the intro; the extras keep their spacing.)
+       const fit = atmos.cloudFit ? (CLOUD_F000_PX[i] ?? null) : null;
+       this.cloudLanes.push(cloudLane(c.verts, fit, atmos.cloudFit ? CLOUD_F000_T : 0, omega));
++      const xs = c.verts.map((v) => v[0]);
++      this.cloudFloor.push({ y: Math.min(...c.verts.map((v) => v[1])), z: c.verts[0][2], x0: Math.min(...xs), x1: Math.max(...xs) });
+       const mesh = new THREE.Mesh(geo, mat);
+       mesh.renderOrder = 1;
+       mesh.frustumCulled = false;
+@@ -1586,6 +1603,8 @@
+   readonly atmosUniforms = createAtmosMistUniforms();
+   /** Round 11 ATMOS: each cloud card's conveyor constants (same order as cloudMaterials). */
+   private readonly cloudLanes: CloudLane[] = [];
++  /** aaresolve: each card's lowest edge and x extent (world, before its lane shift) and its plane (z). */
++  private readonly cloudFloor: { y: number; z: number; x0: number; x1: number }[] = [];
+ 
+   /**
+    * Round 11 ATMOS fix round 1 (Atmos.ts ATMOS_CARDLIGHT): the card light's shared uniforms, the live cards' geometry (same
+@@ -1693,6 +1712,45 @@
+       m.needsUpdate = true;
+     }
+     this.setLakeMirrorPass(this.bakedMirrorPass.value > 0.5);
++  }
++
++  /**
++   * aaresolve (RenderPipeline.enableAAResolve, before the first render): every environment material writes its samples below
++   * the horizon line tone-compressed (`plane` is the pipeline's writer plane, off outside the environment pass).
++   */
++  /**
++   * aaresolve: where the cloud cards reach below the eye of `cam`, as one box in ray-slope space (x and rise per unit of forward
++   * distance; the cards are planes of constant z, so the box is exact): false when every card stays above the eye. One of the
++   * artist's cards hangs 3.6 m under the lake's level and shows below the horizon where nothing stands in front of it. The
++   * r10 drift (in the shader, `?atmos=r10`) is not known here: its cards span every x, with 0.5 m of slack for its breath.
++   */
++  cloudDip(cam: THREE.Vector3, out: { x0: number; x1: number; y: number }) {
++    let dip = false;
++    out.x0 = Infinity;
++    out.x1 = -Infinity;
++    out.y = 0;
++    for (let i = 0; i < this.cloudFloor.length; i++) {
++      const f = this.cloudFloor[i];
++      const dz = cam.z - f.z;
++      if (dz <= 1) continue;
++      const r11 = this.cloudMaterials[i].defines.CLOUD_R11 !== undefined;
++      const shift = this.cloudMaterials[i].uniforms.uCloudShift.value as THREE.Vector3;
++      const y = ((r11 ? f.y + shift.y : f.y - 0.5) - cam.y) / dz;
++      if (y >= 0) continue;
++      dip = true;
++      out.y = Math.min(out.y, y);
++      out.x0 = r11 ? Math.min(out.x0, (f.x0 + shift.x - cam.x) / dz) : -Infinity;
++      out.x1 = r11 ? Math.max(out.x1, (f.x1 + shift.x - cam.x) / dz) : Infinity;
++    }
++    return dip;
++  }
++
++  setAAResolve(aa: Record<string, { value: unknown }>) {
++    for (const m of [this.plateMaterial, ...this.bakedMaterials, ...this.cloudMaterials]) {
++      m.defines.AA_RESOLVE = "";
++      Object.assign(m.uniforms, aa);
++      m.needsUpdate = true;
++    }
+   }
+ 
+   /**
+diff -ruN a/retrux-web/app/hero/engine/world/Water.ts b/retrux-web/app/hero/engine/world/Water.ts
+--- a/retrux-web/app/hero/engine/world/Water.ts	2026-11-19 00:29:44
++++ b/retrux-web/app/hero/engine/world/Water.ts	2026-11-19 01:00:00
+@@ -1,6 +1,6 @@
+ import * as THREE from "three";
+ import { WATER } from "../config";
+-import { GLSL_COMMON, GLSL_ENV } from "../shaders/chunks";
++import { GLSL_AA_RESOLVE, GLSL_COMMON, GLSL_ENV } from "../shaders/chunks";
+ import type { SharedUniforms } from "../uniforms";
+ import {
+   EXTRA_PROJECTORS,
+@@ -216,6 +216,9 @@
+ #endif
+ ${GLSL_PLATE_GRADE}
+ ${GLSL_PLATE_MIST}
++#ifdef AA_RESOLVE
++${GLSL_AA_RESOLVE}
++#endif
+ uniform sampler2D uPlate;
+ uniform float uPlateGain;
+ uniform sampler2D uReflection;   // hero seen from the mirrored camera, premultiplied alpha
+@@ -813,6 +816,10 @@
+ #else
+   gl_FragColor = vec4(col, 1.0);
+ #endif
++#ifdef AA_RESOLVE
++  // aaresolve: below the horizon line the 4x resolve averages tone-compressed samples (chunks.ts GLSL_AA_RESOLVE).
++  if (aaIn(gl_FragCoord.xy)) gl_FragColor.rgb = aaCompress(gl_FragColor.rgb);
++#endif
+ }
+ `;
+ 
+@@ -934,6 +941,13 @@
+     near.name = "water-near";
+     far.name = "water-far";
+     this.group.add(near, far);
++  }
++
++  /** aaresolve (RenderPipeline.enableAAResolve): the lake writes its samples below the horizon line tone-compressed. */
++  setAAResolve(aa: Record<string, { value: unknown }>) {
++    this.material.defines.AA_RESOLVE = "";
++    Object.assign(this.material.uniforms, aa);
++    this.material.needsUpdate = true;
+   }
+ 
+   /** Fires a travelling ring from the ripple centre. */

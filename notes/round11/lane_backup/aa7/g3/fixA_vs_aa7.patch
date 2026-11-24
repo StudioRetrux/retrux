@@ -1,0 +1,84 @@
+--- a/retrux-web/app/hero/engine/HeroEngine.ts
++++ b/retrux-web/app/hero/engine/HeroEngine.ts
+@@ -293,6 +293,7 @@
+     });
+     this.water.material.uniforms.uMirrorViewProj.value = this.pipeline.mirrorViewProj;
+     this.water.setWalkSize(this.pipeline.size.width, this.pipeline.size.height);
++    this.water.setRenderScale(this.adaptive.scale);
+     if (mirror && this.water.scheduled) {
+       this.lakeSched = new LakeSchedule(mirror, this.water);
+       this.lakeSched.amortize = typeof location === "undefined" || new URLSearchParams(location.search).get("lkamort") !== "0";
+@@ -685,6 +686,7 @@
+       this.lakeMirrorSize.set(this.lakeMirror.target.width, this.lakeMirror.target.height);
+     }
+     this.water?.setWalkSize(this.pipeline.size.width, this.pipeline.size.height);
++    this.water?.setRenderScale(scale);
+     this.lakeSched?.invalidate();
+     this.envEdge?.setSize(this.pipeline.size.width, this.pipeline.size.height);
+     this.rig.setAspect(w / h);
+--- a/retrux-web/app/hero/engine/world/Water.ts
++++ b/retrux-web/app/hero/engine/world/Water.ts
+@@ -1035,6 +1035,36 @@
+   return src.slice(0, i + LK_FFB_ANCHOR.length) + LK_FFB_GLSL + src.slice(i + LK_FFB_ANCHOR.length);
+ }
+ 
++/**
++ * AA7 G-3 (20 Nov, the far-floe pale block at the governor's reduced render scales; `?ffbs=0` = AA7 exactly: this text is not
++ * in the shader then). The mirror target scales with the render scale, so at 0.7 its rows are 1 / 0.7 taller: under a low
++ * face (the near far floe's thin left end) the face no longer covers a row centre, and X's two bracketing rows are the
++ * floe's sunlit inside (front-most, ~1.4 m behind the face) and what stands over the face's top (far shore, ~90 m). The
++ * guard's front-most row is then the inside itself and nothing is replaced (debug renders: rows 92 m luma 0.13 / 47.6 m
++ * luma 1.6 at 0.7; with the full-scale row count `?lkmscale=0.5,0.7143` the face's own row, 46.2 m luma 0.05, is there).
++ * Only while the render scale is below 1 (uLkFfbS = 1; at 1.0 it is 0 and the branch is skipped, so scale 1 renders as AA7):
++ * a front-most row that lies more than LK_FFBSM m behind the face's entry X at the water (the inside, by path length; the
++ * face stands at or behind X, at most a heightfield cell) within the inside band, while the other row lies outside that band
++ * (not another inside) and is darker, takes the other row's colour (the scene over the face's top, the dark side of the
++ * face's thin reflection) instead of the pale inside.
++ */
++const LK_FFBS_ANCHOR = "            cF = mix(cF, mix(c0, c1, vR - j0), gFt);\n";
++const LK_FFBS_GLSL = /* glsl */ `            if (uLkFfbS > 0.0) {
++              float pF = distance(uMirrorCamPos, X + vec3(0.0, y0, 0.0)) + LK_FFBSM;
++              float q0 = (1.0 - exp(-max(r0.a - pF, 0.0) / LK_FFBT)) * (1.0 - smoothstep(LK_FFBD0, LK_FFBD1, r0.a - pF));
++              float q1 = (1.0 - exp(-max(r1.a - pF, 0.0) / LK_FFBT)) * (1.0 - smoothstep(LK_FFBD0, LK_FFBD1, r1.a - pF));
++              float l01 = dot(r0.rgb, lW) - dot(r1.rgb, lW);
++              if (r0.a <= r1.a) c0 = mix(c0, r1.rgb, uLkFfbS * q0 * (1.0 - q1) * smoothstep(0.0, LK_FFBL, l01));
++              else c1 = mix(c1, r0.rgb, uLkFfbS * q1 * (1.0 - q0) * smoothstep(0.0, LK_FFBL, -l01));
++            }
++`;
++/** The guard with the reduced-scale term (throws if the anchor moved). */
++function waterFragFFS(src: string) {
++  const i = src.indexOf(LK_FFBS_ANCHOR);
++  if (i < 0 || src.indexOf(LK_FFBS_ANCHOR, i + 1) >= 0) throw new Error("Water: G-3 anchor");
++  return "uniform float uLkFfbS;\n" + src.slice(0, i) + LK_FFBS_GLSL + src.slice(i);
++}
++
+ const WATER_VERT = /* glsl */ `
+ uniform mat4 uPlateViewProj;
+ uniform mat4 uMirrorViewProj;
+@@ -2250,6 +2280,13 @@
+             defines.LK_FFBD0 = lab("ffbd0", 0, 50, 8);
+             defines.LK_FFBD1 = Math.max(Number(lab("ffbd1", 0.01, 100, 16)), Number(defines.LK_FFBD0) + 0.01).toFixed(3);
+             defines.LK_FFBL = lab("ffbl", 0.001, 1, 0.05);
++            // AA7 G-3 (LK_FFBS_GLSL): the guard's term for render scales below 1 (uLkFfbS, setRenderScale); `?ffbs=0` = AA7
++            // exactly (same source); lab `?debug&ffbsm=<m>` (the inside's margin behind the face's entry).
++            if (lq?.get("ffbs") !== "0") {
++              frag = waterFragFFS(frag);
++              defines.LK_FFBSM = lab("ffbsm", 0, 5, 0.5);
++              mirrorUniforms.uLkFfbS = { value: 0 };
++            }
+             // (lab, G7: `?debug&ffbtoggle=1` = a run-time switch uLkFfbOn for one-session A/B timing; not in the product source)
+             if (lq?.has("debug") && lq.get("ffbtoggle") === "1") {
+               defines.LK_FFB_TOG = "";
+@@ -2521,6 +2558,12 @@
+    * and in the hold; lab `?lkwdiv=`).
+    */
+   walkDiv = 4;
++
++  /** AA7 G-3: the render scale (adaptive governor); the guard's reduced-scale term runs only below 1 (LK_FFBS_GLSL). */
++  setRenderScale(scale: number) {
++    const u = this.material.uniforms.uLkFfbS;
++    if (u) u.value = scale < 0.999 ? 1 : 0;
++  }
+ 
+   /** The main HDR target's size (px): the walk target is 1 / walkDiv of it. */
+   setWalkSize(width: number, height: number) {

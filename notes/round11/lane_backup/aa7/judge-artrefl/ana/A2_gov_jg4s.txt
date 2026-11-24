@@ -1,0 +1,15 @@
+== a7 vs a6 (knee adds)
+scale 1: frames 45 | 3x3 51 px (1.13/frame, max 14, darker 4) | 5x5 24 (0.53/frame, max 14) | 7x7 12 (0.27/frame, max 14)
+scale 0.9: frames 25 | 3x3 14 px (0.56/frame, max 7, darker 0) | 5x5 4 (0.16/frame, max 6) | 7x7 0 (0.00/frame, max 0)
+scale 0.8: frames 25 | 3x3 10 px (0.40/frame, max 7, darker 0) | 5x5 2 (0.08/frame, max 5) | 7x7 2 (0.08/frame, max 5)
+scale 0.7: frames 25 | 3x3 19 px (0.76/frame, max 9, darker 0) | 5x5 12 (0.48/frame, max 9) | 7x7 9 (0.36/frame, max 9)
+== a7 vs base
+scale 1: frames 45 | 3x3 192432 px (4276.27/frame, max 115, darker 168236) | 5x5 102503 (2277.84/frame, max 83) | 7x7 57612 (1280.27/frame, max 58)
+scale 0.9: frames 25 | 3x3 145368 px (5814.72/frame, max 90, darker 122899) | 5x5 80975 (3239.00/frame, max 70) | 7x7 48586 (1943.44/frame, max 55)
+scale 0.8: frames 25 | 3x3 177412 px (7096.48/frame, max 86, darker 167502) | 5x5 105054 (4202.16/frame, max 72) | 7x7 67192 (2687.68/frame, max 50)
+scale 0.7: frames 25 | 3x3 161433 px (6457.32/frame, max 94, darker 147634) | 5x5 94794 (3791.76/frame, max 71) | 7x7 60171 (2406.84/frame, max 44)
+== a6 vs base
+scale 1: frames 45 | 3x3 194021 px (4311.58/frame, max 115, darker 170170) | 5x5 103280 (2295.11/frame, max 83) | 7x7 57993 (1288.73/frame, max 58)
+scale 0.9: frames 25 | 3x3 146885 px (5875.40/frame, max 90, darker 124743) | 5x5 81619 (3264.76/frame, max 70) | 7x7 48931 (1957.24/frame, max 56)
+scale 0.8: frames 25 | 3x3 179342 px (7173.68/frame, max 86, darker 169644) | 5x5 106055 (4242.20/frame, max 72) | 7x7 67864 (2714.56/frame, max 50)
+scale 0.7: frames 25 | 3x3 164049 px (6561.96/frame, max 95, darker 150571) | 5x5 95940 (3837.60/frame, max 72) | 7x7 60800 (2432.00/frame, max 44)

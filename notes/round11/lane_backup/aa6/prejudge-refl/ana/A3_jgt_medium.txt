@@ -1,0 +1,8 @@
+K050 all240 {"frames":240,"px":24719,"darker":19947,"laneCloserToGT":14073,"meanErrLane":7.71,"meanErrBase":8.48,"gtDarkerThanBase":10699}
+K050 k0-120 {"frames":120,"px":11133,"darker":9189,"laneCloserToGT":6045,"meanErrLane":8.16,"meanErrBase":8.54,"gtDarkerThanBase":4617}
+K075 all240 {"frames":240,"px":20113,"darker":14878,"laneCloserToGT":13056,"meanErrLane":6.45,"meanErrBase":8.62,"gtDarkerThanBase":8989}
+K075 k0-120 {"frames":120,"px":8771,"darker":6609,"laneCloserToGT":5482,"meanErrLane":6.94,"meanErrBase":8.72,"gtDarkerThanBase":3745}
+K100 all240 {"frames":240,"px":18037,"darker":12466,"laneCloserToGT":12515,"meanErrLane":5.71,"meanErrBase":8.58,"gtDarkerThanBase":8098}
+K100 k0-120 {"frames":120,"px":7678,"darker":5363,"laneCloserToGT":5185,"meanErrLane":6.17,"meanErrBase":8.69,"gtDarkerThanBase":3291}
+FIX1 all240 {"frames":240,"px":12215,"darker":12180,"laneCloserToGT":4001,"meanErrLane":11.95,"meanErrBase":8.59,"gtDarkerThanBase":4411}
+FIX1 k0-120 {"frames":120,"px":6230,"darker":6201,"laneCloserToGT":2116,"meanErrLane":11.78,"meanErrBase":8.79,"gtDarkerThanBase":2316}

@@ -1,0 +1,13 @@
+# final :5197 (fresh, 22:17-22:20) vs the fixer's saved pre-fix AA7 (:5199 aa7pre clone) hashes
+final vs preAA7 def                            IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+final vs preAA7 f0                             IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+final vs preAA7 g0                             IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+final vs preAA7 all5                           IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+final vs preAA7 mc0                            IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+final vs preAA7 t0                             IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+final vs preAA7 s07f0                          IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+final vs preAA7 s09f0                          IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+final ?mrows=0 s0.7 vs preAA7 s0.7             IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+final s0.7 vs preAA7 s0.7 (expect DIFFER)      DIFFER    final DIFF | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: mirror,walk,final | programs 16 differ: - | logs 0/0
+final ?mrows=0 vs final default, scale 1       IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+final now vs final at fixer time               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0

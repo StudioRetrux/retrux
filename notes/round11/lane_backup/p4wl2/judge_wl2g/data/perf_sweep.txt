@@ -1,0 +1,30 @@
+[slot] !judge_wl2g:perf-sweep: taken (load 2.9)
+0 A {"held":null,"n":242,"med":21.600000000000364,"mean":24.702479338842974,"p95":47.20000000000073,"boot":3539,"waited":0,"load0":2.9,"load1":7.6,"others":["judge_wl2g:rl-dpr2-timing"]} load 7.6
+0 B {"held":null,"n":276,"med":21.19999999999891,"mean":21.90072463768116,"p95":36.30000000000109,"boot":3579,"waited":67,"load0":4.3,"load1":4.3,"others":["judge_wl2g:rl2"]} load 4.3
+# pair 0 invalid (load >= 10 or another perf job); valid so far 0/8
+1 B {"held":null,"n":288,"med":20.399999999999636,"mean":20.826041666666665,"p95":36.29999999999927,"boot":3553,"waited":12,"load0":4,"load1":3.9,"others":[]} load 3.9
+1 A {"held":null,"n":297,"med":19.899999999999636,"mean":20.105050505050507,"p95":36.20000000000073,"boot":3673,"waited":0,"load0":3.5,"load1":3.5,"others":[]} load 3.5
+# pair 1 VALID; valid so far 1/8
+2 A {"held":null,"n":305,"med":19.399999999999636,"mean":19.692459016393446,"p95":34.600000000000364,"boot":3830,"waited":0,"load0":3.2,"load1":3.4,"others":[]} load 3.4
+2 B {"held":null,"n":291,"med":19.600000000000364,"mean":20.63539518900344,"p95":24.100000000000364,"boot":3500,"waited":0,"load0":3.2,"load1":3.3,"others":[]} load 3.3
+# pair 2 VALID; valid so far 2/8
+3 B {"held":null,"n":269,"med":21.899999999999636,"mean":22.266914498141265,"p95":24.5,"boot":3543,"waited":0,"load0":3.1,"load1":3.2,"others":[]} load 3.2
+3 A {"held":null,"n":300,"med":19.599999999998545,"mean":20.00733333333333,"p95":34.5,"boot":3727,"waited":0,"load0":3.1,"load1":2.7,"others":[]} load 2.7
+# pair 3 VALID; valid so far 3/8
+4 A {"held":null,"n":303,"med":19.399999999999636,"mean":19.744884488448843,"p95":34.600000000000364,"boot":3705,"waited":0,"load0":2.5,"load1":2.3,"others":[]} load 2.3
+4 B {"held":null,"n":292,"med":19.69999999999891,"mean":20.477739726027394,"p95":34.5,"boot":3586,"waited":0,"load0":2.2,"load1":2.4,"others":[]} load 2.4
+# pair 4 VALID; valid so far 4/8
+5 B {"held":null,"n":293,"med":19.69999999999891,"mean":20.47133105802048,"p95":23.5,"boot":3492,"waited":0,"load0":2.3,"load1":2.3,"others":[]} load 2.3
+5 A {"held":null,"n":300,"med":19.700000000000728,"mean":20.039333333333335,"p95":34.70000000000073,"boot":3545,"waited":0,"load0":2.2,"load1":2.4,"others":[]} load 2.4
+# pair 5 VALID; valid so far 5/8
+6 A {"held":null,"n":304,"med":19.399999999999636,"mean":19.672697368421055,"p95":34.600000000000364,"boot":3563,"waited":0,"load0":2.2,"load1":2.1,"others":[]} load 2.1
+6 B {"held":null,"n":293,"med":19.600000000000364,"mean":20.470307167235497,"p95":34.5,"boot":3573,"waited":0,"load0":2,"load1":2,"others":[]} load 2.0
+# pair 6 VALID; valid so far 6/8
+7 B {"held":null,"n":293,"med":19.600000000000364,"mean":20.472354948805464,"p95":24.5,"boot":3722,"waited":0,"load0":1.9,"load1":2,"others":[]} load 2.0
+7 A {"held":null,"n":304,"med":19.100000000000364,"mean":19.64309210526316,"p95":34.79999999999927,"boot":3733,"waited":0,"load0":1.9,"load1":1.8,"others":[]} load 1.8
+# pair 7 VALID; valid so far 7/8
+8 A {"held":null,"n":282,"med":21.200000000000728,"mean":21.23794326241135,"p95":33.80000000000018,"boot":3831,"waited":0,"load0":1.7,"load1":1.6,"others":[]} load 1.6
+8 B {"held":null,"n":288,"med":20.200000000000728,"mean":20.741666666666667,"p95":25,"boot":3624,"waited":0,"load0":1.8,"load1":1.7,"others":[]} load 1.7
+# pair 8 VALID; valid so far 8/8
+{"valid":8,"pairs":9,"paired_med":1.015463917525736,"paired_mean":1.0405439977994466,"A_med":19.599999999998545,"B_med":19.69999999999891,"A_boot":3705,"B_boot":3573}
+[slot] !judge_wl2g:perf-sweep: freed (exit 0)

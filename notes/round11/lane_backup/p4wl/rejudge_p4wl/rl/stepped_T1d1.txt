@@ -1,0 +1,3 @@
+left_shelf x0-420 y470-620   blips/frame  MAIN 774 | LANE 590 | GT_M 334 | GT_L 290
+far x880-1440 y430-590       blips/frame  MAIN 1101 | LANE 990 | GT_M 903 | GT_L 896
+full rows 380-766            blips/frame  MAIN 11057 | LANE 10848 | GT_M 8827 | GT_L 8889

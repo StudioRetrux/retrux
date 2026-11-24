@@ -1,0 +1,7 @@
+## G slow: G: flagged px 1002, events >= 6 px: 31, px in them 217 
+## G medium: G: flagged px 1750, events >= 6 px: 57, px in them 701 
+## G fast: G: flagged px 1273, events >= 6 px: 43, px in them 555 
+## G diag: G: flagged px 1004, events >= 6 px: 31, px in them 452 
+## G reverse: G: flagged px 2380, events >= 6 px: 77, px in them 1217 
+## G leave: G: flagged px 1280, events >= 6 px: 44, px in them 476 
+DONE_G

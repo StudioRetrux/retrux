@@ -1,0 +1,1 @@
+rl/t2_L1: 150 frames 720x270 buf 2268,1290 pipe 2268,1290 scale 1 dt p50 49.6 p90 50.0 ms | mirror 149 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p50 2.2/2.6/3.0 cap ms p50 0.0/0.1/0.2 gap p50/p90/max 49.7/90.6/114.4

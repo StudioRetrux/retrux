@@ -1,0 +1,9 @@
+== ab_hold_r2.txt: 6 pairs
+  pair 0: A med 60.4 mean 58.72 p95 75.1 n 101 (load 6.8) | B med 43.7 mean 48.28 p95 68.9 n 123 (load 8.1) | ratio med 0.724 mean 0.822 held A {'phase': 'expand', 'cam': 0.967} B {'phase': 'expand', 'cam': 0.967}
+  pair 1: A med 39.6 mean 39.05 p95 54.6 n 153 (load 6.5) | B med 39.4 mean 37.48 p95 52.9 n 160 (load 7.3) | ratio med 0.995 mean 0.960 held A {'phase': 'expand', 'cam': 0.967} B {'phase': 'expand', 'cam': 0.967}
+  pair 2: A med 39.9 mean 40.63 p95 64.5 n 147 (load 9.7) | B med 44.0 mean 43.65 p95 65.2 n 137 (load 14.7) | ratio med 1.103 mean 1.074  [load >= 10] held A {'phase': 'expand', 'cam': 0.967} B {'phase': 'expand', 'cam': 0.967}
+  pair 3: A med 39.7 mean 38.08 p95 52.7 n 157 (load 9.4) | B med 41.5 mean 40.31 p95 54.4 n 149 (load 12.0) | ratio med 1.045 mean 1.058  [load >= 10] held A {'phase': 'expand', 'cam': 0.967} B {'phase': 'expand', 'cam': 0.967}
+  pair 4: A med 38.9 mean 37.55 p95 53.5 n 159 (load 7.5) | B med 37.9 mean 37.59 p95 53.7 n 159 (load 7.0) | ratio med 0.974 mean 1.001 held A {'phase': 'expand', 'cam': 0.967} B {'phase': 'expand', 'cam': 0.967}
+  pair 5: A med 37.0 mean 37.07 p95 53.3 n 162 (load 7.0) | B med 39.0 mean 37.62 p95 53.1 n 159 (load 6.8) | ratio med 1.054 mean 1.015 held A {'phase': 'expand', 'cam': 0.967} B {'phase': 'expand', 'cam': 0.967}
+  median of medians A 39.65 ms  B 40.45 ms  (ratio 1.020); median of means A 38.57 B 38.96 (ratio 1.010)
+  paired ratio medians: med 1.020, mean 1.008; load < 10 pairs (4): med 0.985, mean 0.980

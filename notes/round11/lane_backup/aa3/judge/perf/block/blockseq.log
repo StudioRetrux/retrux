@@ -1,0 +1,6 @@
+[slot] !judge-perf:blockseq waiting (load 6.3 / max 24, slots 2, holders [{"label":"judge-artifacts:reverse","pid":24610,"at":1795160793024,"slot":0},{"label":"judge-motion:gt-reverse","pid":32539,"at":1795160762588,"slot":1}])
+[slot] !judge-perf:blockseq: taken (load 7.7)
+lane done 0 logs
+lane_sf0 done 0 logs
+base done 0 logs
+[slot] !judge-perf:blockseq: freed (exit 0)

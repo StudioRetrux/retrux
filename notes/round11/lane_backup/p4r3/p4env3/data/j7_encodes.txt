@@ -1,0 +1,16 @@
+repaired texels 5729 p4==s2 on repaired True
+f1 vs p4 on repaired: mean 22.64 max 162
+ll_z9.pam     117944 B  repaired: mean 0.00 p99 0 max   0 kept 100.0% | others: mean 0.000 p99 0 max   0 n>2 0
+nl40.pam       85752 B  repaired: mean 1.57 p99 4 max   4 kept 94.4% | others: mean 0.831 p99 4 max   4 n>2 27926
+nl60.pam       88388 B  repaired: mean 1.20 p99 2 max   2 kept 95.9% | others: mean 0.588 p99 2 max   2 n>2 0
+nl80.pam       98798 B  repaired: mean 0.77 p99 1 max   1 kept 97.6% | others: mean 0.375 p99 1 max   1 n>2 0
+q100.pam       37040 B  repaired: mean 1.46 p99 7 max  13 kept 95.4% | others: mean 0.618 p99 4 max  18 n>2 6807
+q100s.pam      39074 B  repaired: mean 1.50 p99 7 max  15 kept 95.3% | others: mean 0.551 p99 3 max  18 n>2 5205
+q95.pam        32566 B  repaired: mean 1.74 p99 7 max  13 kept 94.4% | others: mean 0.836 p99 4 max  21 n>2 16495
+q95s.pam       33960 B  repaired: mean 1.81 p99 8 max  15 kept 94.1% | others: mean 0.784 p99 4 max  16 n>2 14336
+q97.pam        34010 B  repaired: mean 1.57 p99 7 max  13 kept 95.0% | others: mean 0.691 p99 4 max  19 n>2 9775
+q97s.pam       35690 B  repaired: mean 1.60 p99 8 max  14 kept 94.9% | others: mean 0.624 p99 3 max  17 n>2 7607
+q98.pam        35834 B  repaired: mean 1.53 p99 7 max  12 kept 95.2% | others: mean 0.668 p99 4 max  17 n>2 8971
+q98s.pam       37648 B  repaired: mean 1.55 p99 7 max  13 kept 95.1% | others: mean 0.600 p99 3 max  17 n>2 6806
+q99.pam        37258 B  repaired: mean 1.46 p99 7 max  13 kept 95.4% | others: mean 0.630 p99 4 max  18 n>2 7505
+q99s.pam       39142 B  repaired: mean 1.49 p99 7 max  14 kept 95.3% | others: mean 0.562 p99 3 max  15 n>2 5695

@@ -1,0 +1,60 @@
+[
+ {
+  "name": "lanekeep",
+  "port": "5178",
+  "qs": "panokeep=1",
+  "before": {
+   "time": 7.178,
+   "taa": {
+    "weight": 0.5,
+    "runs": 246,
+    "still": 0,
+    "valid": true
+   },
+   "lost": false,
+   "restoring": false,
+   "pano": 4194304
+  },
+  "lost": {
+   "time": 7.768,
+   "taa": {
+    "weight": 0.5,
+    "runs": 273,
+    "still": 0,
+    "valid": false
+   },
+   "lost": true,
+   "restoring": false,
+   "pano": 4194304
+  },
+  "firstFrameAfterRestoreMs": 561,
+  "at1500": {
+   "time": 9.328,
+   "taa": {
+    "weight": 0.5,
+    "runs": 350,
+    "still": 0,
+    "valid": true
+   },
+   "lost": false,
+   "restoring": false,
+   "pano": 4194304
+  },
+  "afterSweep": {
+   "time": 10.431,
+   "taa": {
+    "weight": 0.5,
+    "runs": 405,
+    "still": 0,
+    "valid": true
+   },
+   "lost": false,
+   "restoring": false,
+   "pano": 4194304
+  },
+  "advanced": true,
+  "logs": [
+   "console.warning [hero] WebGL context lost"
+  ]
+ }
+]

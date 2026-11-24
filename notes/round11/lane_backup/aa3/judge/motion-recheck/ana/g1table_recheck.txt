@@ -1,0 +1,48 @@
+slow     FS   MC32 base   0.97 judged   0.29 ( -70%) fix   0.18 ( -81%) ok  | GT  -91% | J32 fix  -41 GT  -20 (off) J48 fix  -86 GT  -31 (off) | eg 1.957/1.893/1.866 MCE 1.915/1.736/1.663 GT 1.448
+slow     WR   MC32 base   1.18 judged   0.41 ( -65%) fix   0.30 ( -75%) ok  | GT  -88% | J32 fix  -13 GT  -22 (off) J48 fix  -17 GT  -58 (off) | eg 2.520/2.469/2.443 MCE 2.260/2.035/1.973 GT 1.731
+slow     DR   MC32 base   2.22 judged   0.37 ( -83%) fix   0.22 ( -90%) ok  | GT  -88% | J32 fix  -34 GT   -9 (off) J48 fix  -80 GT  -31 (off) | eg 2.293/2.176/2.141 MCE 2.555/2.205/2.095 GT 1.976
+slow     FF   MC32 base   6.24 judged   1.98 ( -68%) fix   1.81 ( -71%) ok  | GT  -55% | J32 fix  -56 GT  -37 (off) J48 fix  -80 GT  -67 (off) | eg 4.644/4.366/4.337 MCE 2.871/2.345/2.245 GT 2.235
+slow     FR   MC32 base   1.43 judged   0.63 ( -56%) fix   0.59 ( -59%) ok  | GT  -68% | J32 fix  -54 GT  -62 (off) J48 fix  -75 GT  -87 (off) | eg 2.857/2.772/2.752 MCE 1.813/1.624/1.580 GT 1.400
+slow     RS   MC32 base   0.69 judged   0.31 ( -55%) fix   0.28 ( -59%) ok  | GT  -86% | J32 fix   -9 GT  -26 (off) J48 fix   -9 GT  -54 (off) | eg 2.550/2.479/2.453 MCE 2.206/2.032/1.970 GT 1.668
+slow     tot  MC32 base   2.82 judged   0.92 ( -67%) fix   0.81 ( -71%) ok  | GT  -63% | J32 fix  -34 GT  -29 (off) J48 fix  -59 GT  -60 (ok) | eg 3.170/3.029/3.003 MCE 2.360/2.049/1.972 GT 1.815
+slow     texture judged: texLake 0.9991 texSolid 1.0017 | fix: texLake 0.9991 texSolid 1.0017
+medium   FS   MC32 base   1.12 judged   0.35 ( -69%) fix   0.27 ( -76%) ok  | GT  -71% | J32 fix  -10 GT  -10 (ok) J48 fix  -16 GT   -6 (off) | eg 1.880/1.806/1.779 MCE 1.753/1.611/1.556 GT 1.343
+medium   WR   MC32 base   2.66 judged   1.39 ( -48%) fix   1.24 ( -53%) ok  | GT  -67% | J32 fix   -5 GT   -6 (ok) J48 fix   -7 GT  -11 (ok) | eg 2.742/2.656/2.629 MCE 2.572/2.354/2.296 GT 2.082
+medium   DR   MC32 base   3.32 judged   0.78 ( -77%) fix   0.65 ( -80%) ok  | GT  -73% | J32 fix   -7 GT   -8 (ok) J48 fix  -18 GT  -12 (off) | eg 2.407/2.227/2.194 MCE 2.403/2.090/2.014 GT 1.868
+medium   FF   MC32 base   7.05 judged   2.14 ( -70%) fix   1.95 ( -72%) ok  | GT  -59% | J32 fix  -16 GT  -15 (ok) J48 fix  -38 GT  -32 (off) | eg 4.690/4.377/4.344 MCE 2.868/2.354/2.246 GT 2.251
+medium   FR   MC32 base   2.94 judged   1.44 ( -51%) fix   1.32 ( -55%) ok  | GT  -64% | J32 fix  -17 GT  -16 (ok) J48 fix  -36 GT  -32 (ok) | eg 3.098/2.978/2.959 MCE 1.995/1.780/1.718 GT 1.597
+medium   RS   MC32 base   1.10 judged   0.78 ( -29%) fix   0.76 ( -31%) LOW | GT  -71% | J32 fix   -5 GT   -7 (ok) J48 fix   -3 GT  -14 (off) | eg 2.230/2.164/2.140 MCE 2.082/1.950/1.903 GT 1.611
+medium   tot  MC32 base   3.62 judged   1.32 ( -64%) fix   1.20 ( -67%) ok  | GT  -62% | J32 fix  -10 GT  -11 (ok) J48 fix  -21 GT  -20 (ok) | eg 3.162/2.998/2.971 MCE 2.354/2.063/1.990 GT 1.849
+medium   texture judged: texLake 0.9999 texSolid 1.0015 | fix: texLake 0.9999 texSolid 1.0015
+fast     FS   MC32 base   5.23 judged   3.95 ( -24%) fix   3.73 ( -29%) LOW
+fast     WR   MC32 base   8.43 judged   5.63 ( -33%) fix   5.19 ( -38%) LOW
+fast     DR   MC32 base   3.75 judged   1.28 ( -66%) fix   1.02 ( -73%) ok 
+fast     FF   MC32 base  10.93 judged   3.67 ( -66%) fix   3.35 ( -69%) ok 
+fast     FR   MC32 base   3.96 judged   1.85 ( -53%) fix   1.70 ( -57%) ok 
+fast     RS   MC32 base   3.02 judged   1.60 ( -47%) fix   1.52 ( -50%) ok 
+fast     tot  MC32 base   6.71 judged   3.06 ( -54%) fix   2.82 ( -58%) ok 
+fast     texture judged: texLake 1.0009 texSolid 1.001 | fix: texLake 1.0009 texSolid 1.001
+diag     FS   MC32 base   2.83 judged   1.47 ( -48%) fix   1.20 ( -58%) ok 
+diag     WR   MC32 base   5.18 judged   2.87 ( -45%) fix   2.52 ( -51%) ok 
+diag     DR   MC32 base   2.80 judged   0.75 ( -73%) fix   0.58 ( -79%) ok 
+diag     FF   MC32 base  10.48 judged   3.38 ( -68%) fix   3.07 ( -71%) ok 
+diag     FR   MC32 base   3.35 judged   1.45 ( -57%) fix   1.32 ( -61%) ok 
+diag     RS   MC32 base   2.76 judged   1.17 ( -58%) fix   1.01 ( -63%) ok 
+diag     tot  MC32 base   5.70 judged   2.15 ( -62%) fix   1.90 ( -67%) ok 
+diag     texture judged: texLake 0.9994 texSolid 1.0005 | fix: texLake 0.9994 texSolid 1.0005
+reverse  FS   MC32 base   4.82 judged   3.24 ( -33%) fix   2.97 ( -38%) LOW | GT  -22% | J32 fix   -9 GT   -8 (ok) J48 fix  -18 GT   -0 (off) | eg 1.909/1.850/1.812 MCE 2.756/2.515/2.412 GT 2.300
+reverse  WR   MC32 base   7.13 judged   4.17 ( -42%) fix   3.70 ( -48%) ok  | GT  -50% | J32 fix   -7 GT   -9 (ok) J48 fix   -9 GT  -14 (off) | eg 2.949/2.855/2.805 MCE 3.960/3.554/3.442 GT 3.305
+reverse  DR   MC32 base   3.92 judged   1.42 ( -64%) fix   1.14 ( -71%) ok  | GT  -70% | J32 fix   -3 GT   -5 (ok) J48 fix   -6 GT   -2 (ok) | eg 2.157/2.050/2.014 MCE 3.402/3.032/2.920 GT 2.779
+reverse  FF   MC32 base  12.83 judged   4.35 ( -66%) fix   4.00 ( -69%) ok  | GT  -48% | J32 fix  -17 GT   -9 (off) J48 fix  -31 GT  -20 (off) | eg 4.441/4.127/4.081 MCE 4.291/3.472/3.317 GT 3.478
+reverse  FR   MC32 base   4.00 judged   1.98 ( -50%) fix   1.83 ( -54%) ok  | GT  -66% | J32 fix   -3 GT   +1 (ok) J48 fix   -3 GT   +4 (off) | eg 2.915/2.812/2.786 MCE 2.602/2.280/2.192 GT 2.064
+reverse  RS   MC32 base   2.02 judged   1.37 ( -32%) fix   1.31 ( -35%) LOW | GT  -78% | J32 fix   -5 GT  -13 (off) J48 fix   -4 GT  -29 (off) | eg 2.245/2.167/2.139 MCE 3.050/2.842/2.776 GT 2.435
+reverse  tot  MC32 base   7.02 judged   3.03 ( -57%) fix   2.77 ( -61%) ok  | GT  -50% | J32 fix   -9 GT   -7 (ok) J48 fix  -15 GT  -11 (ok) | eg 3.095/2.933/2.895 MCE 3.481/3.013/2.900 GT 2.829
+reverse  texture judged: texLake 0.9994 texSolid 1.0016 | fix: texLake 0.9994 texSolid 1.0016
+leave    FS   MC32 base   1.10 judged   0.50 ( -55%) fix   0.46 ( -58%) ok 
+leave    WR   MC32 base   2.46 judged   1.25 ( -49%) fix   1.12 ( -54%) ok 
+leave    DR   MC32 base   1.94 judged   0.37 ( -81%) fix   0.30 ( -85%) ok 
+leave    FF   MC32 base   4.91 judged   1.82 ( -63%) fix   1.68 ( -66%) ok 
+leave    FR   MC32 base   2.00 judged   1.07 ( -46%) fix   1.00 ( -50%) ok 
+leave    RS   MC32 base   0.91 judged   0.58 ( -36%) fix   0.56 ( -38%) LOW
+leave    tot  MC32 base   2.63 judged   1.10 ( -58%) fix   1.01 ( -62%) ok 
+leave    texture judged: texLake 0.9997 texSolid 1.0012 | fix: texLake 0.9997 texSolid 1.0012

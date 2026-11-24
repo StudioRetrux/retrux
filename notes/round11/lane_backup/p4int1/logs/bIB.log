@@ -1,0 +1,3 @@
+[slot] int1:identB: taken (load 11.6)
+B done
+[slot] int1:identB: freed (exit 0)

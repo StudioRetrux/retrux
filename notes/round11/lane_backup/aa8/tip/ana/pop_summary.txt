@@ -1,0 +1,6 @@
+fast: A7: 2577, 82, 1001 | TIP: 2427, 74, 899 | new: 134 px, 43 clusters, >= 6 px: 6 | removed: 232 px, 74 clusters, >= 6 px: 13
+diag: A7: 1884, 56, 717 | TIP: 1723, 47, 608 | new: 114 px, 58 clusters, >= 6 px: 3 | removed: 215 px, 64 clusters, >= 6 px: 12
+medium: A7: 3296, 102, 1420 | TIP: 2915, 80, 1020 | new: 201 px, 109 clusters, >= 6 px: 5 | removed: 417 px, 123 clusters, >= 6 px: 22
+leave: A7: 2250, 65, 1049 | TIP: 1926, 55, 705 | new: 112 px, 62 clusters, >= 6 px: 2 | removed: 330 px, 61 clusters, >= 6 px: 13
+slow: A7: 1405, 41, 315 | TIP: 1364, 33, 257 | new: 128 px, 68 clusters, >= 6 px: 1 | removed: 144 px, 50 clusters, >= 6 px: 8
+reverse: A7: 2285, 66, 967 | TIP: 2231, 64, 946 | new: 95 px, 51 clusters, >= 6 px: 3 | removed: 121 px, 56 clusters, >= 6 px: 4

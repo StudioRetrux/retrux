@@ -1,0 +1,4 @@
+rest {"lane":{"blocks":8,"mean":33.456,"med":24.4},"main":{"blocks":8,"mean":36.54,"med":25},"pairedMeanRatioMed":1.002,"pairedMedRatioMed":0.987,"loadMax":8.93}
+  pairedMeanRatios [1.219,0.66,1.002,0.988,1.009,1.18,0.626,0.879] pairedMedRatios [1.324,0.659,0.996,0.987,0.954,1.043,0.502,0.898]
+hold {"lane":{"blocks":8,"mean":42.777,"med":45.4},"main":{"blocks":8,"mean":42.765,"med":45.9},"pairedMeanRatioMed":1.033,"pairedMedRatioMed":1.019,"loadMax":7.04}
+  pairedMeanRatios [0.963,1.084,1.033,0.93,1.161,1.027,0.786,1.045] pairedMedRatios [0.978,1.02,1.063,0.956,1.019,0.996,0.956,1.034]

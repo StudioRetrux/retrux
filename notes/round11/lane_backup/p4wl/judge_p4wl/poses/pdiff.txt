@@ -1,0 +1,4 @@
+p00_rest: mean|d| 3.364 px>4 147536 px>16 55030 bbox (np.int64(0), np.int64(203), np.int64(1439), np.int64(765))  water(y>440) px>4 94233 above 53303
+p04_expand_pop: mean|d| 4.827 px>4 181912 px>16 91696 bbox (np.int64(0), np.int64(116), np.int64(1439), np.int64(765))  water(y>440) px>4 91656 above 90256
+p06_sustain: mean|d| 5.851 px>4 218995 px>16 122995 bbox (np.int64(0), np.int64(129), np.int64(1439), np.int64(765))  water(y>440) px>4 98333 above 120662
+p07_release_snap: mean|d| 3.197 px>4 129038 px>16 56450 bbox (np.int64(0), np.int64(160), np.int64(1439), np.int64(765))  water(y>440) px>4 71955 above 57083

@@ -1,4 +1,6 @@
 import * as THREE from "three";
+import { clamp } from "../math";
+import { laneSource } from "../quality";
 import { GLSL_AGX, GLSL_COMMON } from "../shaders/chunks";
 import type { QualityProfile } from "../types";
 
@@ -28,6 +30,8 @@ export type PostParams = {
   lensStrength: number;
   time: number;
   frame: number;
+  /** P4 lane orb (Q4): the hold's dolly share 0..1; widens the orb band's glow (only with PostChain's `p4` option). */
+  holdGlow?: number;
 };
 
 // The Cycles reference is clean: only a soft halo on the clipped orb, no grain, no CA at rest.
@@ -82,6 +86,32 @@ vec3 prefilter(vec3 c) {
   return prefilterBand(c, uThreshold, uKnee) + prefilterBand(c, 7.0, 1.0) * 0.8 * vec3(0.88, 1.0, 0.96);
 }
 float karis(vec3 c) { return 1.0 / (1.0 + luma(c)); }
+#ifdef POST_P4
+// P4 lane orb (Q4): alpha carries the orb band alone (luminance above uOrbThr), filtered like rgb, for the hold's wider orb
+// skirt (UP_FRAG's uRadiusA, GRADE_FRAG's tBloomA); rgb is computed exactly as without it.
+uniform float uOrbThr;
+vec4 s4(vec2 o) { return texture2D(tSrc, vUv + uTexel * o); }
+void main() {
+  vec4 a = s4(vec2(-2.0, 2.0)), b = s4(vec2(0.0, 2.0)), c = s4(vec2(2.0, 2.0));
+  vec4 d = s4(vec2(-2.0, 0.0)), e = s4(vec2(0.0, 0.0)), f = s4(vec2(2.0, 0.0));
+  vec4 g = s4(vec2(-2.0, -2.0)), h = s4(vec2(0.0, -2.0)), i = s4(vec2(2.0, -2.0));
+  vec4 j = s4(vec2(-1.0, 1.0)), k = s4(vec2(1.0, 1.0)), l = s4(vec2(-1.0, -1.0)), m = s4(vec2(1.0, -1.0));
+  vec4 g0 = (j + k + l + m) * 0.25;
+  vec4 g1 = (a + b + d + e) * 0.25;
+  vec4 g2 = (b + c + e + f) * 0.25;
+  vec4 g3 = (d + e + g + h) * 0.25;
+  vec4 g4 = (e + f + h + i) * 0.25;
+  vec4 col;
+  if (uPrefilter > 0.5) {
+    float w0 = karis(g0.rgb) * 0.5, w1 = karis(g1.rgb) * 0.125, w2 = karis(g2.rgb) * 0.125, w3 = karis(g3.rgb) * 0.125, w4 = karis(g4.rgb) * 0.125;
+    vec3 c3 = min((g0.rgb * w0 + g1.rgb * w1 + g2.rgb * w2 + g3.rgb * w3 + g4.rgb * w4) / (w0 + w1 + w2 + w3 + w4), vec3(64.0));
+    col = vec4(prefilter(c3), luma(prefilterBand(c3, uOrbThr, 1.0)));
+  } else {
+    col = g0 * 0.5 + (g1 + g2 + g3 + g4) * 0.125;
+  }
+  gl_FragColor = col;
+}
+#else
 void main() {
   vec3 a = s(vec2(-2.0, 2.0)), b = s(vec2(0.0, 2.0)), c = s(vec2(2.0, 2.0));
   vec3 d = s(vec2(-2.0, 0.0)), e = s(vec2(0.0, 0.0)), f = s(vec2(2.0, 0.0));
@@ -103,6 +133,7 @@ void main() {
   }
   gl_FragColor = vec4(col, 1.0);
 }
+#endif
 `;
 
 /** Up-sample weight per source mip level (index 1 = half resolution). */
@@ -110,11 +141,30 @@ void main() {
 // the hero out, pop centre saturation 0.113 vs the reference's 0.205; the orb's edge stays crisper too.)
 const UP_WEIGHTS = [1, 0.85, 0.6, 0.32, 0.2, 0.12, 0.08];
 
+/**
+ * P4 lane orb (Q4): up-sample weights of the orb band's own chain (the bloom mips' alpha), wider than UP_WEIGHTS: the hold's
+ * extra orb skirt (GRADE_FRAG reads it from the quarter-resolution level, so the full-resolution core is not doubled).
+ */
+const UP_WEIGHTS_ORB = [1, 1, 0.9, 0.75, 0.6, 0.45, 0.3];
+
 const UP_FRAG = /* glsl */ `
 uniform sampler2D tSrc;
 uniform vec2 uTexel;
 uniform float uRadius;
+#ifdef POST_P4
+uniform float uRadiusA;
+#endif
 varying vec2 vUv;
+#ifdef POST_P4
+vec4 s(vec2 o) { return texture2D(tSrc, vUv + uTexel * o); }
+void main() {
+  vec4 c = s(vec2(-1.0, 1.0)) + 2.0 * s(vec2(0.0, 1.0)) + s(vec2(1.0, 1.0))
+         + 2.0 * s(vec2(-1.0, 0.0)) + 4.0 * s(vec2(0.0)) + 2.0 * s(vec2(1.0, 0.0))
+         + s(vec2(-1.0, -1.0)) + 2.0 * s(vec2(0.0, -1.0)) + s(vec2(1.0, -1.0));
+  // (Blended ONE / ONE on rgb and alpha: rgb adds exactly as the additive blend did with alpha 1.)
+  gl_FragColor = vec4(c.rgb / 16.0 * uRadius, c.a / 16.0 * uRadiusA);
+}
+#else
 vec3 s(vec2 o) { return texture2D(tSrc, vUv + uTexel * o).rgb; }
 void main() {
   vec3 c = s(vec2(-1.0, 1.0)) + 2.0 * s(vec2(0.0, 1.0)) + s(vec2(1.0, 1.0))
@@ -122,6 +172,7 @@ void main() {
          + s(vec2(-1.0, -1.0)) + 2.0 * s(vec2(0.0, -1.0)) + s(vec2(1.0, -1.0));
   gl_FragColor = vec4(c / 16.0 * uRadius, 1.0);
 }
+#endif
 `;
 
 const GRADE_FRAG = /* glsl */ `
@@ -142,6 +193,11 @@ uniform float uLensStrength;
 uniform vec2 uOutSize;
 uniform float uFrame;
 uniform float uTime;
+#ifdef POST_P4
+// P4 lane orb (Q4): the orb band's wide chain at quarter resolution (alpha) and its weight (hold dolly share x gain; 0 at rest).
+uniform sampler2D tBloomA;
+uniform float uHoldGlow;
+#endif
 varying vec2 vUv;
 
 void main() {
@@ -162,6 +218,11 @@ void main() {
   col.g = texture2D(tScene, uv).g;
   col.b = texture2D(tScene, uv + c * ca).b;
   if (uBloomOn > 0.5) col += texture2D(tBloom, uv).rgb * uBloomStrength;
+#ifdef POST_P4
+  // The hold charges the orb: its glow widens over the limb and the ice around it (F402 / F420; p06 returned to the ring level
+  // within ~8 px of the rim). Tinted like the orb band (mint at the orb's edge).
+  if (uHoldGlow > 0.0) col += texture2D(tBloomA, uv).a * uHoldGlow * uBloomStrength * vec3(0.88, 1.0, 0.96);
+#endif
 
   col = agx(max(col, 0.0) * uExposure);
   float l = luma(col);
@@ -229,33 +290,63 @@ export class PostChain {
   private mips: THREE.WebGLRenderTarget[] = [];
   private ldr: THREE.WebGLRenderTarget | null = null;
   private outSize = new THREE.Vector2();
+  /** P4 lane orb (Q4): the hold's wider orb skirt (POST_P4; HeroEngine passes `p4` on T1 / T2 unless ?p4orb=0 / ?orbcharge=r11). */
+  private readonly p4: boolean;
+  /**
+   * Q4 knobs (live): the skirt's gain at full hold and the orb band's threshold for it (scene-linear max channel). (p06 rim zone
+   * 0.9-1.0 R, batch v6k: MAIN 150 / L-ish cobalt limb; lane x0 174-177, x2.5 180-191, x5 188-197; F402 ~200.)
+   * (Fix round, judge p4orb F1 / F3: with the hold orb at MAIN's exposure again the skirt carries most of the box clip: open-orb
+   * p05, orb box241 >= 248 / >= 250 with the hold lens 1.0 / 0.12: K0 5.9 / 1.8 %, K2 16.0 / 5.8 %, K4 22.4 / 15.2 % (MAIN 17.6 /
+   * 13.0 %, F402 16.2 / 14.3 %), and K4 laid a mint-neutral veil over the limb (B-R +22 vs F402's +25..+28). Final, with the hold
+   * lens 0.8 / 0.25 (Orb uP4Orb): K2 19.3 / 14.4 %, rim B-R +27, the ice around the hold orb +0.6..+1.4 L over MAIN's.)
+   */
+  holdGlowK = 2;
+  orbThr = 5;
 
   constructor(
     private renderer: THREE.WebGLRenderer,
     private profile: QualityProfile["post"],
+    opts: { p4?: boolean } = {},
   ) {
+    this.p4 = !!opts.p4 && profile.bloomLevels > 1;
+    const p4Defines = this.p4 ? { defines: { POST_P4: "" } } : {};
     const geo = new THREE.BufferGeometry();
     geo.setAttribute("position", new THREE.Float32BufferAttribute([-1, -1, 0, 3, -1, 0, -1, 3, 0], 3));
     const base = { vertexShader: VERT, depthTest: false, depthWrite: false };
     this.down = new THREE.ShaderMaterial({
       ...base,
+      ...p4Defines,
       name: "rx-bloom-down",
-      fragmentShader: DOWN_FRAG,
-      uniforms: { tSrc: { value: null }, uTexel: { value: new THREE.Vector2() }, uPrefilter: { value: 0 }, uThreshold: { value: 2 }, uKnee: { value: 1 } },
+      fragmentShader: laneSource(DOWN_FRAG, "POST_P4", this.p4),
+      uniforms: {
+        tSrc: { value: null },
+        uTexel: { value: new THREE.Vector2() },
+        uPrefilter: { value: 0 },
+        uThreshold: { value: 2 },
+        uKnee: { value: 1 },
+        ...(this.p4 ? { uOrbThr: { value: this.orbThr } } : {}),
+      },
     });
     this.up = new THREE.ShaderMaterial({
       ...base,
+      ...p4Defines,
       name: "rx-bloom-up",
-      fragmentShader: UP_FRAG,
-      uniforms: { tSrc: { value: null }, uTexel: { value: new THREE.Vector2() }, uRadius: { value: 0.85 } },
-      blending: THREE.AdditiveBlending,
+      fragmentShader: laneSource(UP_FRAG, "POST_P4", this.p4),
+      uniforms: { tSrc: { value: null }, uTexel: { value: new THREE.Vector2() }, uRadius: { value: 0.85 }, ...(this.p4 ? { uRadiusA: { value: 1 } } : {}) },
+      // (P4: ONE / ONE on rgb and alpha, so alpha can carry the orb band; rgb adds as AdditiveBlending did with alpha 1.)
+      ...(this.p4
+        ? { blending: THREE.CustomBlending, blendEquation: THREE.AddEquation, blendSrc: THREE.OneFactor, blendDst: THREE.OneFactor, blendSrcAlpha: THREE.OneFactor, blendDstAlpha: THREE.OneFactor }
+        : { blending: THREE.AdditiveBlending }),
       transparent: true,
     });
     this.grade = new THREE.ShaderMaterial({
       ...base,
+      ...p4Defines,
       name: "rx-grade",
-      fragmentShader: GRADE_FRAG,
+      // (P4: off, the POST_P4 blocks are resolved away, so the sources are MAIN's byte for byte.)
+      fragmentShader: laneSource(GRADE_FRAG, "POST_P4", this.p4),
       uniforms: {
+        ...(this.p4 ? { tBloomA: { value: null }, uHoldGlow: { value: 0 } } : {}),
         tScene: { value: null },
         tBloom: { value: null },
         uBloomOn: { value: profile.bloomLevels > 0 ? 1 : 0 },
@@ -297,6 +388,7 @@ export class PostChain {
       h = Math.max(2, Math.round(h / 2));
     }
     this.grade.uniforms.tBloom.value = this.mips[0]?.texture ?? null;
+    if (this.p4) this.grade.uniforms.tBloomA.value = this.mips[1]?.texture ?? null;
     const buf = this.renderer.getDrawingBufferSize(this.outSize);
     if (this.fxaa) {
       if (!this.ldr) this.ldr = target(buf.x, buf.y, THREE.UnsignedByteType);
@@ -337,8 +429,13 @@ export class PostChain {
         this.up.uniforms.uTexel.value.set(1 / s.width, 1 / s.height);
         // Each coarser level contributes less (a flat 0.85 spread the halo 30-60 px from the orb).
         this.up.uniforms.uRadius.value = UP_WEIGHTS[Math.min(i, UP_WEIGHTS.length - 1)];
+        if (this.p4) this.up.uniforms.uRadiusA.value = UP_WEIGHTS_ORB[Math.min(i, UP_WEIGHTS_ORB.length - 1)];
         this.draw(this.up, this.mips[i - 1]);
       }
+    }
+    if (this.p4) {
+      this.down.uniforms.uOrbThr.value = this.orbThr;
+      this.grade.uniforms.uHoldGlow.value = clamp(p.holdGlow ?? 0) * this.holdGlowK;
     }
 
     const buf = r.getDrawingBufferSize(this.outSize);

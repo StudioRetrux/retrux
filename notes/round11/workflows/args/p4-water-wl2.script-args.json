@@ -1,0 +1,37 @@
+{
+ "note": "Workflow args for p4-water-wl2.js (pass .args verbatim on resume)",
+ "args": {
+  "argsFile": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/args/p4wl2-water.args.json",
+  "round1Args": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/args/p4wl-water.args.json",
+  "brief": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/briefs/p4r4_common.md",
+  "brief2": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/briefs/p4pri2_common.md",
+  "round": "p4wl2",
+  "lanes": [
+   {
+    "key": "wl2g",
+    "port": 5164,
+    "kind": "rj1"
+   },
+   {
+    "key": "wl2f",
+    "port": 5165,
+    "kind": "rj1"
+   },
+   {
+    "key": "wl2b",
+    "port": 5166,
+    "kind": "b"
+   }
+  ],
+  "integ": {
+   "key": "wl2",
+   "port": 5167
+  },
+  "buildMin": 100,
+  "judgeMin": 45,
+  "integMin": 60,
+  "finalJudgeMin": 45,
+  "fixMin": 60,
+  "rejudgeMin": 40
+ }
+}

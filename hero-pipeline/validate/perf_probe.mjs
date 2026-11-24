@@ -9,15 +9,15 @@ const { chromium } = require("playwright-core");
 const query = process.argv[2] || "";
 
 const browser = await chromium.launch({
-  executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+  executablePath: (process.env.CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"),
   headless: true,
-  args: ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"],
+  args: [(process.platform === "win32" ? "--use-angle=d3d11" : "--use-angle=metal"), "--enable-gpu", "--ignore-gpu-blocklist"],
 });
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 766 } });
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto(`http://localhost:5173/?${query}`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${(process.env.LAB || "http://localhost:5173")}/?${query}`, { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => document.documentElement.dataset.heroReady === "1", null, { timeout: 180000 });
   const sample = async (label, ms) => {
     const r = await page.evaluate(async (ms) => {

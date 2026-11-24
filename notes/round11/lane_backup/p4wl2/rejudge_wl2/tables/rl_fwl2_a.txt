@@ -1,0 +1,1 @@
+rl/T1d2_fwl2_a: 100 frames 725x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 28.2 p90 30.3 ms | mirror 98 walk 98 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p50 0.8/2.3/3.1 cap ms p50 0.0/0.1/0.1 gap p50/p90/max 28.2/30.3/45.3

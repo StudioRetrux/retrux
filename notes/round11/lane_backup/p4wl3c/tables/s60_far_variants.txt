@@ -1,0 +1,12 @@
+far_main         n=40 (200, 580) | farwater blips/fr 2.0 max 5 mean|dL| 0.371 p99 1.28 | lips blips/fr 1.1 max 4 mean|dL| 0.345 p99 1.00
+far_lane         n=40 (200, 580) | farwater blips/fr 2.2 max 8 mean|dL| 0.382 p99 1.28 | lips blips/fr 1.6 max 5 mean|dL| 0.356 p99 1.00
+far_g0           n=40 (200, 580) | farwater blips/fr 1.8 max 6 mean|dL| 0.385 p99 1.28 | lips blips/fr 1.2 max 4 mean|dL| 0.359 p99 1.00
+far_g2e3         n=40 (200, 580) | farwater blips/fr 1.7 max 6 mean|dL| 0.359 p99 1.28 | lips blips/fr 1.2 max 4 mean|dL| 0.333 p99 1.00
+far_e0           n=40 (200, 580) | farwater blips/fr 1.6 max 5 mean|dL| 0.358 p99 1.28 | lips blips/fr 1.2 max 4 mean|dL| 0.332 p99 1.00
+far_s0           n=40 (200, 580) | farwater blips/fr 1.8 max 4 mean|dL| 0.368 p99 1.28 | lips blips/fr 1.1 max 4 mean|dL| 0.342 p99 1.00
+far_a0           n=40 (200, 580) | farwater blips/fr 1.9 max 5 mean|dL| 0.322 p99 1.21 | lips blips/fr 1.2 max 4 mean|dL| 0.296 p99 1.00
+far_lane         n=40 (200, 580) | farwater blips/fr 2.2 max 8 mean|dL| 0.382 p99 1.28 | lips blips/fr 1.6 max 5 mean|dL| 0.356 p99 1.00
+far_lane2        n=40 (200, 580) | farwater blips/fr 1.6 max 5 mean|dL| 0.375 p99 1.28 | lips blips/fr 1.1 max 3 mean|dL| 0.349 p99 1.00
+far_lane3        n=40 (200, 580) | farwater blips/fr 1.6 max 6 mean|dL| 0.383 p99 1.28 | lips blips/fr 1.2 max 4 mean|dL| 0.356 p99 1.00
+far_main         n=40 (200, 580) | farwater blips/fr 2.0 max 5 mean|dL| 0.371 p99 1.28 | lips blips/fr 1.1 max 4 mean|dL| 0.345 p99 1.00
+far_main2        n=40 (200, 580) | farwater blips/fr 1.9 max 6 mean|dL| 0.397 p99 1.57 | lips blips/fr 1.1 max 4 mean|dL| 0.369 p99 1.00

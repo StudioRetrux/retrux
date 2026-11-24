@@ -1,0 +1,10 @@
+[slot] verify_int1:det+console: taken (load 2.7)
+04:35:20
+04:36:40 det done
+04:37:35 late ident done
+http://localhost:5173/ desktop console lines 0 []
+http://localhost:5199/ desktop console lines 0 []
+http://localhost:5173/ T0phone console lines 0 []
+http://localhost:5199/ T0phone console lines 0 []
+04:39:06 BATCH2 DONE
+[slot] verify_int1:det+console: freed (exit 0)

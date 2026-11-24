@@ -1,0 +1,338 @@
+--- a/retrux-web/app/hero/engine/world/Water.ts
++++ b/retrux-web/app/hero/engine/world/Water.ts
+@@ -1696,10 +1696,101 @@
+   vec4 F4 = step(-0.15, ta) * vec4(lkPhiT((ta.x - mu) / sE), lkPhiT((ta.y - mu) / sE), lkPhiT((ta.z - mu) / sE), lkPhiT((ta.w - mu) / sE));
+   vec4 a4 = wt * F4;
+   return vec4(t00.rgb * a4.x + t10.rgb * a4.y + t01.rgb * a4.z + t11.rgb * a4.w, a4.x + a4.y + a4.z + a4.w);
++}
++`,
++  },
++];
++/**
++ * wl2g (round 2 of the water lane, 22 Nov; re-judge WL-RJ1): the quarter walk ANCHORED IN LAKE SPACE. `?wl2g=0` = p4wl exactly.
++ * Root cause of the remaining crenellated contour (the shelf's dark reflection right of the left shelf reshaping every frame): the
++ * quarter pass rasterised the lake with the frame's own camera, so its texel grid lived in screen space and slid across the lake
++ * with every camera step; each tap point-samples a horizon / face colour that jumps where the walk changes obstacle cell, and the
++ * sliding grid put new lake points under the taps every frame. Here the pass rasterises the lake through a FIXED anchor
++ * view-projection (the camera at the anchor time, its frustum widened by the guard WL2G_GUARD, the target enlarged by the same
++ * factor: the texel footprint equals the quarter texel there) while it still walks from the frame's own camera (cameraPosition):
++ * every lake point keeps its texel while the camera moves, its value changes only with the view (smooth, except where a face's
++ * silhouette really crosses it). The water reads the texels through the same anchor matrix (uLkWalkVP), bilinear, P4WL_BAND's
++ * per-pixel share kept. The anchor is re-taken only when the frame's lake leaves the guard or the anchor texel grows past the
++ * frame's quarter texel by WL2G_TOL (the hold's dolly; a resize). A scissor keeps the pass to the frame's own lake (+ a margin),
++ * so it draws the same texels as the quarter pass. Lab: `?wl2gg=` guard, `?wl2gt=` scale tolerance.
++ */
++export function wl2gOn(lq: URLSearchParams | null) {
++  return lq?.get("wl2g") !== "0";
++}
++const WL2G_GUARD = 1.25;
++const WL2G_OVER = 1.35;
++const WL2G_TOL = 1.0;
++const WL2G_AZ = 0.004;
++/**
++ * wl2g (build 2): the anchored texel keeps its lake point, but its walk still followed the frame's azimuth (the view's, camera to
++ * lake point), and the walk's horizon jumps wherever a slightly turned ray enters other heightfield cells: same-pose sheets showed
++ * the contour reshaping as before with the grid fixed (WORK st/E_d1_shelf.png). So the walk pass walks two FIXED azimuths of a
++ * lattice (step WL2G_AZ rad) that bracket the view's azimuth and blends them by its fraction: every texel's horizon and face
++ * colour is then a continuous function of the camera (two fixed samples while the camera stays in a bin; the blend weight hands
++ * over continuously at the bin edges). A walk without a face counts as the start elevation emin (no share). Walk pass only.
++ */
++function wl2gWalkFrag(src: string) {
++  const a = "    vec4 wT = lkWalkTerm(dist0, V0, vec3(0.0, 1.0, 0.0), sg0, vWorldPos);   // p4wl: P4WL_BAND\n    gl_FragColor = lkHits > 0.5 ? vec4(wT.rgb / max(wT.a, 1e-4), lkWalkE) : vec4(0.0, 0.0, 0.0, -0.2);\n";
++  if (src.split(a).length !== 2) throw new Error("wl2g: walk pass anchor moved");
++  return src.replace(
++    a,
++    /* glsl */ `    // wl2g: two fixed azimuths around the view's, blended (wl2gWalkFrag)
++    vec2 wlH = normalize(-V0.xz + vec2(1e-6, 0.0));
++    float wlA = atan(wlH.y, wlH.x) / WL2G_AZ;
++    float wlA0 = floor(wlA);
++    float wlF = wlA - wlA0;
++    float wlR = length(V0.xz);
++    float wlEmin = asin(min(0.9 * clamp(V0.y, 0.002, 0.99), 0.01));
++    vec3 wlVa = vec3(-cos(wlA0 * WL2G_AZ) * wlR, V0.y, -sin(wlA0 * WL2G_AZ) * wlR);
++    vec4 wA = lkWalkTerm(dist0, wlVa, vec3(0.0, 1.0, 0.0), sg0, vWorldPos);
++    float wlHa = lkHits;
++    float wlEa = lkWalkE;
++    vec3 wlVb = vec3(-cos((wlA0 + 1.0) * WL2G_AZ) * wlR, V0.y, -sin((wlA0 + 1.0) * WL2G_AZ) * wlR);
++    vec4 wB = lkWalkTerm(dist0, wlVb, vec3(0.0, 1.0, 0.0), sg0, vWorldPos);
++    float wlHb = lkHits;
++    float wlEb = lkWalkE;
++    if (wlHa < 0.5 && wlHb < 0.5) gl_FragColor = vec4(0.0, 0.0, 0.0, -0.2);
++    else {
++      vec3 cA = wA.rgb / max(wA.a, 1e-4);
++      vec3 cB = wB.rgb / max(wB.a, 1e-4);
++      if (wlHa < 0.5) { cA = cB; wlEa = wlEmin; }
++      if (wlHb < 0.5) { cB = cA; wlEb = wlEmin; }
++      gl_FragColor = vec4(mix(cA, cB, wlF), mix(wlEa, wlEb, wlF));
++    }
++`,
++  );
+ }
++/**
++ * wl2g (build 3): the water's read interpolates the HORIZON of the four lake-fixed taps and takes its own rays' share under it
++ * once (P4WL_BAND took a share per tap, a steep step of each tap's horizon against the pixel's own elevation, then blended the
++ * steps: the contour was quantised to the texel grid and advanced tap by tap as the elevation moved with the camera, crenellated).
++ * A smooth iso-line of a lake-fixed field moves continuously. Taps without a face count as the start elevation emin (no share);
++ * the colour is the face taps' mean. Marked taps (under / next to a footprint) still walk per pixel. OPT-IN `?wl2gread=1` (the
++ * default keeps P4WL_BAND's per-tap read: on the lake-fixed taps it is as stable, with less 60 fps sparkle at rest).
++ */
++const WL2G_READ: P4Edit[] = [
++  {
++    find: "  vec4 F4 = step(-0.15, ta) * vec4(lkPhiT((ta.x - mu) / sE), lkPhiT((ta.y - mu) / sE), lkPhiT((ta.z - mu) / sE), lkPhiT((ta.w - mu) / sE));\n  vec4 a4 = wt * F4;\n  return vec4(t00.rgb * a4.x + t10.rgb * a4.y + t01.rgb * a4.z + t11.rgb * a4.w, a4.x + a4.y + a4.z + a4.w);\n",
++    repl: /* glsl */ `  // wl2g: the horizon interpolated over the lake-fixed taps, the pixel's share under it once (WL2G_READ)
++  vec4 hv = step(-0.15, ta);
++  float hs = dot(wt, hv);
++  if (hs < 1e-4) return vec4(0.0);
++  float eMin = asin(min(0.9 * clamp(V.y, 0.002, 0.99), 0.01));
++  float eT = dot(wt, mix(vec4(eMin), ta, hv));
++  vec4 cw = wt * hv;
++  vec3 cF = (t00.rgb * cw.x + t10.rgb * cw.y + t01.rgb * cw.z + t11.rgb * cw.w) / hs;
++  float FW = lkPhiT((eT - mu) / sE);
++  return vec4(cF * FW, FW);
+ `,
+   },
+ ];
++/** wl2g: the walk pass's vertex shader (the lake through the anchor view-projection uLkWalkAP). */
++function wl2gWalkVert(src: string) {
++  const a = "varying vec3 vWorldPos;\n";
++  const b = "  gl_Position = projectionMatrix * viewMatrix * wp;\n";
++  if (!src.includes(a) || !src.includes(b)) throw new Error("wl2g: WATER_VERT anchor moved");
++  return src.replace(a, a + "uniform mat4 uLkWalkAP;   // wl2g: the walk's anchor view-projection\n").replace(b, "  gl_Position = uLkWalkAP * wp;   // wl2g\n");
++}
+ /** (P4 water G6) The water reads the quarter-size walk (LK_HALF: lake v4, `?lkhalf` not 0). */
+ function walkHalfWanted(lq: URLSearchParams | null) {
+   return lq?.get("lkhalf") !== "0";
+@@ -3307,6 +3398,21 @@
+         } else if (p4wlOn(lq) && defines.LK_CACHEN !== undefined && defines.LK_HALF !== undefined && defines.LK_WALKSEL !== undefined && wlw !== "q") {
+           defines.LK_WALKPX = "";
+           frag = p4Apply(frag, P4WL_BAND, "WLB");
++          // wl2g: the band walk's texels anchored in lake space (renderWalkAnchored); `?wl2g=0` = p4wl exactly.
++          if (wl2gOn(lq)) {
++            this.walkAnchored = true;
++            // (WL2G_READ is opt-in, `?wl2gread=1`: same contour stability as P4WL_BAND's per-tap read on the anchored lake-fixed
++            // taps (WORK st/s3_zoom.png), but a little more 60 fps sparkle at rest: shelf water 0.2 -> 0.4, lips 1.1 -> 1.3 blips / frame)
++            if (lq?.get("wl2gread") === "1") frag = p4Apply(frag, WL2G_READ, "WL2G");
++            const gq = Number(lq?.get("wl2gg"));
++            if (gq >= 1 && gq <= 2) this.walkGuard = gq;
++            const tq = Number(lq?.get("wl2gt"));
++            if (tq >= 0.5 && tq <= 4) this.walkTol = tq;
++            const sq = Number(lq?.get("wl2gs"));
++            if (sq >= 0.5 && sq <= 2) this.walkOver = sq;
++            const aq = Number(lq?.get("wl2gaz"));
++            if (aq > 0 && aq <= 0.1) this.walkAz = aq;
++          }
+         }
+         // (No far-water rest correction: it was a fit of the ENV lane's model to the plate.)
+       } else if (opts.mirror.corr) {
+@@ -3382,14 +3488,19 @@
+     if (walkHalf) {
+       const wq = typeof location !== "undefined" ? Number(new URLSearchParams(location.search).get("lkwdiv")) : 0;
+       if (wq >= 1 && wq <= 8) this.walkDiv = wq;
+-      const wd = { ...defines, LK_WALKPASS: "" };
++      const wd: Record<string, string> = { ...defines, LK_WALKPASS: "" };
++      // wl2g: the walk pass's azimuth lattice (wl2gWalkFrag; `?wl2gaz=0` keeps build 1's single walk at the view's azimuth)
++      const wlAz = this.walkAnchored && (typeof location === "undefined" || new URLSearchParams(location.search).get("wl2gaz") !== "0");
++      if (wlAz) wd.WL2G_AZ = this.walkAz.toFixed(6);
+       delete (wd as Record<string, string>).LK_HALF;
+       delete (wd as Record<string, string>).LK_CACHE;
++      // wl2g: the anchor view-projection the walk pass rasterises the lake with (the water itself does not declare it).
++      if (this.walkAnchored) this.material.uniforms.uLkWalkAP = { value: new THREE.Matrix4() };
+       // Same uniforms object: every per-frame value the water gets, the walk pass gets.
+       this.walkMaterial = new THREE.ShaderMaterial({
+         name: "rx-water-walk",
+-        vertexShader: WATER_VERT,
+-        fragmentShader: frag,
++        vertexShader: this.walkAnchored ? wl2gWalkVert(WATER_VERT) : WATER_VERT,
++        fragmentShader: wlAz ? wl2gWalkFrag(frag) : frag,
+         defines: wd,
+         uniforms: this.material.uniforms,
+         depthTest: false,
+@@ -3540,12 +3651,33 @@
+   walkDiv = 4;
+   /** p4wl: the water walks per pixel; the quarter-size walk pass is not drawn. */
+   walkPerPixel = false;
++  /** wl2g: the walk pass rasterises the lake through a fixed anchor (lake-space texels); its guard and scale tolerance. */
++  walkAnchored = false;
++  walkGuard = WL2G_GUARD;
++  walkTol = WL2G_TOL;
++  walkOver = WL2G_OVER;
++  walkAz = WL2G_AZ;
++  /** wl2g: the anchor (valid until the frame's lake leaves it), how many times it was taken (lab), the main target's size. */
++  private wlAnchorOk = false;
++  wlAnchors = 0;
++  private wlMain = new THREE.Vector2(1, 1);
++  private wlAP = new THREE.Matrix4();
++  private wlCur = new THREE.Matrix4();
++  private wlV = new THREE.Vector3();
++  private wlX = new THREE.Vector4();
++  private wlC = new THREE.Vector4();
+ 
+   /** The main HDR target's size (px): the walk target is 1 / walkDiv of it. */
+   setWalkSize(width: number, height: number) {
+     if (!this.walkTarget) return;
+     const k = this.walkDiv;
+-    this.walkTarget.setSize(Math.max(1, Math.ceil(width / k)), Math.max(1, Math.ceil(height / k)));
++    if (this.walkAnchored) {
++      // wl2g: the anchor's frustum is the guard wider, its target the guard larger (the quarter texel at the anchor's pose).
++      const g = this.walkGuard * this.walkOver;
++      this.walkTarget.setSize(Math.max(1, Math.ceil((width / k) * g)), Math.max(1, Math.ceil((height / k) * g)));
++      this.wlMain.set(Math.max(1, width), Math.max(1, height));
++      this.wlAnchorOk = false;
++    } else this.walkTarget.setSize(Math.max(1, Math.ceil(width / k)), Math.max(1, Math.ceil(height / k)));
+     (this.material.uniforms.uLkWalkInv.value as THREE.Vector2).set(1 / Math.max(1, width), 1 / Math.max(1, height));
+     // The cache is read per pixel (texelFetch at gl_FragCoord): the main target's own size.
+     this.cacheTarget?.setSize(Math.max(1, width), Math.max(1, height));
+@@ -3558,6 +3690,10 @@
+    */
+   renderWalk(renderer: THREE.WebGLRenderer, camera: THREE.Camera) {
+     if (!this.walkTarget || !this.walkScene || this.walkPerPixel) return;
++    if (this.walkAnchored && (camera as THREE.PerspectiveCamera).isPerspectiveCamera) {
++      this.renderWalkAnchored(renderer, camera as THREE.PerspectiveCamera);
++      return;
++    }
+     const prev = renderer.getRenderTarget();
+     const prevAuto = renderer.autoClear;
+     renderer.getClearColor(this.walkPrevClear);
+@@ -3575,6 +3711,142 @@
+     renderer.autoClear = prevAuto;
+   }
+ 
++  /**
++   * wl2g: the frame's lake seen through the anchor (A = its view-projection): whether it stays inside the anchor's target (2 texels
++   * in), the largest anchor texel in the frame's quarter texels (scale), and its bounding box in anchor texels (the scissor). The
++   * frame's screen on a 9 x 9 grid: below the horizon the ray's point on the lake plane (two views of a plane: a homography, so the
++   * edges map to lines), above it the horizon direction (the lake's far edge lies below it).
++   */
++  private wlProbe(camera: THREE.PerspectiveCamera, A: THREE.Matrix4, box: number[] | null) {
++    const tgt = this.walkTarget!;
++    const Wt = tgt.width;
++    const Ht = tgt.height;
++    const Wq = this.wlMain.x / this.walkDiv;
++    const Hq = this.wlMain.y / this.walkDiv;
++    const cp = camera.position;
++    const cam = this.wlCur;
++    const v = this.wlV;
++    const X = this.wlX;
++    const c = this.wlC;
++    let inside = true;
++    let scale = 0;
++    let x0 = Infinity;
++    let y0 = Infinity;
++    let x1 = -Infinity;
++    let y1 = -Infinity;
++    const toT = (m: THREE.Matrix4, w: number, h: number, out: number[]) => {
++      c.copy(X).applyMatrix4(m);
++      if (c.w <= 1e-6) return false;
++      out[0] = (c.x / c.w) * 0.5 * w;
++      out[1] = (c.y / c.w) * 0.5 * h;
++      return true;
++    };
++    const pa = [0, 0];
++    const pb = [0, 0];
++    const qa = [0, 0];
++    const qb = [0, 0];
++    const q0 = [0, 0];
++    for (let j = 0; j <= 8; j++) {
++      for (let i = 0; i <= 8; i++) {
++        v.set(-1 + i / 4, -1 + j / 4, 0.5).unproject(camera).sub(cp).normalize();
++        let lake = v.y < -1e-4 && (WATER.level - cp.y) / v.y < 5000;
++        if (lake) {
++          const t = (WATER.level - cp.y) / v.y;
++          X.set(cp.x + v.x * t, WATER.level, cp.z + v.z * t, 1);
++          // (only the lake's own points count: the plane beyond its planes holds no water)
++          lake = X.x >= WATER.far.min[0] && X.x <= WATER.far.max[0] && X.z >= WATER.far.min[2] && X.z <= WATER.near.max[2];
++        } else X.set(v.x, 0, v.z, 0);
++        if (!toT(A, Wt, Ht, pa)) {
++          inside = false;
++          continue;
++        }
++        const tx = pa[0] + 0.5 * Wt;
++        const ty = pa[1] + 0.5 * Ht;
++        if (lake && (tx < 2 || ty < 2 || tx > Wt - 2 || ty > Ht - 2)) inside = false;
++        x0 = Math.min(x0, tx);
++        y0 = Math.min(y0, ty);
++        x1 = Math.max(x1, tx);
++        y1 = Math.max(y1, ty);
++        if (!lake) continue;
++        // scale: the largest stretch of one anchor texel in the frame's quarter texels (sigma_max of J = Jframe Janchor^-1,
++        // from 2 cm steps along x and z on the lake)
++        const px = X.x;
++        const pz = X.z;
++        const ax = pa[0];
++        const ay = pa[1];
++        X.set(px, WATER.level, pz, 1);
++        if (!toT(cam, Wq, Hq, q0)) continue;
++        X.set(px + 0.02, WATER.level, pz, 1);
++        if (!toT(cam, Wq, Hq, qa) || !toT(A, Wt, Ht, pb)) continue;
++        const c00 = qa[0] - q0[0], c10 = qa[1] - q0[1], a00 = pb[0] - ax, a10 = pb[1] - ay;
++        X.set(px, WATER.level, pz + 0.02, 1);
++        if (!toT(cam, Wq, Hq, qb) || !toT(A, Wt, Ht, pb)) continue;
++        const c01 = qb[0] - q0[0], c11 = qb[1] - q0[1], a01 = pb[0] - ax, a11 = pb[1] - ay;
++        const det = a00 * a11 - a01 * a10;
++        if (Math.abs(det) < 1e-12) continue;
++        const i00 = a11 / det, i01 = -a01 / det, i10 = -a10 / det, i11 = a00 / det;
++        const j00 = c00 * i00 + c01 * i10, j01 = c00 * i01 + c01 * i11, j10 = c10 * i00 + c11 * i10, j11 = c10 * i01 + c11 * i11;
++        const T = j00 * j00 + j01 * j01 + j10 * j10 + j11 * j11;
++        const D = j00 * j11 - j01 * j10;
++        scale = Math.max(scale, Math.sqrt(0.5 * (T + Math.sqrt(Math.max(0, T * T - 4 * D * D)))));
++      }
++    }
++    if (box) {
++      box[0] = x0;
++      box[1] = y0;
++      box[2] = x1;
++      box[3] = y1;
++    }
++    return { inside, scale };
++  }
++  private wlBox = [0, 0, 0, 0];
++
++  /** wl2g: the walk pass through the lake-space anchor (see wl2gOn): same texels as the quarter pass, fixed to the lake. */
++  private renderWalkAnchored(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
++    const tgt = this.walkTarget!;
++    camera.updateMatrixWorld();
++    this.wlCur.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
++    const AP = this.material.uniforms.uLkWalkAP.value as THREE.Matrix4;
++    let ok = this.wlAnchorOk;
++    if (ok) {
++      const r = this.wlProbe(camera, AP, this.wlBox);
++      ok = r.inside && r.scale <= this.walkTol;
++    }
++    if (!ok) {
++      // (re)anchor: the frame's camera, its frustum the guard wider (focal lengths and off-axis terms / guard)
++      const g = this.walkGuard;
++      const P = this.wlAP.copy(camera.projectionMatrix);
++      const e = P.elements;
++      for (const k of [0, 4, 8, 12, 1, 5, 9, 13]) e[k] /= g;
++      AP.multiplyMatrices(P, camera.matrixWorldInverse);
++      this.wlAnchorOk = true;
++      this.wlAnchors++;
++      this.wlProbe(camera, AP, this.wlBox);
++    }
++    // the frame's own lake (+ 4 texels: a later frame may read through this walk before the next draw)
++    const b = this.wlBox;
++    const sx0 = Math.max(0, Math.floor(b[0]) - 4);
++    const sy0 = Math.max(0, Math.floor(b[1]) - 4);
++    const sx1 = Math.min(tgt.width, Math.ceil(b[2]) + 4);
++    const sy1 = Math.min(tgt.height, Math.ceil(b[3]) + 4);
++    tgt.scissor.set(sx0, sy0, Math.max(0, sx1 - sx0), Math.max(0, sy1 - sy0));
++    tgt.scissorTest = true;
++    const prev = renderer.getRenderTarget();
++    const prevAuto = renderer.autoClear;
++    renderer.getClearColor(this.walkPrevClear);
++    const prevAlpha = renderer.getClearAlpha();
++    renderer.autoClear = false;
++    renderer.setRenderTarget(tgt);
++    renderer.setClearColor(0x000000, 0);
++    renderer.clear(true, false, false);
++    renderer.render(this.walkScene!, camera);
++    // the water reads the walk through the anchor (LK_WALKREPROJ)
++    (this.material.uniforms.uLkWalkVP.value as THREE.Matrix4).copy(AP);
++    renderer.setRenderTarget(prev);
++    renderer.setClearColor(this.walkPrevClear, prevAlpha);
++    renderer.autoClear = prevAuto;
++  }
++
+   disposeWalk() {
+     this.walkTarget?.dispose();
+     this.walkMaterial?.dispose();

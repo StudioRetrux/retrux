@@ -1,0 +1,46 @@
+{
+ "pass": true,
+ "scores": [
+  {"lens": "orb_shards_light", "main": 7.5, "lane": 7.8},
+  {"lens": "color_grade_post", "main": 8.3, "lane": 8.4},
+  {"lens": "awwwards_jury", "main": 7.6, "lane": 7.8},
+  {"lens": "composition_motion", "main": 8.6, "lane": 8.6}
+ ],
+ "findings": [
+  {
+   "id": "F2",
+   "severity": "major",
+   "title": "Still open, and MAIN has the same gap (the Q2 structure was not delivered): the open hold orb is mostly a clipped white disc without F402's dark branching plasma; refracted grey shapes appear only at some phases",
+   "evidence": "Paired deterministic captures, lane vs ?p4orb=0 (byte-identical to :5197). Interior r < 0.75 R with crystals masked (ana/inner75.txt). At p05 with the ring clock at 3.3 (the open orb), L10 goes 218 -> 197, sd 19.1 -> 23.1, and the share below 215 L goes 9.0 -> 19.9 %. F402 has disc L10 198 and sd 24.2, so the hold lens shading adds refracted shapes at this phase. At fully open phases both builds stay clipped flat: p06 (clock 3.3) L10 241 / 241, sd 7.0 / 6.7; p04 (natural clock) L10 252 / 252, sd 6.9 / 11.1. In the qc_fix set, p05 is 252/253/254 with sd 6.8. Images looked at: img/det_p05_t3.3.png, det_p06_t3.3.png, det_p04_tn.png, orb_p05_expand.png. MAIN shows the same flat disc at the same phases.",
+   "repro": "zsh tools/bA.sh in WORK (rj_det.mjs: paired lane and ?p4orb=0, taus 3.3,n, about 1 min in a slot), then Blender python -I tools/inner75.py caps/det and tools/detana.py caps/det img.",
+   "suggested_fix": "Plan Q2 (b)/(c) as before. Add a slowly churning, domain-warped density that darkens 15-25 % of the disc to 190-215 inside the clipped core at every open phase, checked frame by frame against F402/F453, or use a Cycles flipbook of the artist's volumetric orb. This does not block the lane's merge, because MAIN has the same gap."
+  },
+  {
+   "id": "F4",
+   "severity": "minor",
+   "title": "Still open and unchanged: the brightest crystal facets sit about 15-20 L below the reference (saturation now matches)",
+   "evidence": "Pixels with B-R >= 85, paired, lane / MAIN / REF. p95 L at p04 (natural clock): 154.6 / 156.3 / 177.7 (F358). At p06 (clock 3.3): 156.4 / 147.4 / 170.2 (F420). At q03: 153.6 / 147.7 / 168.4 (F045). Saturation is now near the reference: p06 0.503 / 0.551 / F420 0.506; p04 0.510 / 0.551 / F358 0.447. In the qc_fix set, p04 is 143/162/0.46 against F358's 152/178/0.45. The Shards.ts section of the patch is byte-identical to the builder's, so the fix round did not touch the crystals. No flicker was added: the crystal 2nd/1st temporal-difference ratio is 1.63 vs 1.67 in the hold and 1.75 vs 1.77 at rest (ana/flick_stats.txt).",
+   "repro": "Blender python -I tools/shardpair.py caps/det img q00_tn q03_tn p04_tn p06_t3.3; tools/qcana.py on qc_fix (ana/qc_orb_shard_stats.txt).",
+   "suggested_fix": "Lift only the top facets (the sun lobe) by +10-15 L while preserving chroma, then check that p95 reaches about 170 with saturation at or above 0.48."
+  },
+  {
+   "id": "R1",
+   "severity": "nit",
+   "title": "The orb's top highlight no longer clips at rest or in the hidden-orb hold. This comes from the builder's rest/hold lens shading, not the fix round, and is invisible in the crops.",
+   "evidence": "Paired box241, min channel >= 250, MAIN -> lane: q00 2.4 -> 0.1 % (F000 1.9 %); q03 2.9 -> 2.1 % (F045 5.0 %); hidden-orb hold p05 (natural clock) 1.7 -> 0.0 % and p06 2.1 -> 0.0 % (F420 2.4 %); p08 (clock 3.3) 0.7 -> 0.1 %. p99.9 goes 253 -> 250-252. Inner disc, lane minus MAIN: q00 -1.0/-0.8/-0.9, q03 -2.2/-1.3/-1.1, hidden-hold slit -0.8..-0.9 L. In the qc set q00 goes 0.6 -> 0.0 %. Images img/det_p05_tn.png, det_p06_tn.png and orb_q00_rest.png look the same at normal contrast.",
+   "repro": "ana/det_AB.txt (tools/detana.py caps/det img).",
+   "suggested_fix": "Apply the lens shading only below the shoulder, e.g. fade it out where the unshaded value exceeds about 3 scene-linear, so the hottest tongues stay clipped and the refracted greys remain."
+  },
+  {
+   "id": "R2",
+   "severity": "nit",
+   "title": "Hold rim: the pale glass band is about 10-15 L dimmer than F402's glowing edge, and its 2-px edge hairline is grey rather than lavender-violet",
+   "evidence": "Radial profile at p05 with the ring clock at 3.3 (ana/rim_profile.txt). The lane falls from 235 to 217 L over 0.86-0.96 R at B-R +20, has a hairline at 0.98 R (L 205, B-R +38), and then meets the ice at 215 / +36. F402 runs 251 -> 235 over 0.85-1.0 of its bright radius at B-R +12..+24, with a thin lavender line. MAIN dips to a cobalt ring at L 164, B-R +56. The rim annulus at 0.85-1.02 R has B-R +23..+28 in the lane (F402 +25..+28) against MAIN's +42..+61. In img/rim_zoom.png the lane is much closer to F402 than MAIN's broad cobalt band, but slightly greyer.",
+   "repro": "Blender python -I tools/rimprof.py caps/det p05_t3.3 p06_t3.3 p04_tn; tools/rimzoom.py.",
+   "suggested_fix": "Raise the 0.86-0.96 R band by about 10 L, either by ending the hold lens-shading fade nearer 0.9 R or by lifting uP4Rim G/B slightly. Tint the 0.98 R hairline toward F402's lavender. Then recheck that rim B-R stays within +23..+28 and the box clip stays near MAIN's."
+  }
+ ],
+ "regressions": "No significant regressions remain; only two nits (R1, R2). F1 is fixed. In paired deterministic captures (lane vs ?p4orb=0, which is byte-identical to :5197 at all 12 captures), the hold core clips at MAIN's level or slightly above. Box241 >= 248 / >= 250: p05 (clock 3.3) 10.7/8.8 -> 11.7/9.2 %; p06 (clock 3.3) 18.5/15.7 -> 21.6/17.0 %; p04 (natural clock) 16.8/12.3 -> 17.8/12.9 % (F402 16.2/14.3). The inner disc is +0.6/-0.4/-0.6 versus MAIN, so the cream shift is gone. The rim annulus moves from MAIN's cobalt (B-R +42..+61) to a pale cool edge at +23..+28 (F402 +25..+28), not a grey plate. Release is within a point of MAIN: p07 10.7/7.7 -> 10.8/7.5, p08 6.5/5.0 -> 6.3/4.2 (F460 5.1/4.5). T2 behaves the same. F3 is fixed. The judge's own flick/jring repro gives annuli of +1.05, +1.41, +1.27, +0.59, +0.91, -0.06, +0.11 L (before the fix -1.2..-4.3), and 99.2 % of changed pixels are brighter. Paired ice annuli at 1.02-1.25 R are +1.5..+2.9 L at open-hold poses. The charge is real but modest. Switch: ?p4orb=0 is IDENTICAL to :5197 at T1, T2 and T1 HOLD (final, every target, every program); with the lane on, T0 is IDENTICAL. Perf (synchronous A/B, 8 pairs, load <= 8.9): paired mean-ratio medians are rest 1.002 and hold 1.033, with hold means of 42.78 vs 42.77 ms, so no regression above 5 %. tsc reports 0 / 0. The patch regenerated from the lane equals the shipped patch byte for byte. Flicker: no increase on crystals or the orb (orb disc/rim/skirt 2nd-differences are lower than MAIN's). The far field changes on <= 0.05 % of pixels, and the environment region stats match MAIN's. Residual nits: the orb's top clip is trimmed at rest and in the hidden-orb hold (R1, from the builder's lens shading), and the rim band is about 10-15 L dimmer than F402's (R2).",
+ "visual_verdict": "The fix round did what the previous verdict asked. The hold orb is a luminous clipped ball again, and its edge is a pale, cool glass rim with a thin hairline instead of MAIN's thick cobalt ring or the builder's neutral grey plate. In full frame and in the 3x rim zooms, that reads closer to F402 than MAIN does. At the p05 open phase the lens shading adds some refracted grey shapes, about 20 % of the disc below 215, near F402's level. At fully open phases the disc is a flat white glow, the same as MAIN. The Q7 crystals are unchanged from the builder: paler, translucent periwinkle with a stable internal mosaic, closer in saturation and median level to the reference, though the brightest facets are still dim. The hold now brightens the ice around the orb slightly instead of dimming it. Composition and motion are untouched, release continuity holds, the sweep shows no glitches and no flicker was added. Merge is acceptable. F2 (no branching plasma inside the open orb, which MAIN also lacks) and F4 (crystal top facets) stay open as design follow-ups, and R1/R2 are cheap polish.",
+ "report_path": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/lane_backup/p4r1/rejudge_p4orb/verdict.json"
+}

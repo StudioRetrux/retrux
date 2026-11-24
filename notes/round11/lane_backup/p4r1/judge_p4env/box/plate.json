@@ -1,0 +1,65 @@
+{
+ "qs": "envlake=plate",
+ "port": "5197",
+ "logs": [
+  "console.error Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+ ],
+ "counts": null,
+ "targets": {
+  "reflection": {
+   "w": 720,
+   "h": 383,
+   "hash": "615bb2f4950f9c17"
+  },
+  "final": {
+   "w": 1440,
+   "h": 766,
+   "hash": "26e7769f8cb800dc"
+  }
+ },
+ "programs": {
+  "rx-plate-baked|ShaderMaterial": [
+   "865d1fc4f9872720",
+   "c2fd1b9b7ccb47d4"
+  ],
+  "rx-cloud|ShaderMaterial": [
+   "638149367cc68b7e",
+   "e2366c1175dd3876"
+  ],
+  "rx-water|ShaderMaterial": [
+   "32aedce5c5397762",
+   "77afecf481a0e1a8"
+  ],
+  "rx-env-edge|ShaderMaterial": [
+   "1ea302cc34d6fd6d",
+   "8ba971e9c4c84907"
+  ],
+  "rx-ice|ShaderMaterial": [
+   "02bd3315218f0821",
+   "f628c67efad10b19"
+  ],
+  "rx-orb|ShaderMaterial": [
+   "62b5844971389ad2",
+   "80cf5b96c0bc111e"
+  ],
+  "rx-shards|ShaderMaterial": [
+   "2cf6c8dd842e78df",
+   "5a508e585f3497d5"
+  ],
+  "rx-ice-back|ShaderMaterial": [
+   "c0500856298d5e5c"
+  ],
+  "rx-blit|ShaderMaterial": [
+   "c67046d98d3f65d6"
+  ],
+  "rx-bloom-down|ShaderMaterial": [
+   "c1d61d13e0332746"
+  ],
+  "rx-bloom-up|ShaderMaterial": [
+   "2bc7e6301f5c75e6"
+  ],
+  "rx-grade|ShaderMaterial": [
+   "23df7a28171be020"
+  ]
+ }
+}

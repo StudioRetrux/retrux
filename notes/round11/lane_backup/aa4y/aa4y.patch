@@ -1,0 +1,290 @@
+diff -ruN a/retrux-web/app/hero/engine/HeroEngine.ts b/retrux-web/app/hero/engine/HeroEngine.ts
+--- a/retrux-web/app/hero/engine/HeroEngine.ts	2026-11-20 13:41:43
++++ b/retrux-web/app/hero/engine/HeroEngine.ts	2026-11-20 14:55:12
+@@ -51,6 +51,8 @@
+ const PANO_CLAMP = 64;
+ /** AA3: the lake-edge TAA's history weight while the camera moves (EnvEdge TAA_FRAG). */
+ const LAKE_EDGE_TAA_WEIGHT = 0.5;
++/** AA4Y: the lake-edge MLAA (EnvEdge MLAA_GLSL): shortest reconstructed run (px), search steps per side, depth gap. */
++const LAKE_EDGE_MLAA = { minRun: 4, steps: 12, gap: 0.02, zOnly: 0, colourCoverage: 0 };
+ 
+ export class HeroEngine {
+   readonly state: HeroState = createHeroState();
+@@ -334,12 +336,32 @@
+         const tw = lab ? Number(eq?.get("lktaaw")) : NaN;
+         this.taaCrest = !(lab && eq?.get("lktaacrest") === "0");
+         this.taaRipple.set(WATER.rippleCenter[0], WATER.level, WATER.rippleCenter[2], 0);
++        // AA4Y (angle X2): MLAA of the waterline band on the geometric lake / solid mask, in the same pass (EnvEdge
++        // MLAA_GLSL); `?lkmlaa=0` keeps AA3's pass exactly. Lab only (with ?debug): `?lkmlaarun=` shortest run (px),
++        // `?lkmlaasteps=` search steps per side, `?lkmlaagap=` depth gap, `?lkmlaas=` strength,
++        // `?lkmlaaz=1` Z shapes only, `?lkmlaaq=1` the pixel's current coverage from its colour.
++        const labNum = (k: string, d: number) => {
++          const v = lab ? Number(eq?.get(k) ?? NaN) : NaN;
++          return Number.isFinite(v) ? v : d;
++        };
++        const mlaa =
++          eq?.get("lkmlaa") !== "0"
++            ? {
++                minRun: labNum("lkmlaarun", LAKE_EDGE_MLAA.minRun),
++                steps: labNum("lkmlaasteps", LAKE_EDGE_MLAA.steps),
++                gap: labNum("lkmlaagap", LAKE_EDGE_MLAA.gap),
++                strength: labNum("lkmlaas", 1),
++                zOnly: labNum("lkmlaaz", LAKE_EDGE_MLAA.zOnly) > 0,
++                colourCoverage: labNum("lkmlaaq", LAKE_EDGE_MLAA.colourCoverage) > 0,
++              }
++            : null;
+         edge.enableTAA({
+           camera: this.rig.camera,
+           reflection: this.pipeline.reflection,
+           reflectionViewProj: this.pipeline.mirrorViewProj,
+           ripple: this.taaRipple,
+           weight: tw > 0 && tw < 1 ? tw : LAKE_EDGE_TAA_WEIGHT,
++          mlaa,
+         });
+       }
+     }
+diff -ruN a/retrux-web/app/hero/engine/world/EnvEdge.ts b/retrux-web/app/hero/engine/world/EnvEdge.ts
+--- a/retrux-web/app/hero/engine/world/EnvEdge.ts	2026-11-20 13:20:30
++++ b/retrux-web/app/hero/engine/world/EnvEdge.ts	2026-11-20 14:55:12
+@@ -248,6 +248,175 @@
+ }
+ `;
+ 
++/**
++ * AA4Y (20 Nov, angle X2: "morphological AA on the exact geometric lake / solid mask"): MLAA of the waterline band, inside the
++ * lake-edge TAA pass (`?lkmlaa=0` off: the pass is then exactly AA3's TAA_FRAG).
++ *
++ * The mask is geometric: a pixel's alpha is the mean view distance of its 4 samples, the lake's distance along its ray is
++ * analytic, and next to a silhouette the solid's distance is its neighbour's alpha, so (alpha - solid) / (lake - solid) is
++ * the pixel's lake fraction (the 4-sample coverage) and "> 0.5" is a mid-coverage binary mask whose steps sit where the edge
++ * crosses the pixel centres (MLAA's model). For a band pixel with a boundary to one neighbour (horizontal first, else
++ * vertical; 1-px slivers are left alone), the edge-length search follows the boundary both ways (up to `steps` px) and reads
++ * the crossing at each end; the line through the ends' half-pixel steps (Z, U and L shapes as in MLAA / SMAA) gives the
++ * pixel's coverage by the other side (4 sub-positions), and the pixel moves from its own 4-sample coverage to that one along
++ * the colour difference of the pure pixels on both sides (compressed space, where the resolve is a linear mix), clamped to
++ * their range. Runs shorter than `minRun` keep MSAA's coverage (as good there), and so do creases (the waterline at a slab's
++ * foot, where the solid is not clearly in front of the lake: the alpha says nothing about coverage there).
++ * Spatial and per frame (no history of its own); its strength fades in over 6 moving frames and out over 12 still ones, so
++ * the still camera's hand-over to the plain resolve (TAA_TAIL) sees no step.
++ */
++const MLAA_GLSL = /* glsl */ `
++uniform float uMlaa;
++// x: shortest run that is reconstructed (px), y: search steps per side (<= 16), z: smallest depth gap (fraction of the
++// lake's distance) between a solid and the lake behind it
++uniform vec3 uMlaaP;
++// x: 1 = Z shapes only (a straight line's step at both ends; no U / L shapes, which round corners and bumps),
++// y: 1 = the pixel's current coverage from its colour (linear in the compressed space) instead of its alpha
++uniform vec2 uMlaaQ;
++float mlTw(ivec2 q) {
++  vec3 d = taaRay(vec2(q) + 0.5);
++  return d.y < -1e-5 * length(d) ? -uCamPos.y * length(d) / d.y : -1.0;
++}
++float mlA(ivec2 q) {
++  return texelFetch(uCur, clamp(q, ivec2(0), ivec2(uSize) - 1), 0).a;
++}
++// the lake fraction of pixel q (its alpha between the solid's distance dS and its lake point's)
++float mlF(ivec2 q, float dS) {
++  float a = mlA(q), tw = mlTw(q);
++  if (a <= 1.0 || tw <= 0.0) return 0.0;
++  return clamp((a - dS) / max(tw - dS, 1e-3), 0.0, 1.0);
++}
++// a solid clearly in front of the lake point of its ray (or above the horizon)
++bool mlSolid(ivec2 q, float a) {
++  float tw = mlTw(q);
++  return a > 1.0 && (tw <= 0.0 || a < tw * (1.0 - uMlaaP.z));
++}
++// The boundary pair at lake-side pixel qL and solid-side pixel qL + s: 0 the boundary is there, 1 the solid took the lake
++// side's pixel (the edge stepped toward the lake), 2 the lake took the solid side's pixel (stepped toward the solid), 3 neither.
++int mlPair(ivec2 qL, ivec2 s) {
++  ivec2 qS = qL + s;
++  float aS = mlA(qS), aS2 = mlA(qS + s);
++  float dS = 1e9;
++  if (mlSolid(qS, aS)) dS = aS;
++  if (mlSolid(qS + s, aS2)) dS = min(dS, aS2);
++  if (dS > 1e8) {
++    // no solid on the solid side: the lake took it (when the lake side is still lake)
++    float aL = mlA(qL), twL = mlTw(qL);
++    return aL > 1.0 && twL > 0.0 && abs(aL - twL) <= 0.004 * twL + 0.03 ? 2 : 3;
++  }
++  bool lk = mlF(qL, dS) > 0.5;
++  bool so = mlF(qS, dS) <= 0.5;
++  return lk && so ? 0 : (so ? 1 : (lk ? 2 : 3));
++}
++// MLAA on the boundary between p and p + toN: the reconstructed coverage of p by the other side (aT) and the run's length
++bool mlRun(ivec2 ip, bool pLake, ivec2 toN, out float aT, out float runL) {
++  ivec2 qL0 = pLake ? ip : ip + toN;
++  ivec2 sN = pLake ? toN : -toN;
++  ivec2 t = ivec2(abs(toN.y), abs(toN.x));
++  int steps = int(uMlaaP.y);
++  int dl = steps, dr = steps, el = 3, er = 3;
++  for (int i = 1; i <= 16; i++) {
++    if (i > steps) break;
++    int r = mlPair(qL0 + t * i, sN);
++    if (r != 0) {
++      dr = i - 1;
++      er = r;
++      break;
++    }
++  }
++  for (int i = 1; i <= 16; i++) {
++    if (i > steps) break;
++    int r = mlPair(qL0 - t * i, sN);
++    if (r != 0) {
++      dl = i - 1;
++      el = r;
++      break;
++    }
++  }
++  runL = float(dl + dr + 1);
++  aT = 0.0;
++  // the line's offset from the boundary at the run's ends (+ toward the lake side), MLAA's half-pixel steps
++  float hl = el == 1 ? 0.5 : (el == 2 ? -0.5 : 0.0);
++  float hr = er == 1 ? 0.5 : (er == 2 ? -0.5 : 0.0);
++  if (hl == 0.0 && hr == 0.0) return false;
++  if (uMlaaQ.x > 0.5 && !(hl != 0.0 && hr == -hl)) return false;
++  float xl = -float(dl) - 0.5, span = runL;
++  for (int k = 0; k < 4; k++) {
++    float u = (-0.375 + 0.25 * float(k) - xl) / span;
++    float h = hl != 0.0 && hr != 0.0 ? (hl == hr ? hl * abs(1.0 - 2.0 * u) : mix(hl, hr, u))
++      : (hl != 0.0 ? hl * max(0.0, 1.0 - 2.0 * u) : hr * max(0.0, 2.0 * u - 1.0));
++    aT += max(0.0, pLake ? h : -h);
++  }
++  aT *= 0.25;
++  return true;
++}
++vec3 mlaa(ivec2 ip, vec3 c, float dNear) {
++  if (uMlaa <= 0.0) return c;
++  float twP = mlTw(ip);
++  if (twP <= 0.0 || dNear > twP * (1.0 - uMlaaP.z)) return c;
++  float fP = mlF(ip, dNear);
++  bool pLake = fP > 0.5;
++  bool bU = pLake ? mlPair(ip, ivec2(0, 1)) == 0 : mlPair(ip + ivec2(0, 1), ivec2(0, -1)) == 0;
++  bool bD = pLake ? mlPair(ip, ivec2(0, -1)) == 0 : mlPair(ip + ivec2(0, -1), ivec2(0, 1)) == 0;
++  bool bR = pLake ? mlPair(ip, ivec2(1, 0)) == 0 : mlPair(ip + ivec2(1, 0), ivec2(-1, 0)) == 0;
++  bool bL = pLake ? mlPair(ip, ivec2(-1, 0)) == 0 : mlPair(ip + ivec2(-1, 0), ivec2(1, 0)) == 0;
++  ivec2 toN = ivec2(0);
++  float aT = 0.0, runL = 0.0;
++  bool ok = false;
++  if (bU != bD) {
++    toN = bU ? ivec2(0, 1) : ivec2(0, -1);
++    ok = mlRun(ip, pLake, toN, aT, runL) && runL >= uMlaaP.x;
++  }
++  if (!ok && bR != bL) {
++    toN = bR ? ivec2(1, 0) : ivec2(-1, 0);
++    ok = mlRun(ip, pLake, toN, aT, runL) && runL >= uMlaaP.x;
++  }
++  if (!ok) return c;
++  // the pure pixels: one px away from the boundary on p's side, the neighbour (or the next one) across it
++  ivec2 n = ivec2(uSize) - 1;
++  ivec2 qo = clamp(ip - toN, ivec2(0), n);
++  float fo = mlF(qo, dNear);
++  if (pLake ? fo < 0.95 : fo > 0.05) return c;
++  ivec2 q1 = clamp(ip + toN, ivec2(0), n);
++  float f1 = mlF(q1, dNear);
++  ivec2 qx = (pLake ? f1 < 0.05 : f1 > 0.95) ? q1 : clamp(ip + 2 * toN, ivec2(0), n);
++  float fx = mlF(qx, dNear);
++  if ((pLake ? fx > 0.05 : fx < 0.95) || !aaIn(vec2(qo) + 0.5) || !aaIn(vec2(qx) + 0.5)) return c;
++  vec3 co = texelFetch(uCur, qo, 0).rgb;
++  vec3 cx = texelFetch(uCur, qx, 0).rgb;
++  // p's current coverage by the other side (4 samples) -> the reconstructed one
++  float qc = pLake ? 1.0 - fP : fP;
++  vec3 dc = cx - co;
++  if (uMlaaQ.y > 0.5) qc = clamp(dot(c - co, dc) / max(dot(dc, dc), 1e-6), 0.0, 1.0);
++  vec3 r = c + uMlaa * (aT - qc) * dc;
++  return clamp(r, min(c, min(co, cx)), max(c, max(co, cx)));
++}
++`;
++
++/** TAA_FRAG with the MLAA (MLAA_GLSL) applied to the current frame's band pixels before the blend. */
++function taaFragMLAA() {
++  const src = TAA_FRAG.replace("void main() {", `${MLAA_GLSL}\nvoid main() {`)
++    .replace("if (uHistW <= 0.0 || !aaIn(gl_FragCoord.xy)) return;", "if ((uHistW <= 0.0 && uMlaa <= 0.0) || !aaIn(gl_FragCoord.xy)) return;")
++    .replace(
++      "if (!(lake && solid) || dNear > 1e8) return;",
++      "if (!(lake && solid) || dNear > 1e8) return;\n  c.rgb = mlaa(ip, c.rgb, dNear);\n  gl_FragColor.rgb = c.rgb;\n  if (uHistW <= 0.0) return;",
++    );
++  if (src.split("mlaa(ip, c.rgb, dNear)").length !== 2 || !src.includes("uMlaa <= 0.0) || !aaIn")) throw new Error("EnvEdge: MLAA injection failed");
++  return src;
++}
++
++/** AA4Y lake-edge MLAA parameters (see MLAA_GLSL). */
++export type EdgeMLAAOptions = {
++  minRun: number;
++  steps: number;
++  gap: number;
++  strength: number;
++  /** Z shapes only (see uMlaaQ). */
++  zOnly?: boolean;
++  /** The current coverage from the colour instead of the alpha (see uMlaaQ). */
++  colourCoverage?: boolean;
++};
++
+ /** Lake-edge TAA inputs (HeroEngine, see TAA_FRAG). */
+ export type EdgeTAAOptions = {
+   camera: THREE.PerspectiveCamera;
+@@ -258,6 +427,8 @@
+   ripple: THREE.Vector4;
+   /** History weight while the camera moves. */
+   weight: number;
++  /** AA4Y: the lake-edge MLAA in the same pass (null / absent: AA3's pass exactly). */
++  mlaa?: EdgeMLAAOptions | null;
+ };
+ 
+ type SceneHook = {
+@@ -310,6 +481,8 @@
+     /** (lab) the last frame's history weight, -1 = pass skipped, and the frames the pass ran */
+     lastWeight: number;
+     runs: number;
++    /** AA4Y: the MLAA's ramp (0..6: fades in over 6 moving frames, out over 12 still ones). */
++    mlaaRamp: number;
+   } | null = null;
+   private tv = new THREE.Vector4();
+   private tc = new THREE.Vector3();
+@@ -404,7 +577,7 @@
+     const material = new THREE.ShaderMaterial({
+       name: "rx-lake-edge-taa",
+       vertexShader: VERT,
+-      fragmentShader: TAA_FRAG,
++      fragmentShader: opts.mlaa ? taaFragMLAA() : TAA_FRAG,
+       uniforms: {
+         ...this.aaRead,
+         uCur: { value: null },
+@@ -420,6 +593,13 @@
+         uReflVP: { value: opts.reflectionViewProj },
+         uReflOn: { value: 0 },
+         uRipple: { value: opts.ripple },
++        ...(opts.mlaa
++          ? {
++              uMlaa: { value: 0 },
++              uMlaaP: { value: new THREE.Vector3(opts.mlaa.minRun, Math.min(16, opts.mlaa.steps), opts.mlaa.gap) },
++              uMlaaQ: { value: new THREE.Vector2(opts.mlaa.zOnly ? 1 : 0, opts.mlaa.colourCoverage ? 1 : 0) },
++            }
++          : {}),
+       },
+       depthTest: false,
+       depthWrite: false,
+@@ -446,6 +626,7 @@
+       pxPerCss: 1,
+       lastWeight: -1,
+       runs: 0,
++      mlaaRamp: 0,
+     };
+   }
+ 
+@@ -495,6 +676,8 @@
+     const per60 = t.dt > 1e-6 ? css / (t.dt * 60) : css;
+     const moving = Number.isFinite(motion) && per60 > TAA_STILL;
+     t.still = moving ? 0 : t.still + 1;
++    // AA4Y: the MLAA fades in over 6 moving frames and out over 12 still ones (off well before the hand-over below)
++    if (t.opts.mlaa) t.mlaaRamp = moving ? Math.min(6, t.mlaaRamp + 1) : Math.max(0, t.mlaaRamp - 0.5);
+     if (!moving && t.still > TAA_TAIL) {
+       t.valid = false;
+       t.lastWeight = -1;
+@@ -524,6 +707,7 @@
+     u.uHistW.value = t.valid ? weight : 0;
+     u.uRefl.value = t.opts.reflection?.texture ?? null;
+     u.uReflOn.value = t.opts.reflection ? 1 : 0;
++    if (t.opts.mlaa) u.uMlaa.value = (t.mlaaRamp / 6) * t.opts.mlaa.strength;
+     renderer.setRenderTarget(out);
+     // (every pixel is written: a clear lets a tile-based GPU skip loading the old contents)
+     renderer.clear(true, false, false);

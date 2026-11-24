@@ -1,0 +1,7 @@
+secs 239 boot {'lane': 4626, 'main': 4585} logs []
+move lane med 39 main med 38.7 | paired [0.997, 1.028, 1.014, 1.009, 0.997, 0.988] pairedMed 1.003 loadMax [2.95, 2.95, 2.9, 2.91, 2.84, 2.79] under10 6 1.003 | medDiff ms 0.125 meanDiff ms -0.009 p95 ratio med 1.031
+   lane blockMeds [38.5, 39.2, 38.75, 39.4, 38.9, 39.5]  main blockMeds [38.6, 38.15, 38.2, 39.05, 39, 40]
+rest lane med 32.6 main med 34.4 | paired [0.588, 0.866, 0.914, 1.033, 0.947, 0.978, 1, 0.892] pairedMed 0.93 loadMax [2.79, 2.73, 2.59, 2.8, 2.8, 2.98, 3.06, 3.06] under10 8 0.93 | medDiff ms -2.35 meanDiff ms -0.005 p95 ratio med 1.175
+   lane blockMeds [21.4, 33.05, 31, 33.2, 31.9, 33, 33.65, 31.5]  main blockMeds [36.4, 38.15, 33.9, 32.15, 33.7, 33.75, 33.65, 35.3]
+hold lane med 40.4 main med 40.6 | paired [1.013, 0.998, 0.941, 1.032, 0.965, 0.973] pairedMed 0.986 loadMax [3.72, 5.27, 5.18, 5.16, 4.86, 4.86] under10 6 0.986 | medDiff ms -0.6 meanDiff ms -0.089 p95 ratio med 0.997
+   lane blockMeds [41.3, 41.2, 39.9, 40.75, 38.8, 39.6]  main blockMeds [40.75, 41.3, 42.4, 39.5, 40.2, 40.7]

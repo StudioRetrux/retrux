@@ -1,0 +1,15 @@
+frames 240 thr 20: lake+band px-frames 58626928; |X-R|>thr 269837; toward GT 162392, AWAY from GT 33795
+-- dark (away from GT): px 30365, events >= 6 px: 302
+  k161-239 (79f) x566-583 y483-487 n2438 nmax41 dmean-34 dmax72
+  k116-239 (124f) x928-980 y746-757 n2410 nmax56 dmean-42 dmax120
+  k66-139 (74f) x979-1066 y481-492 n2241 nmax59 dmean-31 dmax57
+  k133-239 (107f) x239-291 y538-542 n1885 nmax24 dmean-32 dmax51
+  k120-151 (32f) x572-611 y483-490 n1167 nmax52 dmean-34 dmax75
+  k150-239 (90f) x213-224 y497-497 n921 nmax12 dmean-35 dmax43
+-- bright (away from GT): px 3430, events >= 6 px: 27
+  k120-239 (120f) x116-150 y535-543 n1360 nmax27 dmean49 dmax115
+  k136-177 (42f) x320-336 y494-512 n549 nmax28 dmean21 dmax26
+  k42-82 (41f) x149-186 y537-549 n271 nmax14 dmean29 dmax115
+  k84-116 (33f) x154-190 y535-544 n229 nmax13 dmean41 dmax138
+  k17-40 (24f) x112-146 y547-568 n215 nmax20 dmean40 dmax138
+  k60-75 (16f) x1158-1171 y514-524 n125 nmax17 dmean24 dmax38

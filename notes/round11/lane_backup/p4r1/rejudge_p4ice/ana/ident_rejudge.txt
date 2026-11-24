@@ -1,0 +1,5 @@
+T1_p4ice0                                      IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+T2_p4ice0                                      IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+T0_default                                     IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+plate_p4ice0                                   IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+T1_default_NEGCTRL                             DIFFER    final DIFF | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: reflection,final | programs 16 differ: rx-ice|ShaderMaterial | logs 0/0

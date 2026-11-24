@@ -1,0 +1,71 @@
+{
+ "pass": true,
+ "scores": [
+  {"lens": "environment", "main": 7.8, "lane": 7.9},
+  {"lens": "glitch_hold_sweep", "main": 8.0, "lane": 8.1},
+  {"lens": "glitch_cursor_orbit", "main": 7.3, "lane": 7.3},
+  {"lens": "color_grade_post", "main": 8.3, "lane": 8.3},
+  {"lens": "awwwards_jury", "main": 7.6, "lane": 7.7}
+ ],
+ "findings": [
+  {
+   "id": "R1",
+   "severity": "minor",
+   "title": "The W3 fix mostly undoes G2: the bottom strip in the hold looks like MAIN's smooth pale glass-plate band again (open item, not a regression against MAIN)",
+   "evidence": "p05 x380-700 y700-766 at x3 (img/p05_mid_x3_M_B_F.png): the builder's chop is gone. The fix shows MAIN's broad smooth bands, with softer edges. The same holds in p06 y600-766 (img/p06_bot_x1_M_B_F_F420.png), deterministic hold frames k200-202 x700-1180 (img/hold_k200-202_x700-1180_M0_Z_F2_x2.png) and sw_hold_L (img/sw_holdL_popB_bot_M_B_F.png). Strip y686-766 sd: p05 12.46 and p06 12.00, against MAIN's 11.47 / 11.38, the plan's G2 target of 16-18, and F402 / F420 at 17.53. In the same-clock sustain, sd goes from 14.39 to 14.90. The 1-px texel stair-steps at x1100-1440 y700-766 in p05 / p06 match MAIN's (img/p05_p06_right_x3_M_F.png). The client's 'weird bottom' is therefore not fixed in the default build.",
+   "repro": "Run tools/im crop at 3 on x380-700 y700-766 of p05_expand.png from $SP/p3/r11_1, judge_p4water/qc and p4water/qc_fix. Then run tools/seqcrop.py over k200-202 x700-1180 y690-766 on caps/pop/hold_M0, hold_Z and hold_F2.",
+   "suggested_fix": "This is a lead decision. Use the fixer's option (b): raise uLkP4B.w to 0.45-0.6 together with uLkP4C, or option (c): a darker, less saturated trough at steep tilts. Gate any change on flick.py at or below MAIN, plus the per-120-px block metric (tools/flickcol.py) at or below MAIN, on a deterministic cap --path hold capture."
+  },
+  {
+   "id": "R2",
+   "severity": "minor",
+   "title": "Flicker in the bottom-right corner doubles during the sustained hold, while the whole strip stays at or below MAIN",
+   "evidence": "Same-session deterministic 60 fps hold path. Lane caps/hold_R is bit-identical to the fixer's hold_F2. ?p4water=0 is caps/hold_O. Over sustain k150-300 in y726-766, block x1200-1440 rises from 0.50 % to 0.98 % sign-reversal flicker. Frames k218-223 peak at 3.3 % against 5.5 % (img/hold_k219-222_x1200-1440_y716-766_O_R_x3.png). Every other 120-px block is at or below MAIN (ana/flick_cols.txt).",
+   "repro": "Blender python -I tools/flickcol.py 150 300 caps/hold_O <hold_F2 or a new cap --port 5177 --path hold --rows 380,766 --frames 480>",
+   "suggested_fix": "At the right edge, the crest-flank lookups still alias where the chop adds tilt. Damp the chop harder where |lkWv| is large, or lower uLkP4D.x locally."
+  },
+  {
+   "id": "R3",
+   "severity": "minor",
+   "title": "Hold frame time is not cleanly measured (the brief's formal gate passes)",
+   "evidence": "Run 1 (perf/ab.json): 6 interleaved pairs per mode, SLOT_BG=0, 1-min load 4.7-8.0. Paired medians: move 1.015, rest 1.016, hold 1.007. Hold pairs: 1.007, 0.79, 1.032, 1.487, 1.008, 0.972. Other lanes' Chrome sessions shared the GPU, so frames ran 40-90 ms instead of ~20 ms. Hold ratio of medians was 1.123. Run 2 (perf/ab_hold2.json, hold only, 10 pairs) is invalid: load climbed to 15-57 during it. Its paired median was 1.148 and its ratio of medians 1.133. For comparison, the fixer's contended hold was 0.963 and the builder's valid judge run was 0.986. In the code, the default does 2 noise octaves per chop-zone pixel plus one fwidth in the hold (the builder did 3), and essentially MAIN's rest work.",
+   "repro": "SLOT_BG=0 node slot.mjs run x -- node judge_p4water/tools/rc2h.mjs --vw 1440 --vh 766 --cycles 0 --restcycles 0 --holdcycles 10 --blockms 2500 --confs \"lane=5177|tier=T1&scale=1,main=5199|tier=T1&scale=1\" --out FILE, run on a quiet machine",
+   "suggested_fix": "Re-run the hold A/B before merge, with no other lane's Chrome running and load under 5."
+  },
+  {
+   "id": "R4",
+   "severity": "minor",
+   "title": "W4: the flat navy dashes are gone, but the reference's soft deep troughs are still missing, and the right edge shows a small dark texel streak",
+   "evidence": "dark.py at L < 120: p05 has 88 px (MAIN 103, builder 431), p06 has 162 px (MAIN 88, builder 515). p06 adds a 51 px streak at x1404-1427 y738-743, rgb(84,100,125), with stair-stepped grey blocks above it (img/p06_right_x5_M_B_F_F420.png). MAIN has a similar grey patch nearby. p05 p1 is 141.3, against F402's 120.5.",
+   "repro": "Blender python -I tools/dark.py 686 766 120 on the p04/p05/p06 PNGs of MAIN (p3/r11_1), the builder (judge_p4water/qc) and the fix (p4water/qc_fix).",
+   "suggested_fix": "Same as R1, option (c)."
+  },
+  {
+   "id": "R5",
+   "severity": "minor",
+   "title": "W6 / W7 still open: Q8's ring texture, Q9 now off, G6 off, AJ-1 tip unchanged",
+   "evidence": "Same-clock grade box p1 goes from 140.4 to 142.0 (F000 108.8; Q8's gate is <= 120). The rings remain soft symmetric bands, while F000's are agitated (img/rest_k12_rings_glint_x2_O_R_F000.png). With Q9 off, the far lake keeps MAIN's corduroy: q00 x640-900 y490-560 lap 11.84 vs F000's 2.46. Tip box x170-240 y497-509: L 168.5, sd 21.64, against MAIN's 168.4 / 21.60 (img/tip_x4_q00_M_F_def1_p08_M_F.png).",
+   "repro": "Blender python -I tools/restbox.py 0 28 caps/hold_O <lane hold capture>. Then run tools/im stats on the q00 boxes.",
+   "suggested_fix": "Lead decisions: Q9 with a working G6 (fixer HANDOFF options), AA8 options 2b / 3 for AJ-1, and the agitated ring texture for Q8."
+  },
+  {
+   "id": "R6",
+   "severity": "nit",
+   "title": "The dotted crest-silhouette line moved rather than disappeared",
+   "evidence": "MAIN's dashed diagonal at p06 x0-250 y716-731 is gone, but a dotted segment now shows at p06 x265-345 y745-755 (img/p06_dots_x6_M_F.png). In deterministic hold frames k80-81, both MAIN and the lane show a dotted diagonal in x0-200 y730-766, at different places (img/hold_k80-81_x0-200_y730-766_M0_F2_x6.png). It is MAIN's artifact class, not a new one.",
+   "repro": "tools/seqcrop.py with k0 80, 2 frames, x0-200 y730-766, zoom 6, on hold_M0 and hold_F2.",
+   "suggested_fix": "G2 plan item: a per-pixel dither on the crest march start, so crest-top rows do not step together."
+  },
+  {
+   "id": "R7",
+   "severity": "nit",
+   "title": "The brighter glint is whiter than F000, and the sustained-hold strip is slightly brighter and less blue than MAIN",
+   "evidence": "Same-clock rest frames, centre x680-760 y640-700: B-R goes from 35.4 to 33.8 (F000 35.1) while L goes from 180.0 to 184.7 (F000 200.3). In the same-clock sustain strip y686-766, L goes from 175.6 to 176.9 and B-R from 34.1 to 32.8. F420 is darker and bluer: L 171.4, B-R 36.0.",
+   "repro": "Blender python -I tools/restbox.py 0 28 caps/hold_O <lane hold capture>",
+   "suggested_fix": "Shift the glint tint uLkP4G.z or the target slightly toward blue (B-R about 35)."
+  }
+ ],
+ "regressions": "No regression against MAIN found. The fix resolved the three regressions from the previous verdict, and I verified each one again myself:\n- W1, glint dimming: fixed. Same-clock A/B on the rest frames k0-27 of the deterministic hold path (?p4water=0 vs default): the centre column goes from 180.0 to 184.7, the glint box from 178.7 to 182.1, and the env box p10 from 161.6 to 165.1, all toward F000. shoot_qc q00 / q03 is too noisy at n=2 to settle it either way.\n- W2, orbit ghost: fixed, because Q9 is now off by default. On my own default pointer set, the ptr_left box sd4 / lap is 3.32 / 6.93 (MAIN 3.28 / 6.86, builder 2.35 / 4.16) and ptr_right is 3.05 / 7.45 (MAIN 3.08 / 7.65). T1 ident shows the walk / cache / cacheN / mirror targets identical to MAIN's at rest.\n- W3, hold flicker: fixed. My new hold capture is bit-identical to the fixer's hold_F2 (480 of 480 frames). Against a new ?p4water=0 capture: press 4.764 -> 4.309 %, sustain 0.688 -> 0.681 %, release 5.113 -> 4.927 %, and the y600-686 band is not worse. The one exception is the local R2 block.\n- W5, stepped onset edge: gone.\nThe switch proof holds. T1 and T2 ?p4water=0 vs :5199 are IDENTICAL (6 targets, 16 programs). The hold pose (expand 2.97, 20 moving frames) with ?p4water=0 is IDENTICAL (18 programs). T0 lane default and envlake=plate&p4water=0 are IDENTICAL. :5199 itself is identical to the 04:37 reference. 0 console lines.\nWaterline AA: I ran the diag and leave paths, which the fixer did not re-run. Both show 0 new pop clusters of 6 px or more (diag 2 single px, leave 0), and the AA8 vs lane flagged counts are 1719 / 1716 and 1991 / 1993, so crawl is unchanged. The fixer's medium / fast results are also 0.\nNothing outside the water changed: lane app/ differs from aa8 only in Water.ts, and the patch sha256 902ee34f... reproduces the lane exactly. Same-clock diffs show changes only in y601-765 at rest, y710-765 in the sustain and y580-765 on the way home. The far water (y < 560) is identical.\nPerf passes the brief's gate in run 1 (paired move 1.015, rest 1.016, hold 1.007), but on a GPU-contended machine. See R3.\nWhat the fix gave up: the builder's visible hold chop. See R1.",
+ "visual_verdict": "The fix round traded G2's still-frame chop for motion that is clean, and it removed the two other regressions:\n- At rest the hero frame is MAIN's, plus a slightly brighter and whiter sparkle cluster at the near-water glint, nudged toward F000. F000 still has a much wider, cyan-white, agitated band. The rings are still MAIN's soft bands.\n- The far lake and every orbit view look exactly like MAIN again: the corduroy is back and the floe ghost is as faint as MAIN's. The builder's glassier water and its exposed ghost blotches are gone.\n- In the hold and pop, the dark navy dashes, the 1-2 px streaks, the stepped chop onset and the extra flicker are gone. Flicker is now at or slightly below MAIN's, except a small patch at the bottom right during the sustained hold.\n- But the bottom strip in p05, p06 and every sw_hold frame has mostly gone back to MAIN's smooth pale glass-plate band. The texel stair-steps at the right and a dotted crest line (moved, not removed) remain, so the client's 'weird bottom' is essentially as it is in MAIN. G2 is not delivered.\n- Release frames look the same as MAIN's. The thin-tip spot is unchanged.\nNet: a small, safe polish over MAIN with no regressions (+0.1 on environment, glitch_hold_sweep and awwwards_jury; cursor orbit and grade equal). It can be merged, but the hold strip still needs a real fix (R1), and the hold frame time needs a quiet-machine re-check (R3).",
+ "report_path": "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/rejudge_p4water/rejudge_p4water.json"
+}

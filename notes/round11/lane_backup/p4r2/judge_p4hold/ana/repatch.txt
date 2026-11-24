@@ -1,0 +1,238 @@
+--- a/retrux-web/app/hero/engine/CameraRig.ts
++++ b/retrux-web/app/hero/engine/CameraRig.ts
+@@ -2,7 +2,7 @@
+ import { HERO_CENTER, REF_ASPECT, REST_CAMERA } from "./config";
+ import { CAM_TARGETS } from "./curves";
+ import type { Drivers } from "./Choreography";
+-import { HOLD_SPIN, HOLD_TUNE, type HoldMode } from "./hero/HoldR11";
++import { HOLD_SPIN, HOLD_TUNE, P4_HOLDCAM, type HoldMode } from "./hero/HoldR11";
+ import { lerp, Spring } from "./math";
+ import type { PlateCoverage } from "./world/PlateEnvironment";
+ 
+@@ -174,8 +174,14 @@
+       this.holdShare = this.holdMode === "r11" && HOLD_SPIN.steady ? Math.min(this.holdFit, this.frameShare()) : this.holdFit;
+       const k = d.camExpand * this.holdShare;
+       const rr = lerp(this.r.update(dt), T.expand.r, k);
+-      const ee = lerp(this.el.update(dt), T.expand.el, k);
+-      const pp = lerp(this.pitch.update(dt), T.expand.pitch + HOLD_PITCH_TRIM, k);
++      let ee = lerp(this.el.update(dt), T.expand.el, k);
++      // P4 Q12 (`?holdcam=r11` / `?p4hold=0` off): the pitch takes the full hold share (a rotation, no parallax), so the background
++      // sits where the reference's does (the steady share 0.853 at 1440x766 left it at 4.51 deg of 5.30: ~23 px high), and the
++      // camera drops by the same angle on its orbit (el), so pitch + el, the orb's angle in the frame, is unchanged: the orb stays at
++      // (720, 392) and the camera sits ~0.19 m lower (y ~2.17; A2 8.1 measured the reference's ~0.95 m below the orb, y ~2.10).
++      const kp = P4_HOLDCAM ? d.camExpand * this.holdFit : k;
++      const pp = lerp(this.pitch.update(dt), T.expand.pitch + HOLD_PITCH_TRIM, kp);
++      if (kp !== k) ee -= (kp - k) * (T.expand.pitch + HOLD_PITCH_TRIM - T.rest.pitch);
+       this.apply(rr, this.az.update(dt), ee, pp, time);
+       return;
+     }
+@@ -209,7 +215,7 @@
+     if (!(R > 0)) return 1;
+     const m = HOLD_SPIN.frameMargin;
+     const T = CAM_TARGETS;
+-    const key = `${this.aspect}|${this.tanV}|${R}|${m}|${HOLD_TUNE.holdLift}|${T.rest.r}|${T.rest.el}|${T.rest.pitch}|${T.expand.r}|${T.expand.el}|${T.expand.pitch}`;
++    const key = `${this.aspect}|${this.tanV}|${R}|${m}|${HOLD_TUNE.holdLift}|${T.rest.r}|${T.rest.el}|${T.rest.pitch}|${T.expand.r}|${T.expand.el}|${T.expand.pitch}${P4_HOLDCAM ? `|${this.holdFit}` : ""}`;
+     if (key === this.frameKey) return this.frameK;
+     let k = 1;
+     if (!this.frameFits(1, R, m)) {
+@@ -235,10 +241,13 @@
+     const el = lerp(T.rest.el, T.expand.el, k) * DEG;
+     const dp = lerp(T.rest.pitch, T.expand.pitch + HOLD_PITCH_TRIM, k) * DEG + el;
+     const lift = HOLD_TUNE.holdLift * k;
++    // (P4 Q12: as in update, the camera sits lower on its orbit by the pitch it takes beyond k at the full hold (camExpand 1); dp,
++    // the rotation from the look-at frame, is the same.)
++    const elc = P4_HOLDCAM && this.holdFit > k ? el - (this.holdFit - k) * (T.expand.pitch + HOLD_PITCH_TRIM - T.rest.pitch) * DEG : el;
+     // The lifted centre in the look-at frame (looking at the orb from below / above by el, world up kept), then the camera's
+     // pitch dp about its own x axis.
+-    const y0 = lift * Math.cos(el);
+-    const z0 = -(r - lift * Math.sin(el));
++    const y0 = lift * Math.cos(elc);
++    const z0 = -(r - lift * Math.sin(elc));
+     const y = y0 * Math.cos(dp) + z0 * Math.sin(dp);
+     const z = -y0 * Math.sin(dp) + z0 * Math.cos(dp);
+     if (!(z < 0)) return false;
+--- a/retrux-web/app/hero/engine/hero/HoldR11.ts
++++ b/retrux-web/app/hero/engine/hero/HoldR11.ts
+@@ -114,6 +114,19 @@
+ export const P2B_F2 = P2B_F1 && !SPIN_F1;
+ 
+ /**
++ * P4 round 2, lane p4hold (21 Nov; default). `?p4hold=0` turns the whole lane off (= AA8 exactly). Only on the default steady hold
++ * (P2B_F2), so every older-build switch stays exact.
++ *   - Q12 hold framing (`?holdcam=r11` off): the camera takes the full hold pitch under the steady-hold dolly share and drops by the
++ *     same angle on its orbit, so the background sits where the reference's does while the orb keeps its place (CameraRig).
++ *   - Q13 pop timing (`?holdpop=r11` off): ring A's and B's opening burst with the camera's lunge (HOLD_SPIN pop0 / pop1 / grow0).
++ *   - N-1 / R8-2 (HeroEngine, `?ctxrun=0` / `?panokeep=1` off): a context restore restarts the loop and re-reads the panorama.
++ */
++const P4Q = typeof location !== "undefined" ? new URLSearchParams(location.search) : null;
++export const P4HOLD = P4Q?.get("p4hold") !== "0";
++export const P4_HOLDCAM = P4HOLD && P2B_F2 && P4Q?.get("holdcam") !== "r11";
++export const P4_HOLDPOP = P4HOLD && P2B_F2 && P4Q?.get("holdpop") !== "r11";
++
++/**
+  * Idle tumble of rings C / D. "p2b" (default): measured from Default Loop.mp4 as constant-rate flips (IDLE_CD in Rings.ts).
+  * "r10" (`?idle=r10`, and with every switch that restores an older build: `?hold=r10`, `?hold=r11a`, `?spin=s3`, `?spin=f2`):
+  * the motion-captured tracks of ringMocap.ts with their loop tips, as in rounds 10 and 11.
+@@ -151,9 +164,13 @@
+   rel1: 0.8,
+   /** Opening (0..1): a quick part with the camera lunge (tp pop0..pop1), then a slow growth (grow0..grow1). */
+   popShare: 0.6,
+-  pop0: 0.7,
+-  pop1: 1.08,
+-  grow0: 1.0,
++  // (P4 Q13: the quick part ran 0.7-1.08 and was only 54 % done when the lunge ends (tp 0.9: 0.323). The reference's ring-B split
++  // jumps 0.219 -> 0.79 between tp 0.883 and 0.917 (EXPAND_POP), right after the lunge (EXPAND_CAM_R11 0.35 -> 0.61 at tp
++  // 0.817-0.85): 0.80-0.94 completes the burst with the lunge (tp 0.9: 0.481, 0.94: 0.6) and the slow growth takes over there
++  // (no plateau). No overshoot: EXPAND_POP's settle is monotone. `?holdpop=r11`: 0.7 / 1.08 / 1.0.)
++  pop0: P4_HOLDPOP ? 0.8 : 0.7,
++  pop1: P4_HOLDPOP ? 0.94 : 1.08,
++  grow0: P4_HOLDPOP ? 0.94 : 1.0,
+   grow1: 3.2,
+   /** ... closed again over tr close0..close1 (the reference's A closes by F456, tr 0.43). */
+   close0: 0.0,
+--- a/retrux-web/app/hero/engine/HeroEngine.ts
++++ b/retrux-web/app/hero/engine/HeroEngine.ts
+@@ -1,10 +1,11 @@
+ import * as THREE from "three";
+-import { loadHeroAssets } from "./assets";
++import { loadHeroAssets, reloadPanorama } from "./assets";
+ import { CameraRig } from "./CameraRig";
+ import { Choreography, type Phase } from "./Choreography";
+ import { WATER } from "./config";
+ import { CAM_TARGETS } from "./curves";
+ import { aPhaseFromUrl, HOLD_CURVES, HOLD_SPIN, HOLD_TUNE, holdCurvesChanged, holdModeFromUrl, idleModeFromUrl, P2B_F1, P2B_F2, shardRateFromSpin, SPIN_P2B, type HoldMode } from "./hero/HoldR11";
++import { P4HOLD } from "./hero/HoldR11";
+ import { ICE_R11A, iceR11 } from "./hero/IceMaterial";
+ import { Orb } from "./hero/Orb";
+ import { Rings } from "./hero/Rings";
+@@ -114,6 +115,17 @@
+   private pmrem?: THREE.WebGLRenderTarget;
+   /** The clamped panorama the PMREM is built from (kept for a context restore, AA8 AJ-2: 1024 x 512 RGBA half = 4 MiB). */
+   private panorama?: THREE.DataTexture;
++  /**
++   * P4 (lane p4hold). N-1: a context restore restarts the render loop once the restored frame is complete (`?ctxrun=0`: AA8, the
++   * hero stayed blank until a tab switch or a scroll). R8-2: the panorama is not kept but read again for the restore (`?panokeep=1`:
++   * AA8's 4 MiB kept for the page's life). `?p4hold=0`: both off. While the restore waits for the panorama the loop stays stopped
++   * (restoring), so no frame is drawn with the empty PMREM; a start asked for meanwhile runs when it is done (runPending).
++   */
++  private readonly p4ctx = P4HOLD && (typeof location === "undefined" || new URLSearchParams(location.search).get("ctxrun") !== "0");
++  private readonly p4pano = P4HOLD && (typeof location === "undefined" || new URLSearchParams(location.search).get("panokeep") !== "1");
++  private restoreGen = 0;
++  private restoring = false;
++  private runPending = false;
+   private postParams: PostParams = { ...DEFAULT_POST, lensCenter: new THREE.Vector2() };
+   private raf = 0;
+   private running = false;
+@@ -203,7 +215,8 @@
+     // (AA8 AJ-2: and the targets drawn only once at load are drawn again, restoreBaked.)
+     const onRestored = () => {
+       this.envEdge?.resetTAA();
+-      this.restoreBaked();
++      if (this.p4ctx || this.p4pano) this.restoreAfterLoss();
++      else this.restoreBaked();
+     };
+     canvas.addEventListener("webglcontextrestored", onRestored);
+     this.disposers.push(() => canvas.removeEventListener("webglcontextrestored", onRestored));
+@@ -230,7 +243,7 @@
+     );
+ 
+     clampHalfFloat(assets.panorama, PANO_CLAMP);
+-    this.panorama = assets.panorama;
++    if (!this.p4pano) this.panorama = assets.panorama;
+     const gen = new THREE.PMREMGenerator(this.renderer);
+     this.pmrem = gen.fromEquirectangular(assets.panorama);
+     gen.dispose();
+@@ -512,6 +525,10 @@
+ 
+   private updateRunning() {
+     if (!this.state.ready) return;
++    if (this.restoring) {
++      this.runPending = true;
++      return;
++    }
+     if (this.visible && this.onScreen) this.start();
+     else this.stop();
+   }
+@@ -525,18 +542,49 @@
+    * depth maps once at load (no clouds and no lake reflections without them): bake them again. Old targets are dropped, not
+    * disposed: their GL objects belong to the lost context.
+    */
+-  private restoreBaked() {
+-    if (this.panorama && this.pmrem) {
++  private restoreBaked(pano = this.panorama) {
++    if (pano && this.pmrem) {
+       const gen = new THREE.PMREMGenerator(this.renderer);
+-      this.pmrem = gen.fromEquirectangular(this.panorama);
++      this.pmrem = gen.fromEquirectangular(pano);
+       gen.dispose();
+-      this.panorama.dispose();
++      pano.dispose();
+       this.shared.uEnvMap.value = this.pmrem.texture;
+     }
+     if (this.env && this.water && !this.lakeMirror) this.env.bakeDepth(this.renderer, [this.water.group], true);
+     this.lakeSched?.invalidate();
+   }
+ 
++  /**
++   * P4 N-1 / R8-2: restoreBaked once the panorama is back (re-read from the browser's cache and clamped exactly as at load, or
++   * the kept one with `?panokeep=1`), then the loop restarts (updateRunning: only when visible and on screen; `?ctxrun=0` leaves
++   * it to the next visibility / intersection change, as AA8). A second loss during the reload drops the stale result. If the
++   * reload fails the restore goes on without it (the environment light stays empty, as before AA8) rather than leave the hero blank.
++   */
++  private restoreAfterLoss() {
++    const gen = ++this.restoreGen;
++    this.restoring = true;
++    const finish = (pano?: THREE.DataTexture) => {
++      if (gen !== this.restoreGen || this.renderer.getContext().isContextLost()) return;
++      this.restoring = false;
++      this.restoreBaked(pano);
++      const run = this.p4ctx || this.runPending;
++      this.runPending = false;
++      if (run) this.updateRunning();
++    };
++    if (this.panorama || !this.p4pano) finish(this.panorama);
++    else
++      reloadPanorama(this.opts.assetBase).then(
++        (p) => {
++          clampHalfFloat(p, PANO_CLAMP);
++          finish(p);
++        },
++        (e) => {
++          console.warn("[hero] panorama reload failed", e);
++          finish();
++        },
++      );
++  }
++
+   private trackFps(frameMs: number, now: number) {
+     this.fpsAcc += frameMs;
+     this.fpsFrames++;
+--- a/retrux-web/app/hero/engine/assets.ts
++++ b/retrux-web/app/hero/engine/assets.ts
+@@ -294,4 +294,26 @@
+     lakeCorr: lakeCorrTex,
+     lakeR12: lakeR12 && !!skyTex,
+   };
++}
++
++/**
++ * P4 R8-2 (lane p4hold; `?panokeep=1` / `?p4hold=0`: AA8 keeps the decoded panorama instead): the environment panorama again,
++ * for the PMREM after a WebGL context restore, decoded exactly as loadHeroAssets' `exr("panorama", ...)` does. `force-cache` takes
++ * the browser's cached copy when it has one (no revalidation), so the restore normally needs no network; the engine no longer
++ * keeps 4 MiB of half floats in memory for the page's whole life for a rare event.
++ */
++export async function reloadPanorama(base: string) {
++  const res = await fetch(base + ASSETS.panorama, { cache: "force-cache" });
++  if (!res.ok) throw new Error(`[hero] ${ASSETS.panorama}: HTTP ${res.status}`);
++  const loader = new EXRLoader().setDataType(THREE.HalfFloatType);
++  const d = loader.parse(await res.arrayBuffer()) as { width: number; height: number; data: Uint16Array; format: THREE.PixelFormat; type: THREE.TextureDataType };
++  const t = new THREE.DataTexture(d.data, d.width, d.height, d.format, d.type);
++  t.colorSpace = THREE.LinearSRGBColorSpace;
++  t.mapping = THREE.EquirectangularReflectionMapping;
++  t.minFilter = THREE.LinearFilter;
++  t.generateMipmaps = false;
++  t.magFilter = THREE.LinearFilter;
++  t.flipY = false;
++  t.needsUpdate = true;
++  return t;
+ }

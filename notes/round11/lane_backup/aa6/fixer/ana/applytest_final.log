@@ -1,0 +1,7 @@
+aa6.patch on fresh aa3_base: APPLIED
+  -> IDENTICAL to the AA6 lane (sources)
+  .orig/.rej: 0
+aa6_vs_fixed1.patch on fresh aa3_fixed1: APPLIED
+  -> IDENTICAL to the AA6 lane (sources)
+  .orig/.rej: 0
+  tsc hero + project clean on the patched BASE clone

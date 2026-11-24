@@ -1,0 +1,38 @@
+05:19:33 CHAIN start
+05:22:31 ident done 5 identical
+05:23:05 rl lL_a rl/lL_a: 150 frames 600x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 50.0 p90 50.0 ms | mirror 148 
+05:23:37 rl lM_a rl/lM_a: 150 frames 600x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 50.0 p90 50.0 ms | mirror 149 
+05:24:09 rl lB_a rl/lB_a: 150 frames 600x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 50.0 p90 50.0 ms | mirror 148 
+05:24:39 rl lL_b rl/lL_b: 150 frames 600x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 38.1 p90 50.0 ms | mirror 148 
+05:25:07 rl lM_b rl/lM_b: 150 frames 600x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 31.8 p90 50.0 ms | mirror 148 
+05:25:34 rl lB_b rl/lB_b: 150 frames 600x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 32.1 p90 50.0 ms | mirror 149 
+05:26:03 rl pL_a rl/pL_a: 150 frames 725x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 50.0 p90 50.0 ms | mirror 148 
+05:26:34 rl pM_a rl/pM_a: 150 frames 725x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 50.0 p90 50.0 ms | mirror 148 
+05:27:02 rl pB_a rl/pB_a: 150 frames 725x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 31.5 p90 50.0 ms | mirror 148 
+05:27:02 rl d2 done
+05:28:14 rest done
+05:28:33 st FL [slot] judge_wl3b:st-FL: freed (exit 0)
+05:28:52 st FM [slot] judge_wl3b:st-FM: freed (exit 0)
+05:29:10 st FB [slot] judge_wl3b:st-FB: freed (exit 0)
+05:29:40 st FGTpx [slot] judge_wl3b:st-FGTpx: freed (exit 0)
+05:29:40 st done
+05:39:46 perf done 8
+05:40:08 rl dL_a rl/dL_a: 150 frames 480x180 buf 1440,766 pipe 1440,766 scale 1 dt p50 21.6 p90 23.4 ms | mirror 148 
+05:40:31 rl dM_a rl/dM_a: 150 frames 480x180 buf 1440,766 pipe 1440,766 scale 1 dt p50 20.4 p90 21.6 ms | mirror 149 
+05:40:55 rl tL_a rl/tL_a: 150 frames 600x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 29.5 p90 32.2 ms | mirror 149 
+05:41:19 rl tM_a rl/tM_a: 150 frames 600x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 27.0 p90 29.8 ms | mirror 148 
+05:41:19 rl d1/t2 done
+05:43:24 fair fast done
+05:46:25 fair reverse done
+05:46:25 CHAIN DONE
+05:47:05 rl lL_c rl/lL_c: 150 frames 600x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 29.6 p90 32.5 ms | mirror 148 
+05:47:28 rl lM_c rl/lM_c: 150 frames 600x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 26.6 p90 28.9 ms | mirror 149 
+05:47:56 rl lB_c rl/lB_c: 150 frames 600x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 28.4 p90 30.5 ms | mirror 148 
+05:48:20 rl lL_d rl/lL_d: 150 frames 600x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 29.3 p90 32.1 ms | mirror 148 
+05:48:45 rl lM_d rl/lM_d: 150 frames 600x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 27.1 p90 29.6 ms | mirror 148 
+05:49:09 rl lB_d rl/lB_d: 150 frames 600x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 28.4 p90 30.3 ms | mirror 148 
+05:49:35 rl pL_b rl/pL_b: 150 frames 725x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 29.3 p90 31.5 ms | mirror 149 
+05:49:59 rl pM_b rl/pM_b: 150 frames 725x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 26.7 p90 29.7 ms | mirror 148 
+05:50:24 rl pB_b rl/pB_b: 150 frames 725x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 29.9 p90 32.5 ms | mirror 148 
+05:50:24 CHAIN2 DONE
+05:51:21 s60 done

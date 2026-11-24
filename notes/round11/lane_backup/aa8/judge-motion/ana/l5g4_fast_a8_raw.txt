@@ -1,0 +1,2 @@
+caps/fast_A8 vs caps/fast_A8raw: frames 118, W 1440: G4 47 px = 0.72 per Mpx-frame; on band 0 (0.00 per M band px); dark 33 bright 14; max excess 15; excess hist 4-8,8-12,..,>24: 30,14,3,0,0,0
+  hot >= 12: k2(533,469)15 k22(635,501)-12 k118(733,456)-12

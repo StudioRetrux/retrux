@@ -1,0 +1,39 @@
+per shot: px where lane's B-R rose by >15 / >25 vs MAIN (int1); max rise; where; and B-R p99.9 in massif box x0-560 y160-440 M -> L
+late150_bottom_left.png  dBR>15   21 >25    0 max    16 at x81 y278 M [147 159 177] L [125 145 171] | massif B-R p99.9 106 -> 106, p99 55 -> 55
+late150_left.png         dBR>15   35 >25    0 max    17 at x83 y305 M [143 154 171] L [120 138 165] | massif B-R p99.9 87 -> 87, p99 51 -> 51
+late150_rest.png         dBR>15   31 >25    0 max    22 at x106 y305 M [ 77  92 118] L [ 65  88 128] | massif B-R p99.9 98 -> 98, p99 56 -> 56
+late150_right.png        dBR>15   44 >25    1 max    29 at x376 y508 M [146 158 180] L [120 146 183] | massif B-R p99.9 108 -> 108, p99 66 -> 66
+late150_top_right.png    dBR>15  126 >25    0 max    18 at x336 y328 M [150 162 181] L [127 148 176] | massif B-R p99.9 92 -> 92, p99 60 -> 60
+late90_bottom_left.png   dBR>15   60 >25   21 max    36 at x114 y176 M [205 208 213] L [143 161 187] | massif B-R p99.9 105 -> 105, p99 71 -> 71
+late90_left.png          dBR>15   67 >25   28 max    36 at x115 y203 M [211 213 217] L [138 156 180] | massif B-R p99.9 87 -> 87, p99 50 -> 50
+late90_rest.png          dBR>15  451 >25   29 max    38 at x253 y210 M [215 218 222] L [152 171 197] | massif B-R p99.9 101 -> 101, p99 58 -> 59
+late90_right.png         dBR>15  333 >25   19 max    34 at x382 y215 M [216 218 223] L [154 171 195] | massif B-R p99.9 84 -> 84, p99 60 -> 61
+late90_top_right.png     dBR>15  180 >25   28 max    37 at x373 y235 M [223 225 227] L [174 192 215] | massif B-R p99.9 101 -> 101, p99 60 -> 61
+ptr_bottom.png           dBR>15  261 >25    6 max    53 at x310 y489 M [ 89 106 131] L [ 41  88 136] | massif B-R p99.9 90 -> 90, p99 55 -> 56
+ptr_bottom_left.png      dBR>15  171 >25    6 max    38 at x235 y492 M [112 129 157] L [ 78 115 161] | massif B-R p99.9 70 -> 70, p99 51 -> 55
+ptr_bottom_right.png     dBR>15  252 >25    5 max    34 at x377 y486 M [144 156 178] L [114 143 182] | massif B-R p99.9 109 -> 109, p99 61 -> 63
+ptr_left.png             dBR>15    4 >25    0 max    17 at x14 y326 M [ 64  81 112] L [ 50  76 115] | massif B-R p99.9 106 -> 106, p99 53 -> 53
+ptr_orb.png              dBR>15  349 >25    4 max    37 at x279 y553 M [136 150 172] L [102 137 175] | massif B-R p99.9 90 -> 90, p99 56 -> 57
+ptr_rest.png             dBR>15    7 >25    1 max    26 at x311 y515 M [ 89 108 139] L [ 65 100 141] | massif B-R p99.9 91 -> 91, p99 55 -> 56
+ptr_right.png            dBR>15  111 >25    1 max    26 at x380 y513 M [135 148 173] L [112 138 176] | massif B-R p99.9 105 -> 105, p99 66 -> 67
+ptr_top.png              dBR>15  164 >25    3 max    32 at x309 y541 M [ 99 117 142] L [ 70 105 145] | massif B-R p99.9 65 -> 66, p99 53 -> 56
+ptr_top_left.png         dBR>15  322 >25    3 max    41 at x237 y544 M [111 125 152] L [ 75 110 157] | massif B-R p99.9 95 -> 95, p99 52 -> 53
+ptr_top_right.png        dBR>15  430 >25    6 max    32 at x377 y539 M [127 140 163] L [ 98 127 166] | massif B-R p99.9 112 -> 112, p99 64 -> 66
+sw_hold_B.png            dBR>15  352 >25   82 max    44 at x1056 y472 M [193 198 205] L [110 133 166] | massif B-R p99.9 89 -> 89, p99 74 -> 74
+sw_hold_BL.png           dBR>15  445 >25  152 max    47 at x1029 y472 M [196 200 207] L [111 136 169] | massif B-R p99.9 106 -> 106, p99 77 -> 77
+sw_hold_L.png            dBR>15  487 >25  147 max    40 at x1028 y472 M [191 196 205] L [116 138 170] | massif B-R p99.9 103 -> 103, p99 79 -> 79
+sw_hold_R.png            dBR>15  490 >25  136 max    43 at x1085 y472 M [192 197 205] L [113 137 169] | massif B-R p99.9 95 -> 95, p99 69 -> 69
+sw_hold_T.png            dBR>15  557 >25  179 max    45 at x1057 y472 M [195 199 207] L [114 138 171] | massif B-R p99.9 113 -> 113, p99 88 -> 88
+sw_hold_TR.png           dBR>15  473 >25  129 max    43 at x1082 y471 M [198 202 208] L [112 134 165] | massif B-R p99.9 91 -> 91, p99 64 -> 64
+sw_pop_B.png             dBR>15  383 >25   83 max    36 at x1027 y435 M [195 200 208] L [130 151 179] | massif B-R p99.9 103 -> 103, p99 73 -> 73
+sw_pop_BL.png            dBR>15  299 >25   86 max    36 at x1026 y435 M [191 196 205] L [126 147 176] | massif B-R p99.9 97 -> 97, p99 68 -> 68
+sw_pop_L.png             dBR>15  485 >25  105 max    38 at x1024 y436 M [200 204 211] L [129 150 178] | massif B-R p99.9 113 -> 113, p99 72 -> 72
+sw_pop_R.png             dBR>15  427 >25   93 max    38 at x1054 y436 M [199 203 210] L [131 152 180] | massif B-R p99.9 113 -> 113, p99 88 -> 88
+sw_pop_T.png             dBR>15  452 >25   80 max    36 at x1051 y437 M [192 197 205] L [126 147 175] | massif B-R p99.9 102 -> 102, p99 72 -> 72
+sw_pop_TR.png            dBR>15  383 >25   90 max    36 at x1055 y437 M [193 198 207] L [130 152 180] | massif B-R p99.9 85 -> 85, p99 57 -> 57
+sw_rel_B.png             dBR>15  533 >25    6 max    27 at x1046 y355 M [203 206 213] L [151 167 188] | massif B-R p99.9 79 -> 79, p99 51 -> 51
+sw_rel_BL.png            dBR>15  514 >25    7 max    27 at x1020 y355 M [204 208 215] L [153 169 191] | massif B-R p99.9 100 -> 100, p99 68 -> 68
+sw_rel_L.png             dBR>15  567 >25    2 max    27 at x1019 y359 M [202 206 214] L [153 169 192] | massif B-R p99.9 108 -> 108, p99 53 -> 54
+sw_rel_R.png             dBR>15  569 >25    4 max    27 at x1070 y358 M [205 208 215] L [153 169 190] | massif B-R p99.9 85 -> 85, p99 61 -> 61
+sw_rel_T.png             dBR>15  552 >25    4 max    27 at x1045 y363 M [203 206 213] L [150 166 187] | massif B-R p99.9 99 -> 99, p99 51 -> 52
+sw_rel_TR.png            dBR>15  463 >25    5 max    27 at x1050 y363 M [204 208 215] L [155 171 193] | massif B-R p99.9 91 -> 91, p99 51 -> 52

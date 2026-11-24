@@ -1,0 +1,3 @@
+DPR1 left 0-420x470-620           blips/frame  M 774 | P 590 | F 688 | X 711 | G 325
+DPR1 shelfwater 280-480x440-520   blips/frame  M 216 | P 206 | F 212 | X 222 | G 192
+DPR1 far 880-1440x430-590         blips/frame  M 1101 | P 990 | F 1121 | X 1173 | G 920

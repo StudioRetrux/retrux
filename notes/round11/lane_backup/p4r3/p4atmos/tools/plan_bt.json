@@ -1,0 +1,5 @@
+[
+ {"name":"bt088","t":3.4,"tau":0},
+ {"name":"bt050","t":3.4,"tau":0,"js":"__hero.env.p4atmosUniforms.uP4Berg.value.x=0.5;"},
+ {"name":"bt100","t":3.4,"tau":0,"js":"__hero.env.p4atmosUniforms.uP4Berg.value.x=1.0;"}
+]

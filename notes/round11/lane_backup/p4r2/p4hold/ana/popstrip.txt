@@ -1,0 +1,14 @@
+MAIN
+0.8 {"spreadA":0.103,"cam":0.296}
+0.85 {"spreadA":0.207,"cam":0.608}
+0.9 {"spreadA":0.324,"cam":0.765}
+0.94 {"spreadA":0.416,"cam":0.815}
+1 {"spreadA":0.531,"cam":0.863}
+1.1 {"spreadA":0.602,"cam":0.91}
+LANE
+0.8 {"spreadA":0,"cam":0.296}
+0.85 {"spreadA":0.175,"cam":0.608}
+0.9 {"spreadA":0.481,"cam":0.765}
+0.94 {"spreadA":0.6,"cam":0.815}
+1 {"spreadA":0.601,"cam":0.863}
+1.1 {"spreadA":0.606,"cam":0.91}

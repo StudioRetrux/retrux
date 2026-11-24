@@ -1,0 +1,15 @@
+MAIN   T1d2_main_d N 150 dt p10/50/90 32.3/34.3/39.0 | blips/frame left 427 shelf 317 right 702 | scales [1] errs 0
+MAIN   T1d2_main_e N 150 dt p10/50/90 29.1/31.0/33.2 | blips/frame left 347 shelf 235 right 625 | scales [1] errs 0
+WL2    T1d2_wl2_d N 150 dt p10/50/90 30.4/32.6/35.5 | blips/frame left 569 shelf 163 right 657 | scales [1] errs 0
+WL2    T1d2_wl2_e N 150 dt p10/50/90 30.2/32.1/34.5 | blips/frame left 556 shelf 155 right 658 | scales [1] errs 0
+
+POOLED, dt-controlled (both steps of the blip inside the band); n = frames:
+dt   0-999 | MAIN n 296 left  387 shelf  276 right  663 || WL2 n 296 left  562 shelf  159 right  657
+dt  26-30  | MAIN n  18 left  398 shelf  239 right  590 || WL2 n   2 left    4 shelf    6 right  100
+dt  30-33  | MAIN n  85 left  292 shelf  206 right  604 || WL2 n 138 left  729 shelf  184 right  629
+dt  33-36  | MAIN n  87 left  398 shelf  293 right  689 || WL2 n  73 left  475 shelf  158 right  763
+dt  28-34  | MAIN n 158 left  356 shelf  244 right  613 || WL2 n 199 left  673 shelf  179 right  620
+dt  30-36  | MAIN n 195 left  365 shelf  264 right  660 || WL2 n 249 left  635 shelf  176 right  674
+dt  26-40  | MAIN n 273 left  378 shelf  269 right  652 || WL2 n 285 left  580 shelf  163 right  676
+sheet MAIN frames 78 - 81 dt [np.float64(34.3), np.float64(34.6), np.float64(33.9), np.float64(33.9)]
+sheet WL2 frames 82 - 85 dt [np.float64(35.1), np.float64(33.7), np.float64(31.5), np.float64(31.5)]

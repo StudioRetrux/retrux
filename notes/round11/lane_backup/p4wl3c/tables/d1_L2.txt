@@ -1,0 +1,1 @@
+rl/d1_L2: 200 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 24.0 p90 26.4 ms | mirror 199 walk 198 cache 1 cacheOn 2 | errs 0 forced 0 | render ms p50 1.1/2.5/2.9 cap ms p50 0.0/0.1/0.1 gap p50/p90/max 24.1/26.3/46.1

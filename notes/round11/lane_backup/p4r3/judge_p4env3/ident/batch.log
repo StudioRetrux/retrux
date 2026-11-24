@@ -1,0 +1,19 @@
+[slot] judge_p4env3:ident: taken (load 3.7)
+m_off_T1.json 07:02:00
+l_off_T1.json 07:02:14
+m_off_T2.json 07:02:29
+l_off_T2.json 07:02:43
+m_T1.json 07:02:57
+l3_T1.json 07:03:12
+on_T1.json 07:03:28
+m_T2.json 07:03:44
+l3_T2.json 07:03:59
+m_T0.json 07:04:14
+l3_T0.json 07:04:29
+on_T0.json 07:04:43
+m_plate.json 07:04:57
+l3_plate.json 07:05:11
+m_off_T0.json 07:05:24
+l_off_T0.json 07:05:37
+IDDONE 07:05:37
+[slot] judge_p4env3:ident: freed (exit 0)

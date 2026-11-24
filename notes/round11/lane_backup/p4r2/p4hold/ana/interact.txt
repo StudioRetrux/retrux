@@ -1,0 +1,27 @@
+== MAIN 5199
+pre {"frames":36,"maxDriver":{"camExpand":0,"align":0,"splitB":0,"spreadA":0,"expandPose":0,"faceInner":0,"flatten":0,"splay":0,"tilt":0.0049},"ringDegPerFrame60":3.45,"camStep60":0.0105,"phases":["idle"],"holding":false}
+click {"frames":79,"maxDriver":{"camExpand":0,"align":0,"splitB":0,"spreadA":0,"expandPose":0,"faceInner":0,"flatten":0,"splay":0,"tilt":0.0025},"ringDegPerFrame60":3.45,"camStep60":0.0074,"phases":["press","idle"],"holding":false}
+hold {"frames":150,"maxDriver":{"camExpand":0.1308,"align":0,"splitB":0.0401,"spreadA":0.0401,"expandPose":0,"faceInner":0,"flatten":0,"splay":0,"tilt":0.0368},"ringDegPerFrame60":3.54,"camStep60":0.8579,"phases":["press","expand"],"holding":true}
+release {"frames":17,"maxDriver":{"camExpand":0.0717,"align":0,"splitB":0.0674,"spreadA":0.0674,"expandPose":0,"faceInner":0,"flatten":0,"splay":0,"tilt":0},"ringDegPerFrame60":0.91,"camStep60":0.5056,"phases":["release"],"holding":false}
+repress {"frames":71,"maxDriver":{"camExpand":0.1263,"align":0,"splitB":0.0481,"spreadA":0.0481,"expandPose":0,"faceInner":0,"flatten":0,"splay":0,"tilt":0},"ringDegPerFrame60":2.21,"camStep60":0.8913,"phases":["release","expand"],"holding":true}
+release2 {"frames":90,"maxDriver":{"camExpand":0.0615,"align":0,"splitB":0.0355,"spreadA":0.0355,"expandPose":0,"faceInner":0,"flatten":0,"splay":0,"tilt":0.0055},"ringDegPerFrame60":3.52,"camStep60":0.4336,"phases":["release","idle"],"holding":false}
+click: max of camExpand/splitB/spreadA/expandPose = 0 phases press,idle holding ever: false
+errors: none
+== LANE 5178
+pre {"frames":36,"maxDriver":{"camExpand":0,"align":0,"splitB":0,"spreadA":0,"expandPose":0,"faceInner":0,"flatten":0,"splay":0,"tilt":0.0048},"ringDegPerFrame60":3.48,"camStep60":0.0101,"phases":["idle"],"holding":false}
+click {"frames":78,"maxDriver":{"camExpand":0,"align":0,"splitB":0,"spreadA":0,"expandPose":0,"faceInner":0,"flatten":0,"splay":0,"tilt":0.0024},"ringDegPerFrame60":3.46,"camStep60":0.0075,"phases":["press","idle"],"holding":false}
+hold {"frames":150,"maxDriver":{"camExpand":0.131,"align":0,"splitB":0.1066,"spreadA":0.1066,"expandPose":0,"faceInner":0,"flatten":0,"splay":0,"tilt":0.0367},"ringDegPerFrame60":3.53,"camStep60":0.8629,"phases":["press","expand"],"holding":true}
+release {"frames":17,"maxDriver":{"camExpand":0.0699,"align":0,"splitB":0.07,"spreadA":0.07,"expandPose":0,"faceInner":0,"flatten":0,"splay":0,"tilt":0},"ringDegPerFrame60":0.86,"camStep60":0.495,"phases":["release"],"holding":false}
+repress {"frames":71,"maxDriver":{"camExpand":0.122,"align":0,"splitB":0.1061,"spreadA":0.1061,"expandPose":0,"faceInner":0,"flatten":0,"splay":0,"tilt":0.0001},"ringDegPerFrame60":2.33,"camStep60":0.8645,"phases":["release","expand"],"holding":true}
+release2 {"frames":90,"maxDriver":{"camExpand":0.0597,"align":0,"splitB":0.0481,"spreadA":0.0481,"expandPose":0,"faceInner":0,"flatten":0,"splay":0,"tilt":0.0055},"ringDegPerFrame60":3.51,"camStep60":0.4238,"phases":["release","idle"],"holding":false}
+click: max of camExpand/splitB/spreadA/expandPose = 0 phases press,idle holding ever: false
+errors: none
+== LANE 5178 run 2
+pre {"frames":36,"maxDriver":{"camExpand":0,"align":0,"splitB":0,"spreadA":0,"expandPose":0,"faceInner":0,"flatten":0,"splay":0,"tilt":0.0048},"ringDegPerFrame60":3.49,"camStep60":0.0101,"phases":["idle"],"holding":false}
+click {"frames":78,"maxDriver":{"camExpand":0,"align":0,"splitB":0,"spreadA":0,"expandPose":0,"faceInner":0,"flatten":0,"splay":0,"tilt":0.0026},"ringDegPerFrame60":3.52,"camStep60":0.0075,"phases":["press","idle"],"holding":false}
+hold {"frames":132,"maxDriver":{"camExpand":0.1308,"align":0,"splitB":0.1062,"spreadA":0.1062,"expandPose":0,"faceInner":0,"flatten":0,"splay":0,"tilt":0.0367},"ringDegPerFrame60":3.53,"camStep60":0.8614,"phases":["press","expand"],"holding":true}
+release {"frames":18,"maxDriver":{"camExpand":0.0737,"align":0,"splitB":0.0668,"spreadA":0.0668,"expandPose":0,"faceInner":0,"flatten":0,"splay":0,"tilt":0},"ringDegPerFrame60":0.94,"camStep60":0.522,"phases":["release"],"holding":false}
+repress {"frames":71,"maxDriver":{"camExpand":0.1252,"align":0,"splitB":0.1054,"spreadA":0.1054,"expandPose":0,"faceInner":0,"flatten":0,"splay":0,"tilt":0.0001},"ringDegPerFrame60":2.4,"camStep60":0.8875,"phases":["release","expand"],"holding":true}
+release2 {"frames":90,"maxDriver":{"camExpand":0.062,"align":0,"splitB":0.0487,"spreadA":0.0487,"expandPose":0,"faceInner":0,"flatten":0,"splay":0,"tilt":0.0054},"ringDegPerFrame60":3.49,"camStep60":0.4395,"phases":["release","idle"],"holding":false}
+click: max of camExpand/splitB/spreadA/expandPose = 0 phases press,idle holding ever: false
+errors: none

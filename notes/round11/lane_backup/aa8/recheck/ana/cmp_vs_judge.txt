@@ -1,0 +1,6 @@
+slow frames 160, differ from the motion judge's 0
+medium frames 240, differ from the motion judge's 0
+diag frames 120, differ from the motion judge's 0
+fast frames 120, differ from the motion judge's 0
+leave frames 120, differ from the motion judge's 0
+reverse frames 120, differ from the motion judge's 0

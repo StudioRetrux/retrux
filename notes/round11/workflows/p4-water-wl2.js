@@ -1,0 +1,47 @@
+export const meta = {
+  name: 'p4-water-wl2',
+  description: 'Water round 2: two competing fixes for the T1 crenellated shelf reflection plus far columns / lips (job B); judge each, integrate the winner, final judge, fix, re-judge',
+  phases: [
+    { title: 'Build', detail: 'three lanes in parallel: wl2g (lake-anchored walk grid), wl2f (footprint-filtered walk), wl2b (job B)' },
+    { title: 'Judge', detail: 'one adversarial judge per lane' },
+    { title: 'Integrate', detail: 'p4wl + the WL-RJ1 winner + job B into lane wl2' },
+    { title: 'Final', detail: 'final judge, one fix round, re-judge' },
+  ],
+}
+const BUILD = { type: 'object', properties: { ok: { type: 'boolean' }, done_tasks: { type: 'string' }, not_done: { type: 'string' }, switches: { type: 'string' }, proof: { type: 'string' }, perf: { type: 'string' }, captures: { type: 'string' }, patch: { type: 'string' }, log_path: { type: 'string' } }, required: ['ok', 'done_tasks', 'not_done', 'switches', 'proof', 'perf', 'captures', 'patch', 'log_path'] }
+const LENS = { type: 'object', properties: { lens: { type: 'string' }, main: { type: 'number' }, lane: { type: 'number' } }, required: ['lens', 'main', 'lane'] }
+const FINDING = { type: 'object', properties: { id: { type: 'string' }, severity: { type: 'string', enum: ['blocker', 'major', 'minor', 'nit'] }, title: { type: 'string' }, evidence: { type: 'string' }, repro: { type: 'string' }, suggested_fix: { type: 'string' } }, required: ['id', 'severity', 'title', 'evidence', 'repro'] }
+const VERDICT = { type: 'object', properties: { pass: { type: 'boolean' }, scores: { type: 'array', items: LENS }, findings: { type: 'array', items: FINDING }, regressions: { type: 'string' }, visual_verdict: { type: 'string' }, report_path: { type: 'string' } }, required: ['pass', 'scores', 'findings', 'regressions', 'visual_verdict', 'report_path'] }
+const FIX = { type: 'object', properties: { fixed: { type: 'array', items: { type: 'object', properties: { id: { type: 'string' }, what: { type: 'string' }, evidence: { type: 'string' } }, required: ['id', 'what', 'evidence'] } }, not_fixed: { type: 'array', items: { type: 'object', properties: { id: { type: 'string' }, why: { type: 'string' } }, required: ['id', 'why'] } }, patch: { type: 'string' }, switches_exact: { type: 'boolean' }, tsc_clean: { type: 'boolean' }, captures: { type: 'string' }, log_path: { type: 'string' } }, required: ['fixed', 'not_fixed', 'patch', 'switches_exact', 'tsc_clean'] }
+const INTEG = { type: 'object', properties: { ok: { type: 'boolean' }, changed: { type: 'boolean', description: 'true if the merged lane differs from LANES/p4wl (something was taken)' }, chosen: { type: 'string' }, why: { type: 'string' }, merged: { type: 'string' }, proof: { type: 'string' }, perf: { type: 'string' }, captures: { type: 'string' }, patch: { type: 'string' }, log_path: { type: 'string' } }, required: ['ok', 'changed', 'chosen', 'why', 'merged', 'proof', 'perf', 'captures', 'patch', 'log_path'] }
+
+const C = `FIRST read the binding briefs ${args.brief} and ${args.brief2}. Then the round-1 task file ${args.round1Args} (key "args": args.build holds the client's words, the evidence, the hard gates (a)-(g) and the tools; they still bind). Then the ROUND-2 task file ${args.argsFile} (key "args"): read args.common IN FULL; it wins over the older files where they differ (the base for round 2 is :5163 = LANES/p4wl, frozen; MAIN's water is :5162).`
+const where = (L) => `Lane LANES/${L.key} ALREADY EXISTS: an APFS clone of LANES/p4wl (the round-1 result). Keep it (if it has a LOG from YOUR earlier cut-off attempt, read it). Serve it: cd LANES/${L.key}/retrux-web && PORT=${L.port} nohup node hero-lab/serve.mjs --no-watch > $SP/work_p4/${L.key}/lab.log 2>&1 & (restart it to pick up source changes; never touch :5162, :5163, :3000 or :3001). WORK $SP/work_p4/${L.key}; LOG.md there, HANDOFF.md in LANES/${L.key}/; mirror LOG, HANDOFF, the patch and key images to MAIN/notes/round11/lane_backup/${args.round}/${L.key}/.`
+const JUDGE_RULES = `Use the panel's scale (10 = indistinguishable from the reference at a glance; 9 = only an expert notices side by side; 8 = noticeable but premium; 7 = clearly different or CG tells); score MAIN (:5162) and the lane on each lens from the same images. Hunt for anything the lane made WORSE anywhere in the frame (a regression is at least major). Re-run the ident and one perf A/B yourself. pass = no blocker / major / minor open. Look at every image you cite.`
+
+phase('Build')
+const judged = await pipeline(
+  args.lanes,
+  (L) => agent(`${C}\n\nROLE: BUILDER of lane '${L.key}'. Your task: args.lanes.${L.key}.build in the round-2 task file (read it IN FULL). ${where(L)} Time box ${args.buildMin} min. Finish with: tsc clean (both configs), the ident proofs of THE BAR (6), a perf A/B vs :5162 (>= 8 pairs), your lane's sheets and numbers for THE BAR, the client files, the patch vs LANES/p4wl/retrux-web/app, HANDOFF.md. Leave your lab running for the judge. ok = true only if your lane's goal is met and every item of THE BAR passes on your final build.`, { label: `build:${L.key}`, phase: 'Build', schema: BUILD, effort: 'xhigh' }),
+  (build, L) => (build ? agent(`${C}\n\nROLE: independent, adversarial JUDGE of lane '${L.key}' (lab :${L.port}, read-only: never edit the lane, never restart its lab unless it is down). Your task: args.lanes.${L.key}.judge in the round-2 task file. Time box ${args.judgeMin} min. Folder $SP/work_p4/judge_${L.key}; mirror to MAIN/notes/round11/lane_backup/${args.round}/judge_${L.key}/. ${JUDGE_RULES}\nBUILDER REPORT (JSON):\n${JSON.stringify(build, null, 1)}`, { label: `judge:${L.key}`, phase: 'Judge', schema: VERDICT }).then((verdict) => ({ key: L.key, kind: L.kind, port: L.port, build, verdict })) : null),
+)
+const got = judged.filter(Boolean)
+log(`judged: ${got.map((x) => `${x.key} ok=${x.build.ok} pass=${x.verdict ? x.verdict.pass : 'none'}`).join(', ')}`)
+if (!got.length) return { judged }
+
+phase('Integrate')
+const I = args.integ
+const summary = got.map((x) => ({ lane: x.key, kind: x.kind, port: x.port, builder_ok: x.build.ok, builder_not_done: x.build.not_done, patch: x.build.patch, judge_pass: x.verdict ? x.verdict.pass : null, scores: x.verdict ? x.verdict.scores : null, findings: x.verdict ? x.verdict.findings.map((f) => ({ id: f.id, severity: f.severity, title: f.title, evidence: f.evidence.slice(0, 700) })) : null, visual_verdict: x.verdict ? x.verdict.visual_verdict : null, judge_report: x.verdict ? x.verdict.report_path : null }))
+const integ = await agent(`${C}\n\nROLE: INTEGRATOR. Your task: args.integrate in the round-2 task file (read it IN FULL). Lane LANES/${I.key}, lab :${I.port}, WORK $SP/work_p4/${I.key}; mirror to MAIN/notes/round11/lane_backup/${args.round}/${I.key}/. Time box ${args.integMin} min. Leave the lab running for the final judge.\nROUND-2 LANE RESULTS (JSON):\n${JSON.stringify(summary, null, 1)}`, { label: `integrate:${I.key}`, phase: 'Integrate', schema: INTEG, effort: 'xhigh' })
+if (!integ) return { judged: summary, integ: null }
+if (!integ.changed) return { judged: summary, integ, verdict: null }
+
+phase('Final')
+const verdict = await agent(`${C}\n\nROLE: independent, adversarial FINAL JUDGE of the merged lane '${I.key}' (lab :${I.port}, read-only). Your task: args.final_judge in the round-2 task file. Time box ${args.finalJudgeMin} min. Folder $SP/work_p4/judge_${I.key}; mirror to MAIN/notes/round11/lane_backup/${args.round}/judge_${I.key}/. ${JUDGE_RULES}\nINTEGRATOR REPORT (JSON):\n${JSON.stringify(integ, null, 1)}`, { label: `judge:${I.key}`, phase: 'Final', schema: VERDICT })
+if (!verdict) return { judged: summary, integ, verdict: null }
+const todo = verdict.findings.filter((f) => ['blocker', 'major', 'minor'].includes(f.severity))
+if (!todo.length) return { judged: summary, integ, verdict, fix: null, rejudge: null }
+const fix = await agent(`${C}\n\nROLE: FIXER of the merged lane '${I.key}' (LANES/${I.key}; you own :${I.port} now). Fix exactly these final-judge findings, each reproduced first with the judge's repro and re-measured after (look at before / after images); no new features. Keep every switch exact (re-prove ident: all switches off vs :5163, ?p4wl=0 vs :5162), tsc clean, THE BAR re-run on the final build, perf within +5 % (>= 8 pairs). Refresh the client files refs_user/wl2_merged_*; regenerate the patch vs LANES/p4ph/retrux-web/app; append to LOG + HANDOFF; mirror. A finding that needs a design decision: leave it with options. Time box ${args.fixMin} min.\nFINDINGS (JSON):\n${JSON.stringify(todo, null, 1)}`, { label: `fix:${I.key}`, phase: 'Final', schema: FIX, effort: 'xhigh' })
+if (!fix || !fix.fixed.length) return { judged: summary, integ, verdict, fix, rejudge: null }
+const rejudge = await agent(`${C}\n\nROLE: RE-JUDGE of the merged lane '${I.key}' after its fix round (lab :${I.port}, read-only). Your task: args.final_judge in the round-2 task file. Time box ${args.rejudgeMin} min. Folder $SP/work_p4/rejudge_${I.key}; mirror to MAIN/notes/round11/lane_backup/${args.round}/rejudge_${I.key}/. Re-run every fixed finding's repro and look; re-check ident and one perf A/B; score the same lenses for MAIN and the lane from the latest captures; hunt for anything the fix made worse. ${JUDGE_RULES}\nPREVIOUS VERDICT (JSON):\n${JSON.stringify(verdict, null, 1)}\nFIXER (JSON):\n${JSON.stringify(fix, null, 1)}`, { label: `rejudge:${I.key}`, phase: 'Final', schema: VERDICT })
+return { judged: summary, integ, verdict, fix, rejudge }

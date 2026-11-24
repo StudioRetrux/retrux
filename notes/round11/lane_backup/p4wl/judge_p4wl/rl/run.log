@@ -1,0 +1,17 @@
+[slot] judge_p4wl:rl-T1: taken (load 3.0)
+rl/T1d2_main: 150 frames 525x150 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 50.0 p90 50.0 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p50 1.2/2.5/2.9 cap ms p50 0.0/0.1/0.1 gap p50/p90/max 58.7/71.8/125.4
+rl/T1d2_lane: 150 frames 525x150 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 50.0 p90 50.0 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p50 1.3/2.3/2.8 cap ms p50 0.0/0.1/0.1 gap p50/p90/max 59.6/68.7/121.1
+rl/T1d2_px: 150 frames 525x150 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 50.0 p90 50.0 ms | mirror 149 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p50 1.4/2.5/3.0 cap ms p50 0.0/0.1/0.1 gap p50/p90/max 63.8/75.2/119.8
+rl/T1d1_main: 150 frames 420x120 buf 1512,860 pipe 1210,688 scale 0.8,0.9 dt p50 45.3 p90 50.0 ms | mirror 148 walk 148 cache 1 cacheOn 2 | errs 0 forced 0 | render ms p50 1.9/2.6/3.2 cap ms p50 0.0/0.1/0.2 gap p50/p90/max 45.3/52.0/99.7
+rl/T1d1_lane: 150 frames 420x120 buf 1512,860 pipe 1512,860 scale 1 dt p50 50.0 p90 50.0 ms | mirror 148 walk 148 cache 1 cacheOn 2 | errs 0 forced 0 | render ms p50 2.1/2.6/3.9 cap ms p50 0.0/0.1/0.1 gap p50/p90/max 52.3/57.9/113.8
+rl/T1d1_px: 150 frames 420x120 buf 1512,860 pipe 1512,860 scale 1 dt p50 50.0 p90 50.0 ms | mirror 149 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p50 2.1/2.7/3.3 cap ms p50 0.0/0.1/0.2 gap p50/p90/max 71.7/87.9/172.5
+[slot] judge_p4wl:rl-T1: freed (exit 0)
+[slot] judge_p4wl:rl-T2: taken (load 16.6)
+rl/T2d2_main: 150 frames 630x180 buf 2268,1290 pipe 2041,1161 scale 0.9,0.85 dt p50 45.3 p90 50.0 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p50 2.1/2.5/3.5 cap ms p50 0.0/0.1/0.2 gap p50/p90/max 44.8/93.9/128.7
+rl/T2far_main: 150 frames 840x240 buf 2160,1149 pipe 1836,977 scale 0.85 dt p50 30.2 p90 34.5 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p50 0.9/2.1/2.7 cap ms p50 0.0/0.1/0.1 gap p50/p90/max 30.1/34.1/52.1
+rl/T0_main: 150 frames 828x320 buf 828,1440 pipe 662,1152 scale 0.8 dt p50 19.4 p90 26.6 ms | mirror 0 walk 0 cache 0 cacheOn 0 | errs 0 forced 0 | render ms p50 0.6/0.8/1.2 cap ms p50 0.0/0.1/0.1 gap p50/p90/max 19.4/26.8/43.6
+rl/T2d2_lane: 150 frames 630x180 buf 2268,1290 pipe 1928,1097 scale 0.85,0.9 dt p50 39.9 p90 44.4 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p50 1.5/2.3/2.7 cap ms p50 0.0/0.1/0.2 gap p50/p90/max 39.9/44.4/62.7
+rl/T2far_lane: 150 frames 840x240 buf 2160,1149 pipe 1836,977 scale 0.85,0.9 dt p50 38.9 p90 50.0 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p50 1.0/1.8/2.5 cap ms p50 0.0/0.1/0.2 gap p50/p90/max 38.9/58.3/75.9
+rl/T0_lane: 150 frames 828x320 buf 828,1440 pipe 662,1152 scale 0.8 dt p50 17.1 p90 23.4 ms | mirror 0 walk 0 cache 0 cacheOn 0 | errs 0 forced 0 | render ms p50 1.2/1.8/2.3 cap ms p50 0.0/0.1/0.2 gap p50/p90/max 17.1/23.6/31.1
+[slot] judge_p4wl:rl-T2: freed (exit 0)
+RLDONE

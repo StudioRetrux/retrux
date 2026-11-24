@@ -1,0 +1,42 @@
+slow     FS   MC32   0.97 ->   0.29 (  -70%) ok  | GT MC32  -91% | J32  -36% vs GT  -20% (off) | J48  -83% vs GT  -31% (off) | eg(+-3) 1.957->1.893 (-3%) MCE 1.915->1.736 (GT 1.448)
+slow     WR   MC32   1.18 ->   0.41 (  -65%) ok  | GT MC32  -88% | J32  -11% vs GT  -22% (off) | J48  -16% vs GT  -58% (off) | eg(+-3) 2.520->2.469 (-2%) MCE 2.260->2.035 (GT 1.731)
+slow     DR   MC32   2.22 ->   0.37 (  -83%) ok  | GT MC32  -88% | J32  -28% vs GT   -9% (off) | J48  -76% vs GT  -31% (off) | eg(+-3) 2.293->2.176 (-5%) MCE 2.555->2.205 (GT 1.976)
+slow     FF   MC32   6.24 ->   1.98 (  -68%) ok  | GT MC32  -55% | J32  -53% vs GT  -37% (off) | J48  -78% vs GT  -67% (off) | eg(+-3) 4.644->4.366 (-6%) MCE 2.871->2.345 (GT 2.235)
+slow     FR   MC32   1.43 ->   0.63 (  -56%) ok  | GT MC32  -68% | J32  -53% vs GT  -62% (off) | J48  -73% vs GT  -87% (off) | eg(+-3) 2.857->2.772 (-3%) MCE 1.813->1.624 (GT 1.400)
+slow     RS   MC32   0.69 ->   0.31 (  -55%) ok  | GT MC32  -86% | J32   -7% vs GT  -26% (off) | J48   -8% vs GT  -54% (off) | eg(+-3) 2.550->2.479 (-3%) MCE 2.206->2.032 (GT 1.668)
+slow     tot  MC32   2.82 ->   0.92 (  -67%) ok  | GT MC32  -63% | J32  -31% vs GT  -29% (ok) | J48  -57% vs GT  -60% (ok) | eg(+-3) 3.170->3.029 (-4%) MCE 2.360->2.049 (GT 1.815)
+medium   FS   MC32   1.12 ->   0.35 (  -69%) ok  | GT MC32  -71% | J32   -8% vs GT  -10% (ok) | J48  -15% vs GT   -6% (off) | eg(+-3) 1.880->1.806 (-4%) MCE 1.753->1.611 (GT 1.343)
+medium   WR   MC32   2.66 ->   1.39 (  -48%) LOW | GT MC32  -67% | J32   -5% vs GT   -6% (ok) | J48   -6% vs GT  -11% (off) | eg(+-3) 2.742->2.656 (-3%) MCE 2.572->2.354 (GT 2.082)
+medium   DR   MC32   3.32 ->   0.78 (  -77%) ok  | GT MC32  -73% | J32   -6% vs GT   -8% (ok) | J48  -18% vs GT  -12% (off) | eg(+-3) 2.407->2.227 (-7%) MCE 2.403->2.090 (GT 1.868)
+medium   FF   MC32   7.05 ->   2.14 (  -70%) ok  | GT MC32  -59% | J32  -14% vs GT  -15% (ok) | J48  -35% vs GT  -32% (ok) | eg(+-3) 4.690->4.377 (-7%) MCE 2.868->2.354 (GT 2.251)
+medium   FR   MC32   2.94 ->   1.44 (  -51%) ok  | GT MC32  -64% | J32  -12% vs GT  -16% (ok) | J48  -31% vs GT  -32% (ok) | eg(+-3) 3.098->2.978 (-4%) MCE 1.995->1.780 (GT 1.597)
+medium   RS   MC32   1.10 ->   0.78 (  -29%) LOW | GT MC32  -71% | J32   -4% vs GT   -7% (ok) | J48   -3% vs GT  -14% (off) | eg(+-3) 2.230->2.164 (-3%) MCE 2.082->1.950 (GT 1.611)
+medium   tot  MC32   3.62 ->   1.32 (  -64%) ok  | GT MC32  -62% | J32   -9% vs GT  -11% (ok) | J48  -19% vs GT  -20% (ok) | eg(+-3) 3.162->2.998 (-5%) MCE 2.354->2.063 (GT 1.849)
+fast     FS   MC32   5.23 ->   3.95 (  -24%) LOW
+fast     WR   MC32   8.43 ->   5.63 (  -33%) LOW
+fast     DR   MC32   3.75 ->   1.28 (  -66%) ok 
+fast     FF   MC32  10.93 ->   3.67 (  -66%) ok 
+fast     FR   MC32   3.96 ->   1.85 (  -53%) ok 
+fast     RS   MC32   3.02 ->   1.60 (  -47%) ok 
+fast     tot  MC32   6.71 ->   3.06 (  -54%) ok 
+diag     FS   MC32   2.83 ->   1.47 (  -48%) ok 
+diag     WR   MC32   5.18 ->   2.87 (  -45%) ok 
+diag     DR   MC32   2.80 ->   0.75 (  -73%) ok 
+diag     FF   MC32  10.48 ->   3.38 (  -68%) ok 
+diag     FR   MC32   3.35 ->   1.45 (  -57%) ok 
+diag     RS   MC32   2.76 ->   1.17 (  -58%) ok 
+diag     tot  MC32   5.70 ->   2.15 (  -62%) ok 
+reverse  FS   MC32   4.82 ->   3.24 (  -33%) LOW
+reverse  WR   MC32   7.13 ->   4.17 (  -42%) ok 
+reverse  DR   MC32   3.92 ->   1.42 (  -64%) ok 
+reverse  FF   MC32  12.83 ->   4.35 (  -66%) ok 
+reverse  FR   MC32   4.00 ->   1.98 (  -50%) ok 
+reverse  RS   MC32   2.02 ->   1.37 (  -32%) LOW
+reverse  tot  MC32   7.02 ->   3.03 (  -57%) ok 
+leave    FS   MC32   1.10 ->   0.50 (  -55%) ok 
+leave    WR   MC32   2.46 ->   1.25 (  -49%) ok 
+leave    DR   MC32   1.94 ->   0.37 (  -81%) ok 
+leave    FF   MC32   4.91 ->   1.82 (  -63%) ok 
+leave    FR   MC32   2.00 ->   1.07 (  -46%) ok 
+leave    RS   MC32   0.91 ->   0.58 (  -36%) LOW
+leave    tot  MC32   2.63 ->   1.10 (  -58%) ok 

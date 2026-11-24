@@ -1,0 +1,13 @@
+{"g4":17,"g4edge":0,"big":71503,"bigEdge":0,"bandInBox":4923,"band":17993915,"edgeBandPx":3210,"edgeBandMeanAbs":0.054,"nearBandPx":300103,"nearBandMeanAbs":0.171}
+k17: g4 1 (edge 0), |l-o|>8 29 (edge 0)
+k64: g4 1 (edge 0), |l-o|>8 305 (edge 0)
+k73: g4 2 (edge 0), |l-o|>8 313 (edge 0)
+k113: g4 1 (edge 0), |l-o|>8 184 (edge 0)
+k116: g4 1 (edge 0), |l-o|>8 124 (edge 0)
+k125: g4 1 (edge 0), |l-o|>8 383 (edge 0)
+k130: g4 4 (edge 0), |l-o|>8 542 (edge 0)
+k151: g4 1 (edge 0), |l-o|>8 232 (edge 0)
+k169: g4 1 (edge 0), |l-o|>8 435 (edge 0)
+k189: g4 1 (edge 0), |l-o|>8 670 (edge 0)
+k213: g4 2 (edge 0), |l-o|>8 96 (edge 0)
+k222: g4 1 (edge 0), |l-o|>8 197 (edge 0)

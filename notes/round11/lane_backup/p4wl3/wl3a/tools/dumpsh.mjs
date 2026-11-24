@@ -1,0 +1,13 @@
+import { createRequire } from "node:module"; import fs from "node:fs";
+const require = createRequire("/Users/muhamadrifaldi/Library/Caches/retrux-lanes/pw/package.json");
+const { chromium } = require("playwright-core");
+const [url, out] = process.argv.slice(2);
+const b = await chromium.launch({ executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", headless: true, args: ["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"] });
+const p = await (await b.newContext({ viewport: { width: 1440, height: 766 } })).newPage();
+const errs = []; p.on("console", (m) => { if (m.type() === "error") errs.push(m.text()); }); p.on("pageerror", (e) => errs.push(String(e)));
+await p.goto(url); await p.waitForFunction(() => window.__hero && window.__hero.state && window.__hero.state.ready, null, { timeout: 120000 });
+const s = await p.evaluate(() => { const o = []; const sc = window.__hero.scene || window.__hero.engine?.scene; const seen = new Set();
+  const visit = (m) => { if (m && m.name && m.name.startsWith("rx-water") && !seen.has(m.uuid)) { seen.add(m.uuid); o.push({ name: m.name, defines: m.defines, frag: m.fragmentShader }); } };
+  sc?.traverse((x) => { const mm = Array.isArray(x.material) ? x.material : [x.material]; mm.forEach(visit); });
+  return { keys: Object.keys(window.__hero), o }; });
+fs.writeFileSync(out, JSON.stringify(s)); console.log(s.keys.join(","), s.o.map((x) => x.name + ":" + x.frag.length).join(" "), "errs", errs.length); await b.close();

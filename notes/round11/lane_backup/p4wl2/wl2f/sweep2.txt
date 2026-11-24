@@ -1,0 +1,28 @@
+[slot] wl2f:perf-sweep2 waiting (load 11.2 / max 40, slots 3, holders [{"label":"wl2g:fair-slow-G-gt","pid":80574,"at":1795349745939,"slot":0},{"label":"wl2b:perf-sweep","pid":80588,"at":1795349612286,"slot":1},{"label":"wl2f:fair-fast-L-cap","pid":82617,"at":1795349753031,"slot":2}])
+[slot] wl2f:perf-sweep2 waiting (load 9.6 / max 40, slots 3, holders [{"label":"wl2g:fair-slow-G-gt","pid":80574,"at":1795349745939,"slot":0},{"label":"wl2b:perf-sweep","pid":80588,"at":1795349612286,"slot":1},{"label":"wl2f:fair-fast-L-gt","pid":83425,"at":1795349802988,"slot":2}])
+[slot] wl2f:perf-sweep2 waiting (load 5.8 / max 40, slots 3, holders [{"label":"wl2g:fair-slow-G-gt","pid":80574,"at":1795349745939,"slot":0},{"label":"wl2b:perf-sweep","pid":80588,"at":1795349612286,"slot":1},{"label":"wl2f:fair-fast-L-gt","pid":83425,"at":1795349802988,"slot":2}])
+[slot] wl2f:perf-sweep2: taken (load 5.2)
+0 A {"held":null,"n":253,"med":21.19999999999891,"mean":23.704743083003954,"p95":40.20000000000073,"boot":3901,"waited":15,"load0":4.8,"load1":5.2,"others":["wl2b:perf-sweep","wl2f:fair-fast-L-gt"]} load 5.2
+0 B {"held":null,"n":271,"med":21.399999999999636,"mean":22.17749077490775,"p95":41.399999999999636,"boot":5482,"waited":15,"load0":5.3,"load1":7,"others":["wl2b:perf-sweep","wl2f:fair-fast-L-gt"]} load 7.0
+# pair 0 invalid (load >= 10 or another perf job); valid so far 0/8
+1 B {"held":null,"n":230,"med":21.399999999999636,"mean":26.074347826086953,"p95":46.899999999999636,"boot":3557,"waited":15,"load0":5.9,"load1":5.6,"others":["wl2b:perf-sweep","wl2g:fair-medium-G"]} load 5.6
+1 A {"held":null,"n":249,"med":21.399999999999636,"mean":24.093574297188756,"p95":42.5,"boot":3593,"waited":15,"load0":6.3,"load1":14.4,"others":["wl2b:perf-sweep","wl2g:fair-medium-G","wl2g:fair-medium-G-gt"]} load 14.4
+# pair 1 invalid (load >= 10 or another perf job); valid so far 0/8
+2 A {"held":null,"n":259,"med":21,"mean":23.088803088803093,"p95":40.899999999999636,"boot":3609,"waited":15,"load0":15.1,"load1":13.2,"others":["wl2b:perf-sweep","wl2g:fair-medium-G-gt"]} load 13.2
+2 B {"held":null,"n":161,"med":38.899999999999636,"mean":37.25714285714286,"p95":62.80000000000109,"boot":3606,"waited":15,"load0":9.4,"load1":9,"others":["wl2b:perf-sweep","wl2g:fair-medium-G-gt"]} load 9.0
+# pair 2 invalid (load >= 10 or another perf job); valid so far 0/8
+3 B {"held":null,"n":251,"med":22,"mean":23.898804780876496,"p95":41.20000000000073,"boot":3527,"waited":15,"load0":7.2,"load1":7.2,"others":["wl2b:perf-sweep","wl2g:fair-medium-G-gt"]} load 7.2
+3 A {"held":null,"n":284,"med":20.80000000000109,"mean":21.099295774647885,"p95":36.5,"boot":3866,"waited":15,"load0":6,"load1":6.2,"others":["wl2b:perf-sweep","wl2g:fair-medium-G-gt","wl2f:fair-reverse-L-cap"]} load 6.2
+# pair 3 invalid (load >= 10 or another perf job); valid so far 0/8
+4 A {"held":null,"n":258,"med":21.399999999999636,"mean":23.295736434108527,"p95":38.399999999999636,"boot":3723,"waited":15,"load0":6.3,"load1":6.4,"others":["wl2b:perf-sweep","wl2f:fair-reverse-L-cap"]} load 6.4
+4 B {"held":null,"n":265,"med":21.80000000000109,"mean":22.702641509433963,"p95":43.399999999999636,"boot":3945,"waited":15,"load0":5.8,"load1":5.9,"others":["wl2b:perf-sweep","wl2f:fair-reverse-L-gt"]} load 5.9
+# pair 4 invalid (load >= 10 or another perf job); valid so far 0/8
+5 B {"held":null,"n":256,"med":21.30000000000109,"mean":23.482812499999998,"p95":41.69999999999891,"boot":3721,"waited":15,"load0":5.4,"load1":5.6,"others":["wl2b:perf-sweep","wl2f:fair-reverse-L-gt"]} load 5.6
+5 A {"held":null,"n":264,"med":20.80000000000109,"mean":22.762500000000003,"p95":41.900000000000546,"boot":3628,"waited":15,"load0":5.1,"load1":5.2,"others":["wl2b:perf-sweep","wl2f:fair-reverse-L-gt"]} load 5.2
+# pair 5 invalid (load >= 10 or another perf job); valid so far 0/8
+6 A {"held":null,"n":201,"med":21.899999999999636,"mean":29.510945273631844,"p95":50.5,"boot":5224,"waited":15,"load0":4.5,"load1":4.5,"others":["wl2b:perf-sweep","wl2f:fair-reverse-L-gt"]} load 4.5
+6 B {"held":null,"n":248,"med":21.700000000000728,"mean":24.171774193548387,"p95":39.79999999999927,"boot":3535,"waited":15,"load0":3.6,"load1":3.5,"others":["wl2b:perf-sweep","wl2g:fair-fast-G"]} load 3.5
+# pair 6 invalid (load >= 10 or another perf job); valid so far 0/8
+7 B {"held":null,"n":243,"med":22.200000000000728,"mean":24.608230452674896,"p95":46.80000000000109,"boot":5920,"waited":15,"load0":3.6,"load1":9.2,"others":["wl2b:perf-sweep","wl2g:fair-fast-G-gt"]} load 9.2
+7 A {"held":null,"n":290,"med":20.899999999999636,"mean":20.733793103448274,"p95":36.79999999999927,"boot":3533,"waited":15,"load0":7.2,"load1":6.5,"others":["wl2b:perf-sweep","wl2g:fair-fast-G-gt"]} load 6.5
+# pair 7 invalid (load >= 10 or another perf job); valid so far 0/8

@@ -1,0 +1,23 @@
+[slot] !lead-demo-check: taken (load 3.5)
+{
+ "url": "http://localhost:3001/",
+ "taa": true,
+ "names": [
+  "marker:ffb-r1",
+  "marker:ffb-r2",
+  "marker:ffblock",
+  "marker:glide",
+  "rx-blit",
+  "rx-env-edge",
+  "rx-lake-edge-taa",
+  "rx-lake-height",
+  "rx-lake-sky-late",
+  "rx-plate-baked-mirror",
+  "rx-water",
+  "rx-water-cache",
+  "rx-water-cache-n",
+  "rx-water-walk"
+ ],
+ "logs": []
+}
+[slot] !lead-demo-check: freed (exit 0)

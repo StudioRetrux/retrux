@@ -1,12 +1,12 @@
 // Prints every projector camera (position, Euler YXZ in degrees, projection terms) as the engine builds it, to compare
 // with the Blender cameras the plates were rendered from (blend\v2build5\plate_<cam>.json).
 import { createRequire } from "node:module";
-const require = createRequire("E:/Retrux Hero R&D/hero-pipeline/tools/package.json");
+const require = createRequire("/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/hero-pipeline/tools/package.json");
 const { chromium } = require("playwright-core");
-const browser = await chromium.launch({ executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe", headless: true, args: ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"] });
+const browser = await chromium.launch({ executablePath: (process.env.CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"), headless: true, args: [(process.platform === "win32" ? "--use-angle=d3d11" : "--use-angle=metal"), "--enable-gpu", "--ignore-gpu-blocklist"] });
 try {
   const page = await browser.newPage({ viewport: { width: 720, height: 383 } });
-  await page.goto("http://localhost:5173/?tier=T1&scale=0.5&debug=1", { waitUntil: "domcontentloaded" });
+  await page.goto(((process.env.LAB || "http://localhost:5173") + "/?tier=T1&scale=0.5&debug=1"), { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => document.documentElement.dataset.heroReady === "1", null, { timeout: 180000 });
   const r = await page.evaluate(() => {
     const h = window.__hero;

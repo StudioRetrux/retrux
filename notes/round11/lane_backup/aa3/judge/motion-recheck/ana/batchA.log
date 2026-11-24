@@ -1,0 +1,16 @@
+[slot] motion-recheck:A fix caps waiting (load 6.7 / max 24, slots 2, holders [{"label":"judge-artifacts-recheck:R1","pid":54413,"at":1795165405485,"slot":0},{"label":"aa5a batch3","pid":57338,"at":1795165092267,"slot":1}])
+[slot] motion-recheck:A fix caps: taken (load 6.8)
+[cap] /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/judge/motion-recheck/caps/fix_medium: 240 frames; 0 errors/warnings
+[batchA] fix_medium took 44 s
+[cap] /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/judge/motion-recheck/caps/fix_reverse: 240 frames; 0 errors/warnings
+[batchA] fix_reverse took 45 s
+[cap] /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/judge/motion-recheck/caps/fix_fast: 240 frames; 0 errors/warnings
+[batchA] fix_fast took 48 s
+[cap] /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/judge/motion-recheck/caps/fix_leave: 240 frames; 0 errors/warnings
+[batchA] fix_leave took 51 s
+[cap] /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/judge/motion-recheck/caps/fix_slow: 240 frames; 0 errors/warnings
+[batchA] fix_slow took 50 s
+[cap] /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/judge/motion-recheck/caps/fix_diag: 240 frames; 0 errors/warnings
+[batchA] fix_diag took 65 s
+BATCHA-DONE
+[slot] motion-recheck:A fix caps: freed (exit 0)

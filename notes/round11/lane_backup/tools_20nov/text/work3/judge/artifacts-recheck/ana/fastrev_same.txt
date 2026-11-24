@@ -1,0 +1,1 @@
+{"a":"/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/judge/artifacts/caps/fastrev/off","b":"caps/fastrev/off","frames":120,"same":120,"diff":0,"max":0,"px4":0,"first":[]}

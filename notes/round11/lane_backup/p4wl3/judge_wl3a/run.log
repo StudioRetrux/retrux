@@ -1,0 +1,44 @@
+05:09:40 CHAIN T start
+05:09:42 CHAIN S start
+05:10:07 rl a2_M1 rl/a2_M1: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 33.1 p90 35.4 ms | mirror 149 walk 148 cache 1 cacheOn 2 | errs 0 forced 0 | render ms 
+05:15:17 launch (waited 141 s for wl3b perf)
+05:15:17 CHAIN T start
+05:15:18 CHAIN S start
+05:15:44 rl a2_M1 rl/a2_M1: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 34.3 p90 36.8 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms 
+05:15:47 CHAIN T2 start
+05:16:17 rl a2_L1 Node.js v24.13.0
+05:16:44 rl a2_M2 rl/a2_M2: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 33.6 p90 35.2 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms 
+05:17:11 rl a2_L2 rl/a2_L2: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 34.7 p90 36.4 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms 
+05:17:37 rl a2_M3 rl/a2_M3: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 33.4 p90 37.9 ms | mirror 149 walk 148 cache 1 cacheOn 2 | errs 0 forced 0 | render ms 
+05:18:03 rl a2_L3 rl/a2_L3: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 35.9 p90 50.0 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms 
+05:18:03 rl a2 done
+05:18:06 ident done
+05:18:28 rl a1_M1 rl/a1_M1: 150 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 25.1 p90 26.4 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p5
+05:18:54 rl a1_L1 rl/a1_L1: 150 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 26.8 p90 40.9 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p5
+05:18:56 sub rest done
+05:18:58 rest done
+05:19:18 rl a1_M2 rl/a1_M2: 150 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 25.7 p90 48.3 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p5
+05:19:38 capdt M [slot] judge_wl3a:capdt-M: freed (exit 0)
+05:19:43 rl a1_L2 rl/a1_L2: 150 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 26.7 p90 28.4 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p5
+05:20:15 rl t2_M1 rl/t2_M1: 150 frames 720x270 buf 2268,1290 pipe 2268,1290 scale 1 dt p50 47.0 p90 50.0 ms | mirror 149 walk 148 cache 1 cacheOn 2 | errs 0 forced 0 | render ms 
+05:20:23 capdt W [slot] judge_wl3a:capdt-W: freed (exit 0)
+05:20:47 rl t2_L1 rl/t2_L1: 150 frames 720x270 buf 2268,1290 pipe 2268,1290 scale 1 dt p50 49.6 p90 50.0 ms | mirror 149 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms 
+05:21:12 capdt L [slot] judge_wl3a:capdt-L: freed (exit 0)
+05:21:18 rl t2_M2 rl/t2_M2: 150 frames 720x270 buf 2268,1290 pipe 2268,1290 scale 1 dt p50 45.3 p90 47.0 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms 
+05:21:51 rl t2_L2 rl/t2_L2: 150 frames 720x270 buf 2268,1290 pipe 2268,1290 scale 1 dt p50 49.4 p90 50.0 ms | mirror 149 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms 
+05:21:51 rl a1 t2 done; waiting for chain S before perf
+05:22:04 capdt G [slot] judge_wl3a:capdt-G: freed (exit 0)
+05:22:24 rl a1b_L1 rl/a1b_L1: 300 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 27.2 p90 47.5 ms | mirror 298 walk 298 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p
+05:23:04 rl a1b_M1 rl/a1b_M1: 300 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 50.0 p90 50.0 ms | mirror 298 walk 298 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p
+05:23:43 rl a1b_L2 rl/a1b_L2: 300 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 50.0 p90 50.0 ms | mirror 298 walk 298 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p
+05:24:18 rl a1b_M2 rl/a1b_M2: 300 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 27.0 p90 50.0 ms | mirror 298 walk 298 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p
+05:24:51 capdt d1 M [slot] judge_wl3a:capdt1-M: freed (exit 0)
+05:25:14 fair fast done
+05:25:25 capdt d1 L [slot] judge_wl3a:capdt1-L: freed (exit 0)
+05:25:25 MORE DONE
+05:25:27 perf start (non-STRICT: judge_wl3b's chain runs in parallel)
+05:27:36 perf done 0
+05:27:38 perf STOPPED by me after pair 0-1: every run beside judge_wl3b's chain + my FAIR GT (load 10-12; A 43.4 vs B 21.0 ms = load, not code); no valid pair possible in my box
+05:29:02 fair reverse done
+05:30:50 s60 done
+05:32:35 CHAIN S2 DONE

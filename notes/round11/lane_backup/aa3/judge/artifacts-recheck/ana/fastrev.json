@@ -1,0 +1,879 @@
+{
+ "frames": 120,
+ "W": 1440,
+ "H": 766,
+ "y0": 0,
+ "tex": {
+  "lake": 0.996,
+  "bright": 1.0136,
+  "dark": 0.9877
+ },
+ "g5": {
+  "skyMean": 0.0043,
+  "skyMax": 24,
+  "heroMean": 0.1744,
+  "heroMax": 91,
+  "regionBoundaryBandMean": 0.131,
+  "regionBoundaryBandPx": 245,
+  "regionBoundaryOtherMean": 0.075,
+  "regionBoundaryOtherPx": 274797
+ },
+ "g4off": {
+  "px": 25,
+  "band": 16,
+  "max": 8,
+  "perMpxFrame": 0.189
+ },
+ "g4base": {
+  "px": 132327,
+  "band": 25099,
+  "max": 117
+ },
+ "offOutsideBandPx": 23372,
+ "rows": [
+  "0(i0) taa 0.5  | l-b>4 band 1915 lake 4 solid 312 sky 156 hero 198 | l-o>4 band 116 out 11 max 76 | g4off 0/0/0 g4base 64/41/41",
+  "1(i1) taa 0.5  | l-b>4 band 1900 lake 24 solid 325 sky 152 hero 223 | l-o>4 band 139 out 20 max 76 | g4off 0/0/0 g4base 73/46/41",
+  "2(i2) taa 0.5  | l-b>4 band 1934 lake 46 solid 321 sky 147 hero 252 | l-o>4 band 172 out 26 max 76 | g4off 0/0/0 g4base 73/41/40",
+  "3(i3) taa 0.5  | l-b>4 band 1974 lake 3 solid 328 sky 147 hero 254 | l-o>4 band 229 out 44 max 76 | g4off 0/0/0 g4base 73/40/26",
+  "4(i4) taa 0.5  | l-b>4 band 2147 lake 200 solid 328 sky 161 hero 303 | l-o>4 band 340 out 55 max 79 | g4off 0/0/0 g4base 125/55/27",
+  "5(i5) taa 0.5  | l-b>4 band 2406 lake 532 solid 324 sky 150 hero 365 | l-o>4 band 574 out 83 max 39 | g4off 0/0/0 g4base 159/68/34",
+  "6(i6) taa 0.5  | l-b>4 band 2340 lake 15 solid 322 sky 155 hero 253 | l-o>4 band 702 out 101 max 38 | g4off 0/0/0 g4base 63/39/41",
+  "7(i7) taa 0.5  | l-b>4 band 2693 lake 1021 solid 316 sky 151 hero 359 | l-o>4 band 876 out 98 max 35 | g4off 0/0/0 g4base 275/80/37",
+  "8(i8) taa 0.5  | l-b>4 band 3280 lake 1652 solid 322 sky 156 hero 433 | l-o>4 band 1180 out 117 max 36 | g4off 0/0/0 g4base 492/193/39",
+  "9(i9) taa 0.5  | l-b>4 band 2707 lake 34 solid 498 sky 0 hero 332 | l-o>4 band 1316 out 114 max 46 | g4off 0/0/0 g4base 80/46/34",
+  "10(i10) taa 0.5  | l-b>4 band 3445 lake 1780 solid 486 sky 0 hero 463 | l-o>4 band 1530 out 137 max 41 | g4off 1/1/6 g4base 406/113/54",
+  "11(i11) taa 0.5  | l-b>4 band 3780 lake 2470 solid 475 sky 0 hero 458 | l-o>4 band 1757 out 146 max 42 | g4off 0/0/0 g4base 596/148/59",
+  "12(i12) taa 0.5  | l-b>4 band 3231 lake 65 solid 492 sky 0 hero 300 | l-o>4 band 1948 out 177 max 70 | g4off 0/0/0 g4base 67/40/39",
+  "13(i13) taa 0.5  | l-b>4 band 3699 lake 1878 solid 481 sky 0 hero 509 | l-o>4 band 2097 out 142 max 52 | g4off 0/0/0 g4base 449/80/35",
+  "14(i14) taa 0.5  | l-b>4 band 4332 lake 4166 solid 491 sky 0 hero 621 | l-o>4 band 2297 out 133 max 42 | g4off 0/0/0 g4base 830/144/53",
+  "15(i15) taa 0.5  | l-b>4 band 3610 lake 44 solid 475 sky 0 hero 238 | l-o>4 band 2396 out 102 max 52 | g4off 1/1/6 g4base 70/30/34",
+  "16(i16) taa 0.5  | l-b>4 band 4117 lake 2097 solid 464 sky 0 hero 286 | l-o>4 band 2554 out 95 max 71 | g4off 0/0/0 g4base 325/71/29",
+  "17(i17) taa 0.5  | l-b>4 band 5125 lake 6823 solid 457 sky 0 hero 462 | l-o>4 band 2722 out 118 max 47 | g4off 0/0/0 g4base 1263/229/57",
+  "18(i18) taa 0.5  | l-b>4 band 3966 lake 63 solid 449 sky 0 hero 226 | l-o>4 band 2846 out 136 max 75 | g4off 0/0/0 g4base 62/35/40",
+  "19(i19) taa 0.5  | l-b>4 band 4710 lake 3653 solid 475 sky 0 hero 444 | l-o>4 band 3043 out 169 max 58 | g4off 0/0/0 g4base 833/189/60",
+  "20(i20) taa 0.5  | l-b>4 band 6040 lake 12446 solid 489 sky 0 hero 587 | l-o>4 band 3179 out 168 max 57 | g4off 0/0/0 g4base 3265/580/62",
+  "21(i21) taa 0.5  | l-b>4 band 4636 lake 43 solid 447 sky 0 hero 241 | l-o>4 band 3407 out 135 max 60 | g4off 0/0/0 g4base 65/40/41",
+  "22(i22) taa 0.5  | l-b>4 band 5450 lake 4587 solid 302 sky 175 hero 530 | l-o>4 band 3889 out 265 max 59 | g4off 0/0/0 g4base 1265/229/54",
+  "23(i23) taa 0.5  | l-b>4 band 7291 lake 11028 solid 490 sky 0 hero 754 | l-o>4 band 4565 out 303 max 48 | g4off 0/0/0 g4base 2873/641/83",
+  "24(i24) taa 0.5  | l-b>4 band 5863 lake 108 solid 491 sky 0 hero 337 | l-o>4 band 4644 out 321 max 103 | g4off 0/0/0 g4base 74/45/34",
+  "25(i25) taa 0.5  | l-b>4 band 6782 lake 4537 solid 446 sky 0 hero 496 | l-o>4 band 4831 out 311 max 49 | g4off 0/0/0 g4base 1060/227/56",
+  "26(i26) taa 0.5  | l-b>4 band 7941 lake 12504 solid 440 sky 0 hero 829 | l-o>4 band 5036 out 388 max 63 | g4off 1/0/5 g4base 3108/556/99",
+  "27(i27) taa 0.5  | l-b>4 band 6206 lake 87 solid 395 sky 0 hero 409 | l-o>4 band 5070 out 384 max 44 | g4off 0/0/0 g4base 74/46/25",
+  "28(i28) taa 0.5  | l-b>4 band 6874 lake 4941 solid 378 sky 0 hero 633 | l-o>4 band 4821 out 305 max 45 | g4off 0/0/0 g4base 1055/272/51",
+  "29(i29) taa 0.5  | l-b>4 band 8243 lake 14531 solid 417 sky 0 hero 1217 | l-o>4 band 4893 out 332 max 43 | g4off 0/0/0 g4base 3689/820/88",
+  "30(i30) taa 0.5  | l-b>4 band 6262 lake 73 solid 424 sky 0 hero 246 | l-o>4 band 5132 out 211 max 94 | g4off 0/0/0 g4base 57/28/36",
+  "31(i31) taa 0.5  | l-b>4 band 6869 lake 6553 solid 410 sky 5 hero 1083 | l-o>4 band 4953 out 318 max 68 | g4off 1/1/5 g4base 2631/378/83",
+  "32(i32) taa 0.5  | l-b>4 band 8380 lake 15175 solid 380 sky 1 hero 1771 | l-o>4 band 4766 out 317 max 48 | g4off 0/0/0 g4base 4702/741/79",
+  "33(i33) taa 0.5  | l-b>4 band 5914 lake 105 solid 318 sky 1 hero 267 | l-o>4 band 4834 out 265 max 80 | g4off 0/0/0 g4base 51/36/24",
+  "34(i34) taa 0.5  | l-b>4 band 6771 lake 5597 solid 351 sky 4 hero 746 | l-o>4 band 4919 out 293 max 52 | g4off 0/0/0 g4base 1847/346/66",
+  "35(i35) taa 0.5  | l-b>4 band 8126 lake 16986 solid 375 sky 1 hero 1127 | l-o>4 band 4703 out 226 max 54 | g4off 0/0/0 g4base 4643/892/117",
+  "36(i36) taa 0.5  | l-b>4 band 5655 lake 81 solid 333 sky 0 hero 303 | l-o>4 band 4510 out 263 max 86 | g4off 0/0/0 g4base 59/32/41",
+  "37(i37) taa 0.5  | l-b>4 band 6056 lake 5219 solid 330 sky 0 hero 720 | l-o>4 band 4273 out 251 max 56 | g4off 0/0/0 g4base 1293/242/77",
+  "38(i38) taa 0.5  | l-b>4 band 7667 lake 18144 solid 319 sky 0 hero 950 | l-o>4 band 4222 out 217 max 51 | g4off 0/0/0 g4base 4782/743/104",
+  "39(i39) taa 0.5  | l-b>4 band 5109 lake 54 solid 336 sky 0 hero 187 | l-o>4 band 4020 out 161 max 49 | g4off 0/0/0 g4base 66/39/33",
+  "40(i40) taa 0.5  | l-b>4 band 5311 lake 5611 solid 357 sky 0 hero 351 | l-o>4 band 3658 out 174 max 46 | g4off 0/0/0 g4base 904/140/50",
+  "41(i41) taa 0.5  | l-b>4 band 6753 lake 17812 solid 343 sky 0 hero 844 | l-o>4 band 3472 out 185 max 52 | g4off 1/1/5 g4base 3283/453/63",
+  "42(i42) taa 0.5  | l-b>4 band 4360 lake 83 solid 360 sky 0 hero 271 | l-o>4 band 3248 out 268 max 53 | g4off 0/0/0 g4base 56/33/34",
+  "43(i43) taa 0.5  | l-b>4 band 5306 lake 5870 solid 348 sky 0 hero 416 | l-o>4 band 3342 out 190 max 40 | g4off 0/0/0 g4base 1353/255/55",
+  "44(i44) taa 0.5  | l-b>4 band 7207 lake 17891 solid 344 sky 0 hero 679 | l-o>4 band 3338 out 176 max 46 | g4off 0/0/0 g4base 3719/584/80",
+  "45(i45) taa 0.5  | l-b>4 band 4422 lake 77 solid 344 sky 0 hero 149 | l-o>4 band 3457 out 167 max 43 | g4off 0/0/0 g4base 62/37/40",
+  "46(i46) taa 0.5  | l-b>4 band 4944 lake 4779 solid 408 sky 0 hero 281 | l-o>4 band 3218 out 136 max 57 | g4off 0/0/0 g4base 858/141/78",
+  "47(i47) taa 0.5  | l-b>4 band 6134 lake 11257 solid 385 sky 0 hero 491 | l-o>4 band 2997 out 99 max 81 | g4off 0/0/0 g4base 2254/385/88",
+  "48(i48) taa 0.5  | l-b>4 band 3874 lake 44 solid 343 sky 0 hero 156 | l-o>4 band 2844 out 118 max 73 | g4off 0/0/0 g4base 56/30/34",
+  "49(i49) taa 0.5  | l-b>4 band 4240 lake 2416 solid 347 sky 0 hero 241 | l-o>4 band 2776 out 99 max 44 | g4off 0/0/0 g4base 493/121/62",
+  "50(i50) taa 0.5  | l-b>4 band 4910 lake 5790 solid 346 sky 0 hero 436 | l-o>4 band 2775 out 170 max 59 | g4off 1/1/5 g4base 1116/180/78",
+  "51(i51) taa 0.5  | l-b>4 band 4028 lake 64 solid 352 sky 0 hero 170 | l-o>4 band 2876 out 136 max 61 | g4off 0/0/0 g4base 59/39/34",
+  "52(i52) taa 0.5  | l-b>4 band 4632 lake 1399 solid 339 sky 0 hero 228 | l-o>4 band 3215 out 174 max 80 | g4off 0/0/0 g4base 270/95/67",
+  "53(i53) taa 0.5  | l-b>4 band 5052 lake 1850 solid 352 sky 0 hero 212 | l-o>4 band 3203 out 130 max 47 | g4off 0/0/0 g4base 443/155/89",
+  "54(i54) taa 0.5  | l-b>4 band 4522 lake 45 solid 374 sky 0 hero 164 | l-o>4 band 3321 out 149 max 45 | g4off 1/1/7 g4base 58/32/34",
+  "55(i55) taa 0.5  | l-b>4 band 5000 lake 1662 solid 330 sky 0 hero 242 | l-o>4 band 3385 out 138 max 58 | g4off 0/0/0 g4base 396/134/40",
+  "56(i56) taa 0.5  | l-b>4 band 5018 lake 2844 solid 336 sky 0 hero 268 | l-o>4 band 3020 out 122 max 43 | g4off 1/1/5 g4base 706/230/54",
+  "57(i57) taa 0.5  | l-b>4 band 4117 lake 52 solid 355 sky 5 hero 166 | l-o>4 band 2852 out 130 max 42 | g4off 0/0/0 g4base 86/44/34",
+  "58(i58) taa 0.5  | l-b>4 band 4271 lake 3305 solid 305 sky 6 hero 273 | l-o>4 band 2378 out 84 max 40 | g4off 0/0/0 g4base 638/134/51",
+  "59(i59) taa 0.5  | l-b>4 band 5011 lake 8691 solid 312 sky 19 hero 388 | l-o>4 band 2228 out 107 max 53 | g4off 0/0/0 g4base 2170/383/58",
+  "60(i60) taa 0.5  | l-b>4 band 3717 lake 43 solid 280 sky 16 hero 174 | l-o>4 band 2449 out 77 max 46 | g4off 0/0/0 g4base 75/40/26",
+  "61(i61) taa 0.5  | l-b>4 band 4531 lake 3637 solid 256 sky 10 hero 371 | l-o>4 band 2808 out 87 max 44 | g4off 1/1/5 g4base 661/114/46",
+  "62(i62) taa 0.5  | l-b>4 band 5830 lake 9614 solid 289 sky 12 hero 540 | l-o>4 band 2903 out 94 max 43 | g4off 0/0/0 g4base 2122/374/56",
+  "63(i63) taa 0.5  | l-b>4 band 4363 lake 59 solid 208 sky 110 hero 238 | l-o>4 band 3207 out 214 max 41 | g4off 0/0/0 g4base 60/39/33",
+  "64(i64) taa 0.5  | l-b>4 band 5189 lake 4493 solid 215 sky 100 hero 481 | l-o>4 band 3407 out 225 max 59 | g4off 0/0/0 g4base 946/174/44",
+  "65(i65) taa 0.5  | l-b>4 band 6388 lake 14527 solid 205 sky 86 hero 860 | l-o>4 band 3725 out 232 max 53 | g4off 0/0/0 g4base 3253/439/60",
+  "66(i66) taa 0.5  | l-b>4 band 4791 lake 77 solid 229 sky 90 hero 284 | l-o>4 band 3638 out 240 max 45 | g4off 1/1/8 g4base 63/44/41",
+  "67(i67) taa 0.5  | l-b>4 band 5367 lake 5354 solid 204 sky 98 hero 646 | l-o>4 band 3654 out 339 max 43 | g4off 0/0/0 g4base 1194/220/46",
+  "68(i68) taa 0.5  | l-b>4 band 6578 lake 16709 solid 271 sky 0 hero 1063 | l-o>4 band 3746 out 308 max 58 | g4off 0/0/0 g4base 3720/457/54",
+  "69(i69) taa 0.5  | l-b>4 band 4563 lake 105 solid 284 sky 0 hero 339 | l-o>4 band 3518 out 315 max 42 | g4off 0/0/0 g4base 60/30/33",
+  "70(i70) taa 0.5  | l-b>4 band 5273 lake 6560 solid 296 sky 0 hero 722 | l-o>4 band 3590 out 291 max 41 | g4off 1/0/6 g4base 2263/217/62",
+  "71(i71) taa 0.5  | l-b>4 band 6725 lake 18237 solid 323 sky 0 hero 1049 | l-o>4 band 3684 out 289 max 71 | g4off 0/0/0 g4base 4511/510/42",
+  "72(i72) taa 0.5  | l-b>4 band 4422 lake 64 solid 361 sky 0 hero 313 | l-o>4 band 3412 out 259 max 52 | g4off 0/0/0 g4base 63/38/34",
+  "73(i73) taa 0.5  | l-b>4 band 4991 lake 5574 solid 321 sky 0 hero 672 | l-o>4 band 3374 out 277 max 47 | g4off 0/0/0 g4base 1650/273/39",
+  "74(i74) taa 0.5  | l-b>4 band 6378 lake 17552 solid 324 sky 0 hero 1160 | l-o>4 band 3358 out 258 max 63 | g4off 0/0/0 g4base 4155/553/89",
+  "75(i75) taa 0.5  | l-b>4 band 4207 lake 61 solid 335 sky 0 hero 314 | l-o>4 band 3042 out 235 max 40 | g4off 0/0/0 g4base 52/33/25",
+  "76(i76) taa 0.5  | l-b>4 band 4739 lake 3938 solid 351 sky 0 hero 540 | l-o>4 band 3107 out 219 max 48 | g4off 0/0/0 g4base 850/166/56",
+  "77(i77) taa 0.5  | l-b>4 band 5722 lake 8460 solid 330 sky 0 hero 710 | l-o>4 band 2972 out 174 max 45 | g4off 0/0/0 g4base 1915/364/64",
+  "78(i78) taa 0.5  | l-b>4 band 3765 lake 56 solid 361 sky 0 hero 154 | l-o>4 band 2604 out 119 max 36 | g4off 1/1/6 g4base 66/38/35",
+  "79(i79) taa 0.5  | l-b>4 band 3799 lake 1865 solid 380 sky 0 hero 234 | l-o>4 band 2233 out 116 max 29 | g4off 0/0/0 g4base 258/65/28",
+  "80(i80) taa 0.5  | l-b>4 band 4198 lake 3895 solid 380 sky 0 hero 289 | l-o>4 band 1953 out 147 max 39 | g4off 0/0/0 g4base 644/152/55",
+  "81(i81) taa 0.5  | l-b>4 band 3178 lake 26 solid 396 sky 0 hero 64 | l-o>4 band 1808 out 60 max 80 | g4off 0/0/0 g4base 82/44/34",
+  "82(i82) taa 0.5  | l-b>4 band 3164 lake 748 solid 346 sky 0 hero 113 | l-o>4 band 1619 out 41 max 66 | g4off 0/0/0 g4base 177/79/31",
+  "83(i83) taa 0.5  | l-b>4 band 2871 lake 921 solid 351 sky 0 hero 96 | l-o>4 band 1194 out 21 max 58 | g4off 0/0/0 g4base 196/83/41",
+  "84(i84) taa 0.5  | l-b>4 band 2631 lake 22 solid 352 sky 0 hero 94 | l-o>4 band 1351 out 50 max 50 | g4off 0/0/0 g4base 57/40/28",
+  "85(i85) taa 0.5  | l-b>4 band 3401 lake 1743 solid 337 sky 0 hero 79 | l-o>4 band 1681 out 40 max 63 | g4off 0/0/0 g4base 243/84/72",
+  "86(i86) taa 0.5  | l-b>4 band 4153 lake 3009 solid 249 sky 124 hero 93 | l-o>4 band 2108 out 66 max 58 | g4off 0/0/0 g4base 516/209/35",
+  "87(i87) taa 0.5  | l-b>4 band 3556 lake 34 solid 240 sky 117 hero 70 | l-o>4 band 2469 out 54 max 47 | g4off 2/0/7 g4base 36/21/43",
+  "88(i88) taa 0.5  | l-b>4 band 4529 lake 3176 solid 209 sky 131 hero 102 | l-o>4 band 2850 out 71 max 52 | g4off 0/0/0 g4base 815/183/74",
+  "89(i89) taa 0.5  | l-b>4 band 5926 lake 8085 solid 224 sky 140 hero 153 | l-o>4 band 3269 out 88 max 40 | g4off 0/0/0 g4base 2330/589/84",
+  "90(i90) taa 0.5  | l-b>4 band 4543 lake 72 solid 226 sky 132 hero 60 | l-o>4 band 3431 out 102 max 45 | g4off 0/0/0 g4base 66/40/34",
+  "91(i91) taa 0.5  | l-b>4 band 5318 lake 4807 solid 249 sky 159 hero 129 | l-o>4 band 3579 out 92 max 43 | g4off 1/0/6 g4base 1479/275/72",
+  "92(i92) taa 0.5  | l-b>4 band 6205 lake 11043 solid 242 sky 160 hero 182 | l-o>4 band 3590 out 69 max 52 | g4off 0/0/0 g4base 3176/479/80",
+  "93(i93) taa 0.5  | l-b>4 band 4243 lake 45 solid 196 sky 183 hero 52 | l-o>4 band 3214 out 66 max 44 | g4off 1/1/5 g4base 58/36/35",
+  "94(i94) taa 0.5  | l-b>4 band 4737 lake 2154 solid 213 sky 161 hero 77 | l-o>4 band 2993 out 69 max 50 | g4off 0/0/0 g4base 446/91/49",
+  "95(i95) taa 0.5  | l-b>4 band 4999 lake 2507 solid 224 sky 125 hero 94 | l-o>4 band 2990 out 111 max 78 | g4off 0/0/0 g4base 527/147/93",
+  "96(i96) taa 0.5  | l-b>4 band 4453 lake 58 solid 236 sky 109 hero 107 | l-o>4 band 3222 out 100 max 36 | g4off 0/0/0 g4base 72/46/33",
+  "97(i97) taa 0.5  | l-b>4 band 5371 lake 1841 solid 232 sky 114 hero 174 | l-o>4 band 3836 out 167 max 64 | g4off 0/0/0 g4base 265/73/47",
+  "98(i98) taa 0.5  | l-b>4 band 5995 lake 4507 solid 344 sky 0 hero 183 | l-o>4 band 3834 out 102 max 54 | g4off 0/0/0 g4base 797/193/33",
+  "99(i99) taa 0.5  | l-b>4 band 5416 lake 66 solid 325 sky 1 hero 184 | l-o>4 band 4195 out 196 max 85 | g4off 0/0/0 g4base 61/35/36",
+  "100(i100) taa 0.5  | l-b>4 band 6061 lake 5379 solid 300 sky 2 hero 410 | l-o>4 band 4277 out 184 max 40 | g4off 0/0/0 g4base 1437/210/66",
+  "101(i101) taa 0.5  | l-b>4 band 7356 lake 13358 solid 301 sky 0 hero 986 | l-o>4 band 4041 out 282 max 34 | g4off 0/0/0 g4base 3577/566/68",
+  "102(i102) taa 0.5  | l-b>4 band 5436 lake 110 solid 346 sky 0 hero 338 | l-o>4 band 4379 out 311 max 39 | g4off 0/0/0 g4base 87/55/35",
+  "103(i103) taa 0.5  | l-b>4 band 6272 lake 5598 solid 362 sky 0 hero 532 | l-o>4 band 4226 out 241 max 91 | g4off 0/0/0 g4base 1522/269/67",
+  "104(i104) taa 0.5  | l-b>4 band 7964 lake 14324 solid 345 sky 0 hero 1401 | l-o>4 band 4414 out 210 max 43 | g4off 0/0/0 g4base 3735/822/87",
+  "105(i105) taa 0.5  | l-b>4 band 5509 lake 76 solid 366 sky 0 hero 244 | l-o>4 band 4368 out 234 max 57 | g4off 0/0/0 g4base 47/30/34",
+  "106(i106) taa 0.5  | l-b>4 band 6122 lake 4637 solid 314 sky 0 hero 866 | l-o>4 band 4324 out 198 max 93 | g4off 0/0/0 g4base 1160/208/76",
+  "107(i107) taa 0.5  | l-b>4 band 7624 lake 13080 solid 358 sky 0 hero 1794 | l-o>4 band 4439 out 167 max 46 | g4off 0/0/0 g4base 4156/768/65",
+  "108(i108) taa 0.5  | l-b>4 band 5412 lake 90 solid 391 sky 0 hero 238 | l-o>4 band 4441 out 255 max 45 | g4off 0/0/0 g4base 49/29/34",
+  "109(i109) taa 0.5  | l-b>4 band 6227 lake 4659 solid 376 sky 0 hero 590 | l-o>4 band 4455 out 315 max 96 | g4off 0/0/0 g4base 1096/178/66",
+  "110(i110) taa 0.5  | l-b>4 band 7110 lake 11019 solid 426 sky 0 hero 1641 | l-o>4 band 4186 out 327 max 55 | g4off 2/1/6 g4base 3312/509/66",
+  "111(i111) taa 0.5  | l-b>4 band 5524 lake 112 solid 388 sky 0 hero 406 | l-o>4 band 4393 out 440 max 46 | g4off 0/0/0 g4base 68/37/34",
+  "112(i112) taa 0.5  | l-b>4 band 6014 lake 3417 solid 401 sky 0 hero 717 | l-o>4 band 4400 out 404 max 59 | g4off 1/0/5 g4base 1177/260/59",
+  "113(i113) taa 0.5  | l-b>4 band 7070 lake 7012 solid 408 sky 0 hero 1341 | l-o>4 band 4525 out 448 max 46 | g4off 1/1/5 g4base 2535/556/72",
+  "114(i114) taa 0.5  | l-b>4 band 5531 lake 114 solid 426 sky 0 hero 423 | l-o>4 band 4402 out 461 max 55 | g4off 0/0/0 g4base 53/26/34",
+  "115(i115) taa 0.5  | l-b>4 band 6282 lake 2834 solid 458 sky 0 hero 1177 | l-o>4 band 4560 out 454 max 67 | g4off 2/1/8 g4base 1311/192/35",
+  "116(i116) taa 0.5  | l-b>4 band 6802 lake 5384 solid 370 sky 0 hero 1761 | l-o>4 band 4560 out 512 max 50 | g4off 1/1/5 g4base 2485/426/64",
+  "117(i117) taa 0.5  | l-b>4 band 5510 lake 105 solid 415 sky 0 hero 521 | l-o>4 band 4402 out 504 max 53 | g4off 2/1/6 g4base 60/30/41",
+  "118(i118) taa 0.5  | l-b>4 band 6101 lake 2374 solid 321 sky 137 hero 872 | l-o>4 band 4418 out 461 max 44 | g4off 0/0/0 g4base 808/176/42",
+  "119(i119) taa 0.5  | l-b>4 band 6651 lake 4000 solid 276 sky 144 hero 1165 | l-o>4 band 4377 out 474 max 42 | g4off 0/0/0 g4base 1655/399/71"
+ ],
+ "worstOff": [
+  {
+   "k": 66,
+   "x": 523,
+   "y": 731,
+   "e": -8,
+   "band": 1,
+   "hero": 0,
+   "l": [
+    91,
+    111,
+    139
+   ],
+   "o": [
+    97,
+    119,
+    147
+   ]
+  },
+  {
+   "k": 115,
+   "x": 527,
+   "y": 468,
+   "e": -8,
+   "band": 0,
+   "hero": 1,
+   "l": [
+    146,
+    164,
+    195
+   ],
+   "o": [
+    159,
+    176,
+    204
+   ]
+  },
+  {
+   "k": 54,
+   "x": 1108,
+   "y": 616,
+   "e": -7,
+   "band": 1,
+   "hero": 0,
+   "l": [
+    128,
+    144,
+    171
+   ],
+   "o": [
+    135,
+    150,
+    175
+   ]
+  },
+  {
+   "k": 87,
+   "x": 639,
+   "y": 474,
+   "e": -7,
+   "band": 0,
+   "hero": 1,
+   "l": [
+    124,
+    145,
+    171
+   ],
+   "o": [
+    131,
+    151,
+    176
+   ]
+  },
+  {
+   "k": 10,
+   "x": 99,
+   "y": 490,
+   "e": -6,
+   "band": 1,
+   "hero": 0,
+   "l": [
+    72,
+    93,
+    120
+   ],
+   "o": [
+    79,
+    99,
+    126
+   ]
+  },
+  {
+   "k": 15,
+   "x": 1172,
+   "y": 658,
+   "e": -6,
+   "band": 1,
+   "hero": 0,
+   "l": [
+    105,
+    127,
+    156
+   ],
+   "o": [
+    111,
+    132,
+    159
+   ]
+  },
+  {
+   "k": 70,
+   "x": 625,
+   "y": 548,
+   "e": -6,
+   "band": 0,
+   "hero": 1,
+   "l": [
+    181,
+    195,
+    214
+   ],
+   "o": [
+    188,
+    201,
+    218
+   ]
+  },
+  {
+   "k": 78,
+   "x": 1241,
+   "y": 587,
+   "e": -6,
+   "band": 1,
+   "hero": 0,
+   "l": [
+    117,
+    143,
+    172
+   ],
+   "o": [
+    123,
+    147,
+    174
+   ]
+  },
+  {
+   "k": 87,
+   "x": 638,
+   "y": 474,
+   "e": -6,
+   "band": 0,
+   "hero": 1,
+   "l": [
+    125,
+    145,
+    171
+   ],
+   "o": [
+    131,
+    151,
+    177
+   ]
+  },
+  {
+   "k": 91,
+   "x": 682,
+   "y": 490,
+   "e": -6,
+   "band": 0,
+   "hero": 1,
+   "l": [
+    110,
+    135,
+    167
+   ],
+   "o": [
+    120,
+    143,
+    174
+   ]
+  },
+  {
+   "k": 110,
+   "x": 510,
+   "y": 490,
+   "e": -6,
+   "band": 0,
+   "hero": 1,
+   "l": [
+    130,
+    148,
+    172
+   ],
+   "o": [
+    139,
+    156,
+    178
+   ]
+  },
+  {
+   "k": 117,
+   "x": 622,
+   "y": 542,
+   "e": -6,
+   "band": 0,
+   "hero": 1,
+   "l": [
+    141,
+    163,
+    191
+   ],
+   "o": [
+    148,
+    169,
+    196
+   ]
+  },
+  {
+   "k": 26,
+   "x": 598,
+   "y": 469,
+   "e": -5,
+   "band": 0,
+   "hero": 1,
+   "l": [
+    153,
+    172,
+    195
+   ],
+   "o": [
+    158,
+    176,
+    198
+   ]
+  },
+  {
+   "k": 31,
+   "x": 1116,
+   "y": 673,
+   "e": -5,
+   "band": 1,
+   "hero": 0,
+   "l": [
+    126,
+    145,
+    173
+   ],
+   "o": [
+    132,
+    150,
+    177
+   ]
+  },
+  {
+   "k": 41,
+   "x": 362,
+   "y": 713,
+   "e": -5,
+   "band": 1,
+   "hero": 0,
+   "l": [
+    115,
+    133,
+    160
+   ],
+   "o": [
+    120,
+    138,
+    164
+   ]
+  },
+  {
+   "k": 50,
+   "x": 496,
+   "y": 729,
+   "e": -5,
+   "band": 1,
+   "hero": 0,
+   "l": [
+    80,
+    94,
+    116
+   ],
+   "o": [
+    84,
+    99,
+    122
+   ]
+  },
+  {
+   "k": 56,
+   "x": 498,
+   "y": 728,
+   "e": -5,
+   "band": 1,
+   "hero": 0,
+   "l": [
+    78,
+    92,
+    114
+   ],
+   "o": [
+    82,
+    97,
+    120
+   ]
+  },
+  {
+   "k": 61,
+   "x": 36,
+   "y": 605,
+   "e": -5,
+   "band": 1,
+   "hero": 0,
+   "l": [
+    155,
+    171,
+    192
+   ],
+   "o": [
+    162,
+    178,
+    198
+   ]
+  },
+  {
+   "k": 93,
+   "x": 58,
+   "y": 600,
+   "e": -5,
+   "band": 1,
+   "hero": 0,
+   "l": [
+    130,
+    151,
+    177
+   ],
+   "o": [
+    135,
+    155,
+    180
+   ]
+  },
+  {
+   "k": 110,
+   "x": 390,
+   "y": 666,
+   "e": -5,
+   "band": 1,
+   "hero": 0,
+   "l": [
+    83,
+    107,
+    140
+   ],
+   "o": [
+    88,
+    111,
+    143
+   ]
+  },
+  {
+   "k": 112,
+   "x": 682,
+   "y": 479,
+   "e": -5,
+   "band": 0,
+   "hero": 1,
+   "l": [
+    100,
+    124,
+    152
+   ],
+   "o": [
+    107,
+    129,
+    155
+   ]
+  },
+  {
+   "k": 113,
+   "x": 394,
+   "y": 665,
+   "e": -5,
+   "band": 1,
+   "hero": 0,
+   "l": [
+    84,
+    108,
+    141
+   ],
+   "o": [
+    89,
+    113,
+    145
+   ]
+  },
+  {
+   "k": 115,
+   "x": 946,
+   "y": 717,
+   "e": -5,
+   "band": 1,
+   "hero": 0,
+   "l": [
+    146,
+    162,
+    184
+   ],
+   "o": [
+    151,
+    167,
+    187
+   ]
+  },
+  {
+   "k": 116,
+   "x": 397,
+   "y": 664,
+   "e": -5,
+   "band": 1,
+   "hero": 0,
+   "l": [
+    88,
+    112,
+    144
+   ],
+   "o": [
+    93,
+    116,
+    148
+   ]
+  },
+  {
+   "k": 117,
+   "x": 1206,
+   "y": 660,
+   "e": 5,
+   "band": 1,
+   "hero": 0,
+   "l": [
+    133,
+    153,
+    179
+   ],
+   "o": [
+    128,
+    149,
+    175
+   ]
+  }
+ ],
+ "worstBaseNonLake": [
+  {
+   "k": 87,
+   "x": 1274,
+   "y": 492,
+   "e": -43,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 89,
+   "x": 1280,
+   "y": 492,
+   "e": -42,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 109,
+   "x": 1244,
+   "y": 486,
+   "e": -42,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 0,
+   "x": 1200,
+   "y": 483,
+   "e": -41,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 1,
+   "x": 1200,
+   "y": 483,
+   "e": -41,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 6,
+   "x": 1201,
+   "y": 483,
+   "e": -41,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 14,
+   "x": 1212,
+   "y": 483,
+   "e": -41,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 17,
+   "x": 1220,
+   "y": 483,
+   "e": -41,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 21,
+   "x": 1233,
+   "y": 484,
+   "e": -41,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 26,
+   "x": 1253,
+   "y": 486,
+   "e": -41,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 34,
+   "x": 1289,
+   "y": 490,
+   "e": -41,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 36,
+   "x": 1298,
+   "y": 490,
+   "e": -41,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 44,
+   "x": 1334,
+   "y": 493,
+   "e": -41,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 47,
+   "x": 1345,
+   "y": 493,
+   "e": -41,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 59,
+   "x": 1344,
+   "y": 492,
+   "e": -41,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 66,
+   "x": 1321,
+   "y": 492,
+   "e": -41,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 68,
+   "x": 1313,
+   "y": 492,
+   "e": -41,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 83,
+   "x": 1268,
+   "y": 492,
+   "e": -41,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 117,
+   "x": 1224,
+   "y": 482,
+   "e": -41,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 2,
+   "x": 1200,
+   "y": 483,
+   "e": -40,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 18,
+   "x": 1223,
+   "y": 483,
+   "e": -40,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 22,
+   "x": 1237,
+   "y": 484,
+   "e": -40,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 31,
+   "x": 1275,
+   "y": 488,
+   "e": -40,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 41,
+   "x": 1321,
+   "y": 492,
+   "e": -40,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 45,
+   "x": 1338,
+   "y": 492,
+   "e": -40,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 52,
+   "x": 1353,
+   "y": 492,
+   "e": -40,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 55,
+   "x": 1352,
+   "y": 492,
+   "e": -40,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 71,
+   "x": 1300,
+   "y": 492,
+   "e": -40,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 91,
+   "x": 1287,
+   "y": 491,
+   "e": -40,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 103,
+   "x": 1270,
+   "y": 488,
+   "e": -40,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  }
+ ]
+}

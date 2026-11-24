@@ -1,0 +1,12 @@
+sw_hold_T  MAIN frame p99 255 p99.9 255 hero-box min-ch>=250  2.54%  >=248  2.83%
+sw_hold_T  LANE frame p99 255 p99.9 255 hero-box min-ch>=250  0.83%  >=248  0.98%
+sw_hold_TR MAIN frame p99 255 p99.9 255 hero-box min-ch>=250  0.82%  >=248  0.86%
+sw_hold_TR LANE frame p99 255 p99.9 255 hero-box min-ch>=250  4.09%  >=248  5.00%
+sw_hold_R  MAIN frame p99 255 p99.9 255 hero-box min-ch>=250  1.48%  >=248  1.75%
+sw_hold_R  LANE frame p99 255 p99.9 255 hero-box min-ch>=250  0.88%  >=248  1.59%
+sw_hold_B  MAIN frame p99 255 p99.9 255 hero-box min-ch>=250  0.83%  >=248  0.86%
+sw_hold_B  LANE frame p99 255 p99.9 255 hero-box min-ch>=250  0.85%  >=248  1.83%
+sw_hold_BL MAIN frame p99 255 p99.9 255 hero-box min-ch>=250  1.90%  >=248  2.38%
+sw_hold_BL LANE frame p99 255 p99.9 255 hero-box min-ch>=250  4.77%  >=248  6.30%
+sw_hold_L  MAIN frame p99 255 p99.9 255 hero-box min-ch>=250  1.56%  >=248  1.74%
+sw_hold_L  LANE frame p99 255 p99.9 255 hero-box min-ch>=250  0.92%  >=248  1.34%

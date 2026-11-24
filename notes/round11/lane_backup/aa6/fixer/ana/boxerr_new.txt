@@ -1,0 +1,6 @@
+medium 880,738,1070,766 NEW:   dark: events 7, px-frames 299, frames 112, dmax 32, nmax 6, spans k88-146 k131-151 k167-177 k145-154 k43-44 k189-191   bright: events 0, px-frames 0, frames 0, dmax 0, nmax 0 
+medium 50,525,185,590 NEW:   dark: events 13, px-frames 366, frames 50, dmax 82, nmax 19, spans k0-10 k207-210 k0-4 k206-211 k31-33 k10-10   bright: events 0, px-frames 0, frames 0, dmax 0, nmax 0 
+reverse 880,738,1070,766 NEW:   dark: events 5, px-frames 144, frames 26, dmax 27, nmax 16, spans k57-67 k103-108 k110-111 k113-116 k25-27   bright: events 0, px-frames 0, frames 0, dmax 0, nmax 0 
+reverse 50,525,185,590 NEW:   dark: events 15, px-frames 284, frames 54, dmax 83, nmax 16, spans k93-100 k18-22 k4-7 k74-78 k113-116 k7-8   bright: events 0, px-frames 0, frames 0, dmax 0, nmax 0 
+rest 880,738,1070,766 NEW:   dark: events 0, px-frames 0, frames 0, dmax 0, nmax 0   bright: events 0, px-frames 0, frames 0, dmax 0, nmax 0 
+rest 50,525,185,590 NEW:   dark: events 3, px-frames 190, frames 115, dmax 82, nmax 3, spans k0-39 k0-39 k0-34   bright: events 0, px-frames 0, frames 0, dmax 0, nmax 0 

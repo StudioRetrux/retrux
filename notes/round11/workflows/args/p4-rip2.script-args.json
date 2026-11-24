@@ -1,0 +1,29 @@
+{
+ "note": "script args for wf_1105aaab-a4b (p4-rip2.js); agents read the long text from p4pri2-rip2.args.json",
+ "args": {
+  "argsFile": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/args/p4pri2-rip2.args.json",
+  "brief": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/briefs/p4r4_common.md",
+  "brief2": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/briefs/p4pri2_common.md",
+  "round": "p4pri2",
+  "basePort": 5173,
+  "mainPort": 5179,
+  "exploreMin": 100,
+  "pickMin": 45,
+  "finishMin": 90,
+  "judgeMin": 50,
+  "fixMin": 60,
+  "rejudgeMin": 40,
+  "explorers": [
+   {
+    "key": "rxa",
+    "lane": "p4rxa",
+    "port": 5175
+   },
+   {
+    "key": "rxb",
+    "lane": "p4rxb",
+    "port": 5176
+   }
+  ]
+ }
+}

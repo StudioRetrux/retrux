@@ -1,0 +1,13 @@
+[slot] judge_wl2b:perf-sweep: taken (load 8.7)
+0 A {"held":null,"n":250,"med":21.600000000000364,"mean":23.8996,"p95":42.400000000001455,"boot":3763,"waited":46,"load0":6.7,"load1":9.7,"others":["judge_wl2f:fair-reverse-gt","judge_wl2f:t2-M"]} load 9.7
+0 B {"held":null,"n":231,"med":21.700000000000728,"mean":25.993073593073593,"p95":53.399999999999636,"boot":3596,"waited":45,"load0":8,"load1":7.1,"others":["judge_wl2f:fair-reverse-gt","judge_wl2f:hold-P"]} load 7.1
+# pair 0 invalid (load >= 10 or another perf job); valid so far 0/8
+1 B {"held":null,"n":229,"med":21.399999999999636,"mean":26.139737991266376,"p95":50.5,"boot":3892,"waited":46,"load0":6,"load1":6.9,"others":["judge_wl2f:rest-T1-P","judge_wl2f:hold-J","judge_wl2f:rest-T1-J"]} load 6.9
+1 A {"held":null,"n":200,"med":22.899999999999636,"mean":30.065499999999997,"p95":63.79999999999927,"boot":3557,"waited":46,"load0":10.9,"load1":12.6,"others":["judge_wl2f:s60","judge_wl2g:st-d1_L","judge_wl2g:st-d2_L"]} load 12.6
+# pair 1 invalid (load >= 10 or another perf job); valid so far 0/8
+2 A {"held":null,"n":285,"med":21,"mean":21.070526315789476,"p95":36.20000000000073,"boot":5682,"waited":45,"load0":10.2,"load1":13.7,"others":["judge_wl2g:ident","judge_wl2f:rl"]} load 13.7
+2 B {"held":null,"n":120,"med":47.399999999999636,"mean":50.13083333333334,"p95":82,"boot":4878,"waited":45,"load0":8.2,"load1":9.6,"others":["judge_wl2g:ident","judge_wl2f:rl"]} load 9.6
+# pair 2 invalid (load >= 10 or another perf job); valid so far 0/8
+3 B {"held":null,"n":240,"med":21.200000000000728,"mean":24.94875,"p95":51.20000000000073,"boot":3592,"waited":46,"load0":6.1,"load1":5.5,"others":["judge_wl2g:ident","judge_wl2f:perf-sweep","judge_wl2g:fair-fast"]} load 5.5
+3 A {"held":null,"n":263,"med":21,"mean":22.81901140684411,"p95":40.600000000000364,"boot":3517,"waited":46,"load0":3.8,"load1":4.3,"others":["judge_wl2g:fair-fast-gt","judge_wl2f:perf-sweep"]} load 4.3
+# pair 3 invalid (load >= 10 or another perf job); valid so far 0/8

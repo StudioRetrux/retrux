@@ -2,21 +2,21 @@
 //   node perf_probe.mjs [query, e.g. "tier=T1&scale=1"]
 import { createRequire } from "node:module";
 
-const SP = "C:/Users/fvldi/AppData/Local/Temp/claude/dc2ac90effee4131/570a569a-5122-4ff1-b51f-d34d42e5fde3/scratchpad";
+const SP = "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad";
 const require = createRequire(SP + "/tools/package.json");
 const { chromium } = require("playwright-core");
 const query = process.argv[2] || "";
 
 const browser = await chromium.launch({
-  executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+  executablePath: (process.env.CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"),
   headless: true,
-  args: ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"],
+  args: [(process.platform === "win32" ? "--use-angle=d3d11" : "--use-angle=metal"), "--enable-gpu", "--ignore-gpu-blocklist"],
 });
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 766 } });
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto(`http://localhost:5173/?${query}`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${(process.env.LAB || "http://localhost:5173")}/?${query}`, { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => document.documentElement.dataset.heroReady === "1", null, { timeout: 180000 });
   const sample = async (label, ms) => {
     const r = await page.evaluate(async (ms) => {

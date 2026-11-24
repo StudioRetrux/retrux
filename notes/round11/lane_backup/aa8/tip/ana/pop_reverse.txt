@@ -1,0 +1,50 @@
+### reverse mask=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work5/aa5b/caps/reverse_bmask gt=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work5/aa5b/caps/reverse_gt
+reverse_TIP vs reverse_A7: frames 120 (120/120), frames differing 120, px > 8: 87747, max 124, first 0, pose mismatches 0, W 1440/1440 rows 380-766/380-766
+A7: flagged px 2285, events >= 6 px: 66, px in them 967
+TIP: flagged px 2231, events >= 6 px: 64, px in them 946
+-- A7 top 6
+  k58-81 x942-1013 y751-763 n88 emax89 frames 58/6/60/-51 59/4/55/-52 60/3/58/-54 60/2/58/-51 ...
+  k73-85 x82-113 y544-550 n57 emax99 frames 73/1/61/100 74/5/70/64 75/3/92/118 75/2/65/-62 ...
+  k30-39 x141-159 y541-548 n31 emax134 frames 30/1/41/-53 31/5/134/-97 32/2/96/-104 33/2/132/-115 ...
+  k59-69 x124-149 y537-543 n36 emax102 frames 59/2/70/88 60/2/93/92 60/1/52/66 61/1/77/93 ...
+  k20-36 x550-591 y493-498 n50 emax67 frames 20/1/44/54 21/1/41/52 22/1/48/53 23/3/59/54 ...
+  k6-16 x1216-1231 y655-665 n43 emax63 frames 6/5/59/48 7/2/46/-42 8/4/61/51 9/5/63/49 ...
+-- TIP top 6
+  k58-81 x942-1013 y751-763 n88 emax89 frames 58/6/60/-51 59/4/55/-52 60/3/58/-54 60/2/58/-51 ...
+  k55-69 x124-153 y537-543 n50 emax136 frames 55/1/136/129 56/1/112/103 56/1/97/-90 57/4/72/28 ...
+  k30-49 x141-164 y538-548 n48 emax134 frames 30/1/41/-54 31/4/134/-106 32/1/53/-116 33/2/129/-114 ...
+  k72-83 x88-115 y544-550 n54 emax98 frames 72/1/72/-70 73/4/67/4 73/1/79/139 74/5/70/64 ...
+  k20-36 x550-591 y493-498 n49 emax67 frames 20/1/44/54 21/1/41/52 22/1/48/53 23/3/59/54 ...
+  k6-16 x1216-1231 y655-665 n43 emax63 frames 6/5/59/48 7/2/46/-42 8/4/61/51 9/5/63/49 ...
+-- popnew TIP vs A7 (new pops)
+new pops (X flagged, ref not, X != ref): 95 px, 51 clusters, >= 6 px: 3
+  k111-114 x1152-1155 y495-499 n10 emax60
+  k116-119 x1161-1167 y495-496 n7 emax65
+  k57-58 x149-151 y538-539 n5 emax66
+  k77-78 x1207-1210 y503-504 n5 emax64
+  k63-67 x227-238 y502-503 n6 emax51
+  k61-63 x138-143 y538-539 n3 emax86
+  k23-23 x1236-1238 y506-507 n3 emax57
+  k74-75 x637-642 y551-551 n3 emax49
+-- popnew A7 vs TIP (pops TIP removes)
+new pops (X flagged, ref not, X != ref): 121 px, 56 clusters, >= 6 px: 4
+  k64-67 x238-249 y501-503 n18 emax78
+  k101-102 x251-261 y502-504 n11 emax57
+  k8-8 x293-300 y497-498 n8 emax52
+  k52-52 x185-190 y500-503 n9 emax44
+-- v3err TIP vs A7 (thr 8, toward/away GT)
+frames 120 thr 8: lake+band px-frames 29741928; |X-R|>thr 78267; toward GT 42513, AWAY from GT 17753
+-- dark (away from GT): px 17038, events >= 6 px: 183
+  k11-62 (52f) x1198-1279 y498-542 n1884 nmax91 dmean-13 dmax53
+  k47-119 (73f) x438-541 y542-569 n1306 nmax25 dmean-15 dmax51
+  k15-78 (64f) x184-259 y500-517 n960 nmax43 dmean-17 dmax56
+  k105-119 (15f) x1016-1045 y477-520 n930 nmax173 dmean-13 dmax37
+  k6-35 (30f) x1059-1146 y477-519 n915 nmax129 dmean-13 dmax36
+  k69-98 (30f) x592-648 y547-559 n890 nmax64 dmean-17 dmax59
+-- bright (away from GT): px 715, events >= 6 px: 16
+  k9-17 (9f) x1084-1110 y512-533 n130 nmax31 dmean11 dmax21
+  k23-31 (9f) x1122-1143 y519-537 n130 nmax21 dmean11 dmax17
+  k69-73 (5f) x1105-1114 y515-534 n63 nmax19 dmean11 dmax19
+  k50-57 (8f) x149-160 y537-550 n60 nmax8 dmean21 dmax59
+  k16-25 (10f) x109-127 y544-555 n58 nmax13 dmean21 dmax112
+  k91-97 (7f) x57-70 y548-556 n52 nmax12 dmean19 dmax57

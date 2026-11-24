@@ -1,0 +1,4 @@
+#!/bin/zsh
+# ordinary pointer sweep (medium path, 120 frames) at render scale 0.8 and 0.7: AA8 / AA7 / BASE; rows 380-766
+cd /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/artrefl/tools; t0=$(date +%s)
+for s in 0.8 0.7; do for pl in "5199 A8" "5197 A7" "5182 BASE"; do set -- ${=pl}; node cap.mjs --port $1 --path medium --scale $s --rows 380,766 --frames 120 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/artrefl/caps/med${s//./}_$2 > /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/artrefl/logs/D2_${s}_$2.log 2>&1; done; echo "scale $s $(( $(date +%s) - t0 ))s"; done

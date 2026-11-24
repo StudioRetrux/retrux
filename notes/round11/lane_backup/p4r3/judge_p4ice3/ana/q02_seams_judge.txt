@@ -1,0 +1,4 @@
+r11_1/q02_loop30.png x540-620: min 181@585 fld 233 depth 22% width 35px | x830-890: min 152@869 fld 194 depth 22% width 15px
+r11_2/q02_loop30.png x540-620: min 172@584 fld 219 depth 21% width 8px | x830-890: min 150@864 fld 199 depth 24% width 11px
+qc_final/q02_loop30.png x540-620: min 143@585 fld 225 depth 36% width 10px | x830-890: min 124@864 fld 196 depth 37% width 10px
+reference/loop_F030.png x540-620: min 146@574 fld 231 depth 37% width 8px | x830-890: min 169@861 fld 188 depth 10% width 11px

@@ -1,0 +1,10 @@
+[slot] aa8-recheck R2 ctx waiting (load 3.7 / max 30, slots 3, holders [{"label":"!p4orb:identF2","pid":13413,"at":1795196663996,"slot":0},{"label":"aa8-recheck R1 caps","pid":13075,"at":1795196553467,"slot":1},{"label":"p4ice:perf2","pid":12595,"at":1795196485947,"slot":2}])
+[slot] aa8-recheck R2 ctx waiting (load 5.1 / max 30, slots 3, holders [{"label":"!p4orb:identF2","pid":13413,"at":1795196663996,"slot":0},{"label":"aa8-recheck R1 caps","pid":13075,"at":1795196553467,"slot":1},{"label":"p4ice:perf2","pid":12595,"at":1795196485947,"slot":2}])
+[slot] aa8-recheck R2 ctx waiting (load 17.3 / max 30, slots 3, holders [{"label":"p4env:g4d","pid":13590,"at":1795196754110,"slot":0},{"label":"lead:ptr","pid":13743,"at":1795196741034,"slot":1},{"label":"p4ice:perf2","pid":12595,"at":1795196485947,"slot":2}])
+[slot] aa8-recheck R2 ctx: taken (load 14.5)
+00:47:57 ctx def 40s
+00:48:35 ctx lktaa0 78s
+00:49:10 ctx envlakeplate 113s
+00:49:40 ctx t0 143s
+00:50:48 live 211s
+[slot] aa8-recheck R2 ctx: freed (exit 0)

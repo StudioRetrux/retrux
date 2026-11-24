@@ -1,0 +1,1 @@
+rl/a1b_L1: 300 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 27.2 p90 47.5 ms | mirror 298 walk 298 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p50 2.1/2.5/3.3 cap ms p50 0.0/0.1/0.2 gap p50/p90/max 27.2/47.5/59.0

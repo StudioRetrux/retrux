@@ -1,0 +1,10 @@
+rest         MAIN crys  14888 p95L 142.3 medSat 0.776 clip>=250     42 | lane crys  14783 p95L 153.0 medSat 0.778 clip>=250      2
+orb          MAIN crys  10499 p95L 152.5 medSat 0.628 clip>=250     66 | lane crys  10565 p95L 168.2 medSat 0.620 clip>=250    147
+top          MAIN crys  15036 p95L 144.5 medSat 0.773 clip>=250    276 | lane crys  15243 p95L 153.0 medSat 0.769 clip>=250    334
+top_right    MAIN crys  14594 p95L 150.9 medSat 0.782 clip>=250    220 | lane crys  15210 p95L 156.8 medSat 0.774 clip>=250    108
+right        MAIN crys  15304 p95L 148.2 medSat 0.776 clip>=250     34 | lane crys  15597 p95L 154.4 medSat 0.773 clip>=250     52
+bottom_right MAIN crys  15819 p95L 143.7 medSat 0.777 clip>=250    129 | lane crys  15688 p95L 148.0 medSat 0.778 clip>=250     22
+bottom       MAIN crys  15324 p95L 146.2 medSat 0.777 clip>=250     52 | lane crys  15080 p95L 153.4 medSat 0.780 clip>=250     73
+bottom_left  MAIN crys  16522 p95L 145.0 medSat 0.762 clip>=250      9 | lane crys  16716 p95L 150.1 medSat 0.761 clip>=250      3
+left         MAIN crys  16315 p95L 146.6 medSat 0.754 clip>=250     19 | lane crys  16669 p95L 159.4 medSat 0.748 clip>=250     13
+top_left     MAIN crys  15084 p95L 145.7 medSat 0.770 clip>=250      2 | lane crys  15151 p95L 157.4 medSat 0.769 clip>=250      3

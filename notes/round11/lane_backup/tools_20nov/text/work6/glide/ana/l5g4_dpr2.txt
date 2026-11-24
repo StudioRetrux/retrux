@@ -1,0 +1,2 @@
+dpr2/a6 vs dpr2/raw: frames 89, W 1800: G4 27 px = 0.35 per Mpx-frame; on band 0 (0.00 per M band px); dark 16 bright 11; max excess 15; excess hist 4-8,8-12,..,>24: 21,3,3,0,0,0
+  hot >= 12: k3(598,602)15 k4(552,605)14 k77(858,686)-13

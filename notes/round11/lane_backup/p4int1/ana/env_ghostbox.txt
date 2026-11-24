@@ -1,0 +1,21 @@
+m8/ptr_right.png            mean [145.5 164.8 188.9] luma 162.4 p10 86.8 min 79 sd 50.42 n<50 0
+l/ptr_right.png            mean [146.  165.  188.8] luma 162.7 p10 86.9 min 79 sd 50.57 n<50 0
+i/ptr_right.png            mean [146.  165.  188.8] luma 162.7 p10 86.9 min 79 sd 50.57 n<50 0
+m8/ptr_bottom_right.png     mean [136.6 156.3 181.4] luma 153.9 p10 94.4 min 80 sd 47.58 n<50 0
+l/ptr_bottom_right.png     mean [137.1 156.5 181.3] luma 154.1 p10 94.4 min 80 sd 47.80 n<50 0
+i/ptr_bottom_right.png     mean [137.1 156.5 181.3] luma 154.1 p10 94.4 min 80 sd 47.80 n<50 0
+m8/ptr_top_left.png         mean [150.3 164.2 183.9] luma 162.7 p10 125.8 min 50 sd 33.61 n<50 1
+l/ptr_top_left.png         mean [152.6 165.4 183.5] luma 164.0 p10 129.2 min 65 sd 32.49 n<50 0
+i/ptr_top_left.png         mean [152.6 165.4 183.5] luma 164.0 p10 129.2 min 65 sd 32.49 n<50 0
+  ptr_right            box 1180,290,250,140: max 0 n>2 0 n>0 0 of 35000
+  ptr_top_right        box 1180,290,250,140: max 0 n>2 0 n>0 0 of 35000
+  ptr_bottom_right     box 1180,290,250,140: max 1 n>2 0 n>0 14 of 35000
+  late90_right         box 1180,290,250,140: max 3 n>2 1 n>0 711 of 35000
+  late150_right        box 1180,290,250,140: max 4 n>2 16 n>0 806 of 35000
+  late150_top_right    box 1180,290,250,140: max 3 n>2 1 n>0 300 of 35000
+  ptr_left             box 0,250,330,200: max 1 n>2 0 n>0 1116 of 66000
+  ptr_top_left         box 0,250,330,200: max 1 n>2 0 n>0 567 of 66000
+  ptr_bottom_left      box 0,250,330,200: max 1 n>2 0 n>0 1417 of 66000
+  late90_left          box 0,250,330,200: max 1 n>2 0 n>0 611 of 66000
+  late150_left         box 0,250,330,200: max 1 n>2 0 n>0 2 of 66000
+  late90_bottom_left   box 0,250,330,200: max 1 n>2 0 n>0 706 of 66000

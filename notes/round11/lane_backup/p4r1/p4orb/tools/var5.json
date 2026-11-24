@@ -1,0 +1,5 @@
+[
+ {"name": "c", "js": "(()=>{const h=__hero,u=h.orb.material.uniforms;h.orb.holdCut=0.9;u.uP4Orb.value.y=2.5;u.uP4OrbB.value.x=8;u.uHoldFill.value.z=0.8;u.uShadeFloor.value=0.25;h.shards.material.uniforms.uP4ShB.value.set(0.8,0.5,0.7,0.4);h.post.holdGlowK=2.5;})()"},
+ {"name": "f", "js": "(()=>{const h=__hero,u=h.orb.material.uniforms;u.uR11OrbB.value.z=0.8;u.uP4Orb.value.z=1.5;u.uP4OrbB.value.y=0.6;h.shards.material.uniforms.uP4ShB.value.set(0.8,0.6,0.7,0.4);})()"},
+ {"name": "g", "js": "(()=>{const h=__hero,u=h.orb.material.uniforms;u.uR11OrbB.value.z=0.6;u.uR11Orb.value.w=0.4;u.uP4Orb.value.z=1.0;u.uP4OrbB.value.y=0.5;h.shards.material.uniforms.uP4ShB.value.set(0.8,0.7,0.7,0.45);})()"}
+]

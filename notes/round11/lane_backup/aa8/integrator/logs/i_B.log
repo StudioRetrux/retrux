@@ -1,0 +1,17 @@
+[slot] aa8-integ B: taken (load 3.7)
+23:39:49 done --port 5199 --qs lkglide=0&mirrorcost=0 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/integ/ident/i8_g0mc0.json
+23:40:01 done --port 5196 --qs lkglide=0 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/integ/ident/a6_g0.json
+23:40:14 done --port 5199 --qs lkglide=0 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/integ/ident/i8_g0.json
+23:40:27 done --port 5197 --qs lkglide=0 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/integ/ident/a7_g0.json
+23:40:41 done --port 5199 --qs aaresolve=0&slabflash=0&lktaa=0&lkglide=0&ffblock=0 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/integ/ident/i8_all5.json
+23:40:54 done --port 5197 --qs aaresolve=0&slabflash=0&lktaa=0&lkglide=0&ffblock=0 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/integ/ident/a7_all5.json
+23:41:07 done --port 5199 --qs lktaa=0 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/integ/ident/i8_lktaa0.json
+23:41:20 done --port 5197 --qs lktaa=0 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/integ/ident/a7_lktaa0.json
+23:41:33 done --port 5199 --qs aaresolve=0 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/integ/ident/i8_ar0.json
+23:41:46 done --port 5197 --qs aaresolve=0 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/integ/ident/a7_ar0.json
+23:42:00 done --port 5199 --qs ffbd0=0&ffbd1=0.01&ffbl=1 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/integ/ident/i8_ffblab.json
+23:42:13 done --port 5197 --qs ffbd0=0&ffbd1=0.01&ffbl=1 --pre window.__hero.pipeline.aa.read.uAAKnee.value = 0.6 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/integ/ident/a7k_ffblab.json
+23:42:25 done --port 5199 --nodebug --qs ffbd0=0&ffbd1=0.01&ffbl=1 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/integ/ident/i8_nodbg_ffblab.json
+23:42:38 done --port 5197 --nodebug --qs ffbd0=0&ffbd1=0.01&ffbl=1 --pre window.__hero.pipeline.aa.read.uAAKnee.value = 0.6 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/integ/ident/a7k_nodbg_ffblab.json
+i_B 182s
+[slot] aa8-integ B: freed (exit 0)

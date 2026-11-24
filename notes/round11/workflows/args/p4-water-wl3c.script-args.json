@@ -1,0 +1,15 @@
+{
+ "note": "Workflow args for p4-water-wl3c.js (pass .args verbatim on resume)",
+ "args": {
+  "argsFile": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/args/p4wl3-water.args.json",
+  "prevArgs": [
+   "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/args/p4wl-water.args.json",
+   "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/args/p4wl2-water.args.json"
+  ],
+  "brief": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/briefs/p4r4_common.md",
+  "brief2": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/briefs/p4pri2_common.md",
+  "fixMin": 75,
+  "judgeMin": 45,
+  "rejudgeMin": 40
+ }
+}

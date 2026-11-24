@@ -1,0 +1,3 @@
+#!/bin/zsh
+# hitch (real loop) lane vs base, 3 reps interleaved
+node /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/judge/perf/tools/hitch.mjs --runs "lane=5181,base=5182" --reps 3 --vw 1440 --vh 766 --qs "scale=1" --rest 8000 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/judge/perf/hitch/hitch_1440.json > /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/judge/perf/hitch/hitch_1440.out 2>&1

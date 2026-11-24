@@ -1,0 +1,36 @@
+[slot] wl3c:perf-sweep: taken (load 2.7)
+0 A {"held":null,"n":303,"med":19.5,"mean":19.745214521452144,"p95":36.100000000000364,"boot":3571,"waited":0,"load0":2.7,"load1":2.6,"others":[]} load 2.6
+0 B {"held":null,"n":289,"med":20.100000000000364,"mean":20.767128027681665,"p95":35.900000000001455,"boot":3555,"waited":0,"load0":2.5,"load1":3.1,"others":[]} load 3.1
+# pair 0 VALID; valid so far 1/10
+1 B {"held":null,"n":293,"med":20.199999999999818,"mean":20.5358361774744,"p95":35.600000000000364,"boot":3609,"waited":0,"load0":2.9,"load1":2.8,"others":[]} load 2.8
+1 A {"held":null,"n":304,"med":19.5,"mean":19.738157894736844,"p95":35.79999999999927,"boot":3583,"waited":0,"load0":2.7,"load1":2.9,"others":[]} load 2.9
+# pair 1 VALID; valid so far 2/10
+2 A {"held":null,"n":303,"med":19.5,"mean":19.742904290429042,"p95":36,"boot":3729,"waited":0,"load0":2.7,"load1":3.7,"others":[]} load 3.7
+2 B {"held":null,"n":293,"med":20.100000000000364,"mean":20.528668941979525,"p95":36.100000000000364,"boot":3588,"waited":0,"load0":3.7,"load1":3.6,"others":[]} load 3.6
+# pair 2 VALID; valid so far 3/10
+3 B {"held":null,"n":288,"med":20.700000000000728,"mean":20.911458333333332,"p95":35.29999999999927,"boot":3476,"waited":0,"load0":3.4,"load1":11,"others":[]} load 11.0
+3 A {"held":null,"n":301,"med":19.899999999999636,"mean":19.934219269102993,"p95":35.70000000000073,"boot":3568,"waited":9,"load0":8.7,"load1":7.6,"others":[]} load 7.6
+# pair 3 invalid (load >= 10 or another perf job); valid so far 3/10
+4 A {"held":null,"n":301,"med":20.200000000000728,"mean":19.984053156146175,"p95":35.5,"boot":3605,"waited":0,"load0":6.8,"load1":6.2,"others":[]} load 6.2
+4 B {"held":null,"n":293,"med":20.19999999999891,"mean":20.50784982935153,"p95":35.900000000001455,"boot":3716,"waited":0,"load0":5.5,"load1":5.1,"others":[]} load 5.1
+# pair 4 VALID; valid so far 4/10
+5 B {"held":null,"n":293,"med":20.100000000000364,"mean":20.483617747440274,"p95":35.5,"boot":3605,"waited":0,"load0":4.9,"load1":4.6,"others":[]} load 4.6
+5 A {"held":null,"n":305,"med":19.599999999998545,"mean":19.664918032786886,"p95":35.5,"boot":3589,"waited":0,"load0":4.5,"load1":4.1,"others":[]} load 4.1
+# pair 5 VALID; valid so far 5/10
+6 A {"held":null,"n":281,"med":21.19999999999891,"mean":21.334519572953738,"p95":33.80000000000018,"boot":3742,"waited":0,"load0":3.8,"load1":3.5,"others":[]} load 3.5
+6 B {"held":null,"n":290,"med":20.399999999999636,"mean":20.694482758620687,"p95":36,"boot":3737,"waited":0,"load0":3.2,"load1":3.4,"others":[]} load 3.4
+# pair 6 VALID; valid so far 6/10
+7 B {"held":null,"n":292,"med":20.19999999999891,"mean":20.506849315068493,"p95":35.70000000000073,"boot":3544,"waited":0,"load0":3.2,"load1":3,"others":[]} load 3.0
+7 A {"held":null,"n":304,"med":19.299999999999272,"mean":19.770723684210523,"p95":35.899999999999636,"boot":3561,"waited":0,"load0":2.8,"load1":2.8,"others":[]} load 2.8
+# pair 7 VALID; valid so far 7/10
+8 A {"held":null,"n":281,"med":21.100000000000364,"mean":21.27259786476868,"p95":33.600000000000364,"boot":3589,"waited":0,"load0":2.7,"load1":3.5,"others":[]} load 3.5
+8 B {"held":null,"n":293,"med":20.200000000000728,"mean":20.52354948805461,"p95":35.600000000000364,"boot":3588,"waited":0,"load0":3.4,"load1":3.4,"others":[]} load 3.4
+# pair 8 VALID; valid so far 8/10
+9 B {"held":null,"n":294,"med":20.100000000000364,"mean":20.456122448979592,"p95":35.30000000000109,"boot":3825,"waited":0,"load0":3.5,"load1":3.2,"others":[]} load 3.2
+9 A {"held":null,"n":301,"med":20,"mean":19.880066445182724,"p95":35.69999999999891,"boot":3587,"waited":0,"load0":3,"load1":3,"others":[]} load 3.0
+# pair 9 VALID; valid so far 9/10
+10 A {"held":null,"n":304,"med":19.299999999999272,"mean":19.72532894736842,"p95":35.70000000000073,"boot":3589,"waited":0,"load0":2.8,"load1":2.6,"others":[]} load 2.6
+10 B {"held":null,"n":293,"med":20.099999999998545,"mean":20.49590443686007,"p95":35.5,"boot":3516,"waited":0,"load0":3.1,"load1":4.2,"others":[]} load 4.2
+# pair 10 VALID; valid so far 10/10
+{"valid":10,"pairs":11,"paired_med":1.0307692307692495,"paired_mean":1.0390652795473128,"A_med":19.599999999998545,"B_med":20.19999999999891,"A_boot":3589,"B_boot":3588}
+[slot] wl3c:perf-sweep: freed (exit 0)

@@ -1,0 +1,130 @@
+[
+ {
+  "dsf": 1,
+  "before": {
+   "buffer": [
+    1440,
+    766
+   ],
+   "pixelRatio": 1,
+   "mean": 207.3,
+   "darkPx": 0,
+   "taaWeights": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "main": [
+    1440,
+    766
+   ]
+  },
+  "afterResize": {
+   "buffer": [
+    1100,
+    700
+   ],
+   "pixelRatio": 1,
+   "mean": 187.4,
+   "darkPx": 0,
+   "taaWeights": [
+    0.5,
+    0.5
+   ],
+   "main": [
+    1100,
+    700
+   ]
+  },
+  "back": {
+   "buffer": [
+    1440,
+    766
+   ],
+   "pixelRatio": 1,
+   "mean": 182,
+   "darkPx": 0,
+   "taaWeights": [
+    0.5,
+    0.5
+   ],
+   "main": [
+    1440,
+    766
+   ]
+  },
+  "logs": []
+ },
+ {
+  "dsf": 2,
+  "before": {
+   "buffer": [
+    1800,
+    957
+   ],
+   "pixelRatio": 1.25,
+   "mean": 207.7,
+   "darkPx": 0,
+   "taaWeights": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "main": [
+    1800,
+    957
+   ]
+  },
+  "afterResize": {
+   "buffer": [
+    1375,
+    875
+   ],
+   "pixelRatio": 1.25,
+   "mean": 187.1,
+   "darkPx": 0,
+   "taaWeights": [
+    0.5,
+    0.5
+   ],
+   "main": [
+    1375,
+    875
+   ]
+  },
+  "back": {
+   "buffer": [
+    1800,
+    957
+   ],
+   "pixelRatio": 1.25,
+   "mean": 182,
+   "darkPx": 0,
+   "taaWeights": [
+    0.5,
+    0.5
+   ],
+   "main": [
+    1800,
+    957
+   ]
+  },
+  "logs": []
+ },
+ {
+  "live": {
+   "fps": 31.366398745710562,
+   "tier": "T1",
+   "scale": 0.7000000000000001,
+   "taa": {
+    "weight": 0.5,
+    "runs": 399,
+    "still": 0,
+    "valid": true
+   }
+  },
+  "logs": []
+ }
+]

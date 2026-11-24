@@ -1,0 +1,29 @@
+[slot] judge-artrefl aa8 B waiting (load 10.1 / max 30, slots 3, holders [{"label":"judge8-motion M2","pid":87211,"at":1795193406606,"slot":0},{"label":"judge-artrefl aa8 A","pid":88331,"at":1795193443480,"slot":1},{"label":"judge8-motion E1","pid":87212,"at":1795193346573,"slot":2}])
+[slot] judge-artrefl aa8 B waiting (load 11.4 / max 30, slots 3, holders [{"label":"judge8-motion M2","pid":87211,"at":1795193406606,"slot":0},{"label":"judge-artrefl aa8 A","pid":88331,"at":1795193443480,"slot":1},{"label":"judge8-motion E1","pid":87212,"at":1795193346573,"slot":2}])
+[slot] judge-artrefl aa8 B: taken (load 15.9)
+rest8 22s
+rest7 44s
+hold8 139s
+hold7 243s
+[slot] judge-artrefl aa8 B: freed (exit 0)
+23:56:32 B done
+[slot] judge-artrefl aa8 D1: taken (load 18.9)
+ctx 66s
+mf8 97s
+mf7 127s
+mfb 194s
+[slot] judge-artrefl aa8 D1: freed (exit 0)
+23:59:46 D1 done
+[slot] judge-artrefl aa8 D2: taken (load 16.5)
+scale 0.8 112s
+scale 0.7 227s
+[slot] judge-artrefl aa8 D2: freed (exit 0)
+00:03:33 D2 done
+[slot] judge-artrefl aa8 E: taken (load 22.9)
+rf8 23s
+rf7 47s
+rfb 79s
+slow8 130s
+[slot] judge-artrefl aa8 E: freed (exit 0)
+00:05:43 E done
+CHAIN2_DONE

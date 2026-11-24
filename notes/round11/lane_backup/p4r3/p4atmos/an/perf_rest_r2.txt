@@ -1,0 +1,9 @@
+== ab_rest_r2.txt: 6 pairs
+  pair 0: A med 54.6 mean 52.29 p95 133.0 n 115 (load 9.5) | B med 53.2 mean 48.47 p95 115.8 n 124 (load 10.0) | ratio med 0.974 mean 0.927  [load >= 10]
+  pair 1: A med 73.1 mean 74.20 p95 172.7 n 80 (load 15.9) | B med 33.1 mean 35.67 p95 75.7 n 169 (load 9.5) | ratio med 0.453 mean 0.481  [load >= 10]
+  pair 2: A med 73.3 mean 75.54 p95 167.5 n 80 (load 13.7) | B med 73.9 mean 77.33 p95 162.3 n 77 (load 13.3) | ratio med 1.008 mean 1.024  [load >= 10]
+  pair 3: A med 73.2 mean 75.58 p95 167.7 n 79 (load 50.1) | B med 72.0 mean 76.15 p95 167.1 n 79 (load 26.3) | ratio med 0.984 mean 1.007  [load >= 10]
+  pair 4: A med 73.1 mean 77.27 p95 165.3 n 77 (load 46.2) | B med 32.8 mean 35.54 p95 78.3 n 169 (load 33.2) | ratio med 0.449 mean 0.460  [load >= 10]
+  pair 5: A med 36.5 mean 39.27 p95 81.5 n 153 (load 19.6) | B med 32.9 mean 35.73 p95 75.6 n 168 (load 24.5) | ratio med 0.901 mean 0.910  [load >= 10]
+  median of medians A 73.10 ms  B 43.15 ms  (ratio 0.590); median of means A 74.87 B 42.10 (ratio 0.562)
+  paired ratio medians: med 0.938, mean 0.918; load < 10 pairs (0): med nan, mean nan

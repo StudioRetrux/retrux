@@ -1,0 +1,36 @@
+### medium  mask=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work5/aa5b/caps/medium_bmask gt=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/aa3/caps/medium_gt fix=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work6/integ/caps/medium_A6g0f0
+A7: flagged px 3296, events >= 6 px: 102, px in them 1420
+A6: flagged px 2984, events >= 6 px: 98, px in them 1254
+FIX1: flagged px 10483, events >= 6 px: 237, px in them 7866
+-- A7 top 12
+-- A6 top 12
+-- FIX1 top 12
+-- popnew A7 vs FIX1
+new pops (X flagged, ref not, X != ref): 304 px, 179 clusters, >= 6 px: 6
+  k14-14 x565-575 y517-517 n11 emax66
+  k40-42 x1415-1416 y511-513 n5 emax77
+  k222-225 x1235-1243 y678-681 n8 emax48
+  k79-79 x918-922 y470-472 n7 emax49
+  k231-232 x1241-1246 y684-685 n6 emax56
+  k152-152 x1417-1418 y505-507 n4 emax78
+  k218-220 x1235-1243 y672-676 n6 emax52
+  k203-203 x954-956 y476-478 n6 emax51
+-- popnew A7 vs A6
+new pops (X flagged, ref not, X != ref): 2 px, 2 clusters, >= 6 px: 0
+  k196-196 x1167-1167 y513-513 n1 emax42
+  k33-33 x464-464 y566-566 n1 emax41
+-- popnew A6 vs FIX1
+new pops (X flagged, ref not, X != ref): 215 px, 117 clusters, >= 6 px: 5
+  k14-14 x565-575 y517-517 n11 emax66
+  k152-152 x1417-1418 y505-507 n5 emax78
+  k40-42 x1415-1416 y511-513 n5 emax77
+-- v3err A7 vs A6 (thr 8, toward/away GT)
+frames 240 thr 8: lake+band px-frames 59387349; |X-R|>thr 21609; toward GT 5006, AWAY from GT 13177
+-- dark (away from GT): px 6, events >= 6 px: 0
+-- bright (away from GT): px 13171, events >= 6 px: 210
+  k4-239 (236f) x425-572 y545-583 n4766 nmax29 dmean9 dmax13
+  k11-57 (47f) x586-661 y531-555 n562 nmax34 dmean9 dmax12
+  k78-124 (47f) x189-206 y498-498 n514 nmax15 dmean10 dmax12
+  k117-190 (74f) x570-588 y544-544 n471 nmax9 dmean8 dmax9
+  k117-203 (87f) x351-387 y694-713 n425 nmax8 dmean10 dmax13
+  k148-188 (41f) x255-276 y502-502 n389 nmax14 dmean10 dmax11

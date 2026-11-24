@@ -7,15 +7,17 @@ const WAVELENGTH = 24;
 const WIDTH = 96;
 const HEIGHT = 15;
 /**
- * Amplitude in px. Muted (the default) is the Figma glyph itself, a still sine (crest 6 px, trough 18 px from
- * the window's left edge at phase 0); playing scrolls it, a little taller.
+ * Amplitude in px. User, 19 Nov: "kalo ga nyala ensure gelombangnya jadi garis, pas nyala gelombang iconnya do as is,
+ * ensure seamless perubahan bentuknya": muted is a flat line (a hair above 0: an exactly singular scale can drop
+ * the non-scaling stroke), playing is the scrolling wave as before; the wave flattens / grows while the scroll
+ * slows / speeds up, one eased morph.
  */
 const AMP_ON = 2.6;
-const AMP_OFF = 2.1;
+const AMP_OFF = 0.001;
 /** Seconds per wavelength of scroll while playing. */
 const PERIOD = 1.1;
-/** Play / mute transition, seconds. */
-const TRANSITION = 0.4;
+/** Play / mute morph, seconds. */
+const TRANSITION = 0.6;
 
 export type SoundWave = {
   /** Eases between the scrolling wave (true) and the still, near-flat line (false). */
@@ -39,7 +41,7 @@ function sinePath() {
 
 /**
  * Mounts the Figma "Wave" icon in `container` (the 24 x 15 clip window): a white 1.5 px sine that
- * scrolls in a seamless loop while playing and eases to the still Figma glyph when muted. Starts
+ * scrolls in a seamless loop while playing and flattens into a straight line when muted. Starts
  * muted; the rAF loop only runs while scrolling or transitioning.
  */
 export function mountSoundWave(container: HTMLElement): SoundWave {

@@ -1,0 +1,3 @@
+[slot] !judge-perf:rt waiting (load 10.6 / max 24, slots 2, holders [{"label":"judge-artifacts:dpr2","pid":34657,"at":1795160954267,"slot":0},{"label":"aa4x batch3","pid":34940,"at":1795160972210,"slot":1}])
+[slot] !judge-perf:rt: taken (load 12.4)
+[slot] !judge-perf:rt: freed (exit 0)

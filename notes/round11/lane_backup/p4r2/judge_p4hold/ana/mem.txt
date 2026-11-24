@@ -1,0 +1,17 @@
+{"name":"main","afterRestore":{"lost":false,"restoring":null,"panoAfter":4194304},"all2":[[8239968,23752103],[8239968,23752103],[8240208,23752103]]}
+{"name":"main","port":"5199","qs":"","panoHeld":4194304,"usedMB":8.389,"backingMB":22.651,"embedderMB":1.171,"all":[[8794136,23751194],[8792192,23751194],[8796688,23751194]]}
+{"name":"lane","afterRestore":{"lost":false,"restoring":false,"panoAfter":0},"all2":[[9107988,19562107],[9228536,19562107],[9125776,19562107]]}
+{"name":"lane","port":"5178","qs":"","panoHeld":0,"usedMB":8.244,"backingMB":18.655,"embedderMB":1.064,"all":[[8728640,19560957],[8739804,19560957],[8644300,19560957]]}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+page.goto: Timeout 30000ms exceeded.
+Call log:
+  - navigating to "http://localhost:5178/?tier=T1&scale=1&panokeep=1", waiting until "domcontentloaded"
+
+    at /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4hold/tools/memprobe2.mjs:13:16 {
+  name: 'TimeoutError'
+}
+
+Node.js v24.13.0

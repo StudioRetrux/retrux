@@ -1,0 +1,18 @@
+== ab_rest.txt: 6 pairs
+  pair 0: A med 30.4 mean 34.30 p95 75.0 n 174 (load 6.4) | B med 31.9 mean 35.17 p95 73.7 n 172 (load 6.6) | ratio med 1.049 mean 1.025
+  pair 1: A med 31.6 mean 34.52 p95 78.4 n 173 (load 10.7) | B med 33.0 mean 35.71 p95 73.4 n 167 (load 9.2) | ratio med 1.044 mean 1.035  [load >= 10]
+  pair 2: A med 48.9 mean 48.15 p95 120.1 n 125 (load 17.2) | B med 65.1 mean 64.06 p95 121.2 n 93 (load 14.7) | ratio med 1.331 mean 1.330  [load >= 10]
+  pair 3: A med 48.4 mean 48.80 p95 115.8 n 123 (load 13.2) | B med 57.1 mean 53.97 p95 133.4 n 113 (load 13.0) | ratio med 1.180 mean 1.106  [load >= 10]
+  pair 4: A med 38.1 mean 43.07 p95 89.0 n 139 (load 12.6) | B med 43.9 mean 47.56 p95 94.8 n 126 (load 11.9) | ratio med 1.152 mean 1.104  [load >= 10]
+  pair 5: A med 36.7 mean 43.78 p95 104.4 n 139 (load 13.8) | B med 38.5 mean 43.08 p95 97.6 n 139 (load 14.5) | ratio med 1.049 mean 0.984  [load >= 10]
+  median of medians A 37.40 ms  B 41.20 ms  (ratio 1.102); median of means A 43.43 B 45.32 (ratio 1.044)
+  paired ratio medians: med 1.101, mean 1.069; load < 10 pairs (1): med 1.049, mean 1.025
+== ab_move.txt: 6 pairs
+  pair 0: A med 49.5 mean 50.04 p95 106.1 n 121 (load 13.5) | B med 42.3 mean 43.26 p95 85.5 n 139 (load 13.2) | ratio med 0.855 mean 0.864  [load >= 10]
+  pair 1: A med 43.5 mean 45.75 p95 103.3 n 132 (load 13.6) | B med 42.1 mean 43.82 p95 84.1 n 137 (load 11.2) | ratio med 0.968 mean 0.958  [load >= 10]
+  pair 2: A med 42.5 mean 41.98 p95 80.0 n 143 (load 13.3) | B med 43.3 mean 44.38 p95 100.7 n 136 (load 10.6) | ratio med 1.019 mean 1.057  [load >= 10]
+  pair 3: A med 45.9 mean 46.53 p95 107.2 n 129 (load 8.0) | B med 48.4 mean 44.42 p95 72.9 n 136 (load 9.2) | ratio med 1.054 mean 0.955
+  pair 4: A med 45.7 mean 46.07 p95 78.7 n 131 (load 7.1) | B med 43.1 mean 44.89 p95 112.0 n 135 (load 7.1) | ratio med 0.943 mean 0.974
+  pair 5: A med 45.6 mean 43.16 p95 77.4 n 140 (load 8.9) | B med 43.2 mean 43.95 p95 84.9 n 137 (load 6.7) | ratio med 0.947 mean 1.018
+  median of medians A 45.65 ms  B 43.15 ms  (ratio 0.945); median of means A 45.91 B 44.16 (ratio 0.962)
+  paired ratio medians: med 0.958, mean 0.966; load < 10 pairs (3): med 0.947, mean 0.974

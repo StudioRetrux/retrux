@@ -1,0 +1,51 @@
+== slow  texLake 1.0075 texSolid 1.0001
+   FS:-74.4(gate -50; GT -94; fix -75) mce 2.781 vs fix 3.000 GT 2.980 [j32 -22/GT -15, j48 -42/GT -12]
+   WR:-73.9(gate -50; GT -89; fix -74) [j32 -32/GT -25, j48 -32/GT -39]
+   DR:-87.3(gate -50; GT -87; fix -84) [j32 -36/GT -5, j48 -84/GT -25]
+   FF:-83.0(gate -50; GT -55; fix -73) [j32 -82/GT -35, j48 -91/GT -64]
+   FR:-74.0(gate -50; GT -58; fix -52) [j32 -84/GT -66, j48 -87/GT -82]
+   RS:-90.2(gate -50; GT -73; fix -86) [j32 -62/GT -49, j48 -69/GT -71]
+   tot:-82.1(gate -50; GT -61; fix -73) [j32 -62/GT -29, j48 -81/GT -55]
+== medium  texLake 1.0106 texSolid 0.9999
+   FS:-82.4(gate -50; GT -68; fix -83) mce 2.117 vs fix 2.281 GT 2.268 [j32 -10/GT -9, j48 -5/GT -1]
+   WR:-68.3(gate -50; GT -68; fix -65) [j32 -20/GT -13, j48 -21/GT -16]
+   DR:-86.4(gate -50; GT -73; fix -81) [j32 -10/GT -8, j48 -18/GT -10]
+   FF:-84.3(gate -50; GT -59; fix -74) [j32 -45/GT -17, j48 -68/GT -35]
+   FR:-72.6(gate -50; GT -66; fix -60) [j32 -44/GT -17, j48 -61/GT -34]
+   RS:-90.8(gate -50; GT -83; fix -87) [j32 -37/GT -19, j48 -34/GT -9]
+   tot:-82.0(gate -50; GT -62; fix -73) [j32 -33/GT -14, j48 -47/GT -25]
+== fast  texLake 1.0108 texSolid 0.9999
+   FS:-21.7(gate -20; GT -25; fix -36) mce 3.767 vs fix 3.936 GT 4.027 [j32 -4/GT -6, j48 -2/GT +3]
+   WR:-51.7(gate -40; GT -43; fix -47) [j32 -24/GT -17, j48 -21/GT -19]
+   DR:-82.4(gate -40; GT -82; fix -79) [j32 -4/GT -4, j48 -8/GT -2]
+   FF:-84.1(gate -40; GT -56; fix -72) [j32 -39/GT -12, j48 -49/GT -24]
+   FR:-78.0(gate -40; GT -71; fix -55) [j32 -11/GT -5, j48 -7/GT +0]
+   RS:-84.9(gate -40; GT -61; fix -71) [j32 -60/GT -23, j48 -72/GT -43]
+   tot:-73.6(gate -40; GT -54; fix -65) [j32 -26/GT -10, j48 -30/GT -15]
+== diag  texLake 1.0108 texSolid 0.9998
+   FS:-36.9(gate -29; GT -34; fix -59) mce 3.004 vs fix 3.216 GT 3.336 [j32 -13/GT -11, j48 -11/GT -2]
+   WR:-58.0(gate -40; GT -50; fix -52) [j32 -15/GT -12, j48 -11/GT -8]
+   DR:-85.6(gate -40; GT -84; fix -83) [j32 -13/GT -10, j48 -18/GT -8]
+   FF:-85.6(gate -40; GT -61; fix -74) [j32 -39/GT -14, j48 -52/GT -27]
+   FR:-80.9(gate -40; GT -62; fix -57) [j32 -12/GT -1, j48 -9/GT +4]
+   RS:-82.0(gate -40; GT -63; fix -74) [j32 -36/GT -23, j48 -24/GT -21]
+   tot:-78.1(gate -40; GT -60; fix -69) [j32 -26/GT -11, j48 -32/GT -16]
+== reverse  texLake 1.0074 texSolid 0.9999
+   FS:-19.5(gate -14; GT -19; fix -36) mce 3.854 vs fix 4.044 GT 4.162 [j32 -5/GT -6, j48 -4/GT +4]
+   WR:-64.7(gate -40; GT -52; fix -54) [j32 -18/GT -14, j48 -16/GT -16]
+   DR:-74.4(gate -40; GT -70; fix -73) [j32 -6/GT -4, j48 -4/GT +1]
+   FF:-83.5(gate -40; GT -52; fix -72) [j32 -35/GT -10, j48 -47/GT -21]
+   FR:-78.3(gate -40; GT -70; fix -55) [j32 -6/GT +1, j48 -3/GT +6]
+   RS:-82.2(gate -40; GT -68; fix -73) [j32 -63/GT -33, j48 -75/GT -47]
+   tot:-74.0(gate -40; GT -52; fix -65) [j32 -22/GT -7, j48 -26/GT -10]
+== leave  texLake 1.0089 texSolid 0.9999
+   FS:-37.3(gate -28; GT -33; fix -58) mce 2.743 vs fix 2.907 GT 2.964 [j32 -7/GT -8, j48 -8/GT -2]
+   WR:-66.4(gate -40; GT -54; fix -60) [j32 -16/GT -12, j48 -9/GT -7]
+   DR:-91.3(gate -40; GT -74; fix -85) [j32 -8/GT -7, j48 -11/GT -5]
+   FF:-83.3(gate -40; GT -59; fix -71) [j32 -41/GT -13, j48 -61/GT -33]
+   FR:-78.9(gate -40; GT -69; fix -58) [j32 -21/GT -5, j48 -27/GT -9]
+   RS:-90.7(gate -40; GT -85; fix -91) [j32 -36/GT -14, j48 -35/GT -11]
+   tot:-78.7(gate -40; GT -59; fix -69) [j32 -27/GT -11, j48 -37/GT -19]
+
+GATE / L4 / MCE MISSES:
+  slow WR j48 AA7 -32 vs GT -39 (L4 floor -34)

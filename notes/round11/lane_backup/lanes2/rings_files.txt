@@ -1,0 +1,8 @@
+HANDOFF.md
+retrux-web/app/hero/README.md
+retrux-web/app/hero/engine/CameraRig.ts
+retrux-web/app/hero/engine/Choreography.ts
+retrux-web/app/hero/engine/HeroEngine.ts
+retrux-web/app/hero/engine/hero/HoldR11.ts
+retrux-web/app/hero/engine/hero/Rings.ts
+retrux-web/app/hero/engine/hero/Shards.ts

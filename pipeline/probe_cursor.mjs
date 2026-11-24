@@ -1,13 +1,13 @@
 // Cursor check: after a mouse move over the hero, the root class is on, the computed cursor is the ring
 // image, the link ring applies over a nav link, the cursor images load, and the press disc fills on a hold.
 import { createRequire } from "node:module";
-const require = createRequire("E:/Retrux Hero R&D/hero-pipeline/tools/package.json");
+const require = createRequire("/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/hero-pipeline/tools/package.json");
 const { chromium } = require("playwright-core");
 const out = process.argv[2];
 const browser = await chromium.launch({
-  executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+  executablePath: (process.env.CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"),
   headless: true,
-  args: ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"],
+  args: [(process.platform === "win32" ? "--use-angle=d3d11" : "--use-angle=metal"), "--enable-gpu", "--ignore-gpu-blocklist"],
 });
 try {
   for (const [w, h, dpr] of [[1440, 766, 2], [1200, 700, 1], [1000, 700, 1]]) {
@@ -17,7 +17,7 @@ try {
     page.on("pageerror", (e) => console.log("pageerror " + e.message));
     page.on("requestfailed", (r) => failed.push(r.url()));
     page.on("response", (r) => { if (r.url().includes("/hero/cursor/") && r.status() !== 200) failed.push(r.url() + " " + r.status()); });
-    await page.goto("http://localhost:5173/?tier=T0&scale=0.5", { waitUntil: "domcontentloaded" });
+    await page.goto(((process.env.LAB || "http://localhost:5173") + "/?tier=T0&scale=0.5"), { waitUntil: "domcontentloaded" });
     await page.waitForFunction(() => document.documentElement.dataset.heroReady === "1", null, { timeout: 180000 });
     await page.mouse.move(w * 0.3, h * 0.5);
     await page.mouse.move(w * 0.32, h * 0.52, { steps: 4 });

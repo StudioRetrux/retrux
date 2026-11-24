@@ -1,0 +1,7 @@
+## L fast: L: flagged px 1018, events >= 6 px: 39, px in them 488 
+## L reverse: L: flagged px 1858, events >= 6 px: 68, px in them 968 
+## L slow: L: flagged px 968, events >= 6 px: 41, px in them 296 
+## L medium: L: flagged px 1475, events >= 6 px: 49, px in them 589 
+## L diag: L: flagged px 943, events >= 6 px: 30, px in them 422 
+## L leave: L: flagged px 1138, events >= 6 px: 41, px in them 476 
+DONE_L

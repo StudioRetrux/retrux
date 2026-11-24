@@ -1,0 +1,14 @@
+[slot] judge-perf-recheck:ident waiting (load 5.4 / max 24, slots 2, holders [{"label":"aa5a batch2","pid":52315,"at":1795164558676,"slot":0},{"label":"aa5b-B","pid":53106,"at":1795164601787,"slot":1}], a priority waiter goes first)
+[slot] judge-perf-recheck:ident waiting (load 7.3 / max 24, slots 2, holders [{"label":"aa5a batch2","pid":52315,"at":1795164558676,"slot":0},{"label":"aa5b-B","pid":53106,"at":1795164601787,"slot":1}], a priority waiter goes first)
+[slot] judge-perf-recheck:ident waiting (load 7.5 / max 24, slots 2, holders [{"label":"aa5a batch2","pid":52315,"at":1795164558676,"slot":0},{"label":"aa5b-B","pid":53106,"at":1795164601787,"slot":1}], a priority waiter goes first)
+[slot] judge-perf-recheck:ident waiting (load 10.0 / max 24, slots 2, holders [{"label":"!judge-perf-recheck:perf","pid":54441,"at":1795164917393,"slot":0},{"label":"aa5b-B","pid":53106,"at":1795164601787,"slot":1}])
+[slot] judge-perf-recheck:ident waiting (load 9.0 / max 24, slots 2, holders [{"label":"!judge-perf-recheck:perf","pid":54441,"at":1795164917393,"slot":0},{"label":"aa5b-B","pid":53106,"at":1795164601787,"slot":1}])
+[slot] judge-perf-recheck:ident: taken (load 7.1)
+{"port":"5181","qs":"aaresolve=0&slabflash=0&lktaa=0","tier":"T1","mobile":false,"W":1440,"H":766,"tierGot":"T1","main":[1440,766],"envEdge":true,"taaOn":false,"mirrorEvery":3,"counts":{"frames":341,"mirror":127,"walk":341,"cache":0,"cacheOn":0},"nprog":14,"logs":[]}
+{"port":"5182","qs":"","tier":"T1","mobile":false,"W":1440,"H":766,"tierGot":"T1","main":[1440,766],"envEdge":true,"taaOn":false,"mirrorEvery":3,"counts":{"frames":341,"mirror":127,"walk":341,"cache":0,"cacheOn":0},"nprog":14,"logs":[]}
+{"port":"5181","qs":"aaresolve=0&slabflash=0&lktaa=0","tier":"T2","mobile":false,"W":1440,"H":766,"tierGot":"T2","main":[1440,766],"envEdge":true,"taaOn":false,"mirrorEvery":3,"counts":{"frames":341,"mirror":127,"walk":341,"cache":0,"cacheOn":0},"nprog":14,"logs":[]}
+{"port":"5181","qs":"envlake=plate","tier":"T1","mobile":false,"W":1440,"H":766,"tierGot":"T1","main":[1440,766],"envEdge":true,"taaOn":false,"mirrorEvery":null,"counts":null,"nprog":12,"logs":[]}
+{"port":"5181","qs":"","tier":"T0","mobile":true,"W":390,"H":844,"tierGot":"T0","main":[332,717],"envEdge":false,"taaOn":false,"mirrorEvery":null,"counts":null,"nprog":12,"logs":[]}
+{"port":"5181","qs":"","tier":"T1","mobile":false,"W":1440,"H":766,"tierGot":"T1","main":[1440,766],"envEdge":true,"taaOn":true,"mirrorEvery":1,"counts":{"frames":341,"mirror":341,"walk":341,"cache":0,"cacheOn":0},"nprog":15,"logs":[]}
+[slot] judge-perf-recheck:ident: freed (exit 0)
+ident exit 0

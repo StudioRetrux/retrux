@@ -1,0 +1,171 @@
+[
+ {
+  "test": "loss",
+  "name": "lane",
+  "before": {
+   "time": 7.264,
+   "fps": 45.2,
+   "scale": 1,
+   "main": [
+    1440,
+    766
+   ],
+   "pr": 1,
+   "taa": {
+    "weight": 0.5,
+    "runs": 243,
+    "still": 0,
+    "valid": true
+   },
+   "lost": false
+  },
+  "lost": {
+   "time": 8.22,
+   "fps": 44.7,
+   "scale": 1,
+   "main": [
+    1440,
+    766
+   ],
+   "pr": 1,
+   "taa": {
+    "weight": 0.5,
+    "runs": 284,
+    "still": 0,
+    "valid": true
+   },
+   "lost": true
+  },
+  "restored": {
+   "time": 8.22,
+   "fps": 44.7,
+   "scale": 1,
+   "main": [
+    1440,
+    766
+   ],
+   "pr": 1,
+   "taa": {
+    "weight": 0.5,
+    "runs": 284,
+    "still": 0,
+    "valid": true
+   },
+   "lost": false
+  },
+  "restarted": {
+   "time": 10.808,
+   "fps": 39.6,
+   "scale": 1,
+   "main": [
+    1440,
+    766
+   ],
+   "pr": 1,
+   "taa": {
+    "weight": 0.5,
+    "runs": 371,
+    "still": 0,
+    "valid": true
+   },
+   "lost": false
+  },
+  "logs": [
+   "console.warning [hero] WebGL context lost"
+  ]
+ },
+ {
+  "test": "dpr2resize",
+  "name": "lane",
+  "after": {
+   "time": 9.504,
+   "fps": 24.6,
+   "scale": 1,
+   "main": [
+    1770,
+    1230
+   ],
+   "pr": 1.5,
+   "taa": {
+    "weight": 0.5,
+    "runs": 207,
+    "still": 0,
+    "valid": true
+   },
+   "lost": false
+  },
+  "logs": []
+ },
+ {
+  "test": "loss",
+  "name": "base",
+  "before": {
+   "time": 7.387,
+   "fps": 42,
+   "scale": 1,
+   "main": [
+    1440,
+    766
+   ],
+   "pr": 1,
+   "taa": null,
+   "lost": false
+  },
+  "lost": {
+   "time": 8.259,
+   "fps": 41.4,
+   "scale": 1,
+   "main": [
+    1440,
+    766
+   ],
+   "pr": 1,
+   "taa": null,
+   "lost": true
+  },
+  "restored": {
+   "time": 8.259,
+   "fps": 41.4,
+   "scale": 1,
+   "main": [
+    1440,
+    766
+   ],
+   "pr": 1,
+   "taa": null,
+   "lost": false
+  },
+  "restarted": {
+   "time": 10.749,
+   "fps": 48.3,
+   "scale": 1,
+   "main": [
+    1440,
+    766
+   ],
+   "pr": 1,
+   "taa": null,
+   "lost": false
+  },
+  "logs": [
+   "console.warning [hero] WebGL context lost"
+  ]
+ },
+ {
+  "test": "dpr2resize",
+  "name": "base",
+  "after": {
+   "time": 9.801,
+   "fps": 17.2,
+   "scale": 1,
+   "main": [
+    1770,
+    1230
+   ],
+   "pr": 1.5,
+   "taa": null,
+   "lost": false
+  },
+  "logs": []
+ }
+]

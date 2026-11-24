@@ -1,0 +1,8 @@
+[slot] judge-artrefl b2 AA6 slow/med/rev: taken (load 26.0)
+[cap] /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work7/artrefl/caps/slow_A6: 240 frames; 0 errors/warnings
+slow t 56s
+[cap] /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work7/artrefl/caps/medium_A6: 240 frames; 0 errors/warnings
+medium t 116s
+[cap] /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work7/artrefl/caps/reverse_A6: 240 frames; 0 errors/warnings
+reverse t 183s
+[slot] judge-artrefl b2 AA6 slow/med/rev: freed (exit 0)

@@ -1,0 +1,16 @@
+MAIN   c4_main_a  N 150 dt p10/50/90 28.5/30.2/32.3 | blips/frame left 331 shelf 227 right 606 | scales [1] errs 0
+MAIN   c4_main_b  N 150 dt p10/50/90 29.1/30.1/31.7 | blips/frame left 328 shelf 229 right 607 | scales [1] errs 0
+MAIN   c4_main_c  N 150 dt p10/50/90 28.5/30.0/32.0 | blips/frame left 334 shelf 227 right 611 | scales [1] errs 0
+FIX    c4_q4_a    N 150 dt p10/50/90 30.1/33.0/36.2 | blips/frame left 398 shelf 244 right 684 | scales [1] errs 0
+FIX    c4_q4_b    N 150 dt p10/50/90 29.9/31.4/33.4 | blips/frame left 378 shelf 223 right 649 | scales [1] errs 0
+FIX    c4_q4_c    N 150 dt p10/50/90 29.3/31.1/33.4 | blips/frame left 383 shelf 218 right 642 | scales [1] errs 0
+
+POOLED, dt-controlled (both steps of the blip inside the band); n = frames:
+dt   0-999 | MAIN n 444 left  331 shelf  228 right  608 || FIX n 444 left  386 shelf  228 right  658
+dt  28-31  | MAIN n 286 left  317 shelf  214 right  586 || FIX n  80 left  289 shelf  159 right  571
+dt  30-33  | MAIN n 141 left  351 shelf  245 right  636 || FIX n 208 left  365 shelf  210 right  652
+dt  33-36  | MAIN n  11 left  427 shelf  333 right  760 || FIX n  51 left  649 shelf  395 right  835
+dt  28-34  | MAIN n 416 left  339 shelf  231 right  625 || FIX n 342 left  373 shelf  215 right  661
+dt  30-36  | MAIN n 176 left  354 shelf  252 right  668 || FIX n 341 left  418 shelf  244 right  695
+sheet MAIN frames 75 - 78 dt [np.float64(29.8), np.float64(29.2), np.float64(29.7), np.float64(29.4)]
+sheet FIX frames 67 - 70 dt [np.float64(29.9), np.float64(31.7), np.float64(30.9), np.float64(32.1)]

@@ -1,0 +1,7 @@
+T1 ?p4water=0 vs :5199 (fresh)                 IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+:5199 fresh vs builder's 04:08 (determinism)   IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+T2 ?p4water=0 vs :5199                         IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+T0 phone (lane default) vs :5199               IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+envlake=plate (lane default) vs :5199          IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+envlake=plate&p4water=0 vs :5199               IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+T1 lane default vs :5199                       DIFFER    final DIFF | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: final | programs 16 differ: rx-water|ShaderMaterial,rx-water-walk|ShaderMaterial | logs 0/0

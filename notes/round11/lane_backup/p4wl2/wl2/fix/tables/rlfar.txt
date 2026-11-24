@@ -1,0 +1,4 @@
+T1d2_fmain N 100 360x60 dt p50 26.1 | blips/frame all 43, dt 26-40 53 (n 40) | errs 0
+T1d2_ffix N 100 360x60 dt p50 27.5 | blips/frame all 49, dt 26-40 52 (n 77) | errs 0
+T1d2_fmain2 N 100 360x60 dt p50 26.1 | blips/frame all 41, dt 26-40 35 (n 39) | errs 0
+T1d2_ffix2 N 100 360x60 dt p50 27.9 | blips/frame all 44, dt 26-40 44 (n 85) | errs 0

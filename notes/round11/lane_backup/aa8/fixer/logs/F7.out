@@ -1,0 +1,7 @@
+[slot] aa8-fixer F7 live ctx waiting (load 21.3 / max 30, slots 3, holders [{"label":"p4env:g4c","pid":7841,"at":1795195887738,"slot":0},{"label":"aa8-fixer F5 ident final 1","pid":7984,"at":1795195879853,"slot":1},{"label":"lead:ptr","pid":7820,"at":1795195882007,"slot":2}], a priority waiter goes first)
+[slot] aa8-fixer F7 live ctx waiting (load 10.3 / max 30, slots 3, holders [{"label":"p4env:g4c","pid":7841,"at":1795195887738,"slot":0},{"label":"aa8-fixer F6 ident final 2","pid":9471,"at":1795196038594,"slot":1},{"label":"lead:ptr","pid":7820,"at":1795195882007,"slot":2}])
+[slot] aa8-fixer F7 live ctx waiting (load 6.5 / max 30, slots 3, holders [{"label":"p4env:g4c","pid":7841,"at":1795195887738,"slot":0},{"label":"aa8-fixer F6 ident final 2","pid":9471,"at":1795196038594,"slot":1},{"label":"lead:ptr","pid":7820,"at":1795195882007,"slot":2}], a priority waiter goes first)
+[slot] aa8-fixer F7 live ctx waiting (load 4.1 / max 30, slots 3, holders [{"label":"p4env:g4c","pid":7841,"at":1795195887738,"slot":0},{"label":"!p4orb:b10","pid":9933,"at":1795196155997,"slot":1},{"label":"lead:ptr","pid":7820,"at":1795195882007,"slot":2}])
+[slot] aa8-fixer F7 live ctx: taken (load 3.7)
+F7 67s
+[slot] aa8-fixer F7 live ctx: freed (exit 0)

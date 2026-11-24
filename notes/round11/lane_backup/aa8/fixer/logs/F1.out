@@ -1,0 +1,6 @@
+[slot] aa8-fixer F1 pre: taken (load 3.8)
+00:20:34 ctx def 33s
+00:21:09 ctx lktaa0 68s
+00:22:08 medium_A8 127s
+00:22:52 medium_A8r2 171s
+[slot] aa8-fixer F1 pre: freed (exit 0)

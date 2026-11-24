@@ -1,0 +1,26 @@
+{
+ "port": "5181",
+ "vw": 1920,
+ "vh": 1080,
+ "path": "diag",
+ "qs": "",
+ "main": [
+  1920,
+  1080
+ ],
+ "summ": {
+  "frames": 28,
+  "band": 1004654,
+  "blended": 925712,
+  "mixed": 0,
+  "mixedChanged": 0,
+  "invalid": 0,
+  "over2": 0,
+  "over4": 0,
+  "under05": 0,
+  "maxRatio": 0,
+  "worst": null,
+  "excActiveFrames": 28
+ },
+ "logs": []
+}

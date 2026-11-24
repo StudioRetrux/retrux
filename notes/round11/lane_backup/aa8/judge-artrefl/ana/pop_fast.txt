@@ -1,0 +1,36 @@
+### fast A8=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/artrefl/caps/fast_A8 A7=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work7/motion/caps/fast_A7 mask=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work5/aa5a/caps/fast_mask gt=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work6/refl/caps/fast_gt
+fast_A8 vs fast_A7: frames 120 (120/120), frames differing 120, px > 8: 1587, max 14, first 0, pose mismatches 0, W 1440/1440 rows 380-766/380-766
+A7: flagged px 2577, events >= 6 px: 82, px in them 1001
+A8: flagged px 2389, events >= 6 px: 77, px in them 910
+-- A7 top 6
+  k52-64 x98-137 y542-551 n59 emax138 frames 52/1/66/86 53/2/71/63 53/1/74/121 53/2/52/-49 ...
+  k46-48 x931-949 y759-763 n48 emax86 frames 46/22/82/56 47/14/86/64 48/4/60/-48 48/8/73/58
+  k1-4 x254-282 y519-524 n41 emax86 frames 1/13/73/86 2/11/86/74 2/4/54/69 2/1/42/56 ...
+  k36-42 x160-172 y544-547 n25 emax141 frames 36/4/141/107 37/6/93/72 38/5/110/89 39/5/124/91 ...
+  k7-13 x152-165 y551-557 n24 emax124 frames 7/5/108/-124 8/6/124/-130 9/1/107/-122 10/6/84/-101 ...
+  k60-77 x906-962 y488-493 n38 emax60 frames 60/1/50/-56 61/3/51/-54 62/3/46/-51 63/3/49/-47 ...
+-- A8 top 6
+  k52-64 x98-137 y542-551 n59 emax138 frames 52/1/66/86 53/2/71/63 53/1/75/121 53/2/52/-49 ...
+  k46-48 x931-949 y759-763 n48 emax86 frames 46/22/82/56 47/14/86/64 48/4/60/-48 48/8/73/58
+  k36-42 x160-172 y544-547 n25 emax141 frames 36/4/141/106 37/6/93/72 38/5/110/89 39/5/124/91 ...
+  k7-13 x152-165 y551-557 n26 emax126 frames 7/5/108/-124 8/8/126/-107 9/1/107/-122 10/6/88/-102 ...
+  k1-4 x254-282 y520-524 n34 emax79 frames 1/13/70/82 2/3/79/82 2/2/53/62 2/4/65/67 ...
+  k1-6 x1101-1120 y695-700 n25 emax91 frames 1/6/91/71 2/7/85/61 3/2/64/53 4/6/63/58 ...
+-- popnew A8 vs A7 (pops A8 has that A7 lacks)
+new pops (X flagged, ref not, X != ref): 0 px, 0 clusters, >= 6 px: 0
+-- popnew A7 vs A8 (pops A8 removes)
+new pops (X flagged, ref not, X != ref): 0 px, 0 clusters, >= 6 px: 0
+-- v3err A8 vs A7 (thr 8, toward/away GT)
+frames 120 thr 8: lake+band px-frames 29490528; |X-R|>thr 999; toward GT 533, AWAY from GT 276
+-- dark (away from GT): px 276, events >= 6 px: 11
+  k20-39 (20f) x311-327 y712-722 n35 nmax3 dmean-8 dmax9
+  k17-34 (18f) x291-310 y719-729 n31 nmax3 dmean-9 dmax10
+  k97-112 (16f) x1230-1243 y674-682 n31 nmax3 dmean-9 dmax11
+  k6-14 (9f) x304-313 y719-731 n28 nmax3 dmean-9 dmax9
+  k33-40 (8f) x326-339 y710-715 n13 nmax2 dmean-8 dmax9
+  k92-97 (6f) x1239-1241 y683-687 n10 nmax3 dmean-9 dmax10
+-- bright (away from GT): px 0, events >= 6 px: 0
+-- v3err A8 vs A7 (thr 16)
+frames 120 thr 16: lake+band px-frames 29490528; |X-R|>thr 0; toward GT 0, AWAY from GT 0
+-- dark (away from GT): px 0, events >= 6 px: 0
+-- bright (away from GT): px 0, events >= 6 px: 0

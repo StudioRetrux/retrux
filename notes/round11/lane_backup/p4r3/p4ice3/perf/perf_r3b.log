@@ -1,0 +1,301 @@
+[slot] p4ice3:perf waiting (load 9.5 / max 30, slots 3, holders [{"label":"rejudge_p4water:perfhold","pid":9514,"at":1795217149039,"slot":0},{"label":"p4atmos:perf_rest","pid":10153,"at":1795217083775,"slot":1},{"label":"judge_p4orb3:perf","pid":11227,"at":1795217158818,"slot":2}])
+[slot] p4ice3:perf waiting (load 13.7 / max 30, slots 3, holders [{"label":"rejudge_p4water:perfhold","pid":9514,"at":1795217149039,"slot":0},{"label":"p4atmos:perf_rest","pid":10153,"at":1795217083775,"slot":1},{"label":"judge_p4orb3:perf","pid":11227,"at":1795217158818,"slot":2}])
+[slot] p4ice3:perf waiting (load 26.3 / max 30, slots 3, holders [{"label":"rejudge_p4water:perfhold","pid":9514,"at":1795217149039,"slot":0},{"label":"p4atmos:perf_rest","pid":10153,"at":1795217083775,"slot":1},{"label":"judge_p4orb3:perf","pid":11227,"at":1795217158818,"slot":2}])
+[slot] p4ice3:perf waiting (load 46.2 / max 30, slots 3, holders [{"label":"p4atmos:perf_rest","pid":10153,"at":1795217083775,"slot":1}])
+[slot] p4ice3:perf: taken (load 29.3)
+[waitquiet] quiet after 210 s: load 9.72
+{
+ "vw": 1440,
+ "vh": 766,
+ "cycles": 8,
+ "blockms": 2500,
+ "boot": {
+  "lane": 4415,
+  "main": 4842
+ },
+ "secs": 115,
+ "summ": {
+  "move": {
+   "lane": {
+    "blocks": 8,
+    "frames": 472,
+    "med": 41.9,
+    "p95": 52.7,
+    "max": 141.8,
+    "blockMeds": [
+     41.55,
+     41.6,
+     41.4,
+     42,
+     41.45,
+     41.3,
+     43.15,
+     42.7
+    ],
+    "blockP95": [
+     73.4,
+     54.4,
+     51.7,
+     53.6,
+     50.7,
+     49.2,
+     50,
+     54
+    ],
+    "loads": [
+     10.62,
+     10.89,
+     10.5,
+     9.72,
+     9.72,
+     8.74,
+     8.74,
+     9.36
+    ],
+    "fps": [
+     23.743569450010646,
+     23.25130788600146,
+     23.73887240356083,
+     23.49256068925218,
+     23.936659915235374,
+     23.55250245338567,
+     23.814248858971,
+     24.21758569279385
+    ],
+    "scale": [
+     1
+    ]
+   },
+   "main": {
+    "blocks": 8,
+    "frames": 477,
+    "med": 41.9,
+    "p95": 51.7,
+    "max": 57.7,
+    "blockMeds": [
+     40.8,
+     42.05,
+     41.45,
+     41.95,
+     41.8,
+     41.75,
+     42.5,
+     42.7
+    ],
+    "blockP95": [
+     48.3,
+     52.8,
+     53.8,
+     52.3,
+     53.7,
+     50,
+     53.1,
+     49.5
+    ],
+    "loads": [
+     10.01,
+     10.01,
+     10.5,
+     10.22,
+     9.34,
+     9.15,
+     9.48,
+     9.36
+    ],
+    "fps": [
+     24.537561343696318,
+     24.62587611296968,
+     24.11873840445269,
+     24.422318241387984,
+     23.64066193846488,
+     23.46041055718475,
+     24.48210922787194,
+     23.400936037577498
+    ],
+    "scale": [
+     1
+    ]
+   },
+   "lane_vs_main": {
+    "paired": [
+     1.018,
+     0.989,
+     0.999,
+     1.001,
+     0.992,
+     0.989,
+     1.015,
+     1
+    ],
+    "pairedMed": 1,
+    "pairedP95ratios": [
+     1.52,
+     1.03,
+     0.961,
+     1.025,
+     0.944,
+     0.984,
+     0.942,
+     1.091
+    ],
+    "pairedP95Med": 1.004,
+    "loadMax": [
+     10.62,
+     10.89,
+     10.5,
+     10.22,
+     9.72,
+     9.15,
+     9.48,
+     9.57
+    ],
+    "pairsUnder10": 4,
+    "pairedMedUnder10": 0.996,
+    "ratioOfMedians": 1,
+    "ratioOfP95": 1.019
+   },
+   "msPerFrame": {
+    "meanDiffPerPair": [
+     3.867,
+     -0.007,
+     0.919,
+     0.133,
+     0.02,
+     -0.23,
+     0.218,
+     -0.177
+    ],
+    "meanDiffMedian": 0.076,
+    "medDiffPerPair": [
+     0.75,
+     -0.45,
+     -0.05,
+     0.05,
+     -0.35,
+     -0.45,
+     0.65,
+     0
+    ],
+    "medDiffMedian": -0.025,
+    "meanA": 42.232,
+    "meanB": 41.655
+   }
+  },
+  "rest": {
+   "lane": {
+    "blocks": 4,
+    "frames": 196,
+    "med": 43.75,
+    "p95": 115.9,
+    "max": 186.8,
+    "blockMeds": [
+     38,
+     42.55,
+     61.85,
+     70.7
+    ],
+    "blockP95": [
+     74.6,
+     90.2,
+     164.7,
+     154.9
+    ],
+    "loads": [
+     9.57,
+     10.56,
+     11.23,
+     11.07
+    ],
+    "fps": [
+     26,
+     27.83300198807157,
+     17.341040462427745,
+     11.949810794626954
+    ],
+    "scale": [
+     1
+    ]
+   },
+   "main": {
+    "blocks": 4,
+    "frames": 195,
+    "med": 42.6,
+    "p95": 106.9,
+    "max": 676,
+    "blockMeds": [
+     30.9,
+     38,
+     66.05,
+     64.65
+    ],
+    "blockP95": [
+     78.4,
+     89.9,
+     175.8,
+     162.6
+    ],
+    "loads": [
+     9.21,
+     8.95,
+     10.73,
+     11.43
+    ],
+    "fps": [
+     27.45098039215686,
+     18.254837531796998,
+     15.631105900605947,
+     12.529365700861394
+    ],
+    "scale": [
+     1
+    ]
+   },
+   "lane_vs_main": {
+    "paired": [
+     1.23,
+     1.12,
+     0.936,
+     1.094
+    ],
+    "pairedMed": 1.107,
+    "pairedP95ratios": [
+     0.952,
+     1.003,
+     0.937,
+     0.953
+    ],
+    "pairedP95Med": 0.952,
+    "loadMax": [
+     9.57,
+     11.23,
+     11.43,
+     11.43
+    ],
+    "pairsUnder10": 1,
+    "pairedMedUnder10": 1.23,
+    "ratioOfMedians": 1.027,
+    "ratioOfP95": 1.084
+   },
+   "msPerFrame": {
+    "meanDiffPerPair": [
+     -2.531,
+     5.601,
+     -4.909,
+     3.4
+    ],
+    "meanDiffMedian": 0.434,
+    "medDiffPerPair": [
+     7.1,
+     4.55,
+     -4.2,
+     6.05
+    ],
+    "medDiffMedian": 5.3,
+    "meanA": 50.834,
+    "meanB": 50.446
+   }
+  }
+ },
+ "logs": []
+}
+[slot] p4ice3:perf: freed (exit 0)

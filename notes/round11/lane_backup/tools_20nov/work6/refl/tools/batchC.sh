@@ -1,0 +1,9 @@
+#!/bin/bash
+# batch C: GT (BASE :5182 at 2880x1532, lkmeach=1, 2x2 averaged) for fast, diag (120) and leave (240)
+cd /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work6/refl/tools; t0=$(date +%s)
+for p in fast diag; do
+  node cap.mjs --port 5182 --path $p --frames 120 --vw 2880 --vh 1532 --rows 380,766,766 --qs "lkmeach=1" --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work6/refl/caps/${p}_gt2x && node down2.mjs /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work6/refl/caps/${p}_gt2x /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work6/refl/caps/${p}_gt && rm -rf /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work6/refl/caps/${p}_gt2x
+  echo "t $(( $(date +%s) - t0 ))s"
+done
+node cap.mjs --port 5182 --path leave --frames 240 --vw 2880 --vh 1532 --rows 380,766,766 --qs "lkmeach=1" --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work6/refl/caps/leave_gt2x && node down2.mjs /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work6/refl/caps/leave_gt2x /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work6/refl/caps/leave_gt && rm -rf /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work6/refl/caps/leave_gt2x
+echo "t $(( $(date +%s) - t0 ))s"

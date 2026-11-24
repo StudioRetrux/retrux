@@ -1,0 +1,57 @@
+{
+ "pass": false,
+ "scores": [
+  {
+   "lens": "orb_shards_light",
+   "main": 7.5,
+   "lane": 8.0
+  },
+  {
+   "lens": "color_grade_post",
+   "main": 8.3,
+   "lane": 8.5
+  },
+  {
+   "lens": "awwwards_jury",
+   "main": 7.6,
+   "lane": 7.9
+  }
+ ],
+ "findings": [
+  {
+   "id": "F2",
+   "severity": "major",
+   "title": "Still open. The open hold orb now has structure, but it is laid out as the radial inverse of F402: a clipped core inside a grey ring at 0.5-0.8 R, where F402 has a dark central keyhole inside a disc clipped white out to about 0.86 R. The release and eye poses are unchanged.",
+   "evidence": "Paired deterministic captures, lane :5176 against :5173 directly (tools/jdv.mjs; engine loop off; ring clock 3.3 for the open orb, natural clock for the hidden orb; plasma clock pinned). They reproduce the builder's numbers exactly. At p05, the share of the disc below 215 goes 13.9 -> 19.1 % (F402 21.7), below 235 26.9 -> 36.8 (37.1), sd 21.2 -> 22.9 (24.4), and box248/250 18.9/16.8 -> 13.3/11.4 (16.2/14.3).\nRadial median L with crystals masked (ana/radial_gap.txt), bins 0-.3 / .3-.5 / .5-.6 / .6-.7 / .7-.8 / .8-.86 R:\n- F402: 237 / 235 / 252 / 254 / 253 / 252\n- MAIN p05: 255 / 254 / 253 / 252 / 249 / 246\n- lane p05: 255 / 251 / 236 / 234 / 235 / 242\n- lane p06: 255 / 253 / 248 / 237 / 235 / 242\n- lane p04 (natural clock): 255 / 253 / 249 / 243 / 242 / 243\nThe centre stays 18-20 L above F402. The 0.5-0.86 R annulus, which MAIN matched to within 1-6 L, is now 10-20 L below it. That is the trade inside this fix, and the disc's global statistics improved.\nOther gaps to the reference:\n- The core (r < 0.5 R) clips 65 % at p05 and 73 % at p06, against F402's 40 %.\n- At p06 open, only 8.6 % of the disc is below 215 (F402 21.7 %).\n- The darkest gaps match (L2 175 vs 174), but the area below 190 is 4.9 % against 7.4 %.\n- Release p07 (clock 3.3) is within 0.4 L of MAIN. F453 shows bold tongues and gaps.\n- The eye pose q03 is untouched: share below 215 is 12.2 % against F045's 27.9 %, and the core clips 76 % against 60 %.\nImages I looked at: img/det/ML_p05_t3.3.png, ML_p06_t3.3.png, ML_p04_tn.png and ML_p07_t3.3.png (MAIN | lane | REF, normal and 200-255 stretched); the builder's img/ref_hold_orb_sheet_372_418.png, where every open REF frame has the central keyhole and a dark bottom band; img/qc/sheet_p05_expand.png; img/sweep/sweep_orbzoom.png. In the lane, soft pale-grey wisps are faint at full frame. F402's figure is bold.",
+   "repro": "In WORK: node SP/slot/slot.mjs run 'x:det' -- zsh tools/jC.sh (about 1 min), then BPY -I tools/jdet.py caps/det img/det M:L and BPY -I tools/jrad.py caps/det.",
+   "suggested_fix": "P(hit) = 1 - exp(-10 lam / R) grows with the chord length, so the clipped centre and the gappy mid-radius come from the geometry, not from the artist's field. Make the gaps follow the field: normalise lam by the chord, or point-sample the density at the Cycles step positions instead of using the sheet mean. Then the lens image shows where the field is empty (the central keyhole) and the outer disc stays at the clamp.\nAccept when, at p04-p06 open:\n- the radial medians track F402 (about 237 / 235 / 252 / 254 / 253 / 252 over 0-0.86 R)\n- the core clip (r < 0.5 R) is near 40 %\n- the release (F453) shows gaps\n- the band in front of the hidden orb is not dimmer than MAIN's\nA Cycles flipbook of the artist's volume is still the frame-exact option."
+  },
+  {
+   "id": "R2",
+   "severity": "nit",
+   "title": "Hold rim: the band is still 7 L below F402 and cooler, and the lavender hairline is a full, even circle where F402's is a lower-left arc",
+   "evidence": "p05 and p06 at clock 3.3:\n- Band 0.86-0.96 R: L 228 -> 238 (F402 245); B-R +21 -> +11 (F402 +18).\n- Hairline: (197, 211, 230) -> (228, 231, 243). F402's ring is (225, 240, 247), and its lower-left line is (223-229, 225-232, 250-252).\n- Radial median at 0.97-1.0 R: MAIN 209 -> lane 231 (F402 237).\nThe diff map img/det/hidden_open_diffmaps.png (bottom right) shows the lift as an even closed ring. In the crops it reads as a pale glass edge, not a CG outline, and it is clearly better than MAIN's dark rim line.",
+   "repro": "BPY -I tools/jdet.py caps/det img/det M:L (the band and hair columns); BPY -I tools/jrad.py caps/det.",
+   "suggested_fix": "Weight the hairline by view-space angle, strongest at the lower left and fading over about 120 degrees. Warm the band lift a little towards F402's mint (B-R about +18), for example (0.86, 1.0, 0.98) -> (0.9, 1.0, 0.96) at 0.75."
+  },
+  {
+   "id": "F4",
+   "severity": "nit",
+   "title": "Crystal top facets are fixed. The release poses now sit slightly above the reference, and median saturation dips by about 0.012 at p06 and q03.",
+   "evidence": "p95 of B-R >= 85 px within 4.5 R, MAIN -> lane (REF):\n- q00: 157.0 -> 170.7 (F000 174.7)\n- q03: 160.7 -> 174.5 (F045 172.5)\n- p04 (clock 3.3): 166.6 -> 172.9 (F358 179.5)\n- p05: 167.8 -> 171.6 (F402 174.9)\n- p06: 161.3 -> 169.8 (F420 170.7)\n- p07: 163.9 -> 176.9 (F453 173.6)\n- p08: 162.6 -> 179.5 (F460 176.7)\nMedian saturation: p06 .480 -> .468 (F420 .503); q03 .493 -> .480 (F045 .506). Crystal bodies are still 9-21 L below the REF medians, which is pre-existing Q7 work.\nimg/det/crystals_paired_MAIN_lane.png (same positions) shows the same mosaic with brighter periwinkle top facets and no paper-white chips. In the sweep and pointer stills (img/sweep/sweep_stats.txt, img/ptr/ptr_stats.txt), p95 rises by 5-20 and nothing glitches.\nFlicker is unchanged (ana/flick_stats.txt, 16 deterministic frames): crystal 2nd-difference 16.63 vs 16.37 in the hold and 26.18 vs 26.39 at rest; pixels with |d2| > 60 are 9.80 vs 9.75 % and 15.30 vs 15.49 %.",
+   "repro": "BPY -I tools/jdet.py caps/det img/det M:L (the crys columns); node tools/flick.mjs (lane / off, hold / rest) + BPY -I tools/jflick.py caps/flick.",
+   "suggested_fix": "Optional: uP4ShC (0.5, 0.5, 0.35) -> about (0.5, 0.42, 0.45), which trims the release overshoot and holds saturation."
+  },
+  {
+   "id": "H1",
+   "severity": "nit",
+   "title": "Hidden-orb hold: the band over the orb glows 5-6 L dimmer and blotchier, because the orb copy now carries the gaps. Against F420 the result is mixed, and it is invisible at full frame.",
+   "evidence": "p05 and p06 at the natural clock (orb behind the band), r < 0.75 R: dL -4.2 / -3.8 (the upper half, the band over the orb, -6.1 / -5.4; p5 -18).\nMoves away from F420:\n- L90: 249 -> 242 (F420 252)\n- share below 235: 60 -> 84 % (61 %)\nMoves towards F420:\n- mean of the band over the orb: 234-238 -> 228-230 (F420 232)\n- contrast against the band beside it: +34..+37 -> +27 (F420 +20)\n- box248: 0.7 -> 1.4 % (2.9 %)\nThe slit now carries grey wisps instead of a flat white strip (F420 has bright bars and dark gaps).\nIn img/det/ML_p06_tn.png, ML_p05_tn.png and hidden_open_diffmaps.png (top), the centre glow is slightly greyer in 2x crops. img/det/full_p06_tn_MAIN_lane.png shows no visible difference at full frame. The builder disclosed this.",
+   "repro": "BPY -I tools/jdet.py caps/det img/det M:L (p05_tn, p06_tn) and BPY -I tools/jband.py caps/det (ana/band_over_orb.txt).",
+   "suggested_fix": "At merge, compensate the hold orb-through term in IceMaterial by about x1.05 (the ice lane's file), or let the F2 rework keep the copy's mean radiance."
+  }
+ ],
+ "regressions": "Nothing the lane made worse counts as a separate glitch. The one real trade belongs to F2 (major): in the open hold, the 0.5-0.86 R annulus of the orb, which MAIN matched to F402 within 1-6 L, is now 10-20 L below F402. The disc's global statistics still moved towards F402. H1 (the band in front of the hidden orb, -5..-6 L) is mixed against F420 and invisible at full frame, so it is listed as a nit.\nEverything else holds:\n- Far field: beyond 1.6 R with crystals masked, at most 0.15 % of pixels change by more than 2 L (max 15, crystal-edge AA) at any pose.\n- Rest q00 / q03: orb identical within 0.02 L.\n- Release p07 / p08: orb within 0.4 L of MAIN.\n- Sweep (26 stills): no black or NaN pixels, no seams, no glitches.\n- Pointer spots: no glitches.\n- Crystal flicker: unchanged.\n- T2 behaves like T1.\nSwitch proof, re-run with the round-1 identP (20 moving frames; final image, every target, every linked program): IDENTICAL for\n- ?p4orb=0 vs :5173?p4orb=0 at T1 (14 targets / 16 programs) and T1 HOLD (14 / 18)\n- ?p4orb3=0 vs :5173 at T1 HOLD and T2 (15 / 16)\n- lane ON vs :5173 at T0 phone (9 / 12)\nThe negative control (lane ON at HOLD) differs only in main, refraction, bloom0-4, final, rx-orb and rx-shards. The regenerated patch equals the shipped one (sha256 8e73bbce...), and the served bundle carries round 3.\nPerf (SLOT_BG=0, lane vs :5173, T1):\n- Real loop, first try: invalid (load 15-57).\n- Real loop, second try (rtx2): hold paired mean-interval median 0.976 (5 pairs under load 10). Rest showed 1.096, from three vsync flips of 33 -> 50 ms at load 8.3-9.6.\n- Rest-only re-check (rtx3, 8 pairs at load 5.8-7.4): 1.007 (pooled 1.016, block-median 1.000).\n- Synchronous frame time (ftime2, 12 alternations at load <= 6.8): rest 0.992 / pooled 1.000; hold 1.023 / pooled 1.007.\nNo regression above 5 %.",
+ "visual_verdict": "Round 3 moves the hold orb in the right direction but has not reached the reference.\nWhat improved:\n- MAIN's flat white plate is now a glowing ball with white plasma tongues and soft grey lens-image gaps.\n- The pale glass edge with a lavender hairline replaces MAIN's dark rim line, which is much closer to F402.\n- The brightest crystal facets reach the reference's level and stay periwinkle.\n- Nothing glitches: the sweep, pointer spots, release, rest poses and the T0 / T2 tiers are clean, and flicker and frame time are unchanged.\nWhat still differs side by side:\n- F402 and the whole hold sheet F372-F418 show a bold, dark keyhole figure and bottom band inside a disc that is clipped white nearly to its edge. The lane shows the opposite: a clipped centre with faint pale wisps and a grey ring at mid-radius. At full frame the wisps are faint.\n- Release (F453) and the eye pose (F045) keep MAIN's structureless core.\nThe orb's interior therefore remains the main gap for orb_shards_light (8.0) and awwwards_jury (7.9). Against the panel's build, the lane is a clear step up: no blue fresnel outline, translucent crystals, and a structured hold core. F2 stays open and major, so pass = false. Merging the lane would still improve MAIN on every judged lens.",
+ "report_path": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/lane_backup/p4r3/judge_p4orb3/verdict.json"
+}

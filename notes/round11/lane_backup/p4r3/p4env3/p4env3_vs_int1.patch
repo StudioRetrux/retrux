@@ -1,0 +1,295 @@
+--- a/retrux-web/app/hero/engine/p4env.ts
++++ b/retrux-web/app/hero/engine/p4env.ts
+@@ -6,6 +6,15 @@
+  *   ?p4crest=0   G1 off: the CLOUD_RANGE occluder as MAIN (the rest plate's whole skyline, evaluated at 250 m)
+  *   ?p4tex=0     G4 off (texels): MAIN's baked textures (no texel repairs)
+  *   ?p4card=0    G4 off (slits): MAIN's card light (the drifting cards may take a dark texel's light down to black)
++ *
++ * P4 round 3, ENV lane (p4env3; the round-1 judge's J1-J7, notes/round11/lane_backup/p4r1/judge_p4env). Every round-3 part rides
++ * on the round-1 part it changes, so `?p4env=0` still turns the whole lane off:
++ *   ?p4env3=0    every round-3 part off (the round-1 lane exactly, i.e. the int1 build)
++ *   ?p4rim=0     J3 off: the far ranges' crest test without the mesh-top floor (the warm rim on the far peak in the hold / pop)
++ *   ?p4luma=0    J6 off: the cards' light floor per channel (round 1) instead of on the change's luma (dark texels may lose
++ *                at most 40 % of their luma, as round 1; white-lit snow / rock 65 %, so the drifting cloud shadows keep MAIN's depth)
++ *   ?p4webp=0    J7 off: the lossless repaired far-range texture (round 1) instead of its lossy q100 encode
++ *   ?p4crack=0   J5 off: no plate depth for the cloud cards with the mirror lake (card 0 cuts the main summit: a white zig-zag)
+  */
+ export type P4EnvFlags = {
+   /** G1: the crest occluder holds only the far ranges (deeper than RANGE_DEPTH), each column tested at its own depth. */
+@@ -14,13 +23,35 @@
+   tex: boolean;
+   /** G4: the drifting cards' light takes at most 40 % of a texel's value (no black crevice slits / specks). */
+   card: boolean;
++  /** Round 3 J3: the card is hidden below the far mesh's own top too (CREST_P4_TOP), not only below the plate's skyline band. */
++  rim: boolean;
++  /** Round 3 J6: the card light's floor bounds the change's luma (a dark texel loses at most 40 %, white-lit 65 %), not each channel. */
++  luma: boolean;
++  /** Round 3 J7: the repaired far-range texture as a lossy q100 WebP (`*_p4q.webp`, 39 KB) instead of the lossless 118 KB. */
++  webp: boolean;
++  /** Round 3 J5: with the mirror lake the cloud cards get the plate depth for a soft fade where a card cuts a mountain. */
++  crack: boolean;
++  /** Round 3 J5: the soft fade's depth range (m) in front of a surface. Lab: `?p4soft=m`. */
++  softM: number;
++  /** Round 3 J3: the floor's soft edge (plate uv): hidden below top - [0], full above top + [1]. Lab: `?p4rimband=lo,hi`. */
++  rimBand: [number, number];
++  /** Round 3 J6: the share of the luma the cards may take from a dark / a white-lit texel. Lab: `?p4lumafloor=dark,white`. */
++  lumaFloor: [number, number];
+ };
+ 
+ export function p4envFromUrl(): P4EnvFlags {
+   const q = typeof location !== "undefined" ? new URLSearchParams(location.search) : null;
+   const off = q?.get("p4env") === "0";
+   const on = (k: string) => !off && q?.get(k) !== "0";
+-  return { crest: on("p4crest"), tex: on("p4tex"), card: on("p4card") };
++  const on3 = (k: string) => on("p4env3") && q?.get(k) !== "0";
++  const crest = on("p4crest");
++  const tex = on("p4tex");
++  const card = on("p4card");
++  const band = (q?.get("p4rimband") ?? "").split(",").map(Number);
++  const rimBand: [number, number] = band.length === 2 && band.every((v) => Number.isFinite(v)) ? [band[0], band[1]] : [0.001, 0.0005];
++  const lf = (q?.get("p4lumafloor") ?? "").split(",").map(Number);
++  const lumaFloor: [number, number] = lf.length === 2 && lf.every((v) => Number.isFinite(v)) ? [lf[0], lf[1]] : [0.4, 0.65];
++  return { crest, tex, card, rim: crest && on3("p4rim"), luma: card && on3("p4luma"), webp: tex && on3("p4webp"), crack: on3("p4crack"), softM: Number(q?.get("p4soft")) > 0 ? Number(q?.get("p4soft")) : 20, rimBand, lumaFloor };
+ }
+ 
+ export const P4ENV: P4EnvFlags = p4envFromUrl();
+--- a/retrux-web/app/hero/engine/assets.ts
++++ b/retrux-web/app/hero/engine/assets.ts
+@@ -43,7 +43,9 @@
+ const P4_TEX: Record<string, string> = {
+   // G4: the bright hairlines on the far range's face at the snow mound's foot (left orbits): the fix round's back-face patch
+   // (tools4/patch_backfaces.py) gave texels hidden at rest the rest ray's colour; 5,729 texels there revert to step 2's values.
+-  Object_2010: "baked/Object_2_010_p4.webp",
++  // (P4 round 3 J7, p4env.ts `?p4webp=0`: the same texture as a lossy q100 sharp-YUV WebP, 39,074 B instead of 117,944 B; the
++  // 5,729 repaired texels keep 95 % of the repair, max 15 levels; the other texels mean 0.55, p99 3 levels.)
++  Object_2010: P4ENV.webp ? "baked/Object_2_010_p4q.webp" : "baked/Object_2_010_p4.webp",
+ };
+ /** The baked environment's files (pipeline bake_env_m9.py), under the asset base. */
+ const ENV_BAKED = { glb: "env_baked.glb", manifest: "env_baked.json", sky: "sky_world.exr", skyLake: "sky_lake.exr", lakeCorr: "lake_corr.png" };
+--- a/retrux-web/app/hero/engine/HeroEngine.ts
++++ b/retrux-web/app/hero/engine/HeroEngine.ts
+@@ -345,7 +345,7 @@
+       // (Bilinear only with the baked environment: the projected plates' own shader keeps its nearest depth tests.)
+       this.env.depthLinear = shoreAA && !!assets.envProxy.scene.userData?.baked;
+       this.env.bakeDepth(this.renderer, [this.water.group]);
+-    }
++    } else this.env.bakeCloudDepth(this.renderer); // (P4 round 3 J5, p4env.ts `?p4crack=0`: the cards' crack guard)
+     // Round 11 fix round (judge1 minor): with the baked environment the skylines are geometric edges, crisper than the plates'
+     // DOF-blurred ones; EnvEdge blurs the environment at its depth discontinuities, before any hero object (MSAA tiers only:
+     // T0 is protected). The afterEnv hook only arms it: its full-screen triangle (in the scene) is drawn first inside the next
+@@ -556,6 +556,7 @@
+       this.shared.uEnvMap.value = this.pmrem.texture;
+     }
+     if (this.env && this.water && !this.lakeMirror) this.env.bakeDepth(this.renderer, [this.water.group], true);
++    else if (this.env && this.lakeMirror) this.env.bakeCloudDepth(this.renderer, true); // (P4 round 3 J5)
+     this.lakeSched?.invalidate();
+   }
+ 
+--- a/retrux-web/app/hero/engine/world/Atmos.ts
++++ b/retrux-web/app/hero/engine/world/Atmos.ts
+@@ -1128,6 +1128,41 @@
+ }
+ 
+ /**
++ * P4 round 3, ENV lane J3 (p4env.ts `?p4rim=0`; the round-1 judge: "warm rim on the far peak's top edge in every hold / pop",
++ * the P3 panel's G3(c): sw_hold_BL x1000-1070 y450-458 a 5-6 px warm rim between sky and peak). Attributed by the round-1 fixer
++ * (rim metric 0 with `?atmosclouds=0`, 0 at t ~10 / 12 with the same hold camera, 127-146 at t ~32-36): the drifting card fades out
++ * 3-10 plate px BELOW the plate's skyline (CLOUD_FRAG's band crest - 0.0075 .. crest - 0.0025), and the far meshes' own top lies
++ * 0.0002-0.008 under that skyline (the strip between is the sky card's paint), so the band lies on the mesh's top edge: the card
++ * veils it, and the hold's ~1.6x dolly shows that as a warm rim whenever a warm card passes behind the peak. CREST_P4_TOP is the
++ * far mesh's top per column (crest_ray2.json far.v: the rest plate camera's ray hits Object_2.009 / 2.010 there; behind the near
++ * objects the far range's own top), so the card is also hidden below the mesh's top (a ~1 plate px soft edge). 0 = no floor:
++ * columns 115-128 (the plate's base mist, tested at 250 m, kept as before).
++ */
++const CREST_P4_TOP: number[] = [
++  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.4881,
++  0.4861, 0.485, 0.4856, 0.4905, 0.5009, 0.5029, 0.5053, 0.5036, 0.5071, 0.5052, 0.5071, 0.5148, 0.5083, 0.5048, 0.5045,
++  0.5058, 0.5075, 0.5082, 0.5066, 0.5057, 0.5076, 0.5074, 0.5013, 0.4971, 0.5022, 0.5042, 0.5096, 0.5057, 0.5031, 0.5034,
++  0.5035, 0.5037, 0.5063, 0.5072, 0.5088, 0.5126, 0.5229, 0.5292, 0.5343, 0.532, 0.5325, 0.5333, 0.5329, 0.5312, 0.5367,
++  0.535, 0.5217, 0.5077, 0.5033, 0.502, 0.5017, 0.4956, 0.4866, 0.4748, 0.4728, 0.4666, 0.4609, 0.4586, 0.4579, 0.4688,
++  0.4696, 0.4772, 0.4807, 0.4804, 0.4827, 0.4815, 0.4835, 0.4864, 0.4819, 0.4816, 0.4834, 0.484, 0.484, 0.4833, 0.4833,
++  0.4774, 0.4764, 0.4802, 0.4843, 0.4821, 0.4799, 0.4803, 0.481, 0.4821, 0.4816, 0.4723, 0.4731, 0.4762, 0.479, 0.4814, 0.49,
++  0.4963, 0.4945, 0.4952, 0.4943, 0.4986, 0.4901, 0.4769, 0.4759, 0.4737, 0.4641, 0.4578, 0.4542, 0.4492, 0.4475, 0.4446,
++  0.4436, 0.4385, 0.4326, 0.4256, 0.4168, 0.4146, 0.4145, 0.4138, 0.4174, 0.4154, 0.423, 0.4222, 0.4295, 0.4308, 0.429, 0.418,
++  0.4192, 0.4165, 0.4145, 0.412,
++];
++/** P4 round 3 J3: rangeCrestTableP4 as RGBA (R crest, G depth, B the far mesh's top or 0, A 0) over 256 columns. */
++export function rangeCrestTableP4Top(): Float32Array {
++  const rg = rangeCrestTableP4();
++  const t = new Float32Array(1024);
++  for (let i = 0; i < 256; i++) {
++    t[4 * i] = rg[2 * i];
++    t[4 * i + 1] = rg[2 * i + 1];
++  }
++  for (let i = 0; i < CREST_P4_TOP.length; i++) t[4 * (CREST_FROM + i) + 2] = CREST_P4_TOP[i];
++  return t;
++}
++
++/**
+  * Fix round 1, the mist at the iceberg's foot (ATMOS_BERG; judge1 finding 1(c): "the right side is static"). The reference's
+  * band over the berg's lower face and the water before it comes and goes (fx1/an2/ref_bergfoot_loop.jpg): berg foot (1060-1240
+  * x 400-440) Loop 128.8 (L000) / 115.0 (L015) / 139.1 (L035) / 100.4 (L075) / 129.9 (L120), State S000 128.7, S202-S228 126.5 -> 114.3,
+--- a/retrux-web/app/hero/engine/world/PlateEnvironment.ts
++++ b/retrux-web/app/hero/engine/world/PlateEnvironment.ts
+@@ -41,6 +41,7 @@
+   RANGE_DEPTH,
+   rangeCrestTable,
+   rangeCrestTableP4,
++  rangeCrestTableP4Top,
+   wispPuff,
+   type AtmosFlags,
+   type CardGeom,
+@@ -553,7 +554,19 @@
+   const a = "return max(c + uCardKappa * k * vCardDE * h, vec3(0.0));";
+   const b = "return c * max(1.0 + uCardKappa * k * vCardDE / max(l, 0.03), 0.0);";
+   if (!GLSL_CARD_LIGHT_FRAG.includes(a) || !GLSL_CARD_LIGHT_FRAG.includes(b)) throw new Error("p4env: cardLit returns not found");
+-  return GLSL_CARD_LIGHT_FRAG.replace(a, "return max(c + uCardKappa * k * vCardDE * h, c * 0.6);").replace(
++  // P4 round 3 J6 (p4env.ts `?p4luma=0`; the round-1 judge: the per-channel floor "also caps strong cloud-shadow passes on
++  // mid-tone snow / rock", late90 p10 135.3 -> 138.5): the CARD_WHITE change h has luma 1 (c / l and white both do), so the
++  // change's luma is kappa k dE, and the floor bounds THAT: a dark texel (below uCardWhite.y, h = its own hue: c scaled
++  // uniformly) loses at most 40 % (round 1's c * 0.6: no black crevice slits / specks), a white-lit one up to 65 % (MAIN's cloud
++  // shadows; a flat 40 % on luma left the box at round 1's 162.9 / p10 138.5). Late90 face box x200-420 y220-400: MAIN 161.4 /
++  // p10 135.3, round 1 162.9 / 138.5, this 161.5 / 135.8; ridge px under luma 50 at late90_right MAIN 148, round 1 1, this 1.
++  // Lab: `?p4lumafloor=dark,white` (shares).
++  const [fd, fw] = P4ENV.lumaFloor;
++  const share = fd === fw ? fd.toFixed(3) : `mix(${fd.toFixed(3)}, ${fw.toFixed(3)}, smoothstep(uCardWhite.y, uCardWhite.z, l))`;
++  const aW = P4ENV.luma
++    ? `return max(c + max(uCardKappa * k * vCardDE, -${share} * l) * h, vec3(0.0));`
++    : "return max(c + uCardKappa * k * vCardDE * h, c * 0.6);";
++  return GLSL_CARD_LIGHT_FRAG.replace(a, aW).replace(
+     b,
+     "return c * max(1.0 + uCardKappa * k * vCardDE / max(l, 0.03), 0.6);",
+   );
+@@ -1311,8 +1324,55 @@
+     vec2 ruv = rc.xy / rc.w * 0.5 + 0.5;
+ `;
+   if (!CLOUD_FRAG.includes(from)) throw new Error("p4env: CLOUD_FRAG crest lookup not found");
+-  return CLOUD_FRAG.replace(from, to);
++  const g1 = CLOUD_FRAG.replace(from, to);
++  if (!P4ENV.rim) return g1;
++  // P4 round 3 J3 (p4env.ts `?p4rim=0`, Atmos.ts CREST_P4_TOP): the RGBA table's B is the far mesh's own top; below it the card is
++  // hidden too (the plate skyline's fade band lay on the mesh's top edge: the warm rim on the far peak in the hold / pop).
++  const occFrom = `    float crest = texture2D(uRangeCrest, vec2(clamp(ruv.x, 0.0, 1.0), 0.5)).r;
++    occ = max(occ, 1.0 - smoothstep(crest - 0.0075, crest - 0.0025, ruv.y));
++`;
++  const f = (v: number) => v.toFixed(6);
++  const occTo = `    vec4 crt = texture2D(uRangeCrest, vec2(clamp(ruv.x, 0.0, 1.0), 0.5));
++    float crest = crt.r;
++    occ = max(occ, 1.0 - smoothstep(crest - 0.0075, crest - 0.0025, ruv.y));
++    if (crt.b > 0.0) occ = max(occ, 1.0 - smoothstep(crt.b - ${f(P4ENV.rimBand[0])}, crt.b + ${f(P4ENV.rimBand[1])}, ruv.y));
++`;
++  if (g1.split(occFrom).length !== 2) throw new Error("p4env: CLOUD_FRAG crest test not found");
++  return g1.replace(occFrom, occTo);
+ })();
++
++/**
++ * P4 round 3 J5 (p4env.ts `?p4crack=0`): the cloud shader with a soft intersection fade (compiled only with the P4_CRACK define,
++ * = the fade's depth range in m, which bakeCloudDepth sets with the mirror lake). Card 0 (z -104 m) drifts through the main
++ * summit at t ~90: along the summit's rays the card plane is ~119.5 m away and V2_Massif's surface 115-122 m (WORK
++ * p4env/jfix/uv_zig.json), so the plane cuts the mountain and the depth test draws the card wherever it lies just in front of the
++ * undulating surface: a white zig-zag along the cut. Where the plate camera sees a surface within P4_CRACK m of the card's depth
++ * (never a sky / BG texel; on either side, since the depth map's texel and the screen's surface differ by the summit's
++ * undulation), the card fades out with that distance (soft particles). One depth fetch per card fragment; the cards' projector
++ * guard stays off as in MAIN (uPlateDepthOn 0 with the mirror lake). Off: MAIN's source, byte for byte.
++ */
++const P4_SOFT_A = `void main() {
++  // A card behind a mountain proxy showed through`;
++const P4_SOFT_C = `  float occ = 0.0;
++`;
++const p4Crack = (src: string) => {
++  if (!P4ENV.crack) return src;
++  for (const a of [P4_SOFT_A, P4_SOFT_C]) if (src.split(a).length !== 2) throw new Error("p4env: CLOUD_FRAG soft-fade anchor not found");
++  return src.replace(P4_SOFT_A, `#ifdef P4_CRACK
++uniform sampler2D uP4CloudDepth;
++#endif
++${P4_SOFT_A}`).replace(P4_SOFT_C, `${P4_SOFT_C}#ifdef P4_CRACK
++  {
++    vec4 sc = uPlateViewProjF * vec4(vCloudWorld, 1.0);
++    vec2 suv = sc.xy / sc.w * 0.5 + 0.5;
++    if (sc.w > 0.0 && suv.x > 0.0 && suv.x < 1.0 && suv.y > 0.0 && suv.y < 1.0) {
++      float sz = textureLod(uP4CloudDepth, suv, 0.0).r;
++      if (sz < 300.0) occ = 1.0 - smoothstep(0.0, P4_CRACK, abs(sz + (uPlateView * vec4(vCloudWorld, 1.0)).z));
++    }
++  }
++#endif
++`);
++};
+ 
+ export class PlateEnvironment {
+   readonly group = new THREE.Group();
+@@ -1351,6 +1411,8 @@
+     uPlateGrade: { value: new THREE.Vector3(1.3, 1.45, 0.3) },
+   };
+   private depthTarget: THREE.WebGLRenderTarget | null = null;
++  /** P4 round 3 J5 (bakeCloudDepth): the cloud cards' own plate depth map with the mirror lake. */
++  private p4CloudDepth: THREE.WebGLRenderTarget | null = null;
+   /**
+    * Hotfix 2 (smooth waterline, Water.ts SHORE_AA): bake the projector depth maps bilinear-filtered (set before bakeDepth).
+    * The lake's depth tests are then continuous across a texel instead of stepping at every one; nearest-filtered, their
+@@ -1592,11 +1654,14 @@
+     if (atmos.range) {
+       cloudDefines.CLOUD_RANGE = "";
+       // (P4 G1: the RG table, far-range crest + depth, Atmos.ts CREST_P4; `?p4crest=0` the R table as before.)
+-      const tab = P4ENV.crest ? rangeCrestTableP4() : rangeCrestTable();
++      // (P4 round 3 J3, `?p4rim=0`: RGBA, B = the far mesh's top, Atmos.ts CREST_P4_TOP.)
++      const tab = P4ENV.crest ? (P4ENV.rim ? rangeCrestTableP4Top() : rangeCrestTableP4()) : rangeCrestTable();
+       const h = new Uint16Array(tab.length);
+       for (let i = 0; i < tab.length; i++) h[i] = THREE.DataUtils.toHalfFloat(tab[i]);
+       crest = P4ENV.crest
+-        ? new THREE.DataTexture(h, tab.length / 2, 1, THREE.RGFormat, THREE.HalfFloatType)
++        ? P4ENV.rim
++          ? new THREE.DataTexture(h, tab.length / 4, 1, THREE.RGBAFormat, THREE.HalfFloatType)
++          : new THREE.DataTexture(h, tab.length / 2, 1, THREE.RGFormat, THREE.HalfFloatType)
+         : new THREE.DataTexture(h, tab.length, 1, THREE.RedFormat, THREE.HalfFloatType);
+       crest.minFilter = crest.magFilter = THREE.LinearFilter;
+       crest.wrapS = crest.wrapT = THREE.ClampToEdgeWrapping;
+@@ -1614,7 +1679,7 @@
+       const mat = new THREE.ShaderMaterial({
+         name: "rx-cloud",
+         vertexShader: CLOUD_VERT,
+-        fragmentShader: crest && P4ENV.crest ? CLOUD_FRAG_P4 : CLOUD_FRAG,
++        fragmentShader: p4Crack(crest && P4ENV.crest ? CLOUD_FRAG_P4 : CLOUD_FRAG),
+         defines: { ...envDefines, ...this.projectorBinding.defines, ...cloudDefines },
+         uniforms: {
+           ...this.projectorBinding.uniforms,
+@@ -1900,6 +1965,32 @@
+       (u[`u${P}CamPos`].value as THREE.Vector3).copy(p.camera.position);
+       (u[`u${P}DepthTexel`].value as THREE.Vector2).set(1 / b.w, 1 / b.h);
+       u[`u${P}DepthOn`].value = 1;
++    }
++  }
++
++  /**
++   * P4 round 3, ENV lane J5 (p4env.ts `?p4crack=0`; the round-1 judge: "white zig-zag hairline near the main summit during long
++   * idle", x266-283 y239-247 at t ~90). Hiding the cloud group removes it, hiding BG.001 does not; hiding the cards one by one:
++   * card 0 (z -104 m), which cuts through the summit (p4Crack above). The fade reads the plate depth map, which bakeDepth only
++   * bakes for the projected / plate lake: with the mirror lake (the T1 / T2 default) uPlateDepthOn is 0 for every material. This
++   * bakes the plate camera's depth once more (the same bakeProjector, once at start and after a context restore) and gives it to
++   * the cloud cards only, as their own uniform (uP4CloudDepth: every material keeps uPlateDepthOn 0, so the cards' projector
++   * guard stays off as in MAIN). T0 and `?envlake=plate` run bakeDepth and never get here (no P4_CRACK define: MAIN's frames).
++   */
++  bakeCloudDepth(renderer: THREE.WebGLRenderer, restored = false) {
++    if (!P4ENV.crack || !this.cloudMaterials.length) return;
++    const ext = renderer.extensions;
++    if (!ext.has("EXT_color_buffer_float") && !ext.has("EXT_color_buffer_half_float")) return;
++    const p1 = this.bakeProjector(renderer, [], this.plateCamera, this.plateViewProj, this.coverage);
++    if (!restored) this.p4CloudDepth?.dispose();
++    this.p4CloudDepth = p1.target;
++    const u = { uP4CloudDepth: { value: p1.target.texture } };
++    for (const m of this.cloudMaterials) {
++      Object.assign(m.uniforms, u);
++      if (m.defines.P4_CRACK === undefined) {
++        m.defines.P4_CRACK = P4ENV.softM.toFixed(2);
++        m.needsUpdate = true;
++      }
+     }
+   }
+ 
+@@ -2072,6 +2163,7 @@
+ 
+   dispose() {
+     this.depthTarget?.dispose();
++    this.p4CloudDepth?.dispose();
+     for (const p of this.projectors) p.target?.dispose();
+     for (const t of this.mirrorTwins.values()) t.dispose();
+   }

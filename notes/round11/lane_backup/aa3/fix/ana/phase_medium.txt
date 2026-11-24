@@ -1,0 +1,20 @@
+base_medium
+  RS: redraw 5.07 other 5.04 | cnt>16 by k%3 68671/69598/68810 k%2 103648/103431 | f=1/3: 1.7x, f=1/2: 1.6x median
+  WR: redraw 6.46 other 6.40 | cnt>16 by k%3 73535/75396/74219 k%2 111350/111800 | f=1/3: 3.0x, f=1/2: 1.0x median
+  FS: redraw 3.95 other 3.93 | cnt>16 by k%3 41254/41506/40963 k%2 61709/62014 | f=1/3: 1.6x, f=1/2: 1.1x median
+  DR: redraw 6.33 other 6.30 | cnt>16 by k%3 44663/45019/44826 k%2 66921/67587 | f=1/3: 2.7x, f=1/2: 1.2x median
+  FF: redraw 5.47 other 5.04 | cnt>16 by k%3 123010/135817/124552 k%2 190637/192742 | f=1/3: 10.3x, f=1/2: 0.6x median
+  FR: redraw 4.55 other 4.28 | cnt>16 by k%3 43391/47680/43827 k%2 67277/67621 | f=1/3: 7.4x, f=1/2: 2.7x median
+  ALL: redraw 5.34 other 5.17 | cnt>16 by k%3 601829/629905/607537 k%2 916864/922407 | f=1/3: 9.3x, f=1/2: 0.7x median
+aa3_medium
+  RS: redraw 4.92 other 0.00 | cnt>16 by k%3 65052/65542/65413 k%2 98215/97792 | f=1/3: 0.9x, f=1/2: 1.6x median
+  WR: redraw 6.27 other 0.00 | cnt>16 by k%3 71975/72795/72543 k%2 108535/108778 | f=1/3: 1.8x, f=1/2: 0.9x median
+  FS: redraw 3.82 other 0.00 | cnt>16 by k%3 39705/39898/39542 k%2 59270/59875 | f=1/3: 1.3x, f=1/2: 1.2x median
+  DR: redraw 6.13 other 0.00 | cnt>16 by k%3 43983/43985/44016 k%2 65703/66281 | f=1/3: 2.0x, f=1/2: 0.8x median
+  FF: redraw 4.85 other 0.00 | cnt>16 by k%3 121288/122834/122597 k%2 182757/183962 | f=1/3: 0.7x, f=1/2: 0.9x median
+  FR: redraw 4.26 other 0.00 | cnt>16 by k%3 44068/43910/43843 k%2 65557/66264 | f=1/3: 1.3x, f=1/2: 0.7x median
+  ALL: redraw 5.04 other 0.00 | cnt>16 by k%3 590747/596517/595556 k%2 889340/893480 | f=1/3: 0.7x, f=1/2: 0.8x median
+m_far3
+  RS: redraw 4.87 other 0.00 | cnt>16 by k%3 63823/64221/64204 k%2 96365/95883 | f=1/3: 1.0x, f=1/2: 1.5x median
+  WR: redraw 6.22 other 0.00 | cnt>16 by k%3 71206/71875/71633 k%2 107280/107434 | f=1/3: 1.7x, f=1/2: 1.1x median
+  FS: redraw 3.77 other 0.00 | cnt>16 by k%3 38552/38866/38524 k%2 57694/58248 | f=1/3: 1.4x, f=1/2: 1.2x median

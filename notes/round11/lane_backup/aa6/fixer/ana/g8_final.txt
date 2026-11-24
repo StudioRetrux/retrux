@@ -1,0 +1,12 @@
+AA6 ?lkglide=0 vs fixed1 + v3 (new)            IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+AA6 ?ffblock=0 vs fixed1 + F1 (new)            IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+AA6 ?lkglide=0&ffblock=0 vs fixed1             IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+AA6 all five off vs BASE                       IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 14 differ: - | logs 0/0
+AA6 ?envlake=plate vs BASE plate               IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+AA6 T0 vs BASE T0                              IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+AA6 T2 all five off vs BASE T2                 IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 14 differ: - | logs 0/0
+-- expected differences
+AA6 default vs integrator's AA6                DIFFER    final DIFF | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: walk,final | programs 15 differ: rx-water|ShaderMaterial,rx-water-walk|ShaderMaterial | logs 0/0
+AA6 ?ffblock=0 vs integrator's                 DIFFER    final DIFF | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: final | programs 15 differ: - | logs 0/0
+AA6 ?lkglide=0 vs integrator's                 DIFFER    final DIFF | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: walk,final | programs 15 differ: rx-water|ShaderMaterial,rx-water-walk|ShaderMaterial | logs 0/0
+fixed1+F1 new vs integrator's fixed1+F1        DIFFER    final DIFF | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: final | programs 15 differ: - | logs 0/0

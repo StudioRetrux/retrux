@@ -1,0 +1,10 @@
+{
+ "url": "http://localhost:5199/",
+ "mobile": false,
+ "st": {
+  "phase": "idle",
+  "ready": "1"
+ },
+ "n": 0,
+ "lines": []
+}

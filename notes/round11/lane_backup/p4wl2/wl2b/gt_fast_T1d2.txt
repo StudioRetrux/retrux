@@ -1,0 +1,6 @@
+left fast_p4wl                    pops vs GT/frame 9219.8 (p90 18357) | blips seq 1292.0 GT 705.1 excess 586.8 | |S-G| mean 6.07
+left fast_lane                    pops vs GT/frame 8020.6 (p90 15017) | blips seq 1049.5 GT 597.2 excess 452.2 | |S-G| mean 5.85
+shelf fast_p4wl                    pops vs GT/frame 274.2 (p90 391) | blips seq 312.0 GT 303.9 excess 8.1 | |S-G| mean 1.87
+shelf fast_lane                    pops vs GT/frame 246.0 (p90 380) | blips seq 311.8 GT 306.0 excess 5.8 | |S-G| mean 1.90
+far fast_p4wl                    pops vs GT/frame 5307.4 (p90 9000) | blips seq 1372.6 GT 1338.9 excess 33.7 | |S-G| mean 3.56
+far fast_lane                    pops vs GT/frame 6318.9 (p90 11115) | blips seq 1457.8 GT 1368.9 excess 88.9 | |S-G| mean 3.84

@@ -1,0 +1,30 @@
+### medium mask=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work5/aa5b/caps/medium_bmask gt=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/aa3/caps/medium_gt
+medium_TIP vs medium_A7: frames 240 (240/240), frames differing 240, px > 8: 169858, max 144, first 0, pose mismatches 0, W 1440/1440 rows 380-766/380-766
+A7: flagged px 3296, events >= 6 px: 102, px in them 1420
+TIP: flagged px 2915, events >= 6 px: 80, px in them 1020
+-- A7 top 4
+  k13-39 x1098-1144 y683-708 n170 emax100 frames 13/1/41/40 14/1/48/67 15/5/65/60 16/1/44/51 ...
+  k14-24 x545-577 y561-571 n77 emax75 frames 14/5/47/44 15/6/66/59 16/8/75/65 17/11/73/66 ...
+  k201-209 x119-133 y537-551 n33 emax121 frames 201/1/41/44 202/1/117/100 203/1/49/-59 203/1/54/63 ...
+  k13-17 x219-240 y525-530 n56 emax69 frames 13/9/59/53 14/5/50/68 14/2/68/75 15/2/48/90 ...
+-- TIP top 4
+  k13-39 x1098-1144 y683-708 n170 emax100 frames 13/1/41/40 14/1/48/67 15/5/65/60 16/1/44/51 ...
+  k4-18 x92-112 y563-573 n38 emax108 frames 4/1/72/-73 5/1/58/86 6/2/64/-59 7/1/56/56 ...
+  k201-210 x119-133 y537-551 n33 emax120 frames 201/1/42/44 202/1/118/101 203/1/49/-59 203/1/54/63 ...
+  k227-234 x84-93 y558-564 n30 emax116 frames 227/1/54/53 228/1/67/65 229/4/74/98 229/2/47/56 ...
+-- popnew TIP vs A7 (new pops)
+new pops (X flagged, ref not, X != ref): 201 px, 109 clusters, >= 6 px: 5
+  k133-137 x171-173 y539-540 n7 emax106
+  k140-143 x169-169 y540-540 n4 emax114
+  k214-214 x1225-1227 y508-512 n6 emax60
+  k13-14 x855-860 y497-499 n7 emax48
+  k32-32 x1260-1264 y512-515 n6 emax49
+  k14-14 x214-218 y528-529 n6 emax46
+  k147-150 x1266-1268 y501-503 n5 emax55
+  k121-123 x173-175 y539-540 n3 emax89
+-- popnew A7 vs TIP (pops TIP removes)
+new pops (X flagged, ref not, X != ref): 417 px, 123 clusters, >= 6 px: 22
+  k14-20 x545-560 y565-571 n35 emax75
+  k23-24 x338-353 y516-518 n18 emax64
+  k25-25 x970-977 y489-490 n15 emax63
+  k45-46 x361-372 y502-504 n19 emax49

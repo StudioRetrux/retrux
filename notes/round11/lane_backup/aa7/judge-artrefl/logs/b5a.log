@@ -1,0 +1,22 @@
+[slot] !judge-artrefl b5a AA7 gov(a7/a6/base)+G5 full waiting (load 4.1 / max 1, slots 1, holders [{"label":"!judge-perfcode G7 exclusive","pid":22796,"at":1795184563138,"slot":1}])
+[slot] !judge-artrefl b5a AA7 gov(a7/a6/base)+G5 full waiting (load 3.7 / max 30, slots 3, holders [{"label":"!judge-perfcode g10 hitch","pid":22947,"at":1795184952256,"slot":0},{"label":"!judge-perfcode g10 firefox","pid":22696,"at":1795184953618,"slot":1},{"label":"!judge-perfcode g10 ctxloss","pid":22694,"at":1795184953618,"slot":2}])
+[slot] !judge-artrefl b5a AA7 gov(a7/a6/base)+G5 full waiting (load 54.2 / max 30, slots 3, holders [{"label":"!judge-perfcode g10 hitch","pid":22947,"at":1795184952256,"slot":0},{"label":"!judge-perfcode g10 firefox","pid":22696,"at":1795184953618,"slot":1},{"label":"!judge-perfcode g10 ctxloss","pid":22694,"at":1795184953618,"slot":2}])
+[slot] !judge-artrefl b5a AA7 gov(a7/a6/base)+G5 full waiting (load 38.6 / max 30, slots 3, holders [])
+[slot] !judge-artrefl b5a AA7 gov(a7/a6/base)+G5 full waiting (load 16.5 / max 1, slots 1, holders [{"label":"!judge-perfcode G7u exclusive","pid":25655,"at":1795185090982,"slot":0}])
+[slot] !judge-artrefl b5a AA7 gov(a7/a6/base)+G5 full waiting (load 11.3 / max 1, slots 1, holders [{"label":"!judge-perfcode G7u exclusive","pid":25655,"at":1795185090982,"slot":0}])
+[slot] !judge-artrefl b5a AA7 gov(a7/a6/base)+G5 full waiting (load 9.1 / max 1, slots 1, holders [{"label":"!judge-perfcode G7u exclusive","pid":25655,"at":1795185090982,"slot":0}])
+[slot] !judge-artrefl b5a AA7 gov(a7/a6/base)+G5 full waiting (load 7.1 / max 1, slots 1, holders [{"label":"!judge-perfcode G7u exclusive","pid":25655,"at":1795185090982,"slot":0}])
+[slot] !judge-artrefl b5a AA7 gov(a7/a6/base)+G5 full waiting (load 7.2 / max 1, slots 1, holders [{"label":"!judge-perfcode G7u exclusive","pid":25655,"at":1795185090982,"slot":0}])
+[slot] !judge-artrefl b5a AA7 gov(a7/a6/base)+G5 full waiting (load 11.0 / max 30, slots 3, holders [{"label":"!judge-perfcode g10 webkit","pid":22695,"at":1795185388848,"slot":0},{"label":"!judge-motion K2 dpr2+tab+resize","pid":27972,"at":1795185389651,"slot":1},{"label":"!judge-motion K1 hitch+gov","pid":27970,"at":1795185389655,"slot":2}])
+[slot] !judge-artrefl b5a AA7 gov(a7/a6/base)+G5 full waiting (load 12.4 / max 30, slots 3, holders [{"label":"!g3-c2d","pid":16775,"at":1795185444733,"slot":0},{"label":"!judge-motion K2 dpr2+tab+resize","pid":27972,"at":1795185389651,"slot":1},{"label":"!judge-motion K1 hitch+gov","pid":27970,"at":1795185389655,"slot":2}])
+[slot] !judge-artrefl b5a AA7 gov(a7/a6/base)+G5 full waiting (load 8.9 / max 30, slots 3, holders [{"label":"!g3-c2d","pid":16775,"at":1795185444733,"slot":0},{"label":"!judge-motion K2 dpr2+tab+resize","pid":27972,"at":1795185389651,"slot":1},{"label":"!g3-c2c","pid":18129,"at":1795185554918,"slot":2}])
+[slot] !judge-artrefl b5a AA7 gov(a7/a6/base)+G5 full: taken (load 10.3)
+[jcap gov] a7: 1 seg, 0 errors/warnings
+  a6: 1 seg, 1 errors/warnings :: console.error Failed to load resource: net::ERR_INTERNET_DISCONNECTED
+  base: 1 seg, 0 errors/warnings
+gov t 113s
+[cap] /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work7/artrefl/caps/restfull_A7: 12 frames; 0 errors/warnings
+restfull t 135s
+[cap] /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work7/artrefl/caps/medfull_A7: 60 frames; 0 errors/warnings
+medfull t 162s
+[slot] !judge-artrefl b5a AA7 gov(a7/a6/base)+G5 full: freed (exit 0)

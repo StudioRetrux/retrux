@@ -1,0 +1,3 @@
+#!/bin/zsh
+node /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice3/tools/waitq2.mjs 9 900000 || exit 3
+node /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice3/tools/rc2.mjs --vw 1440 --vh 766 --cycles 6 --restcycles 3 --blockms 2500 --confs "lane=5175|tier=T1&scale=1,main=5173|tier=T1&scale=1" --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_p4ice3/perf/ab_judge.json

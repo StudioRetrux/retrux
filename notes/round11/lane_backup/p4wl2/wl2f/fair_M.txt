@@ -1,0 +1,4 @@
+## slow M: M: flagged px 1327, events >= 6 px: 41, px in them 293 
+## medium M: M: flagged px 2365, events >= 6 px: 73, px in them 910 
+## diag M: M: flagged px 1363, events >= 6 px: 39, px in them 527 
+## leave M: M: flagged px 1776, events >= 6 px: 52, px in them 645 

@@ -1,0 +1,3 @@
+# int1 binary assets (not in int1_vs_main.patch; copy into retrux-web/ at the same path)
+retrux-web/public/hero/baked/Object_2_010_p4.webp  117944 B  sha256 3ce65b26fef1bf6e6a2f50cda18ff5d0ac73f739552591aca98938d2ab67b37e  (from LANES/p4env, lane env G4; MAIN's Object_2_010_f1.webp 28652 B stays)
+baked textures total: 1432	public/hero/baked

@@ -1,0 +1,2 @@
+{"lane":"BASE","frames":40,"thinDark":{"n":1771326,"meanAbs":1.4448,"meanSigned":0.1069,"overBright12":0},"wlLines":{"n":712894,"meanAbs":6.0426,"meanSigned":3.1277,"overBright12":0},"jgt2OutsideBase3x3":0,"jgt2Darker":0}
+{"lane":"K10","frames":40,"thinDark":{"n":1771326,"meanAbs":1.4138,"meanSigned":-0.0235,"overBright12":0},"wlLines":{"n":712894,"meanAbs":4.3189,"meanSigned":0.3113,"overBright12":2},"jgt2OutsideBase3x3":780,"jgt2Darker":780}

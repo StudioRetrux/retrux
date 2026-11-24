@@ -1,0 +1,10 @@
+== LANE 1280x800 t=0.9
+WORST {"top":102,"bottom":690,"left":336,"right":972} (frame 0..1440 x 0..766; bounding boxes overestimate a little)
+== MAIN 2560x1080 t=0.9
+WORST {"top":82,"bottom":978,"left":797,"right":1796} (frame 0..1440 x 0..766; bounding boxes overestimate a little)
+== MAIN 2560x1080 t=2.97
+WORST {"top":-35,"bottom":1112,"left":692,"right":1864} (frame 0..1440 x 0..766; bounding boxes overestimate a little)
+== LANE 2560x1080 t=0.9
+WORST {"top":56,"bottom":980,"left":786,"right":1812} (frame 0..1440 x 0..766; bounding boxes overestimate a little)
+== LANE 2560x1080 t=2.97
+WORST {"top":-40,"bottom":1102,"left":691,"right":1864} (frame 0..1440 x 0..766; bounding boxes overestimate a little)

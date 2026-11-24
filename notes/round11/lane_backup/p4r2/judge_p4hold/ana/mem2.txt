@@ -1,0 +1,4 @@
+{"name":"lanekeep","afterRestore":{"lost":false,"restoring":false,"panoAfter":4194304},"all2":[[8962456,23756411],[9163920,23756411],[9062388,23756411]]}
+{"name":"lanekeep","port":"5178","qs":"panokeep=1","panoHeld":4194304,"usedMB":8.338,"backingMB":22.655,"embedderMB":1.154,"all":[[8673592,23755272],[8677924,23755272],[8742700,23755272]]}
+{"name":"lane2","afterRestore":{"lost":false,"restoring":false,"panoAfter":0},"all2":[[9027912,19562107],[9036272,19562107],[9151544,19562107]]}
+{"name":"lane2","port":"5178","qs":"","panoHeld":0,"usedMB":8.502,"backingMB":18.655,"embedderMB":1.074,"all":[[8763948,19560957],[8741304,19560957],[8915116,19560957]]}

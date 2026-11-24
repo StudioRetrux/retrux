@@ -1,0 +1,3 @@
+[slot] !judge-perf:batch2perf waiting (load 7.5 / max 24, slots 2, holders [{"label":"judge-artifacts:leavere","pid":23947,"at":1795160198643,"slot":0},{"label":"aa4x batch1","pid":24189,"at":1795160244736,"slot":1}])
+[slot] !judge-perf:batch2perf: taken (load 7.1)
+[slot] !judge-perf:batch2perf: freed (exit 0)

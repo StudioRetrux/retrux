@@ -1,0 +1,5 @@
+[
+ {"name": "k0", "js": "__hero.post.holdGlowK=0"},
+ {"name": "k25", "js": "__hero.post.holdGlowK=2.5"},
+ {"name": "k5", "js": "__hero.post.holdGlowK=5"}
+]

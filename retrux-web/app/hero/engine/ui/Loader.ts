@@ -17,14 +17,12 @@ const logo = (gradient: string) =>
 
 /**
  * First-paint loader in the Retrux language: pale arctic gradient with drifting frost, the "R" mark,
- * a 1 px progress line and a tabular percentage. Blocks pointer events (and, via `data-no-hold`, hero
- * presses) until `finish()` dissolves it into the scene.
+ * a 1 px progress line and the caption "Setting the Scene..." (user, 19 Nov: no counter). Blocks pointer events
+ * (and, via `data-no-hold`, hero presses) until `finish()` dissolves it into the scene.
  */
 export class Loader {
   private readonly el: HTMLDivElement;
   private readonly bar: HTMLElement;
-  private readonly lead: HTMLElement;
-  private readonly digits: HTMLElement;
   private readonly releaseStyles: () => void;
   private target = 0;
   private shown = 0;
@@ -52,11 +50,9 @@ export class Loader {
       `<div data-hero-loader-veil><div data-hero-loader-frost></div></div>` +
       `<div data-hero-loader-content>${logo(`retrux-loader-gradient-${++uid}`)}` +
       `<div data-hero-loader-track><div data-hero-loader-fill></div></div>` +
-      `<div data-hero-loader-pct><span data-dim></span><span data-digits></span>%</div></div>`;
+      `<div data-hero-loader-pct>Setting the Scene...</div></div>`;
     this.el = el;
     this.bar = el.querySelector<HTMLElement>("[data-hero-loader-fill]")!;
-    this.lead = el.querySelector<HTMLElement>("[data-dim]")!;
-    this.digits = el.querySelector<HTMLElement>("[data-digits]")!;
     this.render();
     root.appendChild(el);
   }
@@ -120,9 +116,6 @@ export class Loader {
     const pct = Math.min(100, Math.floor(this.shown * 100 + 1e-6));
     if (pct === this.pct) return;
     this.pct = pct;
-    // Three tabular digits, the leading zeros dimmed.
-    this.lead.textContent = pct < 10 ? "00" : pct < 100 ? "0" : "";
-    this.digits.textContent = String(pct);
     this.el.setAttribute("aria-valuenow", String(pct));
   }
 

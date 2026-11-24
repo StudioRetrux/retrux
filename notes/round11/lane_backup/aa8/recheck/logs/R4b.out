@@ -1,0 +1,7 @@
+[slot] aa8-recheck R4b gov waiting (load 9.7 / max 30, slots 3, holders [{"label":"!p4orb:ftime2","pid":19088,"at":1795197264592,"slot":0},{"label":"p4env:grz","pid":18154,"at":1795197202078,"slot":1},{"label":"aa8-recheck R3b ident","pid":17691,"at":1795197204340,"slot":2}])
+[slot] aa8-recheck R4b gov: taken (load 6.7)
+[slot] aa8-recheck R4b gov: taken (load 6.7)
+[slot] aa8-recheck R4b gov: freed (exit 0)
+00:57:08 gov 86s
+00:57:54 gov1 132s
+[slot] aa8-recheck R4b gov: freed (exit 0)

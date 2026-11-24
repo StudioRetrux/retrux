@@ -1,0 +1,21 @@
+{
+ "note": "P4 round 2 water continuation (21 Nov 02:55)",
+ "args": {
+  "brief": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/briefs/p4r2_common.md",
+  "refPort": 5199,
+  "round": "p4r2",
+  "buildMin": 120,
+  "judgeMin": 50,
+  "fixMin": 60,
+  "rejudgeMin": 40,
+  "lanes": [
+   {
+    "key": "water",
+    "lane": "p4water",
+    "port": 5177,
+    "build": "CONTINUATION (21 Nov 02:55): the first water builder was cut off by a network error (ECONNRESET) at 02:39 after ~95 min. Its lane LANES/p4water, its WORK $SP/work_p4/p4water (LOG.md, ana/, caps/, ident/, img/, p4water_vs_aa8.patch) and its lab :5177 are intact: READ ITS LOG.md FIRST, keep its finished work (G6 fix, Q8, Q9, the ident proof), re-verify quickly, then finish what is left (G2, AJ-1, the pop gate, perf, the final capture set, patch, HANDOFF). LANE TASKS (from MAIN/notes/round11/p3/r11_1_plan.json; read each in full, with the panel issues they came from): G2 (priority 2 - a glitch the client would notice: during the hold / pop the bottom strip of the frame shows a smooth pale 'glass plate' crest arc with stair-stepped band edges and a dashed aliased line instead of choppy dark near water), Q8 (rest ripple rings as physical waves: narrow deep troughs, bright crest faces, irregular, plus the reference's cyan near-water glint band), Q9 (glassy mid / far lake: no point-sampled sub-pixel 'corduroy' wavelets, longer floe reflection pillars), G6 (rest-view floe / slab reflection remnants that stay behind on the water when the pointer orbits the camera - the panel's 'LAKE_CORR ghost'; check whether it still exists on the default mirror lake and fix it), and AJ-1 from AA8 (the faint pale spot at the near far floe's thin tip, about x 90-300 y 490-520; AA8's tip attempt failed the no-new-pops gate: read MAIN/notes/round11/lane_backup/aa8/tip/LOG.md and aa8/fixer/LOG.md section 4 - options 2b (a front / back-face bit in the mirror alpha sign, or refining X) or 3 (more mirror rows behind a switch with guard / walk retuning); accept it only through the full pop gate). Files: world/Water.ts, world/LakeMirror.ts, world/LakeSchedule.ts (and HeroEngine.ts only for switches). The water was matched to Cycles renders of the artist's water (MAIN/notes/round11/handoff_water_userfix.md): where those renders and the reference video disagree, the video wins; never break the waterline AA (AA7 / AA8).",
+    "judge": "LENSES to score: environment, glitch_hold_sweep, glitch_cursor_orbit, color_grade_post, awwwards_jury. Check the bottom strip in every hold / pop / release sweep frame and p04-p08 at x1 and x4, the ripple rings at q00 vs ref_F000 (crop_q00_rest_water), the mid / far lake texture, the orbit views for reflection remnants, the thin-tip spot (x4 strips at scale 1), and the waterline AA gates (no new pops vs AA8, crawl not worse)."
+   }
+  ]
+ }
+}

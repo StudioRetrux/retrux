@@ -1,0 +1,148 @@
+--- a/retrux-web/app/hero/engine/world/Water.ts
++++ b/retrux-web/app/hero/engine/world/Water.ts
+@@ -1696,7 +1696,83 @@
+   vec4 F4 = step(-0.15, ta) * vec4(lkPhiT((ta.x - mu) / sE), lkPhiT((ta.y - mu) / sE), lkPhiT((ta.z - mu) / sE), lkPhiT((ta.w - mu) / sE));
+   vec4 a4 = wt * F4;
+   return vec4(t00.rgb * a4.x + t10.rgb * a4.y + t01.rgb * a4.z + t11.rgb * a4.w, a4.x + a4.y + a4.z + a4.w);
++}
++`,
++  },
++];
++/**
++ * wl2b (22 Nov, job B = judge WL-J2; client: "reflection yang bongkahan es belakang ... vertical line gitu doang, kasar banget",
++ * "bibir air jelek.mov"). `?wl2b=0` = p4wl exactly (no text, no define). Rides on P4WL_BAND (applied only when its read is in).
++ * The lake beyond WL2B_D0..D1 m (25-35 m: the slabs' / floes' column water; the near ring zone is p4wl's):
++ * - WL2B_K (OPT-IN `?wl2bk=2.6`; default 1 = p4wl's spread): the faces' share takes a wider spread along the view (sig.y x K):
++ *   ref_F000's columns run ~1.5-2.4x longer than p4wl's under the far slabs; the tail (rays above the face's horizon) gains
++ *   length and light, the mirror image is kept. The quarter pass walks with the same spread (its hit threshold and the faces'
++ *   band filter), so the read finds the faces. Not default: on the screen-space quarter grid the longer tails show the stored
++ *   horizon's quarter-texel steps (a stair-stepped notch under the slab ends, lane LOG 19:03) and the far box's one-frame blips
++ *   rise 6 %: re-test on top of the WL-RJ1 winner (lake-anchored / footprint-filtered taps).
++ * - WL2B_G / WL2B_T (OPT-IN `?wl2bg=<gain>`, `?wl2bt=<tile m>`): the column breaks: the faces' share sees the normal tilted along
++ *   the view by the pixel's own mip-filtered lake_chop slope (textureGrad with the pixel's footprint: band-limited, static).
++ *   Not default: at gain >= 1 the steep share turns the tilt into 1-px dark scanlines across the far water (lane LOG 19:05);
++ *   the lake's own ripple already breaks the longer columns.
++ * - the walk's face cap 4 -> 8 faces (see the constructor; `?wl2bh=3.5` = p4wl's).
++ * - WL2B_LIP: the slab-foot lip. The walk looked the face up at the entry of the max-mip cell that rose above the horizon ray
++ *   (1.25 m cells beyond 30 m): a staircase along every slab foot not aligned with the grid. Here the face's distance is the
++ *   crossing of the bilinear level-0 height through half the cell's top, found by bisection: continuous in the lake point.
++ */
++export function wl2bOn(lq: URLSearchParams | null) {
++  return lq?.get("wl2b") !== "0";
+ }
++const WL2B_BAND: P4Edit[] = [
++  {
++    // the read: the far faces' spread and the column breaks (the per-pixel fallback walk below gets them too)
++    find: "vec4 lkWalkRead(float dist, vec3 V, vec3 lkN, vec2 lkSig) {\n  // p4wl: the band-limited read (P4WL_BAND)\n",
++    repl: /* glsl */ `#ifdef WL2B_G
++uniform sampler2D uWl2bChop;   // wl2b: lake_chop.png (its own sampler: the hold chop's uLkW4Chop stays unfetched)
++#endif
++vec4 lkWalkRead(float dist, vec3 V, vec3 lkN, vec2 lkSig) {
++  // p4wl: the band-limited read (P4WL_BAND)
++  {
++    // wl2b: far water only
++    float wlbF = smoothstep(WL2B_D0, WL2B_D1, dist);
++#ifdef WL2B_G
++    if (wlbF > 0.0 && (lkW4Dx != vec2(0.0) || lkW4Dy != vec2(0.0))) {
++      vec2 hzV = normalize(-V.xz + vec2(1e-6, 0.0));
++      float iT = 1.0 / WL2B_T;
++      vec2 sc = (textureGrad(uWl2bChop, vWorldPos.xz * iT, lkW4Dx * iT, lkW4Dy * iT).rg * 255.0 - 128.0) / 127.0;
++      float sEk = max(2.0 * 0.07 * lkSig.y * WL2B_K, 1e-4);
++      lkN = normalize(lkN - vec3(hzV.x, 0.0, hzV.y) * (0.5 * WL2B_G * wlbF * sEk * dot(sc, hzV)));
++    }
++#endif
++    lkSig.y *= mix(1.0, WL2B_K, wlbF);
++  }
++`,
++  },
++  {
++    // the quarter pass walks with the same spread along the view (far water)
++    find: "    vec3 n0 = lkBump(vWorldPos, wDx0, wDy0, kDof0, sg0);\n",
++    repl:
++      "    vec3 n0 = lkBump(vWorldPos, wDx0, wDy0, kDof0, sg0);\n" +
++      "    sg0.y *= mix(1.0, WL2B_K, smoothstep(WL2B_D0, WL2B_D1, dist0));   // wl2b: the far faces' spread\n",
++  },
++];
++const WL2B_LIPS: P4Edit[] = [
++  {
++    find: "        float dF = d;\n",
++    repl: /* glsl */ `        float dF = d;
++        {
++          // wl2b: the face's distance = where the bilinear height crosses half the cell's top (continuous in P; the cell entry
++          // d steps by the max-mip cell along a slab foot that is not aligned with the grid: the notched lip)
++          float hT = y0 + 0.5 * max(H - y0, 0.0);
++          float sLo = max(d - 0.3, 0.05);
++          float sHi = dExit + 0.3;
++          if (lkHgtAt(P.xz + hz0 * sHi) > hT && lkHgtAt(P.xz + hz0 * sLo) <= hT) {
++            for (int b = 0; b < 6; b++) {
++              float sM = 0.5 * (sLo + sHi);
++              if (lkHgtAt(P.xz + hz0 * sM) > hT) sHi = sM; else sLo = sM;
++            }
++            dF = 0.5 * (sLo + sHi);
++          }
++        }
+ `,
+   },
+ ];
+@@ -2990,6 +3066,14 @@
+   readonly mirrorViewProj = new THREE.Matrix4();
+   /** p4w4 G1 (`?w4tile=1` only): the water samples the chop tile (HeroEngine loads lake_chop.png, hands it over: setChopTile). */
+   w4Chop = false;
++  /** wl2b: the far columns' breaks sample lake_chop.png (HeroEngine loads it, hands it over: setWl2bChop). */
++  wl2bChop = false;
++  setWl2bChop(t: THREE.Texture) {
++    const u = this.material.uniforms;
++    if (!u.uWl2bChop) return;
++    (u.uWl2bChop.value as THREE.Texture).dispose();
++    u.uWl2bChop.value = t;
++  }
+   setChopTile(t: THREE.Texture) {
+     const u = this.material.uniforms;
+     if (!u.uLkW4Chop) return;
+@@ -3308,6 +3392,28 @@
+           defines.LK_WALKPX = "";
+           frag = p4Apply(frag, P4WL_BAND, "WLB");
+         }
++        // wl2b (job B, WL-J2): the far columns (length, breaks) on the band read, and the slab-foot lip. `?wl2b=0` = p4wl.
++        if (wl2bOn(lq) && frag.includes("// p4wl: the band-limited read (P4WL_BAND)")) {
++          const wn = (k: string, d: number) => (Number.isFinite(Number(lq?.get(k))) && lq?.get(k) ? Number(lq?.get(k)) : d).toFixed(3);
++          defines.WL2B_K = wn("wl2bk", 1);   // OPT-IN 2.6 (see the doc comment)
++          defines.WL2B_D0 = wn("wl2bd0", 25);
++          defines.WL2B_D1 = wn("wl2bd1", 35);
++          frag = p4Apply(frag, WL2B_BAND, "WL2B");
++          if (Number(lq?.get("wl2bg")) > 0 && frag.includes("uniform sampler2D uLkW4Chop;") && frag.includes("lkW4Dx = dFdx(vWorldPos.xz);")) {
++            defines.WL2B_G = wn("wl2bg", 1);
++            defines.WL2B_T = wn("wl2bt", 10);
++            // a flat stand-in (code 128 = slope 0: no breaks) until HeroEngine hands over the tile (setWl2bChop)
++            const flat = new THREE.DataTexture(new Uint8Array([128, 128, 0, 255]), 1, 1);
++            flat.needsUpdate = true;
++            mirrorUniforms.uWl2bChop = { value: flat };
++            this.wl2bChop = true;
++          }
++          if (lq?.get("wl2blip") !== "0" && defines.LK_HMIN !== undefined) frag = p4Apply(frag, WL2B_LIPS, "WL2BL");
++          // The walk's face cap 4 -> 8 (`?wl2bh=<cap - 0.5>`, p4wl 3.5): with the wider spread more faces take a share above the
++          // walk's 0.002 and the 4th stopped it short of the taller faces behind, so the stored horizon jumped from tap to tap (pale
++          // holes popping in the far-left shelf's reflection: stepped fast T1 DPR 2 left box +9.5 %, its far part +128 %).
++          frag = p4Apply(frag, [{ find: "      if (Fc > 0.995 || hits > 3.5) break;\n", repl: `      if (Fc > 0.995 || hits > ${wn("wl2bh", 7.5)}) break;   // wl2b: the face cap\n` }], "WL2BH");
++        }
+         // (No far-water rest correction: it was a fit of the ENV lane's model to the plate.)
+       } else if (opts.mirror.corr) {
+         defines.LAKE_CORR = "";
+--- a/retrux-web/app/hero/engine/HeroEngine.ts
++++ b/retrux-web/app/hero/engine/HeroEngine.ts
+@@ -337,6 +337,15 @@
+         (t) => this.water?.setChopTile(t),
+         (e) => console.warn("[hero] lake chop", e),
+       );
++    // wl2b (opt-in `?wl2bg=<gain>` only; otherwise not fetched): the far columns' breaks sample the chop tile; the lake passes redraw once it is in.
++    if (this.water.wl2bChop)
++      loadLakeChop(this.opts.assetBase + "lake_chop.png", Math.min(16, this.renderer.capabilities.getMaxAnisotropy())).then(
++        (t) => {
++          this.water?.setWl2bChop(t);
++          this.lakeSched?.invalidate();
++        },
++        (e) => console.warn("[hero] wl2b chop", e),
++      );
+     if (mirror && this.water.scheduled) {
+       this.lakeSched = new LakeSchedule(mirror, this.water);
+       this.lakeSched.amortize = typeof location === "undefined" || new URLSearchParams(location.search).get("lkamort") !== "0";

@@ -1,0 +1,5 @@
+p05_tn M: band over orb L 238.2 (p90 244) beside 201.5 -> contrast +36.7
+p05_tn L: band over orb L 229.7 (p90 238) beside 202.3 -> contrast +27.3
+p06_tn M: band over orb L 234.4 (p90 244) beside 200.5 -> contrast +33.9
+p06_tn L: band over orb L 227.9 (p90 235) beside 201.4 -> contrast +26.5
+REF F420: band over orb L 232.2 (p90 239) beside 212.5 -> contrast +19.8

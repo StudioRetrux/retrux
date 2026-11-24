@@ -1,0 +1,21 @@
+[slot] p4wl:perf-sweep: taken (load 2.1)
+0 A {"held":null,"n":300,"med":19.5,"mean":19.94333333333333,"p95":34.399999999999636,"boot":3588,"waited":0,"load0":2.1,"load1":2.5,"others":[]} load 2.5
+0 B {"held":null,"n":273,"med":21.5,"mean":21.893040293040293,"p95":34.19999999999891,"boot":3523,"waited":0,"load0":2.5,"load1":2.5,"others":[]} load 2.5
+# pair 0 VALID; valid so far 1/6
+1 B {"held":null,"n":271,"med":21.299999999999272,"mean":22.085608856088562,"p95":33.599999999998545,"boot":3551,"waited":0,"load0":2.9,"load1":4.3,"others":[]} load 4.3
+1 A {"held":null,"n":298,"med":19.600000000000364,"mean":20.137248322147652,"p95":34.5,"boot":3569,"waited":0,"load0":4,"load1":4,"others":[]} load 4.0
+# pair 1 VALID; valid so far 2/6
+2 A {"held":null,"n":297,"med":19.700000000000728,"mean":20.185521885521887,"p95":34.5,"boot":4253,"waited":0,"load0":6.2,"load1":5.6,"others":[]} load 5.6
+2 B {"held":null,"n":269,"med":21.5,"mean":22.24609665427509,"p95":27.399999999999636,"boot":3570,"waited":0,"load0":5,"load1":5.1,"others":[]} load 5.1
+# pair 2 VALID; valid so far 3/6
+3 B {"held":null,"n":272,"med":21.19999999999891,"mean":21.935661764705884,"p95":28.099999999998545,"boot":3566,"waited":0,"load0":4.7,"load1":4.8,"others":[]} load 4.8
+3 A {"held":null,"n":299,"med":19.599999999998545,"mean":20.038795986622073,"p95":34.5,"boot":3606,"waited":0,"load0":4.4,"load1":4.6,"others":[]} load 4.6
+# pair 3 VALID; valid so far 4/6
+4 A {"held":null,"n":297,"med":19.900000000001455,"mean":20.25858585858586,"p95":35.20000000000073,"boot":3598,"waited":0,"load0":4.2,"load1":3.7,"others":[]} load 3.7
+4 B {"held":null,"n":277,"med":20.799999999999272,"mean":21.61335740072202,"p95":29.600000000000364,"boot":3534,"waited":0,"load0":3.5,"load1":3.1,"others":[]} load 3.1
+# pair 4 VALID; valid so far 5/6
+5 B {"held":null,"n":263,"med":22,"mean":22.771102661596956,"p95":26.399999999999636,"boot":3537,"waited":0,"load0":3,"load1":3.2,"others":[]} load 3.2
+5 A {"held":null,"n":280,"med":21.099999999998545,"mean":21.38214285714286,"p95":24.600000000000364,"boot":3536,"waited":0,"load0":3.2,"load1":3.1,"others":[]} load 3.1
+# pair 5 VALID; valid so far 6/6
+{"valid":6,"pairs":6,"paired_med":1.0867346938774938,"paired_mean":1.0967540600767203,"A_med":19.700000000000728,"B_med":21.5,"A_boot":3598,"B_boot":3551}
+[slot] p4wl:perf-sweep: freed (exit 0)

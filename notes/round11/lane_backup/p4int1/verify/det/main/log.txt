@@ -1,0 +1,5 @@
+q00_rest t=8.517 phase=idle cam=0.234,2.904,11.791
+q01_loop15 t=11.017 phase=idle cam=0.234,2.904,11.791
+q03_eye t=13.517 phase=idle cam=0.234,2.904,11.791
+p05_expand t=15.217 phase=expand cam=0.155,2.356,4.755
+p06_sustain t=16.917 phase=expand cam=0.155,2.356,4.752

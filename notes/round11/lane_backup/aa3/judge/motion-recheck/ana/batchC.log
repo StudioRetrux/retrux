@@ -1,0 +1,4 @@
+[slot] motion-recheck:C g8 ident: taken (load 18.2)
+[batchC] ident took 91 s
+BATCHC-DONE
+[slot] motion-recheck:C g8 ident: freed (exit 0)

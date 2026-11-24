@@ -1,0 +1,46 @@
+== ab_rest.txt: 6 pairs
+  pair 0: A med 19.7 mean 22.91 p95 51.8 n 262 (load 3.8) | B med 18.6 mean 22.46 p95 52.9 n 268 (load 5.3) | ratio med 0.944 mean 0.980
+  pair 1: A med 17.4 mean 21.81 p95 52.3 n 276 (load 5.3) | B med 19.3 mean 24.14 p95 53.2 n 248 (load 5.1) | ratio med 1.109 mean 1.107
+  pair 2: A med 19.4 mean 23.42 p95 54.9 n 257 (load 5.7) | B med 19.4 mean 22.69 p95 53.5 n 264 (load 6.4) | ratio med 1.000 mean 0.969
+  pair 3: A med 20.1 mean 23.46 p95 54.2 n 256 (load 5.9) | B med 19.2 mean 23.87 p95 54.1 n 252 (load 6.1) | ratio med 0.955 mean 1.017
+  pair 4: A med 16.7 mean 20.10 p95 52.5 n 300 (load 6.7) | B med 19.2 mean 24.13 p95 65.5 n 249 (load 6.2) | ratio med 1.150 mean 1.201
+  pair 5: A med 17.9 mean 21.14 p95 52.3 n 283 (load 11.3) | B med 17.3 mean 20.19 p95 52.8 n 298 (load 8.2) | ratio med 0.966 mean 0.955  [load >= 10]
+  median of medians A 18.65 ms  B 19.20 ms  (ratio 1.029); median of means A 22.36 B 23.28 (ratio 1.041)
+  paired ratio medians: med 0.983, mean 0.999; load < 10 pairs (5): med 1.000, mean 1.017
+== ab_rest_r2.txt: 6 pairs
+  pair 0: A med 16.7 mean 19.87 p95 50.9 n 302 (load 4.1) | B med 17.3 mean 21.82 p95 51.9 n 274 (load 4.7) | ratio med 1.036 mean 1.098
+  pair 1: A med 18.5 mean 21.94 p95 53.3 n 274 (load 6.7) | B med 17.6 mean 20.55 p95 52.9 n 293 (load 6.2) | ratio med 0.951 mean 0.937
+  pair 2: A med 16.6 mean 20.11 p95 52.8 n 300 (load 5.6) | B med 17.4 mean 22.12 p95 53.5 n 272 (load 4.8) | ratio med 1.048 mean 1.100
+  pair 3: A med 16.4 mean 19.96 p95 52.2 n 302 (load 4.3) | B med 17.2 mean 20.41 p95 52.1 n 293 (load 4.4) | ratio med 1.049 mean 1.022
+  pair 4: A med 16.6 mean 19.98 p95 52.4 n 301 (load 4.0) | B med 17.8 mean 22.16 p95 53.7 n 270 (load 11.0) | ratio med 1.072 mean 1.109  [load >= 10]
+  pair 5: A med 32.0 mean 34.90 p95 79.5 n 170 (load 16.1) | B med 32.7 mean 35.92 p95 76.1 n 167 (load 18.6) | ratio med 1.022 mean 1.029  [load >= 10]
+  median of medians A 16.65 ms  B 17.50 ms  (ratio 1.051); median of means A 20.05 B 21.97 (ratio 1.096)
+  paired ratio medians: med 1.042, mean 1.064; load < 10 pairs (4): med 1.042, mean 1.060
+== ab_rest_r3.txt: 6 pairs
+  pair 0: A med 16.9 mean 20.06 p95 53.6 n 300 (load 5.2) | B med 17.9 mean 20.46 p95 47.1 n 293 (load 4.9) | ratio med 1.059 mean 1.020
+  pair 1: A med 17.1 mean 19.97 p95 47.6 n 301 (load 5.3) | B med 17.2 mean 20.41 p95 52.9 n 294 (load 4.9) | ratio med 1.006 mean 1.022
+  pair 2: A med 18.0 mean 19.04 p95 38.2 n 316 (load 4.8) | B med 18.1 mean 19.00 p95 37.7 n 315 (load 4.4) | ratio med 1.006 mean 0.998
+  pair 3: A med 17.5 mean 18.63 p95 37.9 n 322 (load 3.9) | B med 18.1 mean 18.85 p95 37.2 n 318 (load 3.6) | ratio med 1.034 mean 1.012
+  pair 4: A med 17.2 mean 19.88 p95 51.3 n 303 (load 4.8) | B med 16.5 mean 19.25 p95 52.9 n 313 (load 8.4) | ratio med 0.959 mean 0.968
+  pair 5: A med 17.0 mean 21.40 p95 53.9 n 281 (load 10.0) | B med 17.4 mean 20.40 p95 52.1 n 295 (load 9.2) | ratio med 1.024 mean 0.953  [load >= 10]
+  median of medians A 17.15 ms  B 17.65 ms  (ratio 1.029); median of means A 19.93 B 19.83 (ratio 0.995)
+  paired ratio medians: med 1.015, mean 1.005; load < 10 pairs (5): med 1.006, mean 1.012
+== ab_move.txt: 6 pairs
+  pair 0: A med 20.3 mean 20.55 p95 36.9 n 292 (load 9.0) | B med 20.4 mean 20.57 p95 36.1 n 292 (load 7.3) | ratio med 1.005 mean 1.001
+  pair 1: A med 20.0 mean 21.16 p95 37.5 n 284 (load 5.9) | B med 20.0 mean 20.18 p95 36.6 n 298 (load 7.2) | ratio med 1.000 mean 0.954
+  pair 2: A med 20.8 mean 22.51 p95 37.0 n 268 (load 6.0) | B med 20.9 mean 21.38 p95 36.5 n 280 (load 5.7) | ratio med 1.005 mean 0.950
+  pair 3: A med 20.1 mean 20.87 p95 36.6 n 288 (load 5.9) | B med 21.3 mean 23.48 p95 39.6 n 255 (load 6.1) | ratio med 1.060 mean 1.125
+  pair 4: A med 19.8 mean 19.95 p95 36.1 n 301 (load 5.3) | B med 20.1 mean 20.32 p95 36.4 n 296 (load 5.0) | ratio med 1.015 mean 1.018
+  pair 5: A med 19.9 mean 19.90 p95 36.1 n 302 (load 4.8) | B med 20.2 mean 20.24 p95 36.5 n 298 (load 5.0) | ratio med 1.015 mean 1.017
+  median of medians A 20.05 ms  B 20.30 ms  (ratio 1.012); median of means A 20.71 B 20.44 (ratio 0.987)
+  paired ratio medians: med 1.010, mean 1.009; load < 10 pairs (6): med 1.010, mean 1.009
+== ab_hold.txt: 6 pairs
+  pair 0: A med 19.8 mean 19.23 p95 35.7 n 312 (load 4.3) | B med 20.5 mean 19.58 p95 35.9 n 306 (load 3.7) | ratio med 1.035 mean 1.018 held A {'phase': 'expand', 'cam': 0.967} B {'phase': 'expand', 'cam': 0.967}
+  pair 1: A med 20.0 mean 19.31 p95 35.6 n 310 (load 4.0) | B med 20.1 mean 19.57 p95 35.4 n 306 (load 3.6) | ratio med 1.005 mean 1.013 held A {'phase': 'expand', 'cam': 0.967} B {'phase': 'expand', 'cam': 0.967}
+  pair 2: A med 21.5 mean 21.78 p95 26.0 n 275 (load 3.3) | B med 20.0 mean 19.34 p95 35.3 n 310 (load 3.5) | ratio med 0.930 mean 0.888 held A {'phase': 'expand', 'cam': 0.967} B {'phase': 'expand', 'cam': 0.967}
+  pair 3: A med 20.5 mean 21.66 p95 37.5 n 277 (load 3.6) | B med 20.1 mean 19.56 p95 35.8 n 307 (load 3.7) | ratio med 0.980 mean 0.903 held A {'phase': 'expand', 'cam': 0.967} B {'phase': 'expand', 'cam': 0.967}
+  pair 4: A med 20.8 mean 23.10 p95 42.9 n 260 (load 4.0) | B med 21.2 mean 22.27 p95 37.3 n 269 (load 4.6) | ratio med 1.019 mean 0.964 held A {'phase': 'expand', 'cam': 0.967} B {'phase': 'expand', 'cam': 0.967}
+  pair 5: A med 21.7 mean 21.91 p95 26.2 n 273 (load 3.9) | B med 20.1 mean 19.61 p95 36.0 n 306 (load 4.7) | ratio med 0.926 mean 0.895 held A {'phase': 'expand', 'cam': 0.967} B {'phase': 'expand', 'cam': 0.967}
+  median of medians A 20.65 ms  B 20.10 ms  (ratio 0.973); median of means A 21.72 B 19.57 (ratio 0.901)
+  paired ratio medians: med 0.993, mean 0.934; load < 10 pairs (6): med 0.993, mean 0.934
+REST all three runs: 18 pairs (14 at load < 10): paired median ratio of run medians 1.020 (all 1.023), of run means 1.019 (all 1.019); clean pairs: median run median MAIN 17.30 vs int1 18.00 ms, median run mean 20.08 vs 21.19 ms

@@ -1,0 +1,14 @@
+patch used: /Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/lane_backup/p4int1/int1_vs_main.patch sha256 31f06f9efba6d4d8
+dry run rc=0
+apply rc=0 (12 files; fuzz/offset lines: 0)
+orig/rej: 0
+applied app/ == int1 app/
+applied public/ (+ asset from the env lane) == int1 public/
+hero-lab main.ts/index.html same
+tsc hero (clone) rc=0 lines=0
+tsc project (clone) rc=0 lines=0
+built /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/verify_int1/apply/dist_clone
+served script: /dist/main.js
+served main.js sha256 49960a37aefc645e  clone build main.js sha256 49960a37aefc645e  int1 dist main.js 49960a37aefc645e
+clone bundle == served :5173 bundle (byte for byte)
+clone removed

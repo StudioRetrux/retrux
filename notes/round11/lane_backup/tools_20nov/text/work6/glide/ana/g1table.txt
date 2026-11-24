@@ -1,0 +1,33 @@
+== NEW masks (aa5a bloom-free capm), MC32 % vs BASE (FIX = aa3_fixed1 for calibration)
+slow     FS:-74(fix -75)[J32 -31/GT -15 J48 -59/GT -12]  WR:-75(fix -74)[J32 -33/GT -25 J48 -36/GT -39]  DR:-87(fix -84)[J32 -41/GT -5 J48 -87/GT -25]  FF:-82(fix -73)[J32 -82/GT -35 J48 -90/GT -64]  FR:-71(fix -52)[J32 -83/GT -66 J48 -90/GT -82]  RS:-90(fix -86)[J32 -63/GT -49 J48 -71/GT -71]  tot:-81(fix -73)[J32 -63/GT -29 J48 -83/GT -55]  | texLake 1.0097 texSolid 1.0007
+medium   FS:-83(fix -83)[J32 -11/GT -9 J48 -8/GT -1]  WR:-70(fix -65)[J32 -20/GT -13 J48 -21/GT -16]  DR:-88(fix -81)[J32 -11/GT -8 J48 -19/GT -10]  FF:-83(fix -74)[J32 -44/GT -17 J48 -68/GT -35]  FR:-71(fix -60)[J32 -44/GT -17 J48 -64/GT -34]  RS:-88(fix -87)[J32 -37/GT -19 J48 -34/GT -9]  tot:-82(fix -73)[J32 -33/GT -14 J48 -48/GT -25]  | texLake 1.0114 texSolid 1.0003
+fast     FS:-23!(fix -36)  WR:-53(fix -47)  DR:-83(fix -79)  FF:-83(fix -72)  FR:-74(fix -55)  RS:-85(fix -71)  tot:-73(fix -65)  | texLake 1.0112 texSolid 1.0003
+diag     FS:-40(fix -59)  WR:-60(fix -52)  DR:-86(fix -83)  FF:-85(fix -74)  FR:-79(fix -57)  RS:-85(fix -74)  tot:-78(fix -69)  | texLake 1.0113 texSolid 1.0002
+reverse  FS:-22!(fix -36)[J32 -6/GT -6 J48 -8/GT +4]  WR:-66(fix -54)[J32 -18/GT -14 J48 -16/GT -16]  DR:-78(fix -73)[J32 -6/GT -4 J48 -5/GT +1]  FF:-82(fix -72)[J32 -34/GT -10 J48 -47/GT -21]  FR:-78(fix -55)[J32 -5/GT +1 J48 -3/GT +6]  RS:-83(fix -73)[J32 -63/GT -33 J48 -75/GT -47]  tot:-74(fix -65)[J32 -21/GT -7 J48 -26/GT -10]  | texLake 1.008 texSolid 1.0003
+leave    FS:-40!(fix -58)  WR:-68(fix -60)  DR:-92(fix -85)  FF:-83(fix -71)  FR:-76(fix -58)  RS:-91(fix -91)  tot:-79(fix -69)  | texLake 1.01 texSolid 1.0002
+== OLD masks (motion judge cap.mjs), MC32 % vs BASE (FIX = aa3_fixed1 for calibration)
+slow     FS:-81(fix -82)[J32 -28/GT -13 J48 -58/GT -20]  WR:-74(fix -73)[J32 -10/GT -20 J48 -13/GT -57]  DR:-88(fix -85)[J32 -39/GT -5 J48 -88/GT -23]  FF:-78(fix -70)[J32 -73/GT -34 J48 -87/GT -64]  FR:-63(fix -52)[J32 -57/GT -61 J48 -82/GT -83]  RS:-61(fix -59)[J32 -9/GT -23 J48 -7/GT -53]  tot:-77(fix -70)[J32 -38/GT -25 J48 -58/GT -56]  | texLake 1.0119 texSolid 1.0023
+medium   FS:-75(fix -75)[J32 -8/GT -10 J48 -10/GT -7]  WR:-55(fix -52)[J32 -6/GT -6 J48 -6/GT -11]  DR:-87(fix -79)[J32 -7/GT -9 J48 -17/GT -12]  FF:-81(fix -72)[J32 -34/GT -15 J48 -56/GT -32]  FR:-62(fix -54)[J32 -25/GT -16 J48 -43/GT -30]  RS:-32!(fix -31)[J32 -5/GT -8 J48 -3/GT -13]  tot:-74(fix -67)[J32 -17/GT -11 J48 -27/GT -20]  | texLake 1.0144 texSolid 1.0016
+fast     FS:-25!(fix -37)  WR:-36!(fix -32)  DR:-80(fix -76)  FF:-81(fix -71)  FR:-68(fix -56)  RS:-54(fix -49)  tot:-66(fix -59)  | texLake 1.0139 texSolid 1.0014
+diag     FS:-43(fix -60)  WR:-40(fix -36)  DR:-85(fix -82)  FF:-82(fix -72)  FR:-70(fix -56)  RS:-48(fix -44)  tot:-70(fix -63)  | texLake 1.0139 texSolid 1.002
+reverse  FS:-24!(fix -37)[J32 -4/GT -8 J48 -9/GT -3]  WR:-56(fix -47)[J32 -8/GT -8 J48 -7/GT -14]  DR:-71(fix -66)[J32 -3/GT -5 J48 -3/GT -2]  FF:-80(fix -70)[J32 -27/GT -9 J48 -40/GT -20]  FR:-73(fix -55)[J32 -2/GT +0 J48 -2/GT +4]  RS:-40(fix -36)[J32 -6/GT -12 J48 -5/GT -27]  tot:-68(fix -61)[J32 -12/GT -7 J48 -17/GT -11]  | texLake 1.0105 texSolid 1.0017
+leave    FS:-44(fix -60)  WR:-55(fix -50)  DR:-91(fix -84)  FF:-79(fix -68)  FR:-64(fix -52)  RS:-32!(fix -32)  tot:-70(fix -63)  | texLake 1.0123 texSolid 1.0019
+
+GATE / L4 MISSES:
+  NEW fast FS MC32 -23 % (gate -40; fix -36)
+  NEW reverse FS MC32 -22 % (gate -40; fix -36)
+  NEW leave FS MC32 -40 % (gate -40; fix -58)
+  OLD slow WR j32 AA6 -10 vs GT -20 (L4 floor -15)
+  OLD slow WR j48 AA6 -13 vs GT -57 (L4 floor -52)
+  OLD slow RS j32 AA6 -9 vs GT -23 (L4 floor -18)
+  OLD slow RS j48 AA6 -7 vs GT -53 (L4 floor -48)
+  OLD medium WR j48 AA6 -6 vs GT -11 (L4 floor -6)
+  OLD medium RS MC32 -32 % (gate -50; fix -31)
+  OLD medium RS j48 AA6 -3 vs GT -13 (L4 floor -8)
+  OLD fast FS MC32 -25 % (gate -40; fix -37)
+  OLD fast WR MC32 -36 % (gate -40; fix -32)
+  OLD reverse FS MC32 -24 % (gate -40; fix -37)
+  OLD reverse WR j48 AA6 -7 vs GT -14 (L4 floor -9)
+  OLD reverse RS j32 AA6 -6 vs GT -12 (L4 floor -7)
+  OLD reverse RS j48 AA6 -5 vs GT -27 (L4 floor -22)
+  OLD leave RS MC32 -32 % (gate -40; fix -32)

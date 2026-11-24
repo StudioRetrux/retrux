@@ -11,7 +11,7 @@ import path from "node:path";
 const SP = fileURLToPath(new URL("..", import.meta.url)).replace(/[\\/]$/, ""); // hero-pipeline/
 const require = createRequire(SP + "/tools/package.json");
 const { chromium } = require("playwright-core");
-const FFMPEG = SP + "/tools/node_modules/ffmpeg-static/ffmpeg.exe";
+const FFMPEG = (process.env.FFMPEG || "/opt/homebrew/bin/ffmpeg");
 const REF = SP + "/reference";
 
 const out = process.argv[2];
@@ -37,9 +37,9 @@ const POSES = [
 
 const logs = [];
 const browser = await chromium.launch({
-  executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+  executablePath: (process.env.CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"),
   headless: true,
-  args: ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"],
+  args: [(process.platform === "win32" ? "--use-angle=d3d11" : "--use-angle=metal"), "--enable-gpu", "--ignore-gpu-blocklist"],
 });
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 766 } });
@@ -47,7 +47,7 @@ try {
   page.on("console", (m) => {
     if (m.type() === "error" || m.type() === "warning") logs.push(`console.${m.type()} ${m.text().slice(0, 400)}`);
   });
-  await page.goto(`http://localhost:5173/?tier=${tier}&scale=${scale}&debug=1`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${(process.env.LAB || "http://localhost:5173")}/?tier=${tier}&scale=${scale}&debug=1`, { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => document.documentElement.dataset.heroReady === "1", null, { timeout: 180000 });
   await page.addStyleTag({ content: ".nav,.hero-copy,.scroll,.sound,.overlay,[data-hud]{visibility:hidden !important}" });
   // Finish the intro deterministically, then let the real loop run a moment.

@@ -21,3 +21,14 @@ __pycache__/
 Thumbs.db
 *.swp
 *.swo
+
+# 22 Nov: client screen recordings dropped in the repo root (one is over GitHub's 100 MB limit) and the lanes' image / video
+# evidence (~560 MB; kept on the Mac and in ~/RetruxR11Work). Text evidence (LOG, HANDOFF, patches, numbers) stays tracked.
+/*.MP4
+/*.mp4
+/*.mov
+/*.MOV
+notes/round11/lane_backup/**/*.png
+notes/round11/lane_backup/**/*.jpg
+notes/round11/lane_backup/**/*.webm
+notes/round11/lane_backup/**/*.exr

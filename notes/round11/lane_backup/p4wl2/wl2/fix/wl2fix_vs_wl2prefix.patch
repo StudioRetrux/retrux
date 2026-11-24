@@ -1,0 +1,93 @@
+--- a/retrux-web/app/hero/engine/world/Water.ts
++++ b/retrux-web/app/hero/engine/world/Water.ts
+@@ -1784,6 +1784,77 @@
+ `,
+   },
+ ];
++/**
++ * wl2 fixer (final judge WL2-FJ1, 22 Nov): in the real loop (dt ~33 ms, the camera moving) the open water in front of the left ice
++ * sheets popped +66-106 % more than MAIN at T1 DPR 2. Bisected in that loop (fix WORK rl/rl2_bisect.txt): `?wlwalk=q` (MAIN's read,
++ * the rest of p4wl on) = MAIN, so P4WL_BAND's read is the whole cause; widening its share by the pixel's footprint of mu
++ * (sE' = sqrt(sE^2 + (k fwidth mu)^2), k 1-8) did not help. Root cause: the share Phi((tap horizon - mu) / sE) took mu and sE from
++ * the PIXEL's bump, whose finest octaves are coherent at the pixel's footprint: a face's reflection broken by ripple stripes a few
++ * px wide that the camera's step between real frames moves by more than half a period (temporal aliasing), so they flip every
++ * frame. MAIN's quarter pass took the share from the bump at the quarter texel's footprint (those octaves incoherent: in the
++ * spread). Fix at the source, no extra noise: lkBump keeps a second set of coherent sums with the coherence of a footprint
++ * WL2FJ_Q times the pixel's (min with the pixel's own), moves the variance it drops into a second spread (LEAN), and the share
++ * takes mu and sE from that band-limited normal / spread (wlN4 / wlSig4). The shading keeps the pixel's own normal.
++ * `?wl2fj=0` = wl2 before this fix (wl2g :5164) exactly; lab `?wl2fjq=` (Q), `?wl2fjs=` (0: the pixel's own spread sE with the
++ * band-limited mu; 1 = default: the band-limited spread too).
++ */
++const WL2FJ_Q = 4.0;
++const WL2FJ_S = 1.0;
++function wl2fjEdits(q: number, sv: number): P4Edit[] {
++  const Q = q.toFixed(4);
++  const S = sv.toFixed(4);
++  return [
++    {
++      find: "vec3 lkBump(vec3 Pw, vec3 dPx, vec3 dPy, float kDof, out vec2 sig) {\n",
++      repl:
++        "vec3 wlN4 = vec3(0.0, 1.0, 0.0);   // wl2 fixer (WL2-FJ1): the last lkBump's normal / spread band-limited to WL2FJ_Q x its footprint\n" +
++        "vec2 wlSig4 = vec2(0.0);\n" +
++        "vec3 lkBump(vec3 Pw, vec3 dPx, vec3 dPy, float kDof, out vec2 sig) {\n",
++    },
++    {
++      find: "  float nc = 0.0, hx = 0.0, hy = 0.0, vx = 0.0, vy = 0.0;\n",
++      repl: "  float nc = 0.0, hx = 0.0, hy = 0.0, vx = 0.0, vy = 0.0;\n  float wlHx = 0.0, wlHy = 0.0, wlVx = 0.0, wlVy = 0.0;   // wl2 fixer\n",
++    },
++    {
++      find: "    // Octaves whose coherent share is negligible only add their variance (no noise evaluation).\n",
++      repl:
++        `    float wlCx = min(cx, lkCoh(Lx * kDof * ${Q}) * lkAvg(Ly * kDof * ${Q}));   // wl2 fixer: the coherence at Q x the footprint\n` +
++        `    float wlCy = min(cy, lkCoh(Ly * kDof * ${Q}) * lkAvg(Lx * kDof * ${Q}));\n` +
++        "    float wlS2 = amp * f * 0.6888;\n    wlS2 *= wlS2;\n" +
++        "    // Octaves whose coherent share is negligible only add their variance (no noise evaluation).\n",
++    },
++    {
++      find: "        hx += amp * min(cx / Tx, 1.0) * (n2.y - n2.x);\n",
++      repl: "        hx += amp * min(cx / Tx, 1.0) * (n2.y - n2.x);\n        wlHx += amp * min(wlCx / Tx, 1.0) * (n2.y - n2.x);\n        wlVx += (cx * cx - wlCx * wlCx) * wlS2;\n",
++    },
++    {
++      find: "        hy += amp * min(cy / Ty, 1.0) * (n2.y - n2.x);\n",
++      repl: "        hy += amp * min(cy / Ty, 1.0) * (n2.y - n2.x);\n        wlHy += amp * min(wlCy / Ty, 1.0) * (n2.y - n2.x);\n        wlVy += (cy * cy - wlCy * wlCy) * wlS2;\n",
++    },
++    {
++      find: "      hx += amp * min(cx / Tx, 1.0) * (n3.y - n3.x);\n      hy += amp * min(cy / Ty, 1.0) * (n3.z - n3.x);\n",
++      repl:
++        "      hx += amp * min(cx / Tx, 1.0) * (n3.y - n3.x);\n      hy += amp * min(cy / Ty, 1.0) * (n3.z - n3.x);\n" +
++        "      wlHx += amp * min(wlCx / Tx, 1.0) * (n3.y - n3.x);\n      wlHy += amp * min(wlCy / Ty, 1.0) * (n3.z - n3.x);\n" +
++        "      wlVx += (cx * cx - wlCx * wlCx) * wlS2;\n      wlVy += (cy * cy - wlCy * wlCy) * wlS2;\n",
++    },
++    {
++      find: "  vec3 No = normalize(abs(det) * vec3(0.0, 0.0, 1.0) - 0.07 * sign(det) * sg);\n  return vec3(No.x, No.z, -No.y);\n",
++      repl:
++        "  vec3 No = normalize(abs(det) * vec3(0.0, 0.0, 1.0) - 0.07 * sign(det) * sg);\n" +
++        "  vec3 wlNo = normalize(abs(det) * vec3(0.0, 0.0, 1.0) - 0.07 * sign(det) * ((rp * wlHx) * Rx + (rp * wlHy) * Ry));   // wl2 fixer\n" +
++        "  wlN4 = vec3(wlNo.x, wlNo.z, -wlNo.y);\n  wlSig4 = rp * sqrt(vec2(vx + wlVx, vy + wlVy));\n" +
++        "  return vec3(No.x, No.z, -No.y);\n",
++    },
++    {
++      // P4WL_BAND's read: the share's mu / sE from the band-limited normal / spread
++      find: "  vec3 rcW = reflect(-V, lkN);\n  float mu = asin(clamp(rcW.y, -1.0, 1.0));\n  float sE = max(2.0 * 0.07 * lkSig.y, 1e-4);\n",
++      repl:
++        "  vec3 rcW = reflect(-V, wlN4);   // wl2 fixer (WL2-FJ1)\n  float mu = asin(clamp(rcW.y, -1.0, 1.0));\n" +
++        `  float sE = max(2.0 * 0.07 * sqrt(mix(lkSig.y * lkSig.y, wlSig4.y * wlSig4.y, ${S})), 1e-4);\n`,
++    },
++  ];
++}
+ /** wl2g: the walk pass's vertex shader (the lake through the anchor view-projection uLkWalkAP). */
+ function wl2gWalkVert(src: string) {
+   const a = "varying vec3 vWorldPos;\n";
+@@ -3404,6 +3475,12 @@
+             // (WL2G_READ is opt-in, `?wl2gread=1`: same contour stability as P4WL_BAND's per-tap read on the anchored lake-fixed
+             // taps (WORK st/s3_zoom.png), but a little more 60 fps sparkle at rest: shelf water 0.2 -> 0.4, lips 1.1 -> 1.3 blips / frame)
+             if (lq?.get("wl2gread") === "1") frag = p4Apply(frag, WL2G_READ, "WL2G");
++            // wl2 fixer (WL2-FJ1): the share from the band-limited bump (wl2fjEdits); `?wl2fj=0` = before the fix
++            if (lq?.get("wl2fj") !== "0") {
++              const qq = Number(lq?.get("wl2fjq"));
++              const sq2 = Number(lq?.get("wl2fjs"));
++              frag = p4Apply(frag, wl2fjEdits(qq >= 1 && qq <= 16 ? qq : WL2FJ_Q, lq?.get("wl2fjs") != null && sq2 >= 0 && sq2 <= 1 ? sq2 : WL2FJ_S), "WL2FJ");
++            }
+             const gq = Number(lq?.get("wl2gg"));
+             if (gq >= 1 && gq <= 2) this.walkGuard = gq;
+             const tq = Number(lq?.get("wl2gt"));

@@ -1,0 +1,6 @@
+rest lane {'blocks': 8, 'frames': 331, 'med': 66.6, 'p95': 66.7, 'blockMeds': [66.6, 58.35, 66.6, 50.1, 66.6, 58.35, 66.6, 50.1], 'loads': [7.4, 7.3, 7.12, 6.71, 6.57, 6.53, 6.33, 5.82]}
+rest main {'blocks': 8, 'frames': 337, 'med': 50.1, 'p95': 66.8, 'blockMeds': [50.1, 66.6, 50.1, 50.1, 66.6, 66.6, 50.1, 50.1], 'loads': [7.37, 7.42, 7.03, 6.95, 7.09, 6.84, 6.14, 5.89]}
+rest pair {'paired': [1.329, 0.876, 1.329, 1, 1, 0.876, 1.329, 1], 'pairedMed': 1, 'loadMax': [7.42, 7.42, 7.12, 6.95, 7.09, 6.84, 6.33, 5.91], 'pairsUnder10': 8, 'pairedMedUnder10': 1, 'ratioOfMedians': 1.329, 'pairedP95Med': 1}
+rest paired MEAN-interval ratios (load<10) [1.11, 0.986, 1.017, 0.99, 0.997, 0.99, 1.031, 1.017] median 1.007 mean 1.017 n 8
+pooled mean interval lane 59.11 main 58.16 ratio 1.016
+logs []

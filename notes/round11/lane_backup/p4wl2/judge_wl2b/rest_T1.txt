@@ -1,0 +1,10 @@
+T1 5166 vs 5162 mean|d| 0.655 max 72 px>2 95574 px>8 24858 bbox>2 (np.int64(0), np.int64(465), np.int64(1439), np.int64(763))
+   sky/top 0-430          mean 0.004 px>2 0 px>8 0 max 1
+   left 0-480x430-766     mean 1.497 px>2 32008 px>8 8891 max 70
+   mid 480-880x430-766    mean 1.343 px>2 24517 px>8 5645 max 37
+   far 880-1440x430-766   mean 1.583 px>2 39049 px>8 10322 max 72
+T1 5166 vs 5163 mean|d| 0.161 max 44 px>2 27703 px>8 3598 bbox>2 (np.int64(0), np.int64(465), np.int64(1437), np.int64(755))
+   sky/top 0-430          mean 0.000 px>2 0 px>8 0 max 1
+   left 0-480x430-766     mean 0.861 px>2 24072 px>8 3156 max 25
+   mid 480-880x430-766    mean 0.105 px>2 811 px>8 310 max 22
+   far 880-1440x430-766   mean 0.127 px>2 2820 px>8 132 max 44

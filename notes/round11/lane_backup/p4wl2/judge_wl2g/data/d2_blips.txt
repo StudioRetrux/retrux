@@ -1,0 +1,4 @@
+left 0-420x470-620       thr12/6/4: MAIN 1305/5198/8805 | P4WL 1075/4340/7412 | LANE 1053/4222/7221 | PX 1270/4945/8279 | GT 861/3481/6425
+shelf 280-480x440-520    thr12/6/4: MAIN 345/939/1380 | P4WL 329/861/1246 | LANE 328/809/1168 | PX 340/930/1355 | GT 323/712/1128
+far 880-1440x430-590     thr12/6/4: MAIN 1782/5637/9764 | P4WL 1581/4602/7928 | LANE 1569/4519/7777 | PX 1891/6001/10272 | GT 1645/4760/8206
+sheet /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_wl2g/img/d2_shelfzoom_x5.png cols ['MAIN', 'P4WL', 'LANE', 'PX', 'GT'] frames [98, 99, 100] then diffs x8; contrast x4

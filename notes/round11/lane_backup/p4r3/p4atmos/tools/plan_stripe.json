@@ -1,0 +1,8 @@
+[
+ {"name":"a_base","t":13.3,"tau":0},
+ {"name":"b_noveil","t":13.3,"tau":0,"js":"__hero.env.atmosUniforms.uAtmosHaze.value.x=0"},
+ {"name":"c_noshade","t":13.3,"tau":0,"js":"__hero.env.atmosUniforms.uAtmosHaze.value.x=1.6;__hero.env.atmosUniforms.uAtmosVeilSh.value.x=0"},
+ {"name":"d_nomist","t":13.3,"tau":0,"js":"__hero.env.atmosUniforms.uAtmosVeilSh.value.x=0.5;__hero.env.atmosUniforms.uAtmosBank.value.w=0"},
+ {"name":"e_base94","t":9.4,"tau":0,"js":"__hero.env.atmosUniforms.uAtmosBank.value.w=-1"},
+ {"name":"f_noveil94","t":9.4,"tau":0,"js":"__hero.env.atmosUniforms.uAtmosHaze.value.x=0"}
+]

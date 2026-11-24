@@ -1,0 +1,31 @@
+### reverse mask=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work5/aa5b/caps/reverse_bmask gt=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work5/aa5b/caps/reverse_gt
+A8: flagged px 2120, events >= 6 px: 60, px in them 875
+LANE: flagged px 2017, events >= 6 px: 57, px in them 842
+-- A8 top 4
+  k58-81 x942-1013 y751-763 n86 emax89 frames 58/6/60/-50 59/4/55/-52 60/3/57/-54 60/2/58/-51 ...
+  k73-85 x82-113 y544-550 n57 emax99 frames 73/1/61/100 74/5/70/64 75/3/91/117 75/2/65/-62 ...
+  k30-39 x141-159 y541-548 n31 emax134 frames 30/1/41/-53 31/5/134/-97 32/2/96/-104 33/2/132/-115 ...
+  k59-69 x124-149 y537-543 n37 emax102 frames 59/2/71/88 60/2/93/92 60/1/52/66 61/1/77/93 ...
+-- LANE top 4
+  k58-81 x942-1013 y751-763 n84 emax89 frames 58/7/59/-47 59/3/54/-55 60/3/57/-53 60/2/59/-50 ...
+  k73-85 x82-113 y544-550 n56 emax99 frames 73/1/65/103 74/5/71/66 75/3/91/116 75/3/56/-54 ...
+  k31-41 x141-161 y540-545 n34 emax134 frames 31/5/134/-97 32/2/95/-104 33/2/132/-113 34/4/104/-81 ...
+  k59-69 x124-149 y537-543 n35 emax102 frames 59/2/70/88 60/2/96/93 60/1/48/62 61/1/76/94 ...
+-- popnew LANE vs A8 (new pops)
+new pops (X flagged, ref not, X != ref): 15 px, 14 clusters, >= 6 px: 0
+  k102-102 x1065-1066 y607-607 n2 emax44
+  k13-13 x1071-1071 y491-491 n1 emax46
+  k27-27 x1396-1396 y510-510 n1 emax45
+  k65-65 x1358-1358 y502-502 n1 emax45
+  k75-75 x969-969 y736-736 n1 emax45
+  k117-117 x413-413 y712-712 n1 emax45
+  k33-33 x142-142 y536-536 n1 emax44
+  k99-99 x416-416 y721-721 n1 emax43
+  k6-6 x401-401 y709-709 n1 emax42
+  k46-46 x1429-1429 y507-507 n1 emax42
+-- popnew A8 vs LANE (pops the lane removes)
+new pops (X flagged, ref not, X != ref): 19 px, 19 clusters, >= 6 px: 0
+  k15-15 x1080-1080 y492-492 n1 emax54
+  k81-81 x944-944 y738-738 n1 emax52
+  k113-113 x1023-1023 y487-487 n1 emax48
+  k89-89 x1209-1209 y671-671 n1 emax46

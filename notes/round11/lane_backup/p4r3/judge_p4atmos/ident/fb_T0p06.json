@@ -1,0 +1,105 @@
+{
+ "qs": "fogbank=r11",
+ "port": "5178",
+ "logs": [],
+ "counts": null,
+ "targets": {
+  "reflection": {
+   "w": 98,
+   "h": 211,
+   "hash": "449d49b3f651d6cc"
+  },
+  "main": {
+   "w": 390,
+   "h": 844,
+   "hash": "d7c212d77213d300"
+  },
+  "refraction": {
+   "w": 195,
+   "h": 422,
+   "hash": "efbc45943623c54b"
+  },
+  "bloom0": {
+   "w": 195,
+   "h": 422,
+   "hash": "a95cbd8524e8ad4e"
+  },
+  "bloom1": {
+   "w": 98,
+   "h": 211,
+   "hash": "aec8a4fb1d9ec7f8"
+  },
+  "bloom2": {
+   "w": 49,
+   "h": 106,
+   "hash": "5ed458b091c93f7f"
+  },
+  "bloom3": {
+   "w": 25,
+   "h": 53,
+   "hash": "bb6534ac8939dd77"
+  },
+  "ldr": {
+   "w": 390,
+   "h": 844,
+   "hash": "30bf9f869fc03fa5"
+  },
+  "final": {
+   "w": 390,
+   "h": 844,
+   "hash": "87167e255277037e"
+  }
+ },
+ "programs": {
+  "rx-plate-baked|ShaderMaterial": [
+   "54d94f4ccd86eec4",
+   "f13333fb493e7f48"
+  ],
+  "rx-cloud|ShaderMaterial": [
+   "992794d7788bbdf5",
+   "a0bb0d6ac549efeb"
+  ],
+  "rx-water|ShaderMaterial": [
+   "318afe41349f28f1",
+   "ecc90d70b70fdfc7"
+  ],
+  "rx-ice|ShaderMaterial": [
+   "22e7548f991dbcb4",
+   "e81d2b98da500d04"
+  ],
+  "rx-orb|ShaderMaterial": [
+   "4cc696080f35f487",
+   "c60a374b249b5d1b"
+  ],
+  "rx-shards|ShaderMaterial": [
+   "2cf6c8dd842e78df",
+   "5a508e585f3497d5"
+  ],
+  "rx-ice-back|ShaderMaterial": [
+   "c0500856298d5e5c"
+  ],
+  "rx-blit|ShaderMaterial": [
+   "a7f94f57bd0aeb00"
+  ],
+  "rx-bloom-down|ShaderMaterial": [
+   "c1d61d13e0332746"
+  ],
+  "rx-bloom-up|ShaderMaterial": [
+   "2bc7e6301f5c75e6"
+  ],
+  "rx-grade|ShaderMaterial": [
+   "b526055568b2954e"
+  ],
+  "rx-fxaa|ShaderMaterial": [
+   "cd5c4f2cb85098aa"
+  ]
+ },
+ "state": {
+  "phase": "expand",
+  "fogHold": 0.9999823996649394,
+  "camExpand": 0.9999823996649394,
+  "uHold": 0,
+  "uFogHold": 0,
+  "time": 6.449999999999982
+ }
+}

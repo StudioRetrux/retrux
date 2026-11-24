@@ -1,0 +1,465 @@
+{
+ "frames": 30,
+ "W": 1440,
+ "H": 766,
+ "y0": 0,
+ "tex": {
+  "lake": 0.9878,
+  "bright": 1.0122,
+  "dark": 0.9894
+ },
+ "g5": {
+  "skyMean": 0.0047,
+  "skyMax": 22,
+  "heroMean": 0.1821,
+  "heroMax": 74,
+  "regionBoundaryBandMean": 0.111,
+  "regionBoundaryBandPx": 9,
+  "regionBoundaryOtherMean": 0.074,
+  "regionBoundaryOtherPx": 68336
+ },
+ "g4off": {
+  "px": 7,
+  "band": 3,
+  "max": 7,
+  "perMpxFrame": 0.212
+ },
+ "g4base": {
+  "px": 35848,
+  "band": 6340,
+  "max": 113
+ },
+ "offOutsideBandPx": 6778,
+ "rows": [
+  "0(i60) taa 0 {\"resize\":[1440,766]} | l-b>4 band 1678 lake 3 solid 406 sky 11 hero 101 | l-o>4 band 0 out 0 max 0 | g4off 0/0/0 g4base 70/44/36",
+  "1(i61) taa 0  | l-b>4 band 1694 lake 0 solid 272 sky 114 hero 107 | l-o>4 band 0 out 0 max 0 | g4off 0/0/0 g4base 74/55/34",
+  "2(i62) taa 0.5  | l-b>4 band 6069 lake 3245 solid 282 sky 126 hero 427 | l-o>4 band 4296 out 272 max 43 | g4off 0/0/0 g4base 612/135/67",
+  "3(i63) taa 0.5  | l-b>4 band 5037 lake 56 solid 274 sky 130 hero 223 | l-o>4 band 3984 out 186 max 99 | g4off 0/0/0 g4base 47/27/34",
+  "4(i64) taa 0.5  | l-b>4 band 5559 lake 4355 solid 252 sky 129 hero 441 | l-o>4 band 4120 out 220 max 53 | g4off 0/0/0 g4base 662/125/45",
+  "5(i65) taa 0.5  | l-b>4 band 6533 lake 12256 solid 234 sky 134 hero 1482 | l-o>4 band 3812 out 258 max 45 | g4off 0/0/0 g4base 1987/342/63",
+  "6(i66) taa 0.5  | l-b>4 band 4766 lake 56 solid 240 sky 112 hero 271 | l-o>4 band 3908 out 181 max 44 | g4off 0/0/0 g4base 63/35/41",
+  "7(i67) taa 0.5  | l-b>4 band 5776 lake 6178 solid 341 sky 0 hero 785 | l-o>4 band 4040 out 258 max 58 | g4off 0/0/0 g4base 1205/215/52",
+  "8(i68) taa 0.5  | l-b>4 band 7157 lake 19702 solid 350 sky 0 hero 1662 | l-o>4 band 4061 out 245 max 54 | g4off 0/0/0 g4base 3875/618/55",
+  "9(i69) taa 0.5  | l-b>4 band 4714 lake 79 solid 349 sky 0 hero 294 | l-o>4 band 3910 out 247 max 48 | g4off 0/0/0 g4base 54/29/33",
+  "10(i70) taa 0.5  | l-b>4 band 5846 lake 7019 solid 341 sky 0 hero 863 | l-o>4 band 4057 out 306 max 41 | g4off 0/0/0 g4base 1040/224/81",
+  "11(i71) taa 0.5  | l-b>4 band 7838 lake 25587 solid 318 sky 0 hero 1717 | l-o>4 band 4055 out 307 max 42 | g4off 0/0/0 g4base 5797/751/113",
+  "12(i72) taa 0.5  | l-b>4 band 4858 lake 80 solid 330 sky 0 hero 355 | l-o>4 band 3918 out 327 max 48 | g4off 0/0/0 g4base 72/48/33",
+  "13(i73) taa 0.5  | l-b>4 band 5936 lake 7866 solid 346 sky 0 hero 852 | l-o>4 band 3876 out 310 max 50 | g4off 0/0/0 g4base 1528/291/91",
+  "14(i74) taa 0.5  | l-b>4 band 7576 lake 24552 solid 305 sky 0 hero 1423 | l-o>4 band 3828 out 398 max 44 | g4off 0/0/0 g4base 5508/870/89",
+  "15(i75) taa 0.5  | l-b>4 band 4793 lake 84 solid 287 sky 0 hero 445 | l-o>4 band 3952 out 409 max 53 | g4off 1/0/7 g4base 56/35/33",
+  "16(i76) taa 0.5  | l-b>4 band 5373 lake 7511 solid 289 sky 0 hero 824 | l-o>4 band 3591 out 440 max 67 | g4off 3/0/7 g4base 1412/294/50",
+  "17(i77) taa 0.5  | l-b>4 band 7226 lake 21813 solid 288 sky 0 hero 1195 | l-o>4 band 3460 out 428 max 49 | g4off 0/0/0 g4base 4697/669/87",
+  "18(i78) taa 0.5  | l-b>4 band 4214 lake 60 solid 312 sky 0 hero 432 | l-o>4 band 3345 out 361 max 46 | g4off 0/0/0 g4base 60/36/26",
+  "19(i79) taa 0.5  | l-b>4 band 5112 lake 4559 solid 304 sky 0 hero 570 | l-o>4 band 3289 out 303 max 64 | g4off 1/1/5 g4base 937/176/52",
+  "20(i80) taa 0.5  | l-b>4 band 5962 lake 10723 solid 217 sky 0 hero 757 | l-o>4 band 3061 out 231 max 42 | g4off 0/0/0 g4base 2061/365/73",
+  "21(i81) taa 0.5  | l-b>4 band 3987 lake 69 solid 244 sky 0 hero 182 | l-o>4 band 2994 out 176 max 46 | g4off 1/1/5 g4base 58/43/34",
+  "22(i82) taa 0.5  | l-b>4 band 4257 lake 2057 solid 254 sky 0 hero 200 | l-o>4 band 2518 out 136 max 36 | g4off 0/0/0 g4base 322/106/40",
+  "23(i83) taa 0.5  | l-b>4 band 4209 lake 3860 solid 274 sky 0 hero 291 | l-o>4 band 2107 out 128 max 55 | g4off 0/0/0 g4base 871/189/54",
+  "24(i84) taa 0.5  | l-b>4 band 2954 lake 21 solid 287 sky 0 hero 141 | l-o>4 band 1546 out 113 max 34 | g4off 1/1/5 g4base 56/39/33",
+  "25(i85) taa 0.5  | l-b>4 band 2581 lake 571 solid 297 sky 0 hero 138 | l-o>4 band 964 out 69 max 56 | g4off 0/0/0 g4base 182/67/33",
+  "26(i86) taa 0.5  | l-b>4 band 3194 lake 1601 solid 270 sky 0 hero 187 | l-o>4 band 1328 out 65 max 54 | g4off 0/0/0 g4base 299/87/48",
+  "27(i87) taa 0.5  | l-b>4 band 3468 lake 39 solid 204 sky 68 hero 144 | l-o>4 band 2124 out 92 max 50 | g4off 0/0/0 g4base 49/31/26",
+  "28(i88) taa 0.5  | l-b>4 band 4814 lake 2600 solid 201 sky 91 hero 245 | l-o>4 band 3124 out 124 max 50 | g4off 0/0/0 g4base 554/103/70",
+  "29(i89) taa 0.5  | l-b>4 band 6032 lake 7143 solid 236 sky 111 hero 434 | l-o>4 band 3745 out 188 max 60 | g4off 0/0/0 g4base 1640/291/70"
+ ],
+ "worstOff": [
+  {
+   "k": 15,
+   "x": 631,
+   "y": 540,
+   "e": -7,
+   "band": 0,
+   "hero": 1,
+   "l": [
+    139,
+    157,
+    182
+   ],
+   "o": [
+    146,
+    163,
+    186
+   ]
+  },
+  {
+   "k": 16,
+   "x": 641,
+   "y": 540,
+   "e": -7,
+   "band": 0,
+   "hero": 1,
+   "l": [
+    133,
+    151,
+    175
+   ],
+   "o": [
+    140,
+    158,
+    182
+   ]
+  },
+  {
+   "k": 16,
+   "x": 548,
+   "y": 467,
+   "e": -5,
+   "band": 0,
+   "hero": 1,
+   "l": [
+    155,
+    169,
+    189
+   ],
+   "o": [
+    163,
+    175,
+    194
+   ]
+  },
+  {
+   "k": 16,
+   "x": 550,
+   "y": 467,
+   "e": -5,
+   "band": 0,
+   "hero": 1,
+   "l": [
+    158,
+    171,
+    191
+   ],
+   "o": [
+    165,
+    177,
+    196
+   ]
+  },
+  {
+   "k": 19,
+   "x": 1079,
+   "y": 675,
+   "e": -5,
+   "band": 1,
+   "hero": 0,
+   "l": [
+    124,
+    143,
+    168
+   ],
+   "o": [
+    129,
+    147,
+    171
+   ]
+  },
+  {
+   "k": 21,
+   "x": 1107,
+   "y": 609,
+   "e": -5,
+   "band": 1,
+   "hero": 0,
+   "l": [
+    126,
+    143,
+    170
+   ],
+   "o": [
+    131,
+    146,
+    172
+   ]
+  },
+  {
+   "k": 24,
+   "x": 234,
+   "y": 485,
+   "e": -5,
+   "band": 1,
+   "hero": 0,
+   "l": [
+    80,
+    101,
+    128
+   ],
+   "o": [
+    85,
+    106,
+    133
+   ]
+  }
+ ],
+ "worstBaseNonLake": [
+  {
+   "k": 6,
+   "x": 1269,
+   "y": 486,
+   "e": -41,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 14,
+   "x": 1315,
+   "y": 486,
+   "e": -41,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 17,
+   "x": 1330,
+   "y": 486,
+   "e": -41,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 19,
+   "x": 1338,
+   "y": 485,
+   "e": -40,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 20,
+   "x": 1341,
+   "y": 485,
+   "e": -40,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 28,
+   "x": 307,
+   "y": 512,
+   "e": -37,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 0,
+   "x": 1220,
+   "y": 624,
+   "e": -36,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 0,
+   "x": 1245,
+   "y": 486,
+   "e": -34,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 1,
+   "x": 1248,
+   "y": 487,
+   "e": -34,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 3,
+   "x": 1255,
+   "y": 485,
+   "e": -34,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 3,
+   "x": 1255,
+   "y": 486,
+   "e": -34,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 3,
+   "x": 1220,
+   "y": 624,
+   "e": -34,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 4,
+   "x": 1220,
+   "y": 624,
+   "e": -34,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 5,
+   "x": 1264,
+   "y": 485,
+   "e": -34,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 5,
+   "x": 1264,
+   "y": 486,
+   "e": -34,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 8,
+   "x": 1280,
+   "y": 485,
+   "e": -34,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 13,
+   "x": 1310,
+   "y": 485,
+   "e": -34,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 16,
+   "x": 1326,
+   "y": 485,
+   "e": -34,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 21,
+   "x": 1344,
+   "y": 484,
+   "e": -34,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 21,
+   "x": 1344,
+   "y": 485,
+   "e": -34,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 1,
+   "x": 1248,
+   "y": 485,
+   "e": -33,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 1,
+   "x": 1248,
+   "y": 486,
+   "e": -33,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 2,
+   "x": 1251,
+   "y": 485,
+   "e": -33,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 4,
+   "x": 1259,
+   "y": 485,
+   "e": -33,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 6,
+   "x": 1269,
+   "y": 484,
+   "e": -33,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 9,
+   "x": 1286,
+   "y": 484,
+   "e": -33,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 10,
+   "x": 1292,
+   "y": 484,
+   "e": -33,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 11,
+   "x": 1298,
+   "y": 484,
+   "e": -33,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 12,
+   "x": 1304,
+   "y": 484,
+   "e": -33,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 15,
+   "x": 1321,
+   "y": 484,
+   "e": -33,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  }
+ ]
+}

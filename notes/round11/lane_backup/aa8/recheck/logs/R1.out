@@ -1,0 +1,8 @@
+[slot] aa8-recheck R1 caps: taken (load 2.9)
+00:43:16 medium 43s
+00:43:51 slow 78s
+00:44:18 fast 105s
+00:44:45 diag 132s
+00:45:13 reverse 160s
+00:45:40 leave 187s
+[slot] aa8-recheck R1 caps: freed (exit 0)

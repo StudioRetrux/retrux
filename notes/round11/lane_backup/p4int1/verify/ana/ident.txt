@@ -1,0 +1,16 @@
+# verify_int1 ident (21 Nov 04:16): OFF = p4env=0&p4ice=0&p4orb=0&p4hold=0 on :5173 vs :5199
+## identP (int1's own tool, 20 frames)
+identP rest T1 off vs 5199         IDENTICAL final SAME mid(0) SAME | targets 14 differ: - | readErr: - | programs 16 differ: - | console lines 0/0
+identP T0 phone off vs 5199        IDENTICAL final SAME mid(0) SAME | targets 9 differ: - | readErr: - | programs 12 differ: - | console lines 0/0
+## identV (mine: other pointer path, 40 frames, final hashed every 10 frames, all console lines)
+identV rest T1 off vs 5199         IDENTICAL final SAME mid(4) SAME | targets 14 differ: - | readErr: - | programs 16 differ: - | console lines 1/1
+identV T0 phone off vs 5199        IDENTICAL final SAME mid(4) SAME | targets 9 differ: - | readErr: - | programs 12 differ: - | console lines 1/1
+identV rest T2 off vs 5199         IDENTICAL final SAME mid(4) SAME | targets 15 differ: - | readErr: - | programs 16 differ: - | console lines 1/1
+identV envlake=plate off vs 5199   IDENTICAL final SAME mid(4) SAME | targets 10 differ: - | readErr: - | programs 12 differ: - | console lines 1/1
+identV hold p06 off vs 5199        IDENTICAL final SAME mid(4) SAME | targets 14 differ: - | readErr: - | programs 16 differ: - | console lines 1/1
+## negative controls (lanes ON)
+identV int1 default T1 vs 5199     DIFFER    final DIFF mid(4) DIFF | targets 14 differ: mirror,walk,reflection,main,refraction,bloom0,bloom1,bloom2,bloom3,bloom4,final | readErr: - | programs 16 differ: rx-plate-baked|ShaderMaterial,rx-cloud|ShaderMaterial,rx-ice|ShaderMaterial,rx-orb|ShaderMaterial,rx-shards|ShaderMaterial,rx-plate-baked-mirror|ShaderMaterial,rx-bloom-down|ShaderMaterial,rx-bloom-up|ShaderMaterial,rx-grade|ShaderMaterial | console lines 1/1
+identV int1 default T0 vs 5199     DIFFER    final SAME mid(4) SAME | targets 9 differ: - | readErr: - | programs 12 differ: rx-plate-baked|ShaderMaterial,rx-cloud|ShaderMaterial | console lines 1/1
+## later session time (pre: settle 90 s, then identV)
+identV int1 DEFAULT T0 phone, t+90 s vs 5199 DIFFER    final DIFF mid(4) DIFF | targets 9 differ: main,refraction,bloom0,bloom1,bloom2,bloom3,ldr,final | readErr: - | programs 12 differ: rx-plate-baked|ShaderMaterial,rx-cloud|ShaderMaterial | console lines 1/1
+identV OFF T1, t+90 s vs 5199      IDENTICAL final SAME mid(4) SAME | targets 14 differ: - | readErr: - | programs 16 differ: - | console lines 1/1

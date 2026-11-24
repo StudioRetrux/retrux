@@ -1,0 +1,48 @@
+--- /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/p4orb3/fix/pre/Orb.ts	2026-11-21 05:49:15
++++ /Users/muhamadrifaldi/RetruxR11Work/lanes/p4orb3/retrux-web/app/hero/engine/hero/Orb.ts	2026-11-21 07:05:41
+@@ -348,6 +348,9 @@
+ // z / w: the model fades out towards the glass edge (impact parameter / radius), where the faint outer shell's sheets would leave
+ // a dark annulus (F402 glows to ~0.9 of its edge): MAIN's clamp there.
+ uniform vec4 uP4HitB;
++// F2 fixer: x the chord normalisation exponent (0 = the hits' total along the chord; 1 = their mean, so the gaps follow the field,
++// not the chord length), y the chord (radii) where both agree, z the hold weight (uRim) at which the model is fully on (0 = linear).
++uniform vec4 uP4HitC;
+ #endif
+ #ifdef ORB_P4RIM
+ // P4 round 3 (R2): the hold rim. x the band lift (0.86-0.96 R), y where the hairline peaks (impact parameter / radius), z its width,
+@@ -572,8 +575,9 @@
+   // Expected clamped sample: Poisson hits with mean lam * z / R; every hit in the plasma saturates the clamp, so the pixel is
+   // P(hit) x limit (or the unclamped mean when that is smaller). Rays that cross no sheet show the lens image of the scene: the
+   // dark refracted structure inside F402 / F453's clipped core (clamp(E) filled the whole hold disc at the cap, HDR p50 ~10).
+-  float hitW = mix(uP4Hit.x, uP4Hit.y, uRim) * (1.0 - smoothstep(uP4HitB.z, uP4HitB.w, bImp));
+-  float pHit = smoothstep(uP4HitB.x, uP4HitB.y, 1.0 - exp(-lam * uP4Hit.z / R)) * uP4Hit.w;
++  float hitW = mix(uP4Hit.x, uP4Hit.y, uP4HitC.z > 0.0 ? smoothstep(0.0, uP4HitC.z, uRim) : uRim) * (1.0 - smoothstep(uP4HitB.z, uP4HitB.w, bImp));
++  float chordN = pow(uP4HitC.y * R / max(2.0 * w, 1e-3 * R), uP4HitC.x);
++  float pHit = smoothstep(uP4HitB.x, uP4HitB.y, 1.0 - exp(-lam * chordN * uP4Hit.z / R)) * uP4Hit.w;
+   float eSum = emit.r + emit.g + emit.b;
+   col = mix(col, emit * min(1.0, limit * pHit / max(eSum, 1e-6)), hitW);
+ #endif
+@@ -587,7 +591,7 @@
+     vec3 inner = clampSample(eps * (sigma > 1e-4 ? (1.0 - exp(-sigma * len)) / sigma : len), limit);
+ #ifdef ORB_P4HIT
+     vec3 innerRaw = eps * (sigma > 1e-4 ? (1.0 - exp(-sigma * len)) / sigma : len);
+-    float pIn = smoothstep(uP4HitB.x, uP4HitB.y, 1.0 - exp(-sm.a * len * uP4Hit.z / R)) * uP4Hit.w;
++    float pIn = smoothstep(uP4HitB.x, uP4HitB.y, 1.0 - exp(-sm.a * len * chordN * uP4Hit.z / R)) * uP4Hit.w;
+     inner = mix(inner, innerRaw * min(1.0, limit * pIn / max(innerRaw.r + innerRaw.g + innerRaw.b, 1e-6)), hitW);
+ #endif
+     // Bounced light mixes the whole ball's colours: mostly neutral, a little of the ramp.
+@@ -865,7 +869,13 @@
+         // front of the hidden orb -9 L (the orb's copy dimmer); gain 3 keeps them at -0.4 / -4 (the hits sit above AgX's white,
+         // compressed by the shoulder). Levels 0.1 / 0.45 -> 0.15 / 0.5 and the hold core glow 0.4 -> 0.25 (uR11OrbC.x): the gaps
+         // read as gaps. Without the edge fade the faint outer shell left a dark annulus inside the rim.)
+-        ...(p4Hit ? { uP4Hit: { value: new THREE.Vector4(0, 1, 10, 3) }, uP4HitB: { value: new THREE.Vector4(0.15, 0.5, 0.7, 0.95) } } : {}),
++        // (F2 fixer, judge p4orb3: the total along the chord made the long central chords clip and the gaps a ring at 0.5-0.8 R, the
++        // radial inverse of F402's dark central figure inside a disc clipped to ~0.86 R. uP4HitC.x 1 = the mean coverage along the
++        // chord (the gaps follow the field), the scale 10 -> 5.5 (the centre no longer saturates by length), the fade to MAIN's clamp
++        // 0.7-0.95 -> 0.45-0.67 R (the outer disc at the clamp, as F402 / F453), the gain 3 -> 8 (the copy's mean, which the ice
++        // reads), and the model full from uRim 0.5 (the release F453 shows the figure; it was 0.24 of it at p07). Fresh-page pairs
++        // vs MAIN in LOG.md, F2 fixer.)
++        ...(p4Hit ? { uP4Hit: { value: new THREE.Vector4(0, 1, 5.5, 8) }, uP4HitB: { value: new THREE.Vector4(0.15, 0.5, 0.45, 0.67) }, uP4HitC: { value: new THREE.Vector4(1, 1.68, 0.5, 0) } } : {}),
+         // P4 round 3 (R2): (band lift, hairline centre, width, strength) and the hairline's lavender colour. (Batches e6-e8: a band
+         // lift of 1.6-2.2 drew a uniform white ring around the structured core; 0.6 with the hit model faded out towards the edge
+         // keeps the glow continuous: p05 band 0.86-0.96 R L 228 -> 238 (F402 245), hairline 0.97-1.0 R (197, 211, 230) -> (228, 231,

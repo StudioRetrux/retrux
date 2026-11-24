@@ -1,0 +1,26 @@
+{
+ "port": "5181",
+ "vw": 1440,
+ "vh": 766,
+ "path": "updown",
+ "qs": "",
+ "main": [
+  1440,
+  766
+ ],
+ "summ": {
+  "frames": 38,
+  "band": 963250,
+  "blended": 909332,
+  "mixed": 0,
+  "mixedChanged": 0,
+  "invalid": 0,
+  "over2": 0,
+  "over4": 0,
+  "under05": 0,
+  "maxRatio": 0,
+  "worst": null,
+  "excActiveFrames": 38
+ },
+ "logs": []
+}

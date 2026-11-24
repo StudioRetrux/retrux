@@ -1,0 +1,9 @@
+q00_rest           px>2  32840 >8  13413 >32  2117 max   100 bbox (np.int64(559), np.int64(173), np.int64(875), np.int64(765)) | rows>=560 px>2 2296 >8 921
+q01_loop15         px>2  29693 >8  12754 >32  2509 max   129 bbox (np.int64(581), np.int64(171), np.int64(867), np.int64(765)) | rows>=560 px>2 3873 >8 1321
+q02_loop30         px>2  26031 >8  11086 >32  2051 max   115 bbox (np.int64(506), np.int64(248), np.int64(941), np.int64(529)) | rows>=560 px>2 0 >8 0
+q03_eye            px>2  55737 >8  25247 >32  4604 max   114 bbox (np.int64(509), np.int64(170), np.int64(924), np.int64(765)) | rows>=560 px>2 6251 >8 2330
+p04_expand_pop     px>2  60121 >8  20472 >32  2351 max    98 bbox (np.int64(505), np.int64(153), np.int64(955), np.int64(651)) | rows>=560 px>2 5982 >8 1825
+p05_expand         px>2 124724 >8  39726 >32  4610 max    98 bbox (np.int64(380), np.int64(101), np.int64(1083), np.int64(617)) | rows>=560 px>2 11103 >8 3852
+p06_sustain        px>2 105962 >8  36952 >32  6125 max   117 bbox (np.int64(338), np.int64(169), np.int64(1072), np.int64(683)) | rows>=560 px>2 25735 >8 8241
+p07_release_snap   px>2  17988 >8   6157 >32  1044 max    99 bbox (np.int64(506), np.int64(262), np.int64(937), np.int64(493)) | rows>=560 px>2 0 >8 0
+p08_release_home   px>2  31024 >8  13099 >32  2583 max   111 bbox (np.int64(525), np.int64(211), np.int64(912), np.int64(761)) | rows>=560 px>2 1034 >8 196

@@ -1,0 +1,13 @@
+[slot] !judge-perfcode G7u exclusive waiting (load 16.1 / max 30, slots 3, holders [{"label":"!judge-perfcode g10 hitch","pid":22947,"at":1795184952256,"slot":0},{"label":"!judge-perfcode g10 firefox","pid":22696,"at":1795184953618,"slot":1},{"label":"!judge-perfcode g10 ctxloss","pid":22694,"at":1795184953618,"slot":2}])
+[slot] !judge-perfcode G7u exclusive waiting (load 61.4 / max 30, slots 3, holders [{"label":"!judge-perfcode g10 hitch","pid":22947,"at":1795184952256,"slot":0}])
+[slot] !judge-perfcode G7u exclusive: taken (load 28.2)
+Fri Nov 20 21:31:31 WIB 2026
+21:31  up 44 mins, 1 user, load averages: 28.18 21.41 35.19
+{"label":"!judge-perfcode G7u exclusive","pid":25655,"at":1795185090982,"slot":0}
+[waitquiet] quiet after 81 s: load 9.66
+21:32  up 45 mins, 1 user, load averages: 9.66 17.13 32.32
+Fri Nov 20 21:36:26 WIB 2026
+21:36  up 49 mins, 1 user, load averages: 6.86 12.17 26.82
+{"label":"!judge-perfcode G7u exclusive","pid":25655,"at":1795185090982,"slot":0}
+{"n":3,"loadMax":30,"bg":false}
+[slot] !judge-perfcode G7u exclusive: freed (exit 0)

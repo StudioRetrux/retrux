@@ -1,0 +1,19 @@
+== R5 15:52:26
+[slot] judge-artifacts-recheck:R5: taken (load 12.7)
+[jcap rest] base: 1 seg, 0 errors/warnings
+  lane: 1 seg, 0 errors/warnings
+  aa0: 1 seg, 0 errors/warnings
+  off: 1 seg, 0 errors/warnings
+[slot] judge-artifacts-recheck:R5: freed (exit 0)
+== R5 done 16:13:05
+== R4 16:13:05
+[slot] judge-artifacts-recheck:R4: taken (load 23.9)
+[jcap tab] lane: 1 seg, 0 errors/warnings
+  off: 1 seg, 0 errors/warnings
+[jcap resize] lane: 3 seg, 0 errors/warnings
+  off: 3 seg, 0 errors/warnings
+[jcap dpr2] lane: 1 seg, 0 errors/warnings
+  off: 1 seg, 0 errors/warnings
+[slot] judge-artifacts-recheck:R4: freed (exit 0)
+== R4 done 16:16:37
+== R6 16:16:37

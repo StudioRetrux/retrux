@@ -1,0 +1,65 @@
+# 1. recheck (R8) vs fixer final (F8) and integrator (I8), same switch
+R8 def vs F8 def                               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 def vs I8 def                               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 g0mc0 vs F8 g0mc0                           IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+R8 g0mc0 vs I8 g0mc0                           IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+R8 all6t vs F8 all6t                           IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 14 differ: - | logs 0/0
+R8 all6t vs I8 all6t                           IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 14 differ: - | logs 0/0
+R8 t2all6t vs F8 t2all6t                       IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 14 differ: - | logs 0/0
+R8 t2all6t vs I8 t2all6t                       IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 14 differ: - | logs 0/0
+R8 plate vs F8 plate                           IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+R8 plate vs I8 plate                           IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+R8 t0 vs F8 t0                                 IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+R8 t0 vs I8 t0                                 IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+R8 fftip0 vs F8 fftip0                         IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 fftip0 vs I8 fftip0                         IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 g0 vs F8 g0                                 IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 g0 vs I8 g0                                 IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 lktaa0 vs F8 lktaa0                         IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+R8 lktaa0 vs I8 lktaa0                         IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+R8 f0 vs F8 f0                                 IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 f0 vs I8 f0                                 IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 mc0 vs F8 mc0                               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+R8 mc0 vs I8 mc0                               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+R8 mr0 vs F8 mr0                               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 mr0 vs I8 mr0                               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 sf0 vs F8 sf0                               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 sf0 vs I8 sf0                               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 ar0 vs F8 ar0                               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+R8 ar0 vs I8 ar0                               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+R8 all5 vs F8 all5                             IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+R8 all5 vs I8 all5                             IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+R8 ffblab vs F8 ffblab                         IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 ffblab vs I8 ffblab                         IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 s07 vs F8 s07                               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 s07 vs I8 s07                               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 nodbg vs F8 nodbg                           IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 nodbg vs I8 nodbg                           IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 nodbg_ffblab vs F8 nodbg_ffblab             IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 nodbg_ffblab vs I8 nodbg_ffblab             IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+# 2. binding G8 / G9
+R8 lkglide=0&mirrorcost=0 vs AA6 lkglide=0 (:5196) IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+R8 all six off + fftip=0 vs BASE T1 (:5182)    IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 14 differ: - | logs 0/0
+R8 T2 all six off + fftip=0 vs BASE T2         IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 14 differ: - | logs 0/0
+R8 envlake=plate vs BASE plate                 IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+R8 T0 phone vs BASE T0                         IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+R8 fftip=0 vs R8 default                       IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+# 3. knee-0.5 / unused switches vs AA7 :5197; knee-0.6 switches vs AA7 + K0.6 live
+R8 g0 vs AA7 g0                                IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 lktaa0 vs AA7 lktaa0                        IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+R8 ar0 vs AA7 ar0                              IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+R8 all5 vs AA7 all5                            IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+R8 def vs AA7 def + K0.6                       IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 f0 vs AA7 f0 + K0.6                         IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 mc0 vs AA7 mc0 + K0.6                       IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+R8 mr0 vs AA7 mr0 + K0.6                       IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 sf0 vs AA7 sf0 + K0.6                       IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 s07 vs AA7 s07 + K0.6                       IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 nodbg vs AA7 nodbg + K0.6                   IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 ffblab vs AA7 ffblab + K0.6                 IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+R8 nodbg_ffblab vs AA7 nodbg_ffblab + K0.6     IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+# 4. P-4: lab params with ?debug differ from ?debug alone (live); without ?debug identical (ignored)
+R8 ffblab (debug) vs R8 default (debug)        DIFFER    final DIFF | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: walk,final | programs 16 differ: rx-water|S
+R8 nodebug+ffblab vs R8 nodebug                IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+# console errors / warnings per session
+sessions: 19, with console lines: 0

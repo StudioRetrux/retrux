@@ -1,7 +1,9 @@
 import * as THREE from "three";
 import { HERO_CENTER, ORB_NAME, ORB_RADIUS } from "../config";
 import { clamp, damp, lerp } from "../math";
+import { laneSource } from "../quality";
 import { GLSL_COMMON, GLSL_ENV } from "../shaders/chunks";
+import { ICE_R10, ICE_R11A } from "./IceMaterial";
 import { LAYER, type QualityProfile } from "../types";
 import type { SharedUniforms } from "../uniforms";
 
@@ -22,6 +24,31 @@ import type { SharedUniforms } from "../uniforms";
  * on the CPU (exact Blender Perlin for the 1D noise). That keeps 8 steps clean and temporally
  * stable without jitter.
  */
+
+/**
+ * P4 round 1, lane orb (20 Nov, panel P3 tasks Q2 / Q4): `?p4orb=0` turns the whole lane off (MAIN exactly: no ORB_P4 define,
+ * MAIN's uniform values and Orb.update gain). Sub-switches: `?orbglass=r11` drops Q2 (the glass lens, rim and hold exposure),
+ * `?orbcharge=r11` drops Q4's orb part (the hold's light build-up). T0 never takes it (HeroEngine passes `p4` only on T1 / T2).
+ */
+const P4Q = typeof location !== "undefined" ? new URLSearchParams(location.search) : null;
+export const P4ORB = P4Q?.get("p4orb") !== "0";
+const P4_GLASS = P4ORB && P4Q?.get("orbglass") !== "r11";
+export const P4_CHARGE = P4ORB && P4Q?.get("orbcharge") !== "r11";
+/**
+ * P4 round 3, lane orb (21 Nov, rejudge p4orb F2 / R2 / F4): `?p4orb3=0` drops round 3 only (MAIN = int1 byte for byte); `?p4orb=0`
+ * drops rounds 1 and 3. Sub-switches: `?orbhit=0` (F2, the plasma's Cycles sample clamp), `?orbrim3=0` (R2, the hold rim).
+ */
+export const P4ORB3 = P4ORB && P4Q?.get("p4orb3") !== "0";
+const P4_HIT = P4ORB3 && P4Q?.get("orbhit") !== "0";
+const P4_RIM3 = P4ORB3 && P4Q?.get("orbrim3") !== "0";
+/**
+ * P4 lane orbd (21 Nov, the client's orb note of 12:40: "jangan kaya cincin sekilas, ada outline tebal ... jadi looks bola ...
+ * tinggal pinggirannya aja, gausah ada outline cahaya tebal"): the orb reads as a glass ball whose glow reaches nearly to a thin,
+ * soft glass edge (ref F000 / F045 / F402), not a bright disc inside a thick pale outline ring. `?p4orbd=0` turns the lane off
+ * (MAIN exactly: no ORB_D define, MAIN's uniforms). Orb.ts only (PostChain / HeroEngine untouched). T1 / T2 with the P4 orb only
+ * (T0 unchanged); `?p4orb=0` drops it too.
+ */
+export const P4ORBD = P4ORB && P4Q?.get("p4orbd") !== "0";
 
 /** Production timing: one Blender frame per 30 fps video frame (frame = 30 t + 1). */
 const BLENDER_FPS = 30;
@@ -299,6 +326,64 @@ uniform vec4 uScreenBg;
 uniform vec4 uHoldFill;
 // Darkest shading factor of the refracted cage (AgX is logarithmic up there: L245 -> L190 needs ~3-4 stops).
 uniform float uShadeFloor;
+#ifdef ORB_R11
+// Round 11 (?ice=r10 compiles without it): scales of the fills added over the Cycles plasma (x whole-disc core glow,
+// y hot radial core, z cyan limb, w hold outer glow), fitted to the Cycles twin (WORK/LOG.md).
+uniform vec4 uR11Orb;
+uniform vec4 uR11OrbB;  // x rim pre-filter strength (sheet coverage -> its mean towards the silhouette), y where it starts
+                        // (impact parameter / radius; 0 = 0.7, the first round-11 value), z the cyan limb's scale in the hold
+                        // (uR11Orb.z is its scale at rest; mixed by uRim)
+uniform vec4 uR11OrbC;  // fix round: x the whole-disc core glow in the hold (uR11Orb.x at rest; mixed by uRim), y where the glass-
+                        // shell band starts (impact parameter / radius; 0 = 0.88, judged), z where the cyan limb starts
+                        // (0 = 0.5, judged), w the limb's inner end (0 = 0.88, judged)
+#endif
+#ifdef ORB_P4
+// P4 lane orb (Q2): x strength of the glass-shell band's lavender multiply (0.35 before), y / z the lens shading's weight / floor
+// in the hold (uHoldFill.z / uShadeFloor at rest; mixed by uRim), w where the hold's cool rim tint starts (impact parameter /
+// radius).
+uniform vec4 uP4Orb;
+// Q2 (fix round): the hold's cool tint of the grazing-exit annulus (a multiply, reached at 0.97 of the radius; mixed by uRim).
+uniform vec3 uP4Rim;
+#endif
+#ifdef ORB_P4HIT
+// P4 round 3 (F2): Cycles clamps each SAMPLE's volume emission (indirect clamp, r + g + b <= 10) and point-samples the volume once
+// per step (procedural volumes: step = 1/10 of the bounds). A sample that lands in a sheet saturates the clamp; one that misses
+// adds nothing, so a pixel is E[clamp] = P(hit) x clamp, not clamp(E). x / y: weight at rest / in the hold (mixed by uRim),
+// z: 2 / (Cycles step in radii) (the share of a step inside a sheet ~ 2 x its mean coverage), w: the hits' gain over the clamp
+// (they sit above AgX's white anyway; it keeps the disc's mean radiance, which the ice reads from the copy, near MAIN's).
+uniform vec4 uP4Hit;
+// x / y: the hit share's levels (smoothstep lo / hi): the reference's core is bimodal, clipped tongues and lens-image gaps;
+// z / w: the model fades out towards the glass edge (impact parameter / radius), where the faint outer shell's sheets would leave
+// a dark annulus (F402 glows to ~0.9 of its edge): MAIN's clamp there.
+uniform vec4 uP4HitB;
+// F2 fixer: x the chord normalisation exponent (0 = the hits' total along the chord; 1 = their mean, so the gaps follow the field,
+// not the chord length), y the chord (radii) where both agree, z the hold weight (uRim) at which the model is fully on (0 = linear).
+uniform vec4 uP4HitC;
+#endif
+#ifdef ORB_P4RIM
+// P4 round 3 (R2): the hold rim. x the band lift (0.86-0.96 R), y where the hairline peaks (impact parameter / radius), z its width,
+// w its strength; uP4RimC the hairline's lavender colour (added).
+uniform vec4 uP4RimB;
+uniform vec3 uP4RimC;
+#endif
+#ifdef ORB_D
+// P4 lane orbd: the glass ball. uOD: the glow that carries the core's light out to the limb (x strength over uGain at rest; the
+// hold's: 3.6, y full until, z zero at (impact parameter / radius), w modulation depth by the plasma's smoke and the limb field);
+// it lifts the pale gap between the core and the edge up to
+// the glow (a max, so the plasma's own structure stays where it is brighter). uODE: the glass edge's thin dark line (x centre,
+// y half-width, z depth toward uODC) and w where the outer zone starts at rest (odOut; the hold's: 0.93; also the start of the
+// hold's cool tint). uODK: MAIN's outline terms kept (x cyan limb, y rim desaturation, z the hold's band lift + hairline, w the
+// plasma emission and the TIR pass in the outer zone).
+uniform vec4 uOD;
+uniform vec4 uODE;
+uniform vec3 uODC;
+uniform vec4 uODK;
+// uODB: the clear glass edge beyond the glow (x its weight, rising from uODE.w to w (impact parameter / radius), y the scene
+// behind, z the reflection).
+uniform vec4 uODB;
+// (No smoke of its own: the lane's smoke level after the shoulder was invisible, <= 169 px > 8 L, judge orbd-J1; the idle
+// orb's internal structure is p4o4's R4-Q10.)
+#endif
 varying vec3 vWorldPos;
 
 // Cycles' film_clamp_light: scale a contribution so that r + g + b <= limit.
@@ -468,6 +553,15 @@ void main() {
 
   vec3 emit = vec3(0.0);
   float trans = 1.0;
+#ifdef ORB_R11
+  // Rays that graze the thin emission sheets near the silhouette hit or miss them pixel by pixel (coloured speckle);
+  // Cycles averages them over its samples into a smooth edge: towards the rim the sheet coverage tends to its mean.
+  float rimSm = uR11OrbB.x * smoothstep(uR11OrbB.y > 0.0 ? uR11OrbB.y : 0.7, 0.95, bImp);
+  vec4 smRim = sheetMean(-0.75, 0.75, h / S);
+#endif
+#ifdef ORB_P4HIT
+  float lam = 0.0;   // sum of mean sheet coverage x path length (metres) along the chord
+#endif
   if (w > 0.0) {
     vec3 pPrev = o + d * s0;
     float nPrev = magickNoise(orbMapping(pPrev));
@@ -478,6 +572,12 @@ void main() {
       float r = length(0.5 * (p + pPrev));
       float c = 0.2 + 0.8 / (5.07 * max(r, 0.008));
       vec4 sm = sheetMean(nPrev, n, r);
+#ifdef ORB_R11
+      sm = mix(sm, smRim, rimSm);
+#endif
+#ifdef ORB_P4HIT
+      lam += sm.a * ds;
+#endif
       float sigma = c * sm.a;                      // Density = D, per metre
       vec3 eps = (1000.0 * c * uGain) * sm.rgb;    // Emission Strength 1000 D, colour ramp(D)
       float tr = exp(-sigma * ds);
@@ -497,6 +597,23 @@ void main() {
   // end of the ramp is violet, and the neutral bounced fill flattened the plasma tongues (QC round 1).
   float chain = min(q < 0.9999 ? (1.0 - q * q * q * q * q) / (1.0 - q) : 5.0, 2.0);
   vec3 col = clampSample(emit, limit);
+#ifdef ORB_P4HIT
+  // Expected clamped sample: Poisson hits with mean lam * z / R; every hit in the plasma saturates the clamp, so the pixel is
+  // P(hit) x limit (or the unclamped mean when that is smaller). Rays that cross no sheet show the lens image of the scene: the
+  // dark refracted structure inside F402 / F453's clipped core (clamp(E) filled the whole hold disc at the cap, HDR p50 ~10).
+  float hitW = mix(uP4Hit.x, uP4Hit.y, uP4HitC.z > 0.0 ? smoothstep(0.0, uP4HitC.z, uRim) : uRim) * (1.0 - smoothstep(uP4HitB.z, uP4HitB.w, bImp));
+  float chordN = pow(uP4HitC.y * R / max(2.0 * w, 1e-3 * R), uP4HitC.x);
+  float pHit = smoothstep(uP4HitB.x, uP4HitB.y, 1.0 - exp(-lam * chordN * uP4Hit.z / R)) * uP4Hit.w;
+  float eSum = emit.r + emit.g + emit.b;
+  col = mix(col, emit * min(1.0, limit * pHit / max(eSum, 1e-6)), hitW);
+#endif
+#ifdef ORB_D
+  // The glass zone beyond the glow: the grazing chords cross only the plasma's faint outer shell, whose ramp end is deep blue
+  // (without MAIN's limb fills over it, a saturated blue ring). The ball's edge shows the scene through the glass instead.
+  // (In the hold the glow reaches further out, F402: mint-white to ~0.93 of the glass, then a thin line.)
+  float odOut = smoothstep(mix(uODE.w, 0.93, uRim), mix(uODB.w, 0.975, uRim), bImp);
+  col *= mix(1.0, uODK.w, odOut);
+#endif
   if (chain > 1.001 && w > 0.0) {
     float rEff = sqrt(h * h + w * w / 3.0) / S;
     float c = 0.2 + 0.8 / (5.07 * max(rEff, 0.008));
@@ -505,9 +622,19 @@ void main() {
     float len = 2.0 * w;
     vec3 eps = (1000.0 * c * uGain) * sm.rgb;
     vec3 inner = clampSample(eps * (sigma > 1e-4 ? (1.0 - exp(-sigma * len)) / sigma : len), limit);
+#ifdef ORB_P4HIT
+    vec3 innerRaw = eps * (sigma > 1e-4 ? (1.0 - exp(-sigma * len)) / sigma : len);
+    float pIn = smoothstep(uP4HitB.x, uP4HitB.y, 1.0 - exp(-sm.a * len * chordN * uP4Hit.z / R)) * uP4Hit.w;
+    inner = mix(inner, innerRaw * min(1.0, limit * pIn / max(innerRaw.r + innerRaw.g + innerRaw.b, 1e-6)), hitW);
+#endif
     // Bounced light mixes the whole ball's colours: mostly neutral, a little of the ramp.
     inner = mix(vec3(dot(inner, vec3(0.2126, 0.7152, 0.0722))), inner, 0.4);
+#ifdef ORB_D
+    // (A neutral, structureless fill that is strongest at the rim (chain -> 2): part of the flat pale band.)
+    col += inner * (chain - 1.0) * mix(1.0, uODK.w, odOut);
+#else
     col += inner * (chain - 1.0);
+#endif
   }
 
   // Behind: the panorama (captured at the orb centre) along the refracted ray, or the screen copy
@@ -537,10 +664,20 @@ void main() {
   // (Rough floor 0.18 since QC round 6: the crisp PMREM detail drew hard vertical seams on the visible caps in the hold.)
   vec3 refl = fIn > 1e-4 ? envRadiance(reflect(rd, N1), max(rough, 0.18)) * fIn : vec3(0.0);
   col = refl + (1.0 - fIn) * col;
+#ifdef ORB_D
+  // The glass edge is clear (F045 / F000 / F402: the scene shows right up to a thin line at the silhouette): beyond the glow the
+  // ball shows what is behind it (the refracted sample, near the rim the scene just behind the edge) and a little of its
+  // reflection, instead of MAIN's pale fills (the bright outline) or the bare TIR zone (a dark grey ring once they are gone).
+  col = mix(col, bg * uODB.y + refl * uODB.z, uODB.x * odOut);
+#endif
   // Grazing paths run through the plasma's low-density shell, where the ramp is deep blue; the
   // reference rim reads pale and soft, so the colour fades towards neutral at the silhouette.
   float rimK = smoothstep(0.55, 1.0, bImp);
+#ifdef ORB_D
+  col = mix(col, vec3(dot(col, vec3(0.2126, 0.7152, 0.0722))), 0.25 * uODK.y * rimK);
+#else
   col = mix(col, vec3(dot(col, vec3(0.2126, 0.7152, 0.0722))), 0.25 * rimK);
+#endif
   // Self-luminous: the whole disc glows (the reference plasma fills the ball; the bare glass between the
   // tongues read as "a lamp in a marble", QC round 3), fading towards the rim, under the plasma structure.
   // Mint, G >= B > R (QC round 4: the reference core reads mint everywhere; B > G read lavender), and a little more
@@ -564,25 +701,118 @@ void main() {
   float smoke = smoothstep(0.35, 0.75, 0.5 + 0.5 * fbm(pMid * 3.0 + vec3(0.0, 0.0, uW * 0.6), MARCH_STEPS <= 8 ? 2 : 3));
   float smokeK = max(mix(1.0, uHoldFill.y, smoke) * mix(1.0, smoothstep(0.3, 3.0, emL), 0.35), mix(0.47, 0.7, uRim));
   float holdFill = mix(1.0, uHoldFill.x, uRim);
+#ifdef ORB_R11
+  // (Fix round, uR11OrbC.x: in the hold the bare plasma read busy, sd 37 vs F420's 15 and the twin's 29, judge 1 (f); a part of
+  // the round-10 core glow evens it out there. Rest keeps uR11Orb.x.)
+  col += mix(vec3(0.62, 1.0, 0.90), vec3(0.80, 1.0, 0.95), coreK * coreK * coreK) * 1.1 * uGain * coreK * smokeK * (1.0 - fIn) * holdFill * mix(uR11Orb.x, uR11OrbC.x, uRim);
+  col += vec3(0.85, 1.0, 0.97) * 2.6 * uGain * pow(1.0 - smoothstep(0.0, mix(0.6, 0.8, uRim), bImp), 2.0) * smokeK * (1.0 - fIn) * uR11Orb.y;
+#else
   col += mix(vec3(0.62, 1.0, 0.90), vec3(0.80, 1.0, 0.95), coreK * coreK * coreK) * 1.1 * uGain * coreK * smokeK * (1.0 - fIn) * holdFill;
   // (x4.0 within 0.55 until QC round 9: ~10 scene-linear, a fully exposed disc above the tone curve's shoulder.)
   col += vec3(0.85, 1.0, 0.97) * 2.6 * uGain * pow(1.0 - smoothstep(0.0, mix(0.6, 0.8, uRim), bImp), 2.0) * smokeK * (1.0 - fIn);
+#endif
   float vein = (1.0 - smoothstep(0.0, 3.5, emL)) * smoothstep(0.15, 0.55, coreK);
   col *= mix(vec3(1.0), vec3(0.5, 0.64, 0.66), vein * 0.8);
   // A luminous cyan limb and a thin additive lilac band at the glass edge (the grey rimTint multiply, a lilac / mint
   // tint over rimG, read as a chrome shell, QC round 6).
+#ifdef ORB_R11
+#ifdef ORB_D
+  // (The cyan limb, a flat bright annulus at 0.7-0.97 R: the "thick light outline". Replaced by the glow below.)
+  col += vec3(0.70, 1.0, 0.94) * uGain * (0.28 + 0.4 * uRim) * smoothstep(uR11OrbC.z > 0.0 ? uR11OrbC.z : 0.5, uR11OrbC.w > 0.0 ? uR11OrbC.w : 0.88, bImp) * (1.0 - smoothstep(0.965, 1.0, bImp)) * (1.0 - fIn) * mix(uR11Orb.z, uR11OrbB.z, uRim) * uODK.x;
+  // The ball's glow carried out to the limb: the reference's glass glows white nearly to its edge (F045, glass radius ~66 px: L
+  // >= 248 to ~6 px inside the edge line, a ~4 px fall, a ~3 px darker line), the engine's plasma fades by ~0.75 R and left a
+  // pale ~15 px glass band around a smaller bright disc. A target level, modulated by the smoke field so the limb is not a flat
+  // ring, raised only where the pixel is dimmer (the plasma keeps its own brighter structure); 0 inside ~0.5 R (0.6 in the hold;
+  // the core's own structure stays) and past uOD.z.
+  // (The limb's own variation: a 2-octave field on the glass in the plasma's Mapping frame, so it drifts with the swirl; its
+  // reach varies too, so the glow's edge is not a perfect circle.)
+  float odN = smoothstep(0.25, 0.75, 0.5 + 0.5 * fbm(orbMapping(o) * 9.0 + vec3(0.0, 0.0, uW * 0.5), 2));
+  // (In the hold the ramp starts further out: F402's dark central figure (the hit model's gaps) stays inside ~0.6 R.)
+  float odR = smoothstep(mix(0.5, 0.6, uRim), mix(0.72, 0.78, uRim), bImp) * (1.0 - smoothstep(mix(uOD.y, 0.9, uRim) - 0.03 * odN, mix(uOD.z, 0.975, uRim) - 0.02 * odN, bImp));
+  // (At rest: mint (the core's G > B > R) to 0.8 R, then a faint cyan-violet towards the edge: the cyan-white (0.62, 0.93, 1.0)
+  // x 3.6 sat on AgX's shoulder as near-neutral white (B-R 10 at 0.85 R vs F000 22) and lifted the rest box's >= 245 count +17-28
+  // %, judge orbd-J2; x uOD.x 3.0 keeps it within the R4-Q10 guard, count +-10 %, tint +-2 of MAIN, plasma frames 600 / 1500 /
+  // 2400. In the hold (uRim 1) the cyan-white x 3.6 as before (the finding is about the idle orb; the rest colour there dimmed the
+  // hold limb at 0.9-0.95 R by 3-4 L and made it bluer, toward the pale band the client asked to remove).)
+  float odF = smoothstep(0.74, 0.95, bImp);
+  vec3 odT = mix(mix(vec3(0.45, 0.92, 0.88), vec3(0.45, 0.68, 1.0), odF), mix(vec3(0.62, 0.93, 1.0), vec3(0.5, 0.8, 1.0), odF), uRim) * (mix(uOD.x, 3.6, uRim) * uGain * mix(1.0, 1.0 - uOD.w, max(smoke, odN))) * (1.0 - fIn);
+  col = mix(col, max(col, odT), odR);
+#else
+  col += vec3(0.70, 1.0, 0.94) * uGain * (0.28 + 0.4 * uRim) * smoothstep(uR11OrbC.z > 0.0 ? uR11OrbC.z : 0.5, uR11OrbC.w > 0.0 ? uR11OrbC.w : 0.88, bImp) * (1.0 - smoothstep(0.965, 1.0, bImp)) * (1.0 - fIn) * mix(uR11Orb.z, uR11OrbB.z, uRim);
+#endif
+#else
   col += vec3(0.70, 1.0, 0.94) * uGain * (0.28 + 0.4 * uRim) * smoothstep(0.5, 0.88, bImp) * (1.0 - smoothstep(0.965, 1.0, bImp)) * (1.0 - fIn);
+#endif
   // In the hold the outer zone glows (QC round 8, orb CRITICAL: the cap and lower arc that show around the bands read as an
   // empty glass shell / soap bubble; F420's orb glows white-mint to its rim). Zero at rest.
   // (0.35 + limb 0.3: the p06 cap L210 -> 221; target >= 235.)
+#ifdef ORB_R11
+  col += vec3(0.75, 1.0, 0.95) * 0.6 * uGain * smoothstep(0.55, 0.8, bImp) * (1.0 - smoothstep(0.93, 0.99, bImp)) * (1.0 - fIn) * uRim * holdFill * uR11Orb.w;
+#else
   col += vec3(0.75, 1.0, 0.95) * 0.6 * uGain * smoothstep(0.55, 0.8, bImp) * (1.0 - smoothstep(0.93, 0.99, bImp)) * (1.0 - fIn) * uRim * holdFill;
+#endif
   // A mild glass-shell band instead of the detached lilac hairline (QC round 9, T07).
+#ifdef ORB_R11
+  // (Fix round, uR11OrbC.y: the twin's and F045's rim is a thin iridescent line, 2-3 px; from 0.88 the band read as a broad
+  // lavender limb, judge 1 (f).)
+  float shell0 = uR11OrbC.y > 0.0 ? uR11OrbC.y : 0.88;
+#ifdef ORB_P4
+  // (Q2: 0.35 drew the lavender-blue outline of the "white plate"; F045's rim ramps mint-aqua, uP4Orb.x.)
+  col *= mix(vec3(1.0), vec3(0.84, 0.87, 1.0), uP4Orb.x * smoothstep(shell0, max(0.97, shell0 + 0.02), bImp));
+  // (Q2 fix round: in the hold the grazing exits read the scene through the lens, a pale neutral-grey annulus around the glow, B-R
+  // +15 vs the ice's ~+29 and F402's +25..+28, judge p4orb F1; a cool tint there, uP4Rim from uP4Orb.w, mixed by uRim.)
+#ifdef ORB_D
+  // (From 0.75 R the hold's cool multiply turned the whole outer quarter into a blue-grey band around the glow: the edge only.)
+  col *= mix(vec3(1.0), uP4Rim, uRim * smoothstep(max(uP4Orb.w, uODE.w), 0.985, bImp));
+#else
+  col *= mix(vec3(1.0), uP4Rim, uRim * smoothstep(uP4Orb.w, 0.97, bImp));
+#endif
+#else
+  col *= mix(vec3(1.0), vec3(0.84, 0.87, 1.0), 0.35 * smoothstep(shell0, max(0.97, shell0 + 0.02), bImp));
+#endif
+#else
   col *= mix(vec3(1.0), vec3(0.84, 0.87, 1.0), 0.35 * smoothstep(0.88, 0.97, bImp));
+#endif
   // The rings behind the ball shade its glow where the lens images them (F402 / F453: grey-blue shapes inside the white disc,
   // QC round 10). An emissive volume over a dark background would not darken; the reference's plasma is thin sheets with
   // gaps, so what shows between them is the refracted cage.
   // (The disc sits at 6-16 scene-linear, far up AgX's shoulder: a shape must drop ~5x to read grey, L ~190-210.)
+#ifdef ORB_P4
+  // (Q2: in the hold (uRim) the lens shades deeper, uP4Orb.y / z: F402's dark branching structure inside the dollied-in, clipped
+  // disc; the rest keeps uHoldFill.z / uShadeFloor, so its level stays near MAIN's.)
+  // (It fades out over the glass zone beyond the plasma ball, 0.85-0.97 R: shaded there, the shell read as a ~10 px grey bezel
+  // around the glow, batch v8; F402 / F045 glow nearly to a thin edge.)
+#ifdef ORB_D
+  // (Not over the limb glow and the clear glass edge: shaded there (the dark cage behind, imaged by the lens) the limb read as a
+  // grey trough ring around the hold orb.)
+  col *= mix(1.0, mix(mix(uShadeFloor, uP4Orb.z, uRim), 1.0, bgShade), mix(uHoldFill.z, uP4Orb.y, uRim) * (1.0 - fOut) * (1.0 - smoothstep(0.72, 0.88, bImp)));
+#else
+  col *= mix(1.0, mix(mix(uShadeFloor, uP4Orb.z, uRim), 1.0, bgShade), mix(uHoldFill.z, uP4Orb.y, uRim) * (1.0 - fOut) * (1.0 - smoothstep(0.85, 0.97, bImp)));
+#endif
+#else
   col *= mix(1.0, mix(uShadeFloor, 1.0, bgShade), uHoldFill.z * (1.0 - fOut));
+#endif
+#ifdef ORB_P4RIM
+  // (R2, hold only: F402 glows mint-white nearly to its glass edge, (235-244, 253-255, 252-255) at 0.9-0.95 of its bright radius,
+  // then a thin pale lavender line, R ~ G < B, (223-229, 225-232, 250-252) at the lower left; the lane's band read 10-15 L dimmer
+  // and its hairline grey-blue (197, 211, 230).)
+  float bandK = smoothstep(0.78, 0.88, bImp) * (1.0 - smoothstep(0.95, 0.985, bImp));
+#ifdef ORB_D
+  // (The hold's band lift and lavender hairline drew the bright outline ring of the hold orb: uODK.z.)
+  col += vec3(0.86, 1.0, 0.98) * uP4RimB.x * uGain * bandK * (1.0 - fIn) * uRim * uODK.z;
+  float hairK = exp(-pow((bImp - uP4RimB.y) / uP4RimB.z, 2.0)) * uRim;
+  col += uP4RimC * uP4RimB.w * uGain * hairK * uODK.z;
+#else
+  col += vec3(0.86, 1.0, 0.98) * uP4RimB.x * uGain * bandK * (1.0 - fIn) * uRim;
+  float hairK = exp(-pow((bImp - uP4RimB.y) / uP4RimB.z, 2.0)) * uRim;
+  col += uP4RimC * uP4RimB.w * uGain * hairK;
+#endif
+#endif
+#ifdef ORB_D
+  // The glass edge: a thin, soft darker line just inside the silhouette (F045: 10-30 L under the scene behind, ~3 px; blue),
+  // instead of a bright outline.
+  col *= mix(vec3(1.0), uODC, uODE.z * exp(-pow((bImp - uODE.x) / uODE.y, 2.0)));
+#endif
 
   // Soft shoulder above 3, then the cap: the plasma's bright tongues keep their structure instead of clipping into
   // a flat bulb (QC round 4: 57 % of the hold orb clipped, uniform white, vs 46 % with grey-teal smoke inside).
@@ -609,8 +839,16 @@ export class Orb {
   private frame = 1;
   private speed = 1;
   private gain = 1;
+  /** P4 lane orb on this tier (HeroEngine: T1 / T2 without `?p4orb=0`): Q2's hold exposure (see update). */
+  private readonly p4Glass: boolean;
+  /**
+   * Q2: the hold's exposure cut per unit of `hold` (0.3 = MAIN; only with the lane on; a live knob). (Fix round: the builder's 1.1,
+   * x0.45 at the full hold, made the open hold orb an unclipped grey plate, judge p4orb F1.)
+   */
+  holdCut = 0.3;
 
-  constructor(gltfScene: THREE.Object3D, shared: SharedUniforms, envDefines: Record<string, string>, quality: QualityProfile["orb"]) {
+  /** @param opts.p4 P4 lane orb (T1 / T2 only; HeroEngine) */
+  constructor(gltfScene: THREE.Object3D, shared: SharedUniforms, envDefines: Record<string, string>, quality: QualityProfile["orb"], opts: { p4?: boolean } = {}) {
     const center = new THREE.Vector3().fromArray(HERO_CENTER);
     let radius = ORB_RADIUS;
     const src = gltfScene.getObjectByName(ORB_NAME) as THREE.Mesh | undefined;
@@ -646,11 +884,28 @@ export class Orb {
       SHEET_INV_RV2: glslFloat(1 / (R_VOL * R_VOL)),
     };
     if (steps >= 12) defines.ORB_SHELL_DETAIL = "";
+    // Round 11 with the round-11 ice: not with ?ice=r10. T0 (orb march steps 8) joins it through quality.r11 since 19 Nov
+    // (phones showed the round-10 hero); `?t0ice=r10` keeps T0 on round 10.
+    const orbR11 = !ICE_R10 && (quality.marchSteps > 8 || quality.r11 === true);
+    if (orbR11) defines.ORB_R11 = "";
+    // P4 lane orb, Q2 (with the round-11 orb only): the glass lens, rim and hold exposure.
+    const p4 = orbR11 && !!opts.p4 && P4_GLASS;
+    if (p4) defines.ORB_P4 = "";
+    this.p4Glass = p4;
+    // P4 round 3 (T1 / T2 with the round-11 orb, like round 1): F2 the expected clamped sample, R2 the hold rim.
+    const p4Hit = orbR11 && !!opts.p4 && P4_HIT;
+    const p4Rim = orbR11 && !!opts.p4 && P4_RIM3;
+    if (p4Hit) defines.ORB_P4HIT = "";
+    if (p4Rim) defines.ORB_P4RIM = "";
+    // P4 lane orbd (T1 / T2 with the round-11 P4 orb): the glass ball, see P4ORBD.
+    const orbD = p4 && P4ORBD;
+    if (orbD) defines.ORB_D = "";
 
     this.material = new THREE.ShaderMaterial({
       name: "rx-orb",
       vertexShader: ORB_VERT,
-      fragmentShader: ORB_FRAG,
+      // (P4: off, the ORB_P4 blocks are resolved away, so the source is MAIN's byte for byte; round 3 likewise.)
+      fragmentShader: laneSource(laneSource(laneSource(laneSource(ORB_FRAG, "ORB_D", orbD), "ORB_P4HIT", p4Hit), "ORB_P4RIM", p4Rim), "ORB_P4", p4),
       defines,
       uniforms: {
         uEnvMap: shared.uEnvMap,
@@ -678,10 +933,88 @@ export class Orb {
         uIorLevel: { value: 1 },
         uReflectionPass: { value: 0 },
         // (weight, distance in radii, copy mip, gain): off until tuned (QC round 10).
-        uScreenBg: { value: new THREE.Vector4(0, 2.5, 1.5, 1) },
+        // (P4 Q2: on, T1 / T2. The far half of the cage is in the copy (RenderPipeline), so the lens shows the rings behind the
+        // ball inverted inside it (F402 / F453) and the grazing exits read the scene, not the panorama's deep blue: the dark
+        // cobalt limb. Mip >= 2: a sharper copy draws the near rings' edges as busy teeth at the limb.)
+        uScreenBg: { value: p4 ? new THREE.Vector4(0.65, 2.5, 2.0, 1) : new THREE.Vector4(0, 2.5, 1.5, 1) },
         // (hold fill scale, smoke lane depth, background shading, bright background luminance): as before.
-        uHoldFill: { value: new THREE.Vector4(1, 0.72, 0, 1) },
-        uShadeFloor: { value: 0.15 },
+        // (P4 Q2: z 0.5, the refracted cage shades the glow grey-blue, F402 / F453's nucleus; floor 0.35.)
+        uHoldFill: { value: p4 ? new THREE.Vector4(1, 0.72, 0.5, 1) : new THREE.Vector4(1, 0.72, 0, 1) },
+        uShadeFloor: { value: p4 ? 0.35 : 0.15 },
+        ...(p4
+          ? {
+              // Q2 (ORB_P4): x lavender multiply 0.35 -> 0.15; y / z the hold's lens shading weight / floor (rest: uHoldFill.z 0.5 /
+              // uShadeFloor 0.35); w where the hold's cool rim tint starts.
+              // (Fix round, judge p4orb F1-F3: the builder's hold exposure cut (gain x(1 - 1.1 h), shoulder 4, sheet pre-filter 0.5)
+              // turned the open hold orb into a flat unclipped grey-cream plate (box241 clipped 17.6 % -> 0 %, F402 16.2 %) and
+              // dimmed the ice around it 3-4 L. The hold tone is MAIN's again; the glass reads through the lens shading inside the
+              // clipped core instead of a global cut. The R / B dispersion taps (invisible at copy mip 2) are gone.)
+              // (Fix round, deterministic A/B at the judge's open-orb p05 (ring clock 3.3 at the hold start; MAIN 17.6 / 13.0 % of
+              // the orb box >= 248 / >= 250, F402 16.2 / 14.3 %), batches ab3-ab7: hold lens 0.8 / 0.25 with the skirt at K2 (PostChain
+              // holdGlowK) 19.3 / 14.4 %, disc sd 19; 1.0 / 0.12 shaded the orb's copy and the ice around the half-hidden hold orb read
+              // 0.4-1.4 L under MAIN's (judge F3 setup). The cool rim tint from 0.75 R: annulus 0.85-1.02 R B-R +22 -> +27, F402
+              // +25..+28; (0.9, 0.98, 1.08) from 0.8 moved it by 1.)
+              uP4Orb: { value: new THREE.Vector4(0.15, 0.8, 0.25, 0.75) },
+              uP4Rim: { value: new THREE.Vector3(0.8, 0.93, 1.15) },
+            }
+          : {}),
+        // P4 round 3 (F2): uP4Hit (weight at rest, weight in the hold, 2 / Cycles step in radii, the hits' gain over the clamp),
+        // uP4HitB (levels lo / hi, fade towards the edge from / to). Rest unchanged (weight 0).
+        // (Paired deterministic captures, ring clock 3.3 = the open hold orb, interior r < 0.75 R, crystals masked; MAIN -> lane,
+        // F402: p05 share < 215 L 13.9 -> 19.1 % (21.7), < 235 26.9 -> 36.8 % (37.1), sd 21.2 -> 22.9 (24.4), box241 >= 248 18.9 ->
+        // 13.3 % (16.2); HDR p50 inside 0.75 R ~10 (the cap) -> bimodal. Gain 1: the ice ring around the orb -0.7 L and the band in
+        // front of the hidden orb -9 L (the orb's copy dimmer); gain 3 keeps them at -0.4 / -4 (the hits sit above AgX's white,
+        // compressed by the shoulder). Levels 0.1 / 0.45 -> 0.15 / 0.5 and the hold core glow 0.4 -> 0.25 (uR11OrbC.x): the gaps
+        // read as gaps. Without the edge fade the faint outer shell left a dark annulus inside the rim.)
+        // (F2 fixer, judge p4orb3: the total along the chord made the long central chords clip and the gaps a ring at 0.5-0.8 R, the
+        // radial inverse of F402's dark central figure inside a disc clipped to ~0.86 R. uP4HitC.x 1 = the mean coverage along the
+        // chord (the gaps follow the field), the scale 10 -> 5.5 (the centre no longer saturates by length), the fade to MAIN's clamp
+        // 0.7-0.95 -> 0.45-0.67 R (the outer disc at the clamp, as F402 / F453), the gain 3 -> 8 (the copy's mean, which the ice
+        // reads), and the model full from uRim 0.5 (the release F453 shows the figure; it was 0.24 of it at p07). Fresh-page pairs
+        // vs MAIN in LOG.md, F2 fixer.)
+        ...(p4Hit ? { uP4Hit: { value: new THREE.Vector4(0, 1, 5.5, 8) }, uP4HitB: { value: new THREE.Vector4(0.15, 0.5, 0.45, 0.67) }, uP4HitC: { value: new THREE.Vector4(1, 1.68, 0.5, 0) } } : {}),
+        // P4 round 3 (R2): (band lift, hairline centre, width, strength) and the hairline's lavender colour. (Batches e6-e8: a band
+        // lift of 1.6-2.2 drew a uniform white ring around the structured core; 0.6 with the hit model faded out towards the edge
+        // keeps the glow continuous: p05 band 0.86-0.96 R L 228 -> 238 (F402 245), hairline 0.97-1.0 R (197, 211, 230) -> (228, 231,
+        // 243), R ~ G < B as F402's lower-left line.)
+        ...(p4Rim ? { uP4RimB: { value: new THREE.Vector4(0.6, 0.975, 0.02, 1.4) }, uP4RimC: { value: new THREE.Vector3(0.62, 0.55, 1.0) } } : {}),
+        // P4 lane orbd (ORB_D): the glow to the limb (strength, full until, zero at, smoke depth), the edge line (centre, half-width,
+        // depth, outer-zone fade start) and its tint, MAIN's outline terms kept (cyan limb, rim desaturation, hold band lift +
+        // hairline, plasma + TIR pass in the outer zone) and the clear edge (weight, scene behind, reflection, end of the fade).
+        // (Paired fresh-page captures vs ?p4orbd=0 and the reference, WORK/LOG.md.)
+        ...(orbD
+          ? {
+              uOD: { value: new THREE.Vector4(3.0, 0.84, 0.96, 0.45) },
+              uODE: { value: new THREE.Vector4(0.975, 0.015, 0.4, 0.88) },
+              uODC: { value: new THREE.Vector3(0.5, 0.62, 0.92) },
+              uODK: { value: new THREE.Vector4(0, 0.5, 0, 0.15) },
+              uODB: { value: new THREE.Vector4(1, 1, 0.5, 0.965) },
+            }
+          : {}),
+        // Round 11 (ORB_R11): scales of the core glow, hot core, limb and hold glow over the Cycles plasma. All 0: the Cycles
+        // twin's orb (the artist's magick_ball_01.002) is clear glass with plasma tongues, no added glow; with them the orb
+        // read as a white disc (twin / engine L sd: q00 224 / 31 vs 236 / 19, p06 231 / 30 vs 246 / 10; batch s15).
+        // (z 0.5 at rest since batch s36: the rim read as a thick saturated lavender band; orb L / sd q00 230 / 33 -> 235 / 24,
+        // F000 233 / 24; q03 229 / 32 -> 234 / 23, F045 239 / 21. The hold keeps 0 (uR11OrbB.z): 0.5 there made a white disc,
+        // p06 240 / 20, batch s37.)
+        // (Fix round: these exist only when ORB_R11 is compiled, i.e. never with ?ice=r10 or on T0.)
+        ...(orbR11
+          ? {
+              // (Fix round: z 1 with the limb narrowed to 0.7-0.9 of the radius (uR11OrbC.z / w): the lavender-grey limb at rest
+              // turns into the twin's bright disc with a thin rim; q03 orb L / sd 236.3 / 21.3 -> 238.6 / 17.1, twin 240.5 / 21.8,
+              // F045 240.3 / 19.6; batch f15. ?ice=r11a keeps 0.5 over 0.5-0.88.)
+              uR11Orb: { value: new THREE.Vector4(0, 0, ICE_R11A ? 0.5 : 1.0, 0) },
+              // x 1: the rim pre-filter on (without the fills the sheets' per-pixel speckle at the silhouette shows; batch s16).
+              // (P4 Q2: z 1 = the rest's uR11Orb.z, the mint limb in the hold too: without it the hold's limb showed the plasma's
+              // deep-blue grazing end, the cobalt ring around the "white plate"; F045 / F420 ramp mint-aqua into the glow.)
+              uR11OrbB: { value: new THREE.Vector4(1, 0, p4 ? 1 : 0, 0) },
+              // Fix round (judge 1, finding f): x hold core glow, y glass-shell band start, z / w cyan limb start / inner end.
+              // ?ice=r11a (the judged build): all 0.
+              // (P4 Q2: y 0.95 -> 0.975, the iridescent line thinner.)
+              // (P4 round 3, F2: the hold core glow x 0.4 -> 0.25 with the hit model, so its gaps are not filled in.)
+              uR11OrbC: { value: ICE_R11A ? new THREE.Vector4(0, 0, 0, 0) : new THREE.Vector4(p4Hit ? 0.25 : 0.4, p4 ? 0.975 : 0.95, 0.7, 0.9) },
+            }
+          : {}),
       },
       // Premultiplied output; alpha is the analytic edge coverage.
       blending: THREE.CustomBlending,
@@ -719,7 +1052,8 @@ export class Orb {
     // hold), the disc is 1.65x larger and was mostly at the cap: x0.72 there (-0.47 EV), rest and eye unchanged.
     // (x0.72 at the hold until QC round 6: with the hot core, the hold orb had no clipped centre and ~5x fewer bright
     // pixels than F420: x0.85 now.)
-    this.gain = damp(this.gain, (1 + 0.1 * e + 0.1 * h) * (1 - 0.3 * h), 0.06, dt);
+    // (P4 Q2: x(1 - holdCut h); fix round: holdCut as MAIN's 0.3 by default, see holdCut.)
+    this.gain = damp(this.gain, (1 + 0.1 * e + 0.1 * h) * (1 - (this.p4Glass ? this.holdCut : 0.3) * h), 0.06, dt);
     this.frame += Math.max(dt, 0) * BLENDER_FPS * this.speed;
     const u = this.material.uniforms;
     u.uW.value = (7.57 * this.frame) / 800;

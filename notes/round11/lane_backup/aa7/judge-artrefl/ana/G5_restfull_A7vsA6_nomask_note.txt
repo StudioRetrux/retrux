@@ -1,0 +1,13 @@
+frames 0-11, t 2: topmost changed row hero 425 lake 492 other 401; max d {"hero":18,"lake":13,"other":13}
+  rows 384-415: {"hero":0,"lake":0,"other":16}
+  rows 416-447: {"hero":184,"lake":0,"other":525}
+  rows 448-479: {"hero":318,"lake":0,"other":1013}
+  rows 480-511: {"hero":39,"lake":237,"other":1884}
+  rows 512-543: {"hero":684,"lake":1398,"other":179}
+  rows 544-575: {"hero":116,"lake":608,"other":0}
+  rows 576-607: {"hero":0,"lake":273,"other":0}
+  rows 608-639: {"hero":0,"lake":859,"other":26}
+  rows 640-671: {"hero":0,"lake":108,"other":1337}
+  rows 672-703: {"hero":0,"lake":481,"other":232}
+  rows 704-735: {"hero":227,"lake":1044,"other":0}
+  rows 736-767: {"hero":529,"lake":863,"other":300}

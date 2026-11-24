@@ -1,0 +1,6 @@
+vA vs fin1 (ref r2) T8 k0-119
+  box: 17492 px-frames, |new-ref| 8.0 vs |old-ref| 20.8, new closer on 87 %
+  outside: 109893 px-frames, |new-ref| 7.1 vs |old-ref| 13.1, new closer on 72 %
+vA vs fin (ref r2) T8 k0-239
+  box: 9156 px-frames, |new-ref| 10.0 vs |old-ref| 24.9, new closer on 84 %
+  outside: 95781 px-frames, |new-ref| 7.4 vs |old-ref| 13.7, new closer on 68 %

@@ -1,0 +1,31 @@
+### slow mask=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work5/aa5b/caps/slow_bmask gt=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/aa3/caps/slow_gt
+A8: flagged px 1318, events >= 6 px: 36, px in them 255
+LANE: flagged px 1207, events >= 6 px: 35, px in them 244
+-- A8 top 4
+  k136-139 x125-132 y541-549 n9 emax117 frames 136/1/96/-83 137/1/41/-36 138/2/98/-82 138/1/46/-43 ...
+  k39-40 x86-87 y574-577 n7 emax126 frames 39/6/126/-76 40/1/52/-51
+  k79-80 x101-102 y566-570 n7 emax125 frames 79/6/125/-89 80/1/52/-62
+  k20-21 x81-83 y575-578 n7 emax121 frames 20/6/121/-61 21/1/60/-58
+-- LANE top 4
+  k83-84 x102-105 y565-568 n9 emax125 frames 83/6/125/-80 84/3/78/-66
+  k39-40 x86-87 y574-577 n7 emax125 frames 39/6/125/-75 40/1/53/-52
+  k74-75 x99-100 y568-571 n7 emax117 frames 74/6/117/-87 75/1/67/-96
+  k129-130 x127-129 y550-553 n8 emax98 frames 129/7/98/-74 130/1/64/-60
+-- popnew LANE vs A8 (new pops)
+new pops (X flagged, ref not, X != ref): 41 px, 41 clusters, >= 6 px: 0
+  k115-115 x114-114 y548-548 n1 emax96
+  k35-35 x1105-1105 y523-523 n1 emax82
+  k44-44 x1107-1107 y522-522 n1 emax79
+  k39-39 x1106-1106 y523-523 n1 emax72
+  k158-158 x1370-1370 y505-505 n1 emax71
+  k49-49 x1108-1108 y521-521 n1 emax70
+  k6-6 x1098-1098 y523-523 n1 emax66
+  k66-66 x1376-1376 y531-531 n1 emax60
+  k112-112 x120-120 y559-559 n1 emax56
+  k2-2 x1097-1097 y523-523 n1 emax53
+-- popnew A8 vs LANE (pops the lane removes)
+new pops (X flagged, ref not, X != ref): 130 px, 90 clusters, >= 6 px: 1
+  k111-114 x1115-1115 y504-507 n7 emax59
+  k80-81 x241-246 y595-596 n5 emax53
+  k111-111 x252-255 y585-585 n4 emax63
+  k50-51 x532-537 y550-550 n5 emax45

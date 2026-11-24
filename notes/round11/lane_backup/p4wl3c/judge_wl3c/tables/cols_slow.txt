@@ -1,0 +1,15 @@
+f000 | _main n16 med 8 | w_wl2 n16 med 8 | _lane n16 med 8
+f020 | _main n15 med 9 | w_wl2 n13 med 9 | _lane n13 med 9
+f040 | _main n15 med 7 | w_wl2 n15 med 7 | _lane n15 med 7
+f060 | _main n13 med 5 | w_wl2 n13 med 5 | _lane n13 med 5
+f080 | _main n15 med 60 | w_wl2 n15 med 65 | _lane n15 med 65
+f100 | _main n12 med 46 | w_wl2 n13 med 42 | _lane n13 med 42
+f120 | _main n11 med 53 | w_wl2 n11 med 55 | _lane n11 med 53
+f140 | _main n13 med 48 | w_wl2 n14 med 52 | _lane n14 med 52
+f160 | _main n11 med 42 | w_wl2 n12 med 52 | _lane n12 med 52
+f180 | _main n13 med 42 | w_wl2 n13 med 44 | _lane n13 med 44
+f200 | _main n12 med 44 | w_wl2 n12 med 51 | _lane n12 med 48
+f220 | _main n13 med 53 | w_wl2 n13 med 58 | _lane n13 med 58
+== median of per-frame median length: {'slow_main': 42.75, 'slow_wl2': 47.5, 'slow_lane': 45.75}
+== slow_wl2 vs slow_main: matched 156, shorter by >=10 px 3, longer by >=10 px 13, mean dlen +2.1, mean dexc20 -0.91
+== slow_lane vs slow_main: matched 156, shorter by >=10 px 4, longer by >=10 px 13, mean dlen +1.9, mean dexc20 -0.93

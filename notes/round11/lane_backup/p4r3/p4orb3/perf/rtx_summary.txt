@@ -1,0 +1,13 @@
+cycles 6 secs 168 boot {'lane': 4504, 'main': 4012} logs []
+== hold: pairs 6 (load < 10: 6)
+   median ratios 1.000 0.800 1.000 0.999 0.999 1.002 | mean ratios 0.958 0.799 1.054 1.014 0.955 1.040
+   loads 5.6 5.6 5.8 5.8 5.5 5.3
+   paired median of median-ratios 1.000, of mean-ratios 0.986; block medians lane 66.62 ms main 66.70 ms
+== move: pairs 6 (load < 10: 6)
+   median ratios 1.000 1.000 1.249 1.000 0.998 1.000 | mean ratios 1.041 0.923 1.079 0.966 0.977 0.996
+   loads 9.2 8.8 7.8 7.8 7.6 6.9
+   paired median of median-ratios 1.000, of mean-ratios 0.987; block medians lane 66.65 ms main 58.40 ms
+== rest: pairs 6 (load < 10: 6)
+   median ratios 0.666 1.000 1.000 0.669 1.002 1.000 | mean ratios 0.738 0.997 0.993 0.912 1.085 1.041
+   loads 7.0 7.0 6.7 6.4 6.2 5.7
+   paired median of median-ratios 1.000, of mean-ratios 0.995; block medians lane 58.35 ms main 58.30 ms

@@ -1,0 +1,39 @@
+== AA7 (:5197) extra restore damage of the TAA (def vs lktaa=0)
+{"frame":0,"extraGt4":16696,"gt4Darker":16696,"extraGt16":5869,"ofWhichDarker":5869,"extraGt32":1392,"rows32":[[544,1439],[512,1187],[480,706],[576,560],[736,552],[704,474]]}
+{"frame":1,"extraGt4":12777,"gt4Darker":12772,"extraGt16":2616,"ofWhichDarker":2616,"extraGt32":144,"rows32":[[544,851],[512,467],[480,303],[576,262],[704,208],[736,192]]}
+{"frame":2,"extraGt4":9169,"gt4Darker":9166,"extraGt16":578,"ofWhichDarker":578,"extraGt32":10,"rows32":[[544,261],[512,78],[576,59],[640,37],[704,35],[480,34]]}
+{"frame":3,"extraGt4":5733,"gt4Darker":5726,"extraGt16":113,"ofWhichDarker":113,"extraGt32":0,"rows32":[[544,81],[512,10],[736,8],[576,5],[640,4],[480,2]]}
+== AA8 (:5199, P-1) extra restore damage of the TAA (def vs AA8 lktaa=0)
+{"frame":0,"extraGt4":4587,"gt4Darker":2781,"extraGt16":382,"ofWhichDarker":279,"extraGt32":43,"rows32":[[544,98],[480,78],[512,77],[704,28],[672,27],[576,27]]}
+{"frame":1,"extraGt4":4249,"gt4Darker":2717,"extraGt16":304,"ofWhichDarker":264,"extraGt32":24,"rows32":[[480,87],[544,73],[512,51],[576,24],[736,21],[704,19]]}
+{"frame":2,"extraGt4":3644,"gt4Darker":2394,"extraGt16":223,"ofWhichDarker":181,"extraGt32":15,"rows32":[[544,60],[480,50],[512,34],[704,21],[736,20],[576,15]]}
+{"frame":3,"extraGt4":3079,"gt4Darker":2004,"extraGt16":152,"ofWhichDarker":112,"extraGt32":17,"rows32":[[544,58],[512,28],[704,19],[736,13],[480,11],[672,7]]}
+== identity checks (cmp -s raw RGBA)
+f0 def_L0: p8 == a7 (bit-identical)
+f0 lktaa0_L0: p8 == a7 (bit-identical)
+f0 lktaa0_L1: p8 == a7 (bit-identical)
+f0 def_L1: p8 != a7
+f1 def_L0: p8 == a7 (bit-identical)
+f1 lktaa0_L0: p8 == a7 (bit-identical)
+f1 lktaa0_L1: p8 == a7 (bit-identical)
+f1 def_L1: p8 != a7
+f2 def_L0: p8 == a7 (bit-identical)
+f2 lktaa0_L0: p8 == a7 (bit-identical)
+f2 lktaa0_L1: p8 == a7 (bit-identical)
+f2 def_L1: p8 != a7
+f3 def_L0: p8 == a7 (bit-identical)
+f3 lktaa0_L0: p8 == a7 (bit-identical)
+f3 lktaa0_L1: p8 == a7 (bit-identical)
+f3 def_L1: p8 != a7
+f0 restore: AA8 TAA vs AA8 lktaa=0 (the plain resolve)
+{"a":"p8_def_L1_f0.rgba","b":"p8_lktaa0_L1_f0.rgba","W":1440,"H":766,"differ":31852,"gt4":257,"gt16":0,"max":13}
+f0 restore: AA7 TAA vs AA7 lktaa=0
+{"a":"a7_def_L1_f0.rgba","b":"a7_lktaa0_L1_f0.rgba","W":1440,"H":766,"differ":82513,"gt4":18130,"gt16":5986,"max":67}
+f0 no loss: TAA vs lktaa=0
+{"a":"p8_def_L0_f0.rgba","b":"p8_lktaa0_L0_f0.rgba","W":1440,"H":766,"differ":52659,"gt4":6214,"gt16":496,"max":81}
+f1 restore: AA8 TAA vs AA8 lktaa=0 (the plain resolve)
+{"a":"p8_def_L1_f1.rgba","b":"p8_lktaa0_L1_f1.rgba","W":1440,"H":766,"differ":36711,"gt4":352,"gt16":0,"max":13}
+f1 restore: AA7 TAA vs AA7 lktaa=0
+{"a":"a7_def_L1_f1.rgba","b":"a7_lktaa0_L1_f1.rgba","W":1440,"H":766,"differ":74999,"gt4":14551,"gt16":2735,"max":58}
+f1 no loss: TAA vs lktaa=0
+{"a":"p8_def_L0_f1.rgba","b":"p8_lktaa0_L0_f1.rgba","W":1440,"H":766,"differ":53316,"gt4":6088,"gt16":455,"max":60}

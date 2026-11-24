@@ -1,0 +1,17 @@
+frames 239
+== base
+  FS   edgePx    14885 eg    null rms    null mceE  12.071 mc32E   95.67 | G6 1/2   0.3 1/3   2.2 1/4   1.1 1/6   1.5 1/8   1.3 peak   2.8@0.372 fold3 0.009
+  WR   edgePx    59760 eg    null rms    null mceE   3.871 mc32E    5.77 | G6 1/2   1.2 1/3   4.4 1/4   1.3 1/6   1.2 1/8   0.6 peak   4.4@0.335 fold3 0.02
+  DR   edgePx     8447 eg    null rms    null mceE   5.493 mc32E   11.48 | G6 1/2   0.6 1/3   1.5 1/4     1 1/6   1.8 1/8   2.7 peak   3.5@0.109 fold3 0.004
+  FF   edgePx    64129 eg    null rms    null mceE   5.245 mc32E   17.62 | G6 1/2   0.3 1/3  14.9 1/4   0.6 1/6   1.1 1/8   1.6 peak  14.9@0.335 fold3 0.067
+  FR   edgePx    65157 eg    null rms    null mceE    3.89 mc32E    8.52 | G6 1/2   0.2 1/3   6.9 1/4   0.9 1/6   2.3 1/8   3.5 peak   6.9@0.335 fold3 0.029
+  RS   edgePx    37066 eg    null rms    null mceE   5.067 mc32E   12.68 | G6 1/2   0.6 1/3   1.8 1/4     1 1/6   1.7 1/8   4.8 peak   4.8@0.126 fold3 0.012
+  tot  edgePx   249444 eg    null rms    null mceE   4.951 mc32E   16.12 | G6 1/2   0.6 1/3  11.7 1/4   0.8 1/6   1.8 1/8   1.9 peak  11.7@0.335 fold3 0.033
+== aa3
+  FS   edgePx    14885 eg    null rms    null mceE  11.208 mc32E   67.85 | G6 1/2     1 1/3   1.3 1/4     1 1/6   1.7 1/8   1.7 peak   2.5@0.151 fold3 0.005
+  WR   edgePx    59760 eg    null rms    null mceE   2.881 mc32E    5.05 | G6 1/2   0.6 1/3     1 1/4   1.4 1/6   2.1 1/8   2.1 peak   5.4@0.134 fold3 0.001
+  DR   edgePx     8447 eg    null rms    null mceE    4.23 mc32E     3.2 | G6 1/2   0.5 1/3     2 1/4   1.1 1/6   1.7 1/8   3.1 peak   3.8@0.109 fold3 0.005
+  FF   edgePx    64129 eg    null rms    null mceE   4.253 mc32E   10.21 | G6 1/2   0.4 1/3   1.6 1/4     1 1/6   1.7 1/8   3.7 peak     7@0.117 fold3 0.001
+  FR   edgePx    65157 eg    null rms    null mceE   2.894 mc32E    0.58 | G6 1/2   0.6 1/3   1.3 1/4   1.2 1/6   2.3 1/8     4 peak   5.7@0.1 fold3 0.004
+  RS   edgePx    37066 eg    null rms    null mceE   3.677 mc32E     5.8 | G6 1/2   0.6 1/3   0.9 1/4   1.1 1/6   1.9 1/8   4.9 peak   4.9@0.126 fold3 0.003
+  tot  edgePx   249444 eg    null rms    null mceE   3.898 mc32E    9.01 | G6 1/2   0.5 1/3   0.7 1/4   1.4 1/6   1.6 1/8   2.3 peak   3.6@0.117 fold3 0.001

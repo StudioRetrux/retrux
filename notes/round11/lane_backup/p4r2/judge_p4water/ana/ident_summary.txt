@@ -1,0 +1,5 @@
+T1 ?p4water=0 vs :5199                         IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+T2_off                                         IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+HOLD_off                                       IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 18 differ: - | logs 0/0
+HOLD_default                                   DIFFER    final DIFF | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: walk,cache,cacheN,final | programs 18 differ: rx-water|ShaderMaterial,rx-water-walk|ShaderMaterial,rx-water-cache|ShaderMaterial,rx-water-cache-n|ShaderMaterial | logs 0/0
+T0_default                                     IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0

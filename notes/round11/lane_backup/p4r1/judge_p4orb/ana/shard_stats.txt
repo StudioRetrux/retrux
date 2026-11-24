@@ -1,0 +1,28 @@
+q00_rest
+  MAIN n  16813 L med  68.3 p95 146.5 sat med 0.750 hue 211.0 RGB [ 30.  74. 121.]
+  LANE n  14982 L med  64.3 p95 148.5 sat med 0.774 hue 210.7 RGB [ 26.  70. 117.]
+  REF  n  12540 L med  89.7 p95 163.5 sat med 0.629 hue 212.3 RGB [ 53.  95. 143.]
+q01_loop15
+  MAIN n  18813 L med  74.1 p95 141.5 sat med 0.725 hue 211.2 RGB [ 36.  80. 127.]
+  LANE n  16188 L med  66.6 p95 147.2 sat med 0.760 hue 210.8 RGB [ 29.  73. 120.]
+  REF  n  14163 L med 103.7 p95 166.8 sat med 0.579 hue 214.2 RGB [ 68. 108. 160.]
+q02_loop30
+  MAIN n  15792 L med  65.7 p95 145.7 sat med 0.765 hue 210.8 RGB [ 28.  72. 119.]
+  LANE n  14666 L med  63.4 p95 143.8 sat med 0.779 hue 210.7 RGB [ 26.  69. 116.]
+  REF  n  12348 L med  92.4 p95 168.7 sat med 0.612 hue 212.3 RGB [ 57.  98. 146.]
+q03_eye
+  MAIN n  17785 L med  70.7 p95 145.9 sat med 0.738 hue 211.1 RGB [ 32.  77. 124.]
+  LANE n  15491 L med  65.0 p95 146.4 sat med 0.768 hue 210.8 RGB [ 27.  71. 118.]
+  REF  n  14686 L med 115.0 p95 168.4 sat med 0.565 hue 215.2 RGB [ 79. 119. 175.]
+p04_expand_pop
+  MAIN n   7124 L med 132.5 p95 160.8 sat med 0.536 hue 224.2 RGB [101. 133. 216.]
+  LANE n   3514 L med 141.3 p95 161.3 sat med 0.461 hue 224.3 RGB [114. 142. 211.]
+  REF  n   8304 L med 152.2 p95 177.7 sat med 0.447 hue 222.7 RGB [124. 154. 225.]
+p05_expand
+  MAIN n  14629 L med 129.5 p95 159.5 sat med 0.518 hue 224.4 RGB [100. 130. 210.]
+  LANE n   6899 L med 128.7 p95 159.6 sat med 0.485 hue 224.4 RGB [103. 129. 199.]
+  REF  n   8492 L med 152.4 p95 174.1 sat med 0.445 hue 222.7 RGB [124. 154. 224.]
+p06_sustain
+  MAIN n  10339 L med 128.2 p95 164.3 sat med 0.546 hue 223.9 RGB [ 97. 129. 213.]
+  LANE n   4805 L med 140.1 p95 161.1 sat med 0.456 hue 224.3 RGB [114. 141. 211.]
+  REF  n  18945 L med 136.7 p95 170.2 sat med 0.506 hue 221.5 RGB [104. 139. 213.]

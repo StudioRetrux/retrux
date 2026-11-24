@@ -1,0 +1,4 @@
+G8b_final?lkglide=0&mirrorcost=0_vs_AA6?lkglide=0 IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+G8c_final_all6off_vs_BASE_T1                   IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 14 differ: - | logs 0/0
+G8d_final_T2_all6off_vs_BASE_T2                IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 14 differ: - | logs 0/0
+G8e_final_plate_vs_BASE_plate                  IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0

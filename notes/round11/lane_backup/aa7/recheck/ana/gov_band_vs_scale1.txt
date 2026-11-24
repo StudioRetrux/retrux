@@ -1,0 +1,4 @@
+# band under the near far floe x40-300 y492-512: px with |X - scale-1 render| > 15 lv (lower = closer to the scale-1 look of the same camera pose)
+s0.9 k26-49  final vs scale1: total A>B 908  A<B 79 | pre-fix vs scale1: total A>B 1208  A<B 107
+s0.8 k51-74  final vs scale1: total A>B 1908  A<B 242 | pre-fix vs scale1: total A>B 4944  A<B 3071
+s0.7 k76-99  final vs scale1: total A>B 3645  A<B 366 | pre-fix vs scale1: total A>B 12043  A<B 2267

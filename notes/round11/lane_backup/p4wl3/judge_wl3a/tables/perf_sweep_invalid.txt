@@ -1,0 +1,5 @@
+[slot] judge_wl3a:perf-sweep: taken (load 12.1)
+0 A {"held":null,"n":139,"med":43.400000000001455,"mean":43.3705035971223,"p95":83.5,"boot":5325,"waited":12,"load0":12.2,"load1":12.6,"others":["judge_wl3b:rl-pL_a","judge_wl3a:fair-reverse"]} load 12.6
+0 B {"held":null,"n":231,"med":21,"mean":25.979653679653683,"p95":67.70000000000073,"boot":5078,"waited":12,"load0":10.4,"load1":11.5,"others":["judge_wl3b:rl-pM_a","judge_wl3a:fair-reverse-gt","judge_wl3b:rl-pB_a"]} load 11.5
+# pair 0 invalid (load >= 10 or another perf job); valid so far 0/8
+1 B {"held":null,"n":234,"med":20.799999999999272,"mean":25.66452991452992,"p95":55,"boot":3739,"waited":12,"load0":10.6,"load1":10.7,"others":["judge_wl3b:rl-pB_a","judge_wl3a:fair-reverse-gt","judge_wl3b:rest"]} load 10.7

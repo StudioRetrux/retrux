@@ -1,0 +1,20 @@
+[slot] p4atmos:perf_rest waiting (load 5.1 / max 30, slots 3, holders [{"label":"lead:ptr","pid":1336,"at":1795215664513,"slot":0},{"label":"p4env3:zig3","pid":1392,"at":1795215675476,"slot":1},{"label":"p4orb3:ident2","pid":99041,"at":1795215664664,"slot":2}])
+[slot] p4atmos:perf_rest waiting (load 8.8 / max 30, slots 3, holders [{"label":"lead:ptr","pid":1336,"at":1795215664513,"slot":0},{"label":"p4ice3:identB","pid":99641,"at":1795215731937,"slot":1},{"label":"p4orb3:ident2","pid":99041,"at":1795215664664,"slot":2}])
+[slot] p4atmos:perf_rest waiting (load 6.3 / max 30, slots 3, holders [{"label":"lead:ptr","pid":1336,"at":1795215664513,"slot":0},{"label":"p4ice3:identB","pid":99641,"at":1795215731937,"slot":1},{"label":"p4env3:ab4","pid":1786,"at":1795215796994,"slot":2}])
+[slot] p4atmos:perf_rest waiting (load 5.5 / max 30, slots 3, holders [{"label":"lead:sweep","pid":2264,"at":1795215826435,"slot":0},{"label":"p4orb3:fin2","pid":2145,"at":1795215813489,"slot":1},{"label":"p4env3:ab4","pid":1786,"at":1795215796994,"slot":2}])
+[slot] p4atmos:perf_rest waiting (load 7.6 / max 30, slots 3, holders [{"label":"rejudge_p4water:ident","pid":2567,"at":1795215886989,"slot":0},{"label":"p4ice3:perf","pid":2366,"at":1795215861587,"slot":1},{"label":"p4env3:ab4","pid":1786,"at":1795215796994,"slot":2}])
+[slot] p4atmos:perf_rest: taken (load 5.5)
+0 A {"held":null,"n":149,"med":37.399999999999636,"mean":40.06107382550336,"p95":87.10000000000036} load 5.5
+0 B {"held":null,"n":149,"med":36.099999999998545,"mean":39.77986577181208,"p95":91.70000000000073} load 5.0
+1 B {"held":null,"n":151,"med":36.100000000000364,"mean":39.582119205298014,"p95":86} load 5.4
+1 A {"held":null,"n":176,"med":30.399999999999636,"mean":34.04886363636364,"p95":70} load 6.1
+2 A {"held":null,"n":156,"med":36.5,"mean":38.47948717948717,"p95":88} load 12.6
+2 B {"held":null,"n":115,"med":56.5,"mean":52.66434782608695,"p95":132.90000000000146} load 26.0
+3 B {"held":null,"n":120,"med":55,"mean":50.37916666666667,"p95":134.89999999999964} load 23.4
+3 A {"held":null,"n":116,"med":55.900000000001455,"mean":51.7801724137931,"p95":136.60000000000036} load 18.7
+4 A {"held":null,"n":129,"med":48.19999999999891,"mean":46.974418604651156,"p95":116} load 13.6
+4 B {"held":null,"n":128,"med":48.29999999999927,"mean":46.830468749999994,"p95":95.60000000000036} load 11.4
+5 B {"held":null,"n":147,"med":37.19999999999891,"mean":40.82244897959183,"p95":78.60000000000036} load 9.8
+5 A {"held":null,"n":107,"med":55.5,"mean":55.916822429906546,"p95":122.19999999999891} load 10.6
+{"A_med":48.19999999999891,"B_med":48.29999999999927,"A_mean":46.974418604651156,"B_mean":46.830468749999994,"ratio_med":1.002074688796688,"ratio_mean":0.9969355692113471}
+[slot] p4atmos:perf_rest: freed (exit 0)

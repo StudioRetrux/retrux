@@ -1,0 +1,8 @@
+#!/bin/bash
+# AA6 hold (420, rows 380-766); jcap holdre (a7 / a6 / base+mask); G5 full-frame: rest 12 + medium 60 on A6 + BASE mask medium 60
+cd /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work7/artrefl/tools; t0=$(date +%s)
+node cap.mjs --port 5196 --path hold --frames 420 --rows 380,766 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work7/artrefl/caps/hold_A6; echo "hold t $(( $(date +%s) - t0 ))s"
+node glide/jcap.mjs --case holdre --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work7/artrefl/caps/holdre --rows 380,766 --variants "a7:5197,a6:5196,base:5182:mask"; echo "holdre t $(( $(date +%s) - t0 ))s"
+node cap.mjs --port 5196 --path medium --frames 60 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work7/artrefl/caps/medfull_A6; echo "medfull t $(( $(date +%s) - t0 ))s"
+node cap.mjs --port 5196 --path rest --frames 12 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work7/artrefl/caps/restfull_A6; echo "restfull t $(( $(date +%s) - t0 ))s"
+node cap.mjs --port 5182 --path medium --frames 60 --mask --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work7/artrefl/caps/medfull_bmask; echo "medfull mask t $(( $(date +%s) - t0 ))s"

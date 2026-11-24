@@ -30,17 +30,59 @@ canvas {
   touch-action: none;
 }
 
-/* While the sculpture is held (HeroExperience sets data-hero-hold), the copy steps back: the dollied-in rings reach
-   the headline. It returns as the hold is released. */
-[data-hero-copy] {
-  transition: opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+/* While the sculpture is held, the copy disperses like ink into rice paper and gathers back after the release
+   (engine/ui/Ink.ts drives it; HeroExperience sets data-hero-hold). */
+
+/* wearemasa.com link hover: the label rolls up, its copy rolls in from below. */
+.rx-roll {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  line-height: 1.2;
+  margin: -0.1em 0;
 }
-html[data-hero-hold] [data-hero-copy] {
-  opacity: 0.14;
-  transition-duration: 0.45s;
+.rx-roll__a,
+.rx-roll__b {
+  display: block;
+  transition: transform 0.55s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.rx-roll__b {
+  position: absolute;
+  inset: 0;
+  transform: translateY(100%);
+}
+@media (hover: hover) {
+  a:hover .rx-roll__a,
+  button:hover .rx-roll__a {
+    transform: translateY(-100%);
+  }
+  a:hover .rx-roll__b,
+  button:hover .rx-roll__b {
+    transform: translateY(0);
+  }
+}
+a:focus-visible .rx-roll__a,
+button:focus-visible .rx-roll__a {
+  transform: translateY(-100%);
+}
+a:focus-visible .rx-roll__b,
+button:focus-visible .rx-roll__b {
+  transform: translateY(0);
 }
 @media (prefers-reduced-motion: reduce) {
-  [data-hero-copy] {
+  .rx-roll__a,
+  .rx-roll__b {
     transition: none;
   }
+}
+
+/* iOS Safari (user, 19 Nov): a press-and-hold on the hero must not start a text selection (the blue full-screen
+   selection) or the long-press callout. The coming-soon page has no text to select; links still work. */
+html,
+body {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 }

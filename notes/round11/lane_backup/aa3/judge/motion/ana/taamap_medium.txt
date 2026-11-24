@@ -1,0 +1,1 @@
+band px where TAA changed the pixel by > 2 lv (share): FS 2.4%  WR 3.5%  DR 4.9%  FF 7.3%  FR 3.4%  RS 2.1%

@@ -1,0 +1,121 @@
+--- a/app/hero/engine/world/Water.ts
++++ b/app/hero/engine/world/Water.ts
+@@ -980,6 +980,52 @@
+  * rings on press/release, moving micro-ripples, the live reflection of the hero
+  * and small sun glints.
+  */
++
++/**
++ * AA5b (20 Nov, the far-floe pale block; `?ffblock=0` = AA3 exactly: this text is not in the shader then). The walk's face
++ * colour is looked up in the mirror target LK_HMIN (5 cm) above the water at the face's entry X, with a filter footprint as tall
++ * as the band of heights its rays reach. Right under a face's foot the target shows the floe's INSIDE (the mirrored camera,
++ * under the water, looks into the floe through the oblique clip at the water line: the double-sided bake's sunlit insides).
++ * On T1's half-size target a far floe's face is 1-2 texel rows tall (~8 cm per row at 45 m), so the lookup's filter taps
++ * reached that row; as the camera moved, the foot line slid across the target's rows and every lake pixel reading that face
++ * texel turned pale at once (a block under the floe that pops in; the 2x render shows the same on thinner faces).
++ * Where a SMALL footprint (top within LK_FFB + 1..2 texels of X's foot) comes within LK_FFB texels of X's foot (X's foot
++ * projects onto the face, at or above its true foot), the lookup point stays where the walk puts it, but its two bracketing
++ * target rows are read separately and a row that lies farther than the front-most of the two (path length, the target's
++ * alpha; scale LK_FFBT m) takes the front-most row's colour: the face is the nearest surface there, the inside under its foot
++ * and whatever stands behind a short face over its top are farther. Both conditions fade over a texel (smoothstep): nothing
++ * switches. Taller footprints (the far faces' bands, many texels: averages a single row would change) are left as they were.
++ */
++const LK_FFB_ANCHOR = "        vec3 cF = textureGrad(uEnvMirror, clamp(uvM, vec2(0.0005), vec2(0.9995)), dxF, dyF).rgb;\n";
++const LK_FFB_GLSL = /* glsl */ `        {
++          // AA5b: a small footprint near X's foot: the face's two bracketing rows; a row behind the front-most one takes its colour.
++          vec2 uvFt = lkProj(X + vec3(0.0, y0, 0.0));
++          float aFt = length((uvM - uvFt) * uEnvMirrorSize);
++          float hFt = 0.5 * length(dyF * uEnvMirrorSize);
++          float gFt = (1.0 - smoothstep(LK_FFB, LK_FFB + 1.0, aFt - hFt)) * (1.0 - smoothstep(LK_FFB + 1.0, LK_FFB + 2.0, aFt + hFt));
++#ifdef LK_FFB_TOG
++          if (uLkFfbOn < 0.5) gFt = 0.0;
++#endif
++          if (gFt > 0.0) {
++            float vR = clamp(uvM.y, 0.0005, 0.9995) * uEnvMirrorSize.y - 0.5;
++            float j0 = floor(vR);
++            float ux = clamp(uvM.x, 0.0005, 0.9995);
++            vec4 r0 = textureGrad(uEnvMirror, vec2(ux, (j0 + 0.5) / uEnvMirrorSize.y), dxF, vec2(0.0));
++            vec4 r1 = textureGrad(uEnvMirror, vec2(ux, (j0 + 1.5) / uEnvMirrorSize.y), dxF, vec2(0.0));
++            float pm = min(r0.a, r1.a);
++            vec3 cN = r0.a <= r1.a ? r0.rgb : r1.rgb;
++            vec3 c0 = mix(cN, r0.rgb, exp(-(r0.a - pm) / LK_FFBT));
++            vec3 c1 = mix(cN, r1.rgb, exp(-(r1.a - pm) / LK_FFBT));
++            cF = mix(cF, mix(c0, c1, vR - j0), gFt);
++          }
++        }
++`;
++/** The water's fragment source with the AA5b face-lookup guard (throws if the anchor moved). */
++function waterFragFF(src: string) {
++  const i = src.indexOf(LK_FFB_ANCHOR);
++  if (i < 0 || src.indexOf(LK_FFB_ANCHOR, i + 1) >= 0) throw new Error("Water: AA5b anchor");
++  return src.slice(0, i + LK_FFB_ANCHOR.length) + LK_FFB_GLSL + src.slice(i + LK_FFB_ANCHOR.length);
++}
+ 
+ const WATER_VERT = /* glsl */ `
+ uniform mat4 uPlateViewProj;
+@@ -2108,6 +2154,8 @@
+     if (opts.shore && !opts.mirror) defines.SHORE_AA = "";
+     const mirrorUniforms: Record<string, { value: unknown }> = {};
+     let walkHalf = false;
++    // AA5b: the water's source (with the face-lookup guard when the r12 walk runs and `?ffblock` is not 0).
++    let frag = WATER_FRAG;
+     let lkCache = false;
+     if (opts.mirror) {
+       defines.BAKED_MIRROR = "";
+@@ -2178,6 +2226,20 @@
+           }
+           // (frame budget at rest / in the hold: the cached path skips the bump and the walk read; `?lkcachen=0` off)
+           this.cacheN = fix1 && lq?.get("lkcachen") !== "0";
++          // AA5b (the far-floe pale block, LK_FFB_GLSL): `?ffblock=0` = AA3 exactly (same source); lab `?debug&ffb=<texels>`.
++          if (lq?.get("ffblock") !== "0") {
++            frag = waterFragFF(WATER_FRAG);
++            const fb = lq?.has("debug") && lq.get("ffb") !== null ? Number(lq.get("ffb")) : NaN;
++            defines.LK_FFB = (fb >= 0 && fb <= 4 ? fb : 1).toFixed(3);
++            const ft = lq?.has("debug") && lq.get("ffbt") !== null ? Number(lq.get("ffbt")) : NaN;
++            defines.LK_FFBT = (ft > 0 && ft <= 10 ? ft : 0.3).toFixed(3);
++            // (lab, G7: `?debug&ffbtoggle=1` = a run-time switch uLkFfbOn for one-session A/B timing; not in the product source)
++            if (lq?.has("debug") && lq.get("ffbtoggle") === "1") {
++              defines.LK_FFB_TOG = "";
++              frag = "uniform float uLkFfbOn;\n" + frag;
++              mirrorUniforms.uLkFfbOn = { value: 1 };
++            }
++          }
+           mirrorUniforms.uLkHgt = { value: opts.mirror.height.texture };
+           mirrorUniforms.uLkHgtG = { value: opts.mirror.height.grid };
+           mirrorUniforms.uLkHgtTop = { value: opts.mirror.height.top };
+@@ -2221,7 +2283,7 @@
+     this.material = new THREE.ShaderMaterial({
+       name: "rx-water",
+       vertexShader: WATER_VERT,
+-      fragmentShader: WATER_FRAG,
++      fragmentShader: frag,
+       defines,
+       uniforms: {
+         ...(opts.projectors?.uniforms ?? {}),
+@@ -2293,7 +2355,7 @@
+       this.walkMaterial = new THREE.ShaderMaterial({
+         name: "rx-water-walk",
+         vertexShader: WATER_VERT,
+-        fragmentShader: WATER_FRAG,
++        fragmentShader: frag,
+         defines: wd,
+         uniforms: this.material.uniforms,
+         depthTest: false,
+@@ -2322,7 +2384,7 @@
+         this.cacheMaterial = new THREE.ShaderMaterial({
+           name: "rx-water-cache",
+           vertexShader: WATER_VERT,
+-          fragmentShader: WATER_FRAG,
++          fragmentShader: frag,
+           defines: cd,
+           uniforms: this.material.uniforms,
+           depthTest: false,
+@@ -2352,7 +2414,7 @@
+           this.cacheNMaterial = new THREE.ShaderMaterial({
+             name: "rx-water-cache-n",
+             vertexShader: WATER_VERT,
+-            fragmentShader: WATER_FRAG,
++            fragmentShader: frag,
+             defines: nd,
+             uniforms: this.material.uniforms,
+             depthTest: false,

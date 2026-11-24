@@ -1,0 +1,65 @@
+--- a/retrux-web/app/hero/engine/world/Water.ts
++++ b/retrux-web/app/hero/engine/world/Water.ts
+@@ -1881,9 +1881,30 @@
+     });
+   return e;
+ }
+-/** wl3a (W): the walk pass records every face above its horizon ray (lkWalkTerm's share gate 0.002 -> 0), walk pass only. */
+-function wl3aWalkFrag(src: string) {
+-  return p4Apply(src, [{ find: "      if (share > 0.002) {\n", repl: "      if (share > 0.0) {   // wl3a (W)\n" }], "WL3AW");
++/**
++ * wl3a (W): the walk pass records every face above its horizon ray (lkWalkTerm's share gate 0.002 -> 0), walk pass only.
++ * wl3c (round 3c, judge WL3A-J1): with gate 0 alone the far column at x ~1334 shortened (T1 rest 67 -> 44 px). lkWalkTerm stops
++ * after 4 recorded faces (hits > 3.5): the tiny-share faces in front of the far slabs used up that cap before the bright slab face,
++ * so the stored horizon / colour ended early. The cap now has its own counter: a face counts when its share under wl2's own
++ * first-face rule exceeds WL3C_G (wl2: 0.002). Measured (same pose, dt 1/30, T1 DPR 2): the left water's gain comes from the early
++ * stop itself (WL3C_G 0.002: left 364 = W off; 0: 332 but the column cut), the column needs the cap to skip faces of share
++ * < ~0.0004 (0.0003: cut); 0.0004: column 67, left 347 (MAIN 340, wl2 394). A camera-distance or walk-distance rule cannot separate
++ * the two (same camera distance ~30-35 m; both sets of tiny faces lie 15-25 m along the walk). `?wl3c=0` = the round-3 wl3a (one
++ * counter, gate 0); `?wl3cg=<g>` moves WL3C_G (lab).
++ */
++const WL3C_G = 0.0004;
++function wl3aWalkFrag(src: string, capC: boolean, g = WL3C_G) {
++  const e: P4Edit[] = [{ find: "      if (share > 0.002) {\n", repl: "      if (share > 0.0) {   // wl3a (W)\n" }];
++  if (capC)
++    e.push(
++      { find: "  float hits = 0.0;\n", repl: "  float hits = 0.0;\n  float hitsC = 0.0;   // wl3c: the 4-face cap's own counter\n" },
++      {
++        find: "      float share = first ? FN : FN - Fc;\n",
++        repl: `      float share = first ? FN : FN - Fc;\n      if ((hitsC < 0.5 ? FN : FN - Fc) > ${g.toFixed(5)}) hitsC += 1.0;   // wl3c\n`,
++      },
++      { find: "      if (Fc > 0.995 || hits > 3.5) break;\n", repl: "      if (Fc > 0.995 || hitsC > 3.5) break;   // wl3c\n" },
++    );
++  return p4Apply(src, e, "WL3AW");
+ }
+ /** wl2g: the walk pass's vertex shader (the lake through the anchor view-projection uLkWalkAP). */
+ function wl2gWalkVert(src: string) {
+@@ -3516,6 +3537,9 @@
+               if (w3) {
+                 frag = p4Apply(frag, wl3aReadEdits(lq), "WL3A");
+                 this.wl3aWalk = lq?.get("wl3aw") !== "0";
++                this.wl3aCap = lq?.get("wl3c") !== "0";
++                const cg = Number(lq?.get("wl3cg"));
++                if (lq?.get("wl3cg") != null && cg >= 0 && cg <= 0.01) this.wl3aCapG = cg;
+               }
+             }
+             const gq = Number(lq?.get("wl2gg"));
+@@ -3614,7 +3638,7 @@
+       this.walkMaterial = new THREE.ShaderMaterial({
+         name: "rx-water-walk",
+         vertexShader: this.walkAnchored ? wl2gWalkVert(WATER_VERT) : WATER_VERT,
+-        fragmentShader: this.wl3aWalk ? wl3aWalkFrag(wlAz ? wl2gWalkFrag(frag) : frag) : wlAz ? wl2gWalkFrag(frag) : frag,
++        fragmentShader: this.wl3aWalk ? wl3aWalkFrag(wlAz ? wl2gWalkFrag(frag) : frag, this.wl3aCap, this.wl3aCapG) : wlAz ? wl2gWalkFrag(frag) : frag,
+         defines: wd,
+         uniforms: this.material.uniforms,
+         depthTest: false,
+@@ -3769,6 +3793,9 @@
+   walkAnchored = false;
+   /** wl3a (W): the walk pass records every face above its horizon ray (wl3aWalkFrag). */
+   wl3aWalk = false;
++  /** wl3c: (W)'s 4-face cap counts only the faces whose wl2-rule share exceeds wl3aCapG (wl3aWalkFrag). */
++  wl3aCap = false;
++  wl3aCapG = WL3C_G;
+   walkGuard = WL2G_GUARD;
+   walkTol = WL2G_TOL;
+   walkOver = WL2G_OVER;

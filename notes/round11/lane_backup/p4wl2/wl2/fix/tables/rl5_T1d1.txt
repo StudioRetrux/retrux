@@ -1,0 +1,12 @@
+MAIN   e1_main_a  N 150 dt p10/50/90 20.7/22.1/23.9 | blips/frame left 76 shelf 48 right 303 | scales [1] errs 0
+MAIN   e1_main_b  N 150 dt p10/50/90 20.6/22.2/23.7 | blips/frame left 74 shelf 52 right 306 | scales [1] errs 0
+FIX    e1_fix_a   N 150 dt p10/50/90 20.9/23.2/25.3 | blips/frame left 86 shelf 51 right 321 | scales [1] errs 0
+FIX    e1_fix_b   N 150 dt p10/50/90 21.7/23.2/24.9 | blips/frame left 88 shelf 53 right 325 | scales [1] errs 0
+
+POOLED, dt-controlled (both steps of the blip inside the band); n = frames:
+dt   0-999 | MAIN n 296 left   75 shelf   50 right  304 || FIX n 296 left   87 shelf   52 right  323
+dt  20-23  | MAIN n 178 left   55 shelf   39 right  288 || FIX n  66 left   49 shelf   31 right  254
+dt  22-26  | MAIN n 109 left  106 shelf   66 right  348 || FIX n 195 left   95 shelf   58 right  354
+dt  22-28  | MAIN n 111 left  111 shelf   69 right  354 || FIX n 213 left   99 shelf   59 right  352
+sheet MAIN frames 60 - 63 dt [np.float64(24.7), np.float64(24.5), np.float64(24.3), np.float64(23.5)]
+sheet FIX frames 60 - 63 dt [np.float64(22.7), np.float64(23.2), np.float64(21.7), np.float64(23.2)]

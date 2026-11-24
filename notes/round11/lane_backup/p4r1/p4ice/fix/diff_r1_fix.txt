@@ -1,0 +1,10 @@
+q00_rest           px>4: 109648  mean|dL| 2.389  bbox x0-1426 y0-763
+q01_loop15         px>4: 103421  mean|dL| 2.324  bbox x0-1439 y0-765
+q02_loop30         px>4: 105873  mean|dL| 2.342  bbox x0-1439 y0-765
+q03_eye            px>4: 106535  mean|dL| 2.415  bbox x0-1439 y0-765
+p04_expand_pop     px>4: 145618  mean|dL| 2.843  bbox x0-1439 y0-765
+p05_expand         px>4: 213496  mean|dL| 4.675  bbox x0-1439 y0-765
+p06_sustain        px>4: 169646  mean|dL| 3.798  bbox x0-1439 y0-765
+p07_release_snap   px>4: 138488  mean|dL| 2.613  bbox x0-1439 y1-765
+p08_release_home   px>4: 120990  mean|dL| 2.668  bbox x0-1439 y0-765
+ui_rest            px>4: 116070  mean|dL| 2.337  bbox x0-1439 y0-765

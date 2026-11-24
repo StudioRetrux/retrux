@@ -1,0 +1,11 @@
+frames 240 thr 8: lake+band px-frames 67997883; |X-R|>thr 11167
+-- dark: px 0, events >= 6 px: 0
+-- bright: px 11167, events >= 6 px: 184
+  k133-198 (66f) x433-492 y546-592 n978 nmax27 dmean9 dmax12
+  k16-73 (58f) x412-463 y585-613 n794 nmax32 dmean9 dmax11
+  k141-197 (57f) x460-516 y543-584 n645 nmax12 dmean9 dmax12
+  k0-35 (36f) x434-458 y586-586 n635 nmax24 dmean10 dmax11
+  k44-69 (26f) x564-631 y575-591 n540 nmax39 dmean9 dmax15
+  k24-53 (30f) x601-638 y573-578 n414 nmax21 dmean10 dmax13
+  k0-35 (36f) x101-116 y530-530 n401 nmax14 dmean11 dmax13
+  k0-36 (37f) x569-593 y573-573 n332 nmax12 dmean8 dmax9

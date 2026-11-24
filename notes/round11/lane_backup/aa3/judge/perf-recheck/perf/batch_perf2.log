@@ -1,0 +1,5 @@
+[slot] !judge-perf-recheck:perf2 waiting (load 6.9 / max 24, slots 2, holders [{"label":"judge-perf-recheck:ident","pid":54456,"at":1795165048467,"slot":0},{"label":"aa5a batch3","pid":57338,"at":1795165092267,"slot":1}])
+[slot] !judge-perf-recheck:perf2 waiting (load 8.7 / max 24, slots 2, holders [{"label":"judge-perf-recheck:ident","pid":54456,"at":1795165048467,"slot":0},{"label":"aa5a batch3","pid":57338,"at":1795165092267,"slot":1}])
+[slot] !judge-perf-recheck:perf2: taken (load 9.2)
+[slot] !judge-perf-recheck:perf2: freed (exit 0)
+perf2 exit 0

@@ -1,16 +1,28 @@
 "use client";
 
-const NAV = [
-  { label: "Projects", href: "#projects" },
-  { label: "Studio", href: "#studio" },
-  { label: "Contact", href: "#contact" },
-];
+/** Figma "D/Home - Coming Soon" (2979:1492): the nav's right side holds the Instagram handle and the e-mail. */
+// Figma 2979:1515 shows the handle without the "@" (client, 21 Nov: "IG '@' nya ilangin aja").
+const INSTAGRAM = { label: "retruxstd", href: "https://www.instagram.com/retruxstd/" };
+const EMAIL = { label: "hello@retrux.com", href: "mailto:hello@retrux.com" };
 
 /*
  * Sizes are the Figma frame's (1440 x 766) at that size and scale down fluidly below it:
  * padding 56 px, nav top 40 px, H1 64 px / 614 px wide, subline 20 px / 460.5 px wide.
  */
 const PAD = "clamp(20px, 3.889vw, 56px)";
+
+/** wearemasa.com link hover: the label rolls up and an identical copy rolls in from below (globals.css .rx-roll). */
+function Roll({ children }: { children: string }) {
+  const move = "block transition-transform duration-[550ms] ease-[cubic-bezier(0.76,0,0.24,1)] motion-reduce:transition-none";
+  return (
+    <span className="relative -my-[0.1em] inline-block overflow-hidden align-top leading-[1.2]">
+      <span className={`${move} group-hover:-translate-y-full group-focus-visible:-translate-y-full`}>{children}</span>
+      <span aria-hidden className={`${move} absolute inset-0 translate-y-full group-hover:translate-y-0 group-focus-visible:translate-y-0`}>
+        {children}
+      </span>
+    </span>
+  );
+}
 
 export function ChromeNav() {
   return (
@@ -32,20 +44,24 @@ export function ChromeNav() {
         />
       </a>
       <nav
-        className="flex items-center text-base font-medium leading-none text-white"
-        style={{ gap: "clamp(18px, 2.292vw, 33px)" }}
+        className="flex items-center text-base font-medium leading-none text-[color:var(--color-w-90)]"
+        style={{ gap: "clamp(16px, 2.222vw, 32px)" }}
       >
-        {NAV.map((item) => (
-          <a
-            key={item.label}
-            href={item.href}
-            className="translate-y-px transition-colors hover:text-white"
-            data-reveal="fade"
-            draggable={false}
-          >
-            {item.label}
-          </a>
-        ))}
+        <a
+          href={INSTAGRAM.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex translate-y-px items-center gap-2"
+          data-reveal="fade"
+          draggable={false}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/icons/instagram.svg" alt="" aria-hidden width={16} height={16} className="block size-4" draggable={false} />
+          <Roll>{INSTAGRAM.label}</Roll>
+        </a>
+        <a href={EMAIL.href} className="group translate-y-px" data-reveal="fade" draggable={false}>
+          <Roll>{EMAIL.label}</Roll>
+        </a>
       </nav>
     </header>
   );
@@ -83,8 +99,9 @@ export function HeroSection() {
           style={{ fontSize: "clamp(32px, min(4.4444vw, 8.36vh), 64px)", width: "min(614px, calc(100vw - 2 * var(--pad)))" }}
           data-reveal="lines"
         >
-          Ridiculously innovative studio
-          <br />
+          Ridiculously innovative studio{" "}
+          {/* Phones (< 640 px): no forced break after "studio", the headline wraps naturally (user, 19 Nov). */}
+          <br className="max-sm:hidden" />
           for humankind
         </h1>
         <p
@@ -93,14 +110,22 @@ export function HeroSection() {
           style={{ fontSize: "clamp(16px, 1.3889vw, 20px)" }}
           data-reveal="lines"
         >
-          Crafting immersive, interactive, impossibly alive digital experiences.
+          Crafting immersive, interactive,{" "}
+          {/* Desktop: two lines as in Figma 2979:1498 ("impossibly" starts the second line; client, 21 Nov); phones wrap
+              naturally (< 640 px), like the headline. */}
+          <br className="max-sm:hidden" />
+          impossibly alive digital experiences.
         </p>
       </div>
 
-      {/* Steps back with the copy while the sculpture is held (data-hero-copy): the hold's lower arcs pass just above it. */}
-      <div data-hero-copy className="pointer-events-none absolute bottom-0 left-1/2 z-10 -translate-x-1/2 pb-[var(--pad)] max-sm:hidden">
-        <span className="inline-block translate-y-px text-base font-medium leading-none text-white" data-reveal="fade">
-          Scroll to Explore
+      {/* Figma 2979:1504: centred at the bottom; on phones it takes the bottom-left slot beside Sound. The ink
+          animation takes it away with the copy while the sculpture is held (data-hero-copy). */}
+      <div
+        data-hero-copy
+        className="pointer-events-none absolute bottom-0 left-[var(--pad)] z-10 pb-[var(--pad)] sm:left-1/2 sm:-translate-x-1/2"
+      >
+        <span className="inline-block translate-y-px whitespace-nowrap text-base font-medium leading-none text-[color:var(--color-w-90)]" data-reveal="fade">
+          Coming Soon
         </span>
       </div>
 
@@ -110,13 +135,14 @@ export function HeroSection() {
         aria-pressed="false"
         data-sound-toggle
         data-reveal="fade"
-        className="pointer-events-auto absolute bottom-0 right-0 z-10 flex items-center gap-2 pb-[var(--pad)] pr-[var(--pad)]"
+        // The hand cursor like the nav links (client, 21 Nov: "hovering the sound ... mirip pas hover link ig sama email").
+        className="group pointer-events-auto absolute bottom-0 right-0 z-10 flex cursor-pointer items-center gap-2 pb-[var(--pad)] pr-[var(--pad)]"
       >
         {/* Figma "Wave": a 24x15 window over an animated sine (mounted by ui/SoundWave). */}
         <span data-sound-wave aria-hidden className="block h-[15px] w-[24px] overflow-hidden" />
         {/* 1 px lower than the leading-none box: on Figma's baseline (QC round 1). */}
         <span className="translate-y-px text-base font-medium leading-none text-white">
-          Sound
+          <Roll>Sound</Roll>
         </span>
       </button>
     </section>
@@ -189,9 +215,9 @@ export function FooterSection() {
         </h2>
         <a
           href="mailto:hello@retrux.studio"
-          className="pointer-events-auto mt-4 inline-block text-sm text-white/80 underline-offset-4 hover:text-white hover:underline"
+          className="pointer-events-auto mt-4 inline-block text-sm text-white/80 underline-offset-4 hover:text-white"
         >
-          hello@retrux.studio
+          <Roll>hello@retrux.studio</Roll>
         </a>
       </div>
       <div className="pointer-events-none text-[11px] uppercase tracking-[0.2em] text-white/40">

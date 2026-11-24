@@ -1,0 +1,7 @@
+[slot] judge-perf:ctxloss waiting (load 11.3 / max 24, slots 2, holders [{"label":"judge-artifacts:leavere","pid":23947,"at":1795160198643,"slot":0},{"label":"aa4y-cap-sanity","pid":20441,"at":1795160184027,"slot":1}])
+[slot] judge-perf:ctxloss waiting (load 7.8 / max 24, slots 2, holders [{"label":"judge-artifacts:leavere","pid":23947,"at":1795160198643,"slot":0},{"label":"aa4x batch1","pid":24189,"at":1795160244736,"slot":1}])
+[slot] judge-perf:ctxloss waiting (load 7.2 / max 24, slots 2, holders [{"label":"!judge-perf:batch2perf","pid":27141,"at":1795160286436,"slot":0},{"label":"aa4x batch1","pid":24189,"at":1795160244736,"slot":1}])
+[slot] judge-perf:ctxloss waiting (load 18.8 / max 24, slots 2, holders [{"label":"!judge-perf:batch2perf","pid":27141,"at":1795160286436,"slot":0},{"label":"judge-perf:ident2","pid":26508,"at":1795160353298,"slot":1}])
+[slot] judge-perf:ctxloss waiting (load 18.0 / max 24, slots 2, holders [{"label":"judge-motion:capE-gt","pid":22630,"at":1795160420657,"slot":0},{"label":"judge-perf:ident2","pid":26508,"at":1795160353298,"slot":1}])
+[slot] judge-perf:ctxloss: taken (load 14.9)
+[slot] judge-perf:ctxloss: freed (exit 0)

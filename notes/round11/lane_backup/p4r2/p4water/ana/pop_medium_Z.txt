@@ -1,0 +1,31 @@
+### medium mask=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work5/aa5b/caps/medium_bmask gt=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/aa3/caps/medium_gt
+A8: flagged px 3043, events >= 6 px: 99, px in them 1280
+LANE: flagged px 2903, events >= 6 px: 89, px in them 1192
+-- A8 top 4
+  k13-39 x1098-1144 y683-708 n171 emax100 frames 13/1/41/40 14/1/48/67 15/5/65/60 16/1/44/51 ...
+  k197-209 x123-139 y542-551 n39 emax121 frames 197/4/92/82 198/1/56/-55 199/4/88/113 200/1/69/87 ...
+  k14-23 x545-574 y562-571 n63 emax70 frames 14/4/45/44 15/5/62/58 16/7/70/62 17/11/70/62 ...
+  k227-234 x84-95 y558-564 n33 emax117 frames 227/4/97/88 228/1/62/60 229/4/74/98 229/2/47/56 ...
+-- LANE top 4
+  k13-39 x1098-1144 y683-708 n171 emax98 frames 13/1/41/40 14/1/47/67 15/6/65/56 16/2/44/47 ...
+  k14-23 x545-576 y562-571 n64 emax70 frames 14/4/45/44 15/5/62/58 16/7/70/62 17/11/70/62 ...
+  k8-20 x97-115 y561-571 n39 emax108 frames 8/2/91/-82 9/1/45/-54 9/3/69/-107 10/1/69/63 ...
+  k199-209 x123-137 y543-549 n31 emax122 frames 199/4/88/111 200/1/69/87 201/3/86/105 202/2/86/82 ...
+-- popnew LANE vs A8 (new pops)
+new pops (X flagged, ref not, X != ref): 34 px, 31 clusters, >= 6 px: 0
+  k229-230 x1081-1082 y507-507 n2 emax55
+  k82-82 x1205-1205 y515-516 n2 emax44
+  k202-202 x1164-1165 y517-518 n2 emax43
+  k96-96 x1403-1403 y504-504 n1 emax73
+  k15-15 x1118-1118 y515-515 n1 emax65
+  k128-128 x1275-1275 y501-501 n1 emax63
+  k237-237 x1075-1075 y510-510 n1 emax60
+  k153-153 x1414-1414 y504-504 n1 emax53
+  k5-5 x1111-1111 y520-520 n1 emax52
+  k39-39 x1193-1193 y523-523 n1 emax52
+-- popnew A8 vs LANE (pops the lane removes)
+new pops (X flagged, ref not, X != ref): 51 px, 39 clusters, >= 6 px: 1
+  k25-27 x594-600 y537-539 n8 emax51
+  k33-33 x1128-1128 y501-503 n3 emax46
+  k204-204 x1100-1100 y494-495 n2 emax49
+  k21-21 x591-592 y542-542 n2 emax48

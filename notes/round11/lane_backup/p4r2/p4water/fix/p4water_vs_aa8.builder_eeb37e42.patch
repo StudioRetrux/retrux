@@ -1,0 +1,457 @@
+--- a/retrux-web/app/hero/engine/world/Water.ts
++++ b/retrux-web/app/hero/engine/world/Water.ts
+@@ -1033,7 +1033,412 @@
+   const i = src.indexOf(LK_FFB_ANCHOR);
+   if (i < 0 || src.indexOf(LK_FFB_ANCHOR, i + 1) >= 0) throw new Error("Water: AA5b anchor");
+   return src.slice(0, i + LK_FFB_ANCHOR.length) + LK_FFB_GLSL + src.slice(i + LK_FFB_ANCHOR.length);
++}
++
++/**
++ * P4 round 2, lane water (21 Nov 2026; plan MAIN/notes/round11/p3/r11_1_plan.json). `?p4water=0` = MAIN exactly: none of the
++ * text below reaches the shader and no uniform is added. Each task is a set of edits of the water's source (a whole function
++ * swapped, or an anchor line replaced; every anchor must occur exactly as often as expected, or the constructor throws), made
++ * only while the task is on:
++ * - G2 (`?lkchop=0` off): the hold's near water. (1) A near-field chop: two octaves of world-space value-noise slopes on the
++ *   crests' tilt, weighted by the dolly and fading out with the distance (F402 / F420's bottom strip: irregular dark-blue
++ *   wavelets with bright tips, where the crest train alone mirrored one smooth sky patch per flank: a frame-wide 'glass plate'
++ *   arc). (2) The train itself irregular: phase +-LK_P4WP m and amplitude x(1 +- LK_P4WA) from a low-frequency value noise of the
++ *   world position (taken once per pixel), so no crest is a compass arc. (3) The march catches a crest top that the ray grazes
++ *   between two steps (the slope of H - y changes sign inside the step: its maximum is tested): the dotted line along the crest
++ *   silhouettes came from pixels where the 12 steps skipped the top. (4) On the tilted water the strata lookups take at least
++ *   LK_P4FP texels along the target's rows (the flanks magnify the half-size target: texel staircases on the mirrored edges).
++ *   (6) Specular anti-aliasing on the tilted water: the tilt's change across the pixel joins the slope spread (the grazing top
++ *   of every crest silhouette reflects the low horizon on a sub-pixel line, caught on one pixel per row step: the dotted line;
++ *   it persists with 48 march steps, so it is not the march). (The plan's (5), a rest-ring fade within 6 m of the camera, has
++ *   nothing to act on: the nearest visible water is 13 m away at rest and 16.5 m in the hold.)
++ * - Q8 (`?lkring=r11` off): the rest ring as physical waves: a phase-steepened (Gerstner-like) profile, narrow deep troughs and
++ *   broad crests, amplitude x(1 +- 0.3) around the ring from 3- and 5-lobe terms, the crest clamp raised; the orb's glint on the
++ *   ring zone anisotropic (wider across the view) and cyan-white.
++ * - Q9 (`?lkglass=0` off): the bump's alias guard beyond ~30-40 m: an octave whose footprint reaches 0.15..0.45 lattice cells
++ *   (x the DOF) gives up its coherent share (the pixel-centre sample of a sub-pixel wavelet aliases into 1-2 px row stripes, the
++ *   'corduroy'); its variance joins the incoherent spread (lkBump's own bookkeeping: Tr^2 - c^2), so the rays' spread and the
++ *   columns keep the Cycles-fitted slope variance.
++ */
++type P4Edit = { find: string; repl: string; count?: number; fnEnd?: string };
++function p4Apply(src: string, edits: P4Edit[], tag: string) {
++  for (const e of edits) {
++    if (e.fnEnd !== undefined) {
++      // a whole function: from `find` (unique) to the first `fnEnd` after it
++      const i = src.indexOf(e.find);
++      if (i < 0 || src.indexOf(e.find, i + 1) >= 0) throw new Error(`Water: P4 ${tag} anchor ${e.find.slice(0, 40)}`);
++      const j = src.indexOf(e.fnEnd, i);
++      if (j < 0) throw new Error(`Water: P4 ${tag} end ${e.fnEnd.slice(0, 40)}`);
++      src = src.slice(0, i) + e.repl + src.slice(j + e.fnEnd.length);
++      continue;
++    }
++    const n = src.split(e.find).length - 1;
++    if (n !== (e.count ?? 1)) throw new Error(`Water: P4 ${tag} anchor x${n} ${e.find.slice(0, 40)}`);
++    src = src.split(e.find).join(e.repl);
++  }
++  return src;
++}
++const P4_G2: P4Edit[] = [
++  {
++    find: "vec3 lkWaveH(vec2 xz, float R) {",
++    fnEnd: "\n}\n",
++    repl: /* glsl */ `// P4 water G2 (2): the train's irregularity at the pixel (lkWaveGrad): x phase (m), yz its xz gradient, w amplitude; amplitude
++// gradient. (MAIN: 0, 0, 0, 1 / 0.)
++vec4 lkWm = vec4(0.0, 0.0, 0.0, 1.0);
++vec2 lkWmA = vec2(0.0);
++uniform float uLkP4E;   // P4 water G2 (7): the tilted reflection's floor (lkWaveTilt)
++vec3 lkWaveH(vec2 xz, float R) {
++  if (abs(xz.x) > 14.85 || abs(xz.y) > 14.85) return vec3(0.0);
++  vec2 d = vec2(xz.x, xz.y + 8.6);
++  float r = length(d);
++  if (r >= R) return vec3(0.0);
++  const float WB = 1.358483;
++  const float NW = 1.808;
++  float a = mod(r + lkWm.x - 1.115 * uTime + WB, 2.0 * WB) - WB;
++  float e = 1.0 - smoothstep(R - 2.0, R, r);
++  float z0 = 0.173 * exp(-(NW * a) * (NW * a));
++  float z = z0 * lkWm.w;
++  vec2 n = d / max(r, 1e-3);
++  vec2 g = (-2.0 * NW * NW * a * z) * (n + lkWm.yz) + z0 * lkWmA;
++  float de = (smoothstep(R - 2.0, R, r + 0.01) - smoothstep(R - 2.0, R, r)) * 100.0;
++  return vec3(z * e, g * e - z * de * n);
++}
++`,
++  },
++  {
++    find: "vec2 lkWaveGrad(vec3 P) {",
++    fnEnd: "  return hit.yz;\n}\n",
++    repl: /* glsl */ `uniform vec4 uLkP4W;    // P4 water G2 (2): x phase (m), y amplitude share, z noise frequency (1/m); w: (6)
++vec2 lkWaveGrad(vec3 P) {
++  float R = mix(8.2, 21.5, smoothstep(0.0, 1.0, uHold));
++  {
++    // P4 water G2 (2): the train's phase and amplitude from a value noise of the world position (cells of 1 / uLkP4W.z m), taken
++    // here once: the march's samples lie within ~0.5 m of P.
++    vec4 nP = noised(vec3(P.xz * uLkP4W.z, 7.31));
++    vec4 nA = noised(vec3(P.xz * uLkP4W.z + vec2(19.7, -4.3), 3.17));
++    lkWm = vec4(uLkP4W.x * nP.x, (uLkP4W.x * uLkP4W.z) * nP.yz, 1.0 + uLkP4W.y * nA.x);
++    lkWmA = (uLkP4W.y * uLkP4W.z) * nA.yz;
++  }
++  float yT = 0.173 * (1.0 + uLkP4W.y);   // the march starts over the highest crest
++  vec2 toC = (cameraPosition.xz - P.xz) / max(cameraPosition.y - P.y, 0.05);
++  vec2 x0 = P.xz + toC * yT;
++  vec2 c = vec2(0.0, -8.6);
++  if (min(distance(P.xz, c), distance(x0, c)) - length(toC) * yT > R) return vec2(0.0);
++  float yPrev = yT;
++  vec3 hit = vec3(0.0);
++#ifdef LK_WAVE2
++  // P4 water G2 (3): g(y) = H - y along the ray (y: height on the ray, from the top down) and its slope dg/dy = grad H . toC - 1.
++  // A step whose ends both pass over the water can still graze a crest's top between them: there dg/dy turns from < 0 (g rising
++  // as the ray descends) to > 0; the maximum, where the slope's linear interpolation is 0, is tested. Continuous silhouettes.
++  float dPrev = dot(lkWaveH(x0, R).yz, toC) - 1.0;
++  for (int i = 1; i <= LK_WAVE2_N; i++) {
++    float y = yT * (1.0 - float(i) / float(LK_WAVE2_N));
++    vec3 w = lkWaveH(P.xz + toC * y, R);
++    float dg = dot(w.yz, toC) - 1.0;
++    float ya = yPrev;
++    float yb = y;
++    bool found = w.x >= y;
++    if (!found && dPrev < 0.0 && dg > 0.0) {
++      float ym = yPrev + (y - yPrev) * dPrev / (dPrev - dg);
++      if (lkWaveH(P.xz + toC * ym, R).x >= ym) {
++        yb = ym;
++        found = true;
++      }
++    }
++    if (found) {
++      for (int k = 0; k < 5; k++) {
++        float yh = 0.5 * (ya + yb);
++        if (lkWaveH(P.xz + toC * yh, R).x >= yh) yb = yh;
++        else ya = yh;
++      }
++      hit = lkWaveH(P.xz + toC * (0.5 * (ya + yb)), R);
++      break;
++    }
++    yPrev = y;
++    dPrev = dg;
++  }
++#else
++  float gPrev = lkWaveH(x0, R).x - yPrev;
++  for (int i = 1; i <= 8; i++) {
++    float y = yT * (1.0 - float(i) / 8.0);
++    vec3 w = lkWaveH(P.xz + toC * y, R);
++    float g = w.x - y;
++    if (g >= 0.0) {
++      float t = gPrev / min(gPrev - g, -1e-6);
++      float yh = mix(yPrev, y, clamp(t, 0.0, 1.0));
++      hit = lkWaveH(P.xz + toC * yh, R);
++      break;
++    }
++    yPrev = y;
++    gPrev = g;
++  }
++#endif
++  return hit.yz;
++}
++`,
++  },
++  {
++    // (1) + (4): the chop and the footprint floor, declared after lkWaveTilt (inside LK_WAVEB)
++    find: "  if (R.y < 0.0) Nt = normalize(vec3(R.x, -R.y, R.z) + V);\n#endif\n  return Nt;\n}\n",
++    repl: /* glsl */ `  if (R.y < 0.0) Nt = normalize(vec3(R.x, -R.y, R.z) + V);
++#endif
++  {
++    // P4 water G2 (7): no tilted reflection lower than ~uLkP4E x the flat water's own elevation. Just behind every crest's top
++    // the back flank turns the reflection through the horizon (elevation 0 where its slope is half the view's), a sub-pixel
++    // sliver that the one sample per pixel caught on one pixel per row step of the silhouette: a dotted dark line (the walk's
++    // faces and the far shore at the horizon; it stays with 48 march steps and with any slope spread). Clamped, the crest's
++    // back reflects as the water around it (a smooth floor: back flanks fold up onto it without an outline).
++    vec3 R2 = reflect(-V, Nt);
++    float eF = uLkP4E * V.y;
++    float eS = 0.5 * (R2.y + eF + sqrt((R2.y - eF) * (R2.y - eF) + 0.25 * eF * eF));   // a soft floor (no kink, no outline)
++    Nt = normalize(normalize(vec3(R2.x, eS, R2.z)) + V);
++  }
++  return Nt;
++}
++// P4 water G2 (1): the near water's chop in the hold (F402 / F420: the bottom strip, 16-25 m from the hold camera, shows
++// irregular dark-blue wavelets 50-200 px wide). Slopes (dh/dx, dh/dz) of two value-noise octaves (uLkP4CF.xy cycles/m, the
++// second turned 37 deg; a third at 2.4 x the second's, turned -23 deg, 0.42 x its amplitude), drifting with the wind
++// (uLkP4CF.zw m/s) and evolving slowly, amplitudes uLkP4C.xy (slope per unit
++// noise gradient per cycle/m), x the dolly, fading out between uLkP4C.z and uLkP4C.w m from the camera. Band-limited: an
++// octave fades out where the pixel's footprint on the water (fp, m: fwidth) x the lake's DOF blur (kDof px) reaches 0.2-0.45 of
++// its wavelength.
++uniform vec4 uLkP4C;
++uniform vec4 uLkP4CF;
++uniform float uLkP4K;
++vec2 lkChop(vec3 P, float dist, vec2 fp, float kDof) {
++  float w = smoothstep(0.0, 1.0, uHold) * (1.0 - smoothstep(uLkP4C.z, uLkP4C.w, dist));
++  if (w <= 0.0) return vec2(0.0);
++  float L = max(fp.x, fp.y) * mix(1.0, kDof, uLkP4K);   // (uLkP4K: the share of the lake's DOF blur in the band limit)
++  float a1 = uLkP4C.x * (1.0 - smoothstep(0.2, 0.45, L * uLkP4CF.x));
++  float a2 = uLkP4C.y * (1.0 - smoothstep(0.2, 0.45, L * uLkP4CF.y));
++  float f3 = 2.4 * uLkP4CF.y;
++  float a3 = uLkP4C.y * 0.42 * (1.0 - smoothstep(0.2, 0.45, L * f3));
++  vec4 n1 = noised(vec3(P.xz * uLkP4CF.x + vec2(uLkP4CF.z, 0.3 * uLkP4CF.z) * uTime * uLkP4CF.x, 0.21 * uTime));
++  const float CS = 0.7986355;   // cos 37 deg
++  const float SN = 0.6018150;
++  vec2 q = vec2(CS * P.x + SN * P.z, -SN * P.x + CS * P.z);
++  vec4 n2 = noised(vec3(q * uLkP4CF.y + vec2(-uLkP4CF.w, 0.4 * uLkP4CF.w) * uTime * uLkP4CF.y, 5.3 + 0.37 * uTime));
++  vec2 g2 = vec2(CS * n2.y - SN * n2.z, SN * n2.y + CS * n2.z);
++  vec2 s = w * (a1 * uLkP4CF.x * n1.yz + a2 * uLkP4CF.y * g2);
++  if (a3 > 0.0) {
++    // a third, finer octave (x2.4, turned -23 deg) where the footprint resolves it
++    const float C3 = 0.9205049;
++    const float S3 = -0.3907311;
++    vec2 q3 = vec2(C3 * P.x + S3 * P.z, -S3 * P.x + C3 * P.z);
++    vec4 n3 = noised(vec3(q3 * f3 + vec2(0.5 * uLkP4CF.w, -uLkP4CF.z) * uTime * f3, 11.7 + 0.55 * uTime));
++    s += w * a3 * f3 * vec2(C3 * n3.y - S3 * n3.z, S3 * n3.y + C3 * n3.z);
++  }
++  return s;
++}
++// P4 water G2 (4): the strata lookups' screen footprint along the target's rows, at least LK_P4FP texels on the tilted water.
++vec2 lkP4Floor(vec2 g, float w) {
++  float lv = length(g * uEnvMirrorSize);
++  if (lv < 1e-5) return vec2(0.0, w * LK_P4FP / uEnvMirrorSize.y);
++  return g * mix(1.0, max(1.0, LK_P4FP / lv), w);
++}
++// P4 water G2 (6): specular anti-aliasing on the tilted water. The tilt's change across the pixel (fwidth: a crest's silhouette,
++// where the hit jumps from the flank's grazing top to the water behind it, and the chop) joins the incoherent slope spread as
++// its rms (uLkP4W.w of the change), so a sub-pixel feature (the grazing top's horizon reflection along every silhouette, which
++// the one sample per pixel caught on one pixel per row step: a dotted line) is averaged over the pixel, not point-sampled.
++vec2 lkP4SpecAA(vec2 sig, vec2 dw) {
++  float s = uLkP4W.w * max(dw.x, dw.y) / 0.07;
++  return sqrt(sig * sig + vec2(s * s));
++}
++`,
++  },
++  {
++    find: "  vec2 lkWv = lkHw > 0.0 ? lkWaveGrad(vWorldPos) * lkHw : vec2(0.0);\n",
++    repl:
++      "  vec2 lkP4Fp = fwidth(vWorldPos.xz);   // P4 water G2 (1): the pixel's footprint on the water (derivatives before any branch)\n" +
++      "  vec2 lkWv = lkHw > 0.0 ? lkWaveGrad(vWorldPos) * lkHw : vec2(0.0);\n" +
++      "  // P4 water G2 (1): the chop rides on the water the crest train already tilts (a tilted pixel skips the cached term: chop\n" +
++      "  // beyond the train front tilted more of the hold's water), so it spreads with the wave front from the press; the per-pixel\n" +
++      "  // walk keeps the train's tilt alone (lkP4Wt: a normal coherent across the pixels; the chop's made the walks diverge).\n" +
++      "  // Measured: the chop cost +0.83 ms per hold frame with both, ~0 with its amplitude at 0 (WORK/LOG.md 03:21).\n" +
++      "  vec2 lkP4Wt = lkWv;\n" +
++      "  if (lkWv.x != 0.0 || lkWv.y != 0.0) lkWv += lkChop(vWorldPos, dist, lkP4Fp, kDof);\n" +
++      "  vec2 lkP4Dw = fwidth(lkWv);   // P4 water G2 (6)\n",
++    count: 2,
++  },
++  {
++    // (6) on the tilted water (the cached-path water, LK_CACHEN default; the plain path); the walk's normal (the train's tilt)
++    find: "    if (lkWv.x != 0.0 || lkWv.y != 0.0) lkN = lkWaveTilt(lkN, lkWv, V);\n",
++    repl:
++      "    vec3 lkP4Nw = lkN;   // P4 water G2: the per-pixel walk's normal (the train's tilt alone)\n" +
++      "    if (lkWv.x != 0.0 || lkWv.y != 0.0) {\n      lkP4Nw = lkWaveTilt(lkN, lkP4Wt, V);\n      lkN = lkWaveTilt(lkN, lkWv, V);\n      lkSig = lkP4SpecAA(lkSig, lkP4Dw);   // P4 water G2 (6)\n    }\n",
++  },
++  {
++    find: "  if (lkWv.x != 0.0 || lkWv.y != 0.0) lkN = lkWaveTilt(lkN, lkWv, V);\n",
++    repl:
++      "  vec3 lkP4Nw = lkN;   // P4 water G2: the per-pixel walk's normal (the train's tilt alone)\n" +
++      "  if (lkWv.x != 0.0 || lkWv.y != 0.0) {\n    lkP4Nw = lkWaveTilt(lkN, lkP4Wt, V);\n    lkN = lkWaveTilt(lkN, lkWv, V);\n    lkSig = lkP4SpecAA(lkSig, lkP4Dw);   // P4 water G2 (6)\n  }\n",
++  },
++  {
++    // the per-pixel walk on the tilted water takes the train's tilt alone (cached path; plain path)
++    find: "    if (lkWv.x != 0.0 || lkWv.y != 0.0) lkW = lkWalkTerm(dist, V, lkN, lkSig, vWorldPos);\n",
++    repl: "    if (lkWv.x != 0.0 || lkWv.y != 0.0) lkW = lkWalkTerm(dist, V, lkP4Nw, lkSig, vWorldPos);   // P4 water G2: the train's tilt\n",
++  },
++  {
++    find: "  if (lkWv.x != 0.0 || lkWv.y != 0.0) lkW = lkWalkTerm(dist, V, lkN, lkSig, vWorldPos);   // (as the cached path above)\n",
++    repl: "  if (lkWv.x != 0.0 || lkWv.y != 0.0) lkW = lkWalkTerm(dist, V, lkP4Nw, lkSig, vWorldPos);   // (as the cached path above; P4 water G2: the train's tilt)\n",
++  },
++  {
++    // (4) the cached-path water (LK_CACHEN, default) and the plain LK_CACHE path
++    find: "    base = lkReflect4(muv, lkGx, lkGy, dist, V, lkN, lkSig, moffsW, lkW, lkS) * (uMirrorGain * LK_GAIN);\n",
++    repl:
++      "    if (lkWv.x != 0.0 || lkWv.y != 0.0) lkGy = lkP4Floor(lkGy, lkHw);   // P4 water G2 (4)\n" +
++      "    base = lkReflect4(muv, lkGx, lkGy, dist, V, lkN, lkSig, moffsW, lkW, lkS) * (uMirrorGain * LK_GAIN);\n",
++  },
++  {
++    find: "  else base = lkReflect4(muv, lkGx, lkGy, dist, V, lkN, lkSig, moffsW, lkW, lkS) * (uMirrorGain * LK_GAIN);\n",
++    repl:
++      "  else {\n" +
++      "#ifdef LK_WAVEB\n" +
++      "    if (lkWv.x != 0.0 || lkWv.y != 0.0) lkGy = lkP4Floor(lkGy, lkHw);   // P4 water G2 (4)\n" +
++      "#endif\n" +
++      "    base = lkReflect4(muv, lkGx, lkGy, dist, V, lkN, lkSig, moffsW, lkW, lkS) * (uMirrorGain * LK_GAIN);\n" +
++      "  }\n",
++  },
++];
++const P4_G6: P4Edit[] = [
++  {
++    // the helper, before the walk read (LK_CACHEN path's function and the inline read both follow it)
++    find: "#if defined(LAKE_R12) && defined(LK_CACHEN) && defined(LK_HALF) && defined(LK_WALKREPROJ)\n",
++    repl: /* glsl */ `#if defined(LAKE_R12) && defined(LK_HALF)
++// P4 water G6: the quarter-size walk's four taps disagree (a thin face feature, e.g. a sunlit edge the low rays meet, that only
++// some walk texels sample): smoothstep(uLkP4WJ.x, uLkP4WJ.y) of their spread (share-weighted luma and share), x a fade-in
++// over uLkP4WJ.z..w m from the camera (the far water), blends to the pixel's own walk. Interpolated, such a texel painted a blocky pale blotch on open water in the orbit views (the panel's
++// 'LAKE_CORR ghost': it follows the walk's resolution, ?lkwdiv=1 and ?lkhalf=0 remove it; not the cache, the mirror or a pose
++// jump). (lab: uLakeDebug 12 shows the blend weight)
++uniform vec4 uLkP4WJ;
++float lkP4Wj = 0.0;
++float lkP4WalkJump(vec4 a, vec4 b, vec4 c, vec4 d) {
++  vec4 l = vec4(dot(a.rgb, LUMA), dot(b.rgb, LUMA), dot(c.rgb, LUMA), dot(d.rgb, LUMA));
++  vec4 s = vec4(a.a, b.a, c.a, d.a);
++  float dl = max(max(l.x, l.y), max(l.z, l.w)) - min(min(l.x, l.y), min(l.z, l.w));
++  float ds = max(max(s.x, s.y), max(s.z, s.w)) - min(min(s.x, s.y), min(s.z, s.w));
++  return dl + 0.25 * ds;
+ }
++#endif
++#if defined(LAKE_R12) && defined(LK_CACHEN) && defined(LK_HALF) && defined(LK_WALKREPROJ)
++`,
++  },
++  {
++    find: "  if (dot(wt, 1.0 - wv) > 0.01) lkW = lkWalkTerm(dist, V, lkN, lkSig, vWorldPos);\n  else lkW = t00 * wt.x + t10 * wt.y + t01 * wt.z + t11 * wt.w;\n",
++    repl:
++      "  if (dot(wt, 1.0 - wv) > 0.01) lkW = lkWalkTerm(dist, V, lkN, lkSig, vWorldPos);\n" +
++      "  else {\n" +
++      "    lkW = t00 * wt.x + t10 * wt.y + t01 * wt.z + t11 * wt.w;\n" +
++      "    lkP4Wj = smoothstep(uLkP4WJ.x, uLkP4WJ.y, lkP4WalkJump(t00, t10, t01, t11)) * smoothstep(uLkP4WJ.z, uLkP4WJ.w, dist);   // P4 water G6\n" +
++      "    if (lkP4Wj > 0.0) lkW = mix(lkW, lkWalkTerm(dist, V, lkN, lkSig, vWorldPos), lkP4Wj);\n" +
++      "  }\n",
++  },
++  {
++    find: "    if (dot(wt, 1.0 - wv) > 0.01) lkW = lkWalkTerm(dist, V, lkN, lkSig, vWorldPos);\n    else lkW = t00 * wt.x + t10 * wt.y + t01 * wt.z + t11 * wt.w;\n",
++    repl:
++      "    if (dot(wt, 1.0 - wv) > 0.01) lkW = lkWalkTerm(dist, V, lkN, lkSig, vWorldPos);\n" +
++      "    else {\n" +
++      "      lkW = t00 * wt.x + t10 * wt.y + t01 * wt.z + t11 * wt.w;\n" +
++      "      lkP4Wj = smoothstep(uLkP4WJ.x, uLkP4WJ.y, lkP4WalkJump(t00, t10, t01, t11)) * smoothstep(uLkP4WJ.z, uLkP4WJ.w, dist);   // P4 water G6\n" +
++      "      if (lkP4Wj > 0.0) lkW = mix(lkW, lkWalkTerm(dist, V, lkN, lkSig, vWorldPos), lkP4Wj);\n" +
++      "    }\n",
++  },
++  {
++    find: "  if (uLakeDebug > 10.5) {\n",
++    repl: "#ifdef LK_HALF\n  if (uLakeDebug > 11.5) {\n    gl_FragColor = vec4(lkP4Wj, 0.0, 0.0, 1.0);   // (lab) P4 water G6: the per-pixel walk's share\n    return;\n  }\n#endif\n  if (uLakeDebug > 10.5) {\n",
++    count: 2,
++  },
++];
++const P4_Q8: P4Edit[] = [
++  {
++    find: "vec2 ringSlope(vec2 d, float r) {",
++    fnEnd: "\n}\n",
++    repl: /* glsl */ `// P4 water Q8: x the profile's steepening Q (< 0: steep faces at the crests, broad troughs), y the amplitude's variation,
++// z / w the shading clamp of the troughs / crests.
++uniform vec4 uLkP4R;
++// P4 water Q8: the orb's glint on the ring zone: x / y GGX alpha across / along the view, z the tint's share of cyan-white.
++uniform vec4 uLkP4G;
++vec2 ringSlope(vec2 d, float r) {
++  float th = atan(d.y, d.x);
++  float x = r - uWave.z * uTime + 0.09 * sin(th * 7.0 + r * 1.3) + 0.05 * sin(th * 13.0 - r * 0.9);
++  float k = 6.2831853 / uWave.y;
++  // P4 water Q8: h = 0.55 A cos(kx - Q sin kx) (MAIN: Q = 0). Q < 0 (default -0.35): the phase runs fast over the crests and
++  // slowly through the troughs, so the steep faces gather at each crest: the face toward the camera (a dark band) and right
++  // behind it the far face (a thin bright rim), with broad calm troughs between (F000: "each dark trough has a thin bright rim
++  // on its far side"; the plan's Q = +0.6, narrow troughs, moved the ring box away from F000: p10 165 -> 157 vs F000 172).
++  // The amplitude varies around the ring with 3 and 5 lobes that drift with the radius (F000's rings vary along their length).
++  float kx = k * x;
++  float dh = -uWave.x * k * 0.55 * sin(kx - uLkP4R.x * sin(kx)) * (1.0 - uLkP4R.x * cos(kx));
++  dh *= 1.0 + uLkP4R.y * (0.6 * sin(th * 3.0 + 1.3 + 0.21 * r) + 0.4 * sin(th * 5.0 - 0.7 - 0.13 * r));
++  float env = smoothstep(0.4, 1.8, r) * exp(-r / (uWaveReach * 0.7)) * (1.0 - smoothstep(uWaveReach * 0.8, uWaveReach, r));
++  return d / max(r, 1e-3) * dh * env;
++}
++// P4 water Q8: anisotropic GGX (D x a Smith-like visibility, as ggxSpec), the lobe wide across the view (the reference's glint band
++// is twice as wide as tall on the ring zone).
++float p4GgxAniso(vec3 n, vec3 v, vec3 l, float ax, float ay) {
++  vec3 h = normalize(v + l);
++  vec3 t = normalize(cross(n, v) + vec3(1e-6, 0.0, 0.0));
++  vec3 b = cross(t, n);
++  float th = dot(h, t), bh = dot(h, b), nh = saturate(dot(n, h));
++  float dd = th * th / (ax * ax) + bh * bh / (ay * ay) + nh * nh;
++  float D = 1.0 / (PI * ax * ay * dd * dd);
++  float a = sqrt(ax * ay);
++  float a2 = a * a;
++  float nv = saturate(dot(n, v)) + 1e-4, nl = saturate(dot(n, l));
++  float gv = nl * sqrt(nv * nv * (1.0 - a2) + a2);
++  float gl = nv * sqrt(nl * nl * (1.0 - a2) + a2);
++  return D * (0.5 / max(gv + gl, 1e-4)) * nl;
++}
++`,
++  },
++  {
++    find: "  float k = clamp((dot(rRip, LUMA) - dot(rFlat, LUMA)) / max(dot(rFlat, LUMA), 1e-3) * uRippleShade, -0.48, 0.48);\n",
++    repl: "  float k = clamp((dot(rRip, LUMA) - dot(rFlat, LUMA)) / max(dot(rFlat, LUMA), 1e-3) * uRippleShade, -uLkP4R.z, uLkP4R.w);   // P4 water Q8\n",
++  },
++  {
++    find: "    col += vec3(0.7, 0.88, 1.0) * uOrbGlow * 0.5 * ggxSpec(Ns, V, lO, 0.28) * (0.6 + 0.4 * spark) * zone;\n",
++    repl:
++      "    // P4 water Q8: the glint anisotropic and cyan-white (F000 / loop F030: a wide band, ~200,235,245 at its core).\n" +
++      "    col += mix(vec3(0.7, 0.88, 1.0), vec3(0.58, 0.83, 0.91), uLkP4G.z) * uOrbGlow * 0.5 * p4GgxAniso(Ns, V, lO, uLkP4G.x, uLkP4G.y) * (0.6 + 0.4 * spark) * zone;\n",
++  },
++];
++const P4_Q9: P4Edit[] = [
++  {
++    find: "vec3 lkBump(vec3 Pw, vec3 dPx, vec3 dPy, float kDof, out vec2 sig) {\n",
++    repl:
++      "uniform vec4 uLkP4Gl;   // P4 water Q9: the alias guard's footprint band (lattice cells), and the distance band it fades in over (m)\n" +
++      "vec3 lkBump(vec3 Pw, vec3 dPx, vec3 dPy, float kDof, out vec2 sig) {\n" +
++      "  // (the ring zone, 13-28 m at rest, keeps its wavelets: F000's rings are agitated)\n" +
++      "  float lkGd = smoothstep(uLkP4Gl.z, uLkP4Gl.w, distance(cameraPosition, Pw));\n",
++  },
++  {
++    find: "    float cx = lkCoh(Lx * kDof) * lkAvg(Ly * kDof);\n    float cy = lkCoh(Ly * kDof) * lkAvg(Lx * kDof);\n",
++    repl:
++      "    float cx = lkCoh(Lx * kDof) * lkAvg(Ly * kDof);\n    float cy = lkCoh(Ly * kDof) * lkAvg(Lx * kDof);\n" +
++      "    // P4 water Q9: an octave whose footprint spans uLkP4Gl.x..y cells gives up its coherent share (the pixel-centre sample of a\n" +
++      "    // sub-pixel wavelet aliases into row stripes); the spread below takes the variance (Tr^2 - c^2).\n" +
++      "    float lkGa = 1.0 - smoothstep(uLkP4Gl.x, uLkP4Gl.y, max(Lx, Ly) * kDof) * lkGd;\n" +
++      "    cx *= lkGa;\n" +
++      "    cy *= lkGa;\n",
++  },
++];
++/** (P4 water G6) The water reads the quarter-size walk (LK_HALF: lake v4, `?lkhalf` not 0). */
++function walkHalfWanted(lq: URLSearchParams | null) {
++  return lq?.get("lkhalf") !== "0";
++}
++/** P4 water: the lane's tasks on (each restores MAIN's text for its part when off). */
++function p4WaterTasks(lq: URLSearchParams | null) {
++  const on = lq?.get("p4water") !== "0";
++  return {
++    g2: on && lq?.get("lkchop") !== "0",
++    q8: on && lq?.get("lkring") !== "r11",
++    q9: on && lq?.get("lkglass") !== "0",
++    // G6 is OFF by default (`?lkwalkj=1` turns it on): it removes the orbit ghost, but the pixel's own walk it blends in flickers
++    // at the far floes' feet where the quarter-size walk's bilinear read was steady: 5 new pop clusters >= 6 px over the six
++    // AA paths (fast 1, reverse 2, leave 2; none with it off), which the waterline AA gate does not allow (WORK/LOG.md 03:47).
++    g6: on && lq?.get("lkwalkj") === "1",
++  };
++}
+ 
+ const WATER_VERT = /* glsl */ `
+ uniform mat4 uPlateViewProj;
+@@ -2293,6 +2698,41 @@
+               }
+             }
+           }
++        }
++        // P4 water (`?p4water=0` = MAIN exactly: no text, no define, no uniform; per task `?lkchop=0`, `?lkring=r11`, `?lkglass=0`;
++        // G6 only with `?lkwalkj=1`). The knobs are live uniforms (lab: __hero.water.material.uniforms.uLkP4*), shared by the walk /
++        // cache passes.
++        const p4 = p4WaterTasks(lq);
++        if (p4.g2) {
++          frag = p4Apply(frag, P4_G2, "G2");
++          defines.LK_P4FP = "1.500";
++          // chop: slope per unit noise gradient (octave 1, 2), fade-out band from the camera (m); frequencies (1/m), drift (m/s)
++          mirrorUniforms.uLkP4C = { value: new THREE.Vector4(0.55, 0.22, 19.0, 26.0) };
++          mirrorUniforms.uLkP4K = { value: 0.0 };
++          mirrorUniforms.uLkP4CF = { value: new THREE.Vector4(0.45, 1.0, 0.35, 0.6) };
++          // the train: phase (m), amplitude share, noise frequency (1/m); the specular AA's share of the tilt's change per pixel
++          mirrorUniforms.uLkP4W = { value: new THREE.Vector4(0.25, 0.25, 0.33, 0.3) };
++          // the tilted reflection's floor (x the flat water's elevation)
++          mirrorUniforms.uLkP4E = { value: 1.0 };
++        }
++        if (p4.q8) {
++          frag = p4Apply(frag, P4_Q8, "Q8");
++          // (lab, with the engine's debug option: `lkringq=<Q>` the profile's steepening)
++          const rq = opts.debug && lq && lq.get("lkringq") !== null ? Number(lq.get("lkringq")) : NaN;
++          mirrorUniforms.uLkP4R = { value: new THREE.Vector4(rq >= -0.9 && rq <= 0.9 ? rq : -0.35, 0.3, 0.48, 0.55) };
++          mirrorUniforms.uLkP4G = { value: new THREE.Vector4(0.16, 0.078, 0.6, 0) };
++        }
++        if (p4.g6 && walkHalfWanted(lq)) {
++          frag = p4Apply(frag, P4_G6, "G6");
++          // the taps' spread band, and the distance band (m) it fades in over (the far water: the near water's own walk is costly)
++          mirrorUniforms.uLkP4WJ = { value: new THREE.Vector4(0.01, 0.04, 30.0, 40.0) };
++        }
++        if (p4.q9) {
++          frag = p4Apply(frag, P4_Q9, "Q9");
++          // (lab, with the engine's debug option: `lkglassg=<a>,<b>` the guard's band)
++          const gg = opts.debug && lq?.get("lkglassg") ? (lq.get("lkglassg") as string).split(",").map(Number) : [];
++          // (distance band 30-40 m: with 24-34 m the near far floes' waterlines at ~33 m got two new 6 px pops, fast / leave paths)
++          mirrorUniforms.uLkP4Gl = { value: gg.length === 2 && gg[0] >= 0 && gg[1] > gg[0] ? new THREE.Vector4(gg[0], gg[1], 30, 40) : new THREE.Vector4(0.15, 0.45, 30, 40) };
+         }
+         // (No far-water rest correction: it was a fit of the ENV lane's model to the plate.)
+       } else if (opts.mirror.corr) {

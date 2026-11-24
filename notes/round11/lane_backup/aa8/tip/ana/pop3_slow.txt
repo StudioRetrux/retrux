@@ -1,0 +1,30 @@
+### slow mask=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work5/aa5b/caps/slow_bmask gt=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/aa3/caps/slow_gt
+slow_TIP vs slow_A7: frames 160 (160/160), frames differing 160, px > 8: 108723, max 141, first 0, pose mismatches 0, W 1440/1440 rows 380-766/380-766
+A7: flagged px 1405, events >= 6 px: 41, px in them 315
+TIP: flagged px 1364, events >= 6 px: 33, px in them 257
+-- A7 top 4
+  k81-84 x96-105 y559-569 n14 emax125 frames 81/1/52/62 82/1/84/-92 83/1/65/-65 83/1/47/-45 ...
+  k136-139 x125-132 y541-549 n9 emax117 frames 136/1/100/-86 137/1/46/-40 138/2/99/-83 138/1/46/-43 ...
+  k129-131 x127-129 y550-553 n9 emax101 frames 129/7/101/-79 130/1/65/-61 131/1/41/-48
+  k39-40 x86-87 y574-577 n7 emax127 frames 39/6/127/-76 40/1/53/-52
+-- TIP top 4
+  k38-43 x84-87 y574-577 n14 emax124 frames 38/2/53/51 39/2/74/-57 39/6/124/-76 40/1/55/-54 ...
+  k82-84 x101-105 y565-569 n10 emax130 frames 82/1/130/-123 83/6/125/-81 84/3/87/-76
+  k67-70 x94-98 y569-571 n10 emax111 frames 67/1/47/43 68/2/111/-92 69/3/55/-47 70/1/42/52 ...
+  k29-31 x82-85 y575-577 n10 emax101 frames 29/2/59/55 30/4/101/-73 31/3/80/-15 31/1/47/-47
+-- popnew TIP vs A7 (new pops)
+new pops (X flagged, ref not, X != ref): 128 px, 68 clusters, >= 6 px: 1
+  k53-56 x88-91 y572-573 n5 emax122
+  k47-50 x86-88 y574-574 n4 emax99
+  k78-81 x848-853 y496-499 n8 emax49
+  k38-39 x84-85 y574-575 n4 emax74
+  k9-10 x77-80 y575-576 n3 emax95
+  k31-31 x82-83 y575-576 n3 emax80
+  k63-64 x93-93 y571-571 n2 emax118
+  k41-43 x86-86 y575-575 n3 emax77
+-- popnew A7 vs TIP (pops TIP removes)
+new pops (X flagged, ref not, X != ref): 144 px, 50 clusters, >= 6 px: 8
+  k123-127 x232-246 y513-515 n13 emax57
+  k83-83 x849-855 y496-497 n13 emax55
+  k113-114 x142-148 y516-517 n8 emax51
+  k49-49 x116-118 y533-535 n7 emax57

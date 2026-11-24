@@ -1,0 +1,34 @@
+== reverse_Lq9off vs A8 (new pops)
+new pops (X flagged, ref not, X != ref): 114 px, 61 clusters, >= 6 px: 3
+  k38-42 x153-157 y514-515 n6 emax106
+  k76-79 x1084-1090 y514-517 n10 emax57
+  k61-63 x1391-1396 y501-503 n8 emax69
+  k66-67 x119-120 y514-514 n4 emax81
+  k92-95 x41-45 y522-522 n4 emax78
+== reverse_Lg6off vs A8 (new pops)
+new pops (X flagged, ref not, X != ref): 28 px, 24 clusters, >= 6 px: 0
+  k6-7 x97-100 y542-543 n2 emax53
+  k18-19 x114-116 y547-547 n2 emax50
+  k76-76 x106-109 y548-549 n2 emax47
+  k102-102 x1065-1066 y607-607 n2 emax44
+  k73-73 x114-114 y546-546 n1 emax50
+== reverse_Lj1 vs A8 (new pops)
+new pops (X flagged, ref not, X != ref): 126 px, 73 clusters, >= 6 px: 2
+  k76-79 x1084-1090 y514-518 n10 emax59
+  k61-63 x1391-1396 y501-503 n8 emax67
+  k38-42 x153-157 y514-515 n5 emax105
+  k66-67 x119-120 y514-514 n4 emax67
+-- A8 vs reverse_Lj1 (removed)
+new pops (X flagged, ref not, X != ref): 198 px, 131 clusters, >= 6 px: 1
+  k71-71 x212-219 y548-548 n7 emax56
+  k11-11 x1063-1064 y489-491 n5 emax58
+== reverse_Lj2 vs A8 (new pops)
+new pops (X flagged, ref not, X != ref): 126 px, 73 clusters, >= 6 px: 2
+  k76-79 x1084-1090 y514-518 n10 emax59
+  k61-63 x1391-1396 y501-503 n8 emax66
+  k38-42 x153-157 y514-515 n5 emax104
+  k66-67 x119-120 y514-514 n4 emax68
+-- A8 vs reverse_Lj2 (removed)
+new pops (X flagged, ref not, X != ref): 198 px, 131 clusters, >= 6 px: 1
+  k71-71 x212-219 y548-548 n7 emax56
+  k11-11 x1063-1064 y489-491 n5 emax58

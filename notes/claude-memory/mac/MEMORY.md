@@ -1,0 +1,6 @@
+- [Retrux round 11 state](retrux-round11-state.md) — PAUSED 20 Nov 20:15 (Mac cleanup) until "lanjut"; AA7 final judge to relaunch; durable copies in ~/RetruxR11Work
+- [Retrux Mac machine](retrux-mac-machine.md) — M4 shared with Photoshop/Figma, Blender Metal GPU, iCloud Documents, max 2 heavy jobs
+- [Hero interaction spec](hero-interaction-spec.md) — click inert, hold = slow-mo video expand with rings moving, seamless, slight centre zoom, no glitches
+- [Hero must be real-time, not video](hero-must-be-realtime-not-video.md) — user rejected a pre-rendered video hero; poster only as no-WebGL fallback
+- [Autonomous run preference](autonomous-run-preference.md) — user away + "full power sampe kelar": caffeinate, heartbeat cron, auto-resume after limits, no questions
+- [Staging deploy](staging-deploy.md) — staging.retrux.com on Niagahoster cPanel (srv143, public_html/staging, CPANEL_TOKEN in .env) + public Vercel project retrux-staging

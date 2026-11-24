@@ -1,0 +1,7 @@
+pair 0  A 21.6  B 21.7  B/A 1.005  invalid  loads A 6.7/9.7 B 8/7.1 others ['judge_wl2f:fair-reverse-gt', 'judge_wl2f:hold-P', 'judge_wl2f:t2-M']
+pair 1  A 22.9  B 21.4  B/A 0.934  invalid  loads A 10.9/12.6 B 6/6.9 others ['judge_wl2f:hold-J', 'judge_wl2f:rest-T1-J', 'judge_wl2f:rest-T1-P', 'judge_wl2f:s60', 'judge_wl2g:st-d1_L', 'judge_wl2g:st-d2_L']
+pair 2  A 21.0  B 47.4  B/A 2.257  invalid  loads A 10.2/13.7 B 8.2/9.6 others ['judge_wl2f:rl', 'judge_wl2g:ident']
+pair 3  A 21.0  B 21.2  B/A 1.010  invalid  loads A 3.8/4.3 B 6.1/5.5 others ['judge_wl2f:perf-sweep', 'judge_wl2g:fair-fast', 'judge_wl2g:fair-fast-gt', 'judge_wl2g:ident']
+n 4  paired median B/A 1.007  (min 0.934 max 2.257)  median A 21.3  median B 21.6
+modes (split 20.8 ms): A low [] high [21.600000000000364, 22.899999999999636, 21, 21] | B low [] high [21.700000000000728, 21.399999999999636, 47.399999999999636, 21.200000000000728]
+valid pairs 0

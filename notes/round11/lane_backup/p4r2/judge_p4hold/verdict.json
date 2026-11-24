@@ -1,0 +1,22 @@
+{
+ "lane": "p4hold", "judge": "judge_p4hold", "date": "2026-11-21 02:56 WIB", "pass": true,
+ "scores": [
+  {"lens": "composition_motion", "main": 8.6, "lane": 8.8},
+  {"lens": "glitch_hold_sweep", "main": 8.0, "lane": 8.0},
+  {"lens": "environment", "main": 7.8, "lane": 7.85}
+ ],
+ "verified": {
+  "patch": "re-made from LANES/aa8 vs LANES/p4hold: sha256 2434e13e...25cf4 = builder's; 4 files; lab :5178 dist built after the last edit",
+  "ident_off": "?p4hold=0 == :5199 IDENTICAL at rest T1/T2/T0 phone/plate and at p04/p06/p07 T1 + p06 T0; lane default == :5199 at rest T1; ?hold=r10 p06 and ?spin=f1 p04 lane == :5199",
+  "perf_hold": "6 interleaved pairs SLOT_BG=0, load 3.3-4.6, all expand cam 0.967: median of medians MAIN 20.0 / lane 18.8 ms (0.940), means 0.981, lane <= MAIN 6/6",
+  "continuity": "ring deg/60Hz frame max hold 3.64/3.60, release 1.03/0.97, re-press 2.46/2.38, release2 3.41/3.44; click inert in both",
+  "pop30": "lane opening per 30 fps frame .023/.175/.385/.556/.600 at tp .817-.950 with the lunge; MAIN spreads it over tp .72-1.08",
+  "bounds": "p06 same as MAIN at 1440x766/1280x800/1920x1080; p04 wider but inside (1440: T69 B686 L398 R1070; 1280x800: T102 B690 L336 R972; 1920: T104 B963 L514 R1446)",
+  "ctx": "lane restarts by itself 604.8 ms after the restore, clean hero; ?ctxrun=0, ?p4hold=0 and MAIN stay blank (AA8); ?panokeep=1 561 ms",
+  "memory": "backing store MAIN 23,751,194 / lane 19,560,957 (-4,190,237 B) / panokeep 23,755,272; after a loss+restore lane 19,562,107 (no leak)",
+  "framing": "peak vs reference p06 MAIN -24.6 -> lane -5.0 px (F420), p05 -25.1 -> -6.7 (F402); lane vs MAIN p06 peak +20, base +15, iceberg +17 px"
+ },
+ "findings": ["N1 nit: Q13 'no plateau' not literal (opening 0.600-0.613 over tp 0.95-1.18; MAIN similar after 1.08)",
+              "N2 nit: restoreAfterLoss edge cases (loop already running at the restore draws ~50 ms with the empty PMREM; no timeout on the re-read)",
+              "N3 nit/judgment: 2560x1080 camera y 2.54 -> 1.66, background 0.75 H -> ~0.85 H, extents inside"]
+}

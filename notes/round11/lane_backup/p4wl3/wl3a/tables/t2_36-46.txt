@@ -1,0 +1,22 @@
+M      t2_M1      n  95 dtp50 44.7 | left all 730 band 702 | shelf all 704 band 695 | right all 1342 band 1363
+M      t2_M2      n 132 dtp50 43.8 | left all 716 band 764 | shelf all 651 band 688 | right all 1319 band 1321
+M      t2_M3      n  53 dtp50 44.9 | left all 739 band 769 | shelf all 716 band 729 | right all 1354 band 1419
+L      t2_L1      n   4 dtp50 47.6 | left all 664 band 527 | shelf all 657 band 625 | right all 1433 band 1540
+L      t2_L2      n  23 dtp50 47.0 | left all 677 band 440 | shelf all 676 band 401 | right all 1468 band 1109
+L      t2_L3      n  12 dtp50 49.1 | left all 769 band 688 | shelf all 832 band 698 | right all 1548 band 1304
+POOLED dt 36-46:
+  M      n  280 dt mean 44.25 | left 744 | shelf 698 | right 1354
+  L      n   39 dt mean 44.25 | left 525 | shelf 516 | right 1213
+1-ms bins left (vs M):
+  36-37  M n   0   -1  L n   0   -1
+  37-38  M n   1   -1  L n   1   -1
+  38-39  M n   2   -1  L n   3   -1
+  39-40  M n   1   -1  L n   0   -1
+  40-41  M n   0   -1  L n   1   -1
+  41-42  M n   1   -1  L n   0   -1
+  42-43  M n  18  796  L n   0   -1
+  43-44  M n  66  939  L n   1   -1
+  44-45  M n 123  713  L n  11  535
+  45-46  M n  68  629  L n  22  636
+dt-matched (weights M):  left M 683 | L 571 (-16 %, n 191)  shelf M 672 | L 569 (-15 %, n 191)  right M 1336 | L 1226 (-8 %, n 191)
+dt-matched (weights L):  left M 657 | L 603 (-8 %, n 33)  shelf M 664 | L 588 (-11 %, n 33)  right M 1312 | L 1278 (-3 %, n 33)

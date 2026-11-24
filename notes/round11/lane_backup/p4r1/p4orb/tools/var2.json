@@ -1,0 +1,6 @@
+[
+ {"name": "a", "js": ""},
+ {"name": "b", "js": "(()=>{const h=__hero,u=h.orb.material.uniforms;h.orb.holdCut=0.75;u.uP4Orb.value.y=3.0;u.uP4OrbB.value.x=9;u.uHoldFill.value.z=0.7;u.uShadeFloor.value=0.3;})()"},
+ {"name": "c", "js": "(()=>{const h=__hero,u=h.orb.material.uniforms;h.orb.holdCut=0.9;u.uP4Orb.value.y=2.5;u.uP4OrbB.value.x=8;u.uHoldFill.value.z=0.8;u.uShadeFloor.value=0.25;})()"},
+ {"name": "d", "js": "(()=>{const h=__hero,u=h.orb.material.uniforms;h.orb.holdCut=0.9;u.uP4Orb.value.y=2.5;u.uP4OrbB.value.x=8;u.uHoldFill.value.z=0.8;u.uShadeFloor.value=0.25;u.uScreenBg.value.x=0.85;})()"}
+]

@@ -1,0 +1,1 @@
+{"port":"5199","qs":"lktaa=0","loss":true,"res":[{"W":1440,"H":766,"taa":null,"lost":false,"err":0},{"W":1440,"H":766,"taa":null,"lost":false,"err":0},{"W":1440,"H":766,"taa":null,"lost":false,"err":0},{"W":1440,"H":766,"taa":null,"lost":false,"err":0}],"logs":["console.warning [hero] WebGL context lost"]}

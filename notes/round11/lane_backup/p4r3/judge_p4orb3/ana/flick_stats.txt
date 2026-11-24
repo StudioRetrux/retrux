@@ -1,0 +1,6 @@
+hold lane crystal px  88188 | 2nd-diff mean on crystals  16.63  elsewhere  3.65 | crystal px with |d2|>60  9.80% | 1st-diff mean on crystals  10.21
+hold off  crystal px  88188 | 2nd-diff mean on crystals  16.37  elsewhere  3.64 | crystal px with |d2|>60  9.75% | 1st-diff mean on crystals  10.02
+hold strip window centre (crop coords) 390 240
+rest lane crystal px  70038 | 2nd-diff mean on crystals  26.18  elsewhere  3.32 | crystal px with |d2|>60 15.30% | 1st-diff mean on crystals  15.25
+rest off  crystal px  70038 | 2nd-diff mean on crystals  26.39  elsewhere  3.33 | crystal px with |d2|>60 15.49% | 1st-diff mean on crystals  15.35
+rest strip window centre (crop coords) 540 270

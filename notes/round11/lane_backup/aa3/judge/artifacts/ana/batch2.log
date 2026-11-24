@@ -1,0 +1,12 @@
+== slowdet 14:30:41
+[cap] caps/slowdet_F: 6 frames; 0 errors/warnings
+== rest 14:46:33
+[jcap rest] base: 1 seg, 0 errors/warnings
+  lane: 1 seg, 0 errors/warnings
+  aa0: 1 seg, 0 errors/warnings
+  off: 1 seg, 0 errors/warnings
+== dpr2 14:49:14
+[jcap dpr2] base: 1 seg, 0 errors/warnings
+  lane: 1 seg, 0 errors/warnings
+  off: 1 seg, 0 errors/warnings
+== done 14:51:02

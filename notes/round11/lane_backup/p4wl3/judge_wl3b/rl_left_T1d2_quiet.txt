@@ -1,0 +1,13 @@
+M      lM_c         N 150 dt p10/50/90 25.5/26.6/28.9 | leftwater 472 region 2194 | errs 0
+M      lM_d         N 150 dt p10/50/90 25.6/27.1/29.5 | leftwater 515 region 2305 | errs 0
+L      lL_c         N 150 dt p10/50/90 27.7/29.6/32.3 | leftwater 1018 region 2857 | errs 0
+L      lL_d         N 150 dt p10/50/90 27.4/29.3/32.0 | leftwater 984 region 2801 | errs 0
+B      lB_c         N 150 dt p10/50/90 26.9/28.3/30.4 | leftwater 673 region 2497 | errs 0
+B      lB_d         N 150 dt p10/50/90 27.1/28.4/30.2 | leftwater 659 region 2494 | errs 0
+POOLED dt-controlled (both steps inside the band), blips / frame:
+dt   0-999 | M n 296 leftwater   493 region  2249 || L n 296 leftwater  1001 region  2829 || B n 296 leftwater   666 region  2496
+dt  20-26  | M n  24 leftwater   351 region  2005 || L n   4 leftwater     0 region   589 || B n   1 leftwater     1 region   636
+dt  26-30  | M n 181 leftwater   545 region  2394 || L n 137 leftwater  1058 region  3027 || B n 233 leftwater   662 region  2513
+dt  28-34  | M n  45 leftwater   539 region  2303 || L n 200 leftwater  1019 region  2925 || B n 134 leftwater   821 region  2755
+dt  30-36  | M n  10 leftwater   394 region  1836 || L n  65 leftwater  1166 region  2876 || B n  14 leftwater  1059 region  3307
+dt  26-40  | M n 203 leftwater   549 region  2394 || L n 283 leftwater  1043 region  2935 || B n 282 leftwater   694 region  2582

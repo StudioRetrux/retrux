@@ -1,0 +1,41 @@
+### hold (jcap holdre rows 380-766; mask + reference = BASE :5182 in the same session; a7 = :5197)
+tip3 vs a7: frames 240 (240/240), frames differing 240, px > 8: 196999, max 134, first 0, pose mismatches 0, W 1440/1440 rows 380-766/380-766
+A7: flagged px 14905, events >= 6 px: 412, px in them 12798
+TIP: flagged px 16258, events >= 6 px: 481, px in them 13829
+-- A7 top 4
+  k202-213 x18-81 y639-665 n530 emax103 frames 202/69/103/-89 203/72/103/-85 204/74/101/-82 205/54/97/-78 ...
+  k186-201 x104-192 y555-578 n544 emax100 frames 186/8/52/-39 187/12/53/-43 188/1/44/-46 188/2/41/-42 ...
+  k77-83 x8-64 y650-663 n357 emax110 frames 77/76/100/-77 78/72/110/-78 79/2/45/-51 79/28/71/-62 ...
+  k200-214 x160-211 y592-616 n338 emax100 frames 200/4/53/-47 201/7/72/55 202/70/100/-75 203/11/59/-72 ...
+-- TIP top 4
+  k186-201 x104-192 y555-578 n562 emax100 frames 186/8/52/-39 187/12/53/-43 188/1/44/-46 188/2/41/-42 ...
+  k202-213 x18-81 y639-665 n530 emax103 frames 202/69/103/-89 203/72/103/-85 204/74/101/-82 205/54/97/-78 ...
+  k77-83 x8-64 y650-663 n357 emax110 frames 77/76/100/-77 78/72/110/-78 79/2/45/-51 79/28/71/-62 ...
+  k200-214 x163-211 y592-616 n332 emax100 frames 200/4/53/-47 201/7/72/55 202/70/100/-75 203/9/59/-71 ...
+-- popnew TIP vs A7 (new pops)
+new pops (X flagged, ref not, X != ref): 1164 px, 289 clusters, >= 6 px: 62
+  k195-198 x461-483 y576-584 n50 emax83
+  k204-213 x425-435 y654-671 n41 emax79
+  k203-209 x136-153 y597-610 n34 emax60
+  k69-73 x449-457 y598-606 n21 emax90
+  k128-132 x471-486 y567-577 n21 emax85
+  k77-81 x1283-1288 y597-606 n27 emax66
+  k140-144 x483-494 y549-553 n27 emax60
+  k216-218 x128-138 y613-616 n21 emax68
+-- popnew A7 vs TIP (pops TIP removes)
+new pops (X flagged, ref not, X != ref): 137 px, 54 clusters, >= 6 px: 4
+  k133-134 x311-317 y510-513 n19 emax52
+  k237-237 x309-318 y513-514 n11 emax50
+  k191-191 x309-316 y515-515 n7 emax49
+  k157-157 x320-325 y496-496 n6 emax48
+### tip box changes T8 (gov1 = scale-1 gov path vs AA7 fin1; gov = governor 1/0.9/0.8/0.7/1 vs AA7 fin; holdre rows 560-660 vs AA7 fin)
+tip2 vs fin1 T8 k0-119: box darker 13925 brighter 0 | outside darker 73632 brighter 1617 max 101
+tip3 vs fin T8 k0-119: box darker 14299 brighter 0 | outside darker 76018 brighter 1762 max 98
+tip3 vs fin T8 k0-239: box darker 8226 brighter 22 | outside darker 66340 brighter 893 max 119
+### toward the 2x-rows image (fftip=0 + ?lkmscale=0.5,1)
+tip2 vs fin1 (ref r2) T8 k0-119
+  box: 13925 px-frames, |new-ref| 9.2 vs |old-ref| 23.0, new closer on 91 %
+  outside: 75249 px-frames, |new-ref| 7.0 vs |old-ref| 14.3, new closer on 76 %
+tip3 vs fin (ref r2) T8 k0-239
+  box: 8248 px-frames, |new-ref| 10.3 vs |old-ref| 27.0, new closer on 91 %
+  outside: 67233 px-frames, |new-ref| 7.4 vs |old-ref| 14.9, new closer on 73 %

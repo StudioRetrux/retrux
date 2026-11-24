@@ -1,0 +1,40 @@
+== F1 p05 right arc x880-1070 y155-545
+   MAIN   L184.5 sd32.6 B-G+26.9 lap11.1
+   ICE    L185.8 sd29.2 B-G+28.9 lap 6.8
+   INT1   L186.4 sd27.6 B-G+28.5 lap 6.4
+   REF    L193.4 sd23.4 B-G+26.7 lap 2.9
+== F1 p05 top arc x640-880 y50-150
+   MAIN   L194.7 sd21.7 B-G+25.2 lap 7.1
+   ICE    L193.6 sd21.9 B-G+27.6 lap 4.5
+   INT1   L193.4 sd21.5 B-G+28.1 lap 4.5
+   REF    L213.0 sd 3.4 B-G+21.7 lap 0.5
+== F3 q03 x800-830 y260-350
+   MAIN   L182.9 sd27.2 B-G+26.1 lap13.8
+   ICE    L191.1 sd25.4 B-G+28.4 lap10.7
+   INT1   L191.1 sd25.3 B-G+28.3 lap10.6
+   REF    L174.3 sd30.8 B-G+33.0 lap 6.4
+== F3 q03 x790-840 y230-330
+   MAIN   L171.7 sd30.5 B-G+30.2 lap13.7
+   ICE    L180.1 sd28.6 B-G+32.9 lap10.8
+   INT1   L180.0 sd28.6 B-G+32.9 lap10.7
+   REF    L165.2 sd33.1 B-G+35.2 lap 6.2
+== F3 q03 x820-860 y300-380
+   MAIN   L172.6 sd31.2 B-G+29.3 lap12.0
+   ICE    L173.1 sd30.2 B-G+34.5 lap10.9
+   INT1   L173.1 sd30.2 B-G+34.4 lap10.9
+   REF    L157.0 sd35.3 B-G+39.3 lap 7.1
+== F4 p06 lower strip x520-960 y470-530
+   MAIN   L201.7 sd18.9 B-G+18.9 lap 4.8
+   ICE    L208.6 sd24.9 B-G+21.0 lap 4.1
+   INT1   L207.1 sd26.1 B-G+21.5 lap 5.0
+   REF    L206.5 sd16.7 B-G+19.3 lap 3.0
+== F5 p04 log x680-880 y330-390
+   MAIN   L218.6 sd20.7 B-G+11.3 lap 4.3
+   ICE    L219.0 sd20.2 B-G+15.9 lap 3.0
+   INT1   L218.8 sd19.2 B-G+15.9 lap 2.8
+   REF    L200.4 sd22.3 B-G+26.1 lap 4.1
+== F4 p06 clipped px (max RGB >= 254) outside the orb box x600-840 y300-500, in x520-960 y300-540
+   MAIN   110
+   ICE    2
+   INT1   1
+   REF    37

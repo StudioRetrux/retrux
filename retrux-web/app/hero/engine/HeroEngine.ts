@@ -1,20 +1,27 @@
 import * as THREE from "three";
-import { loadHeroAssets } from "./assets";
+import { loadHeroAssets, reloadPanorama } from "./assets";
 import { CameraRig } from "./CameraRig";
 import { Choreography, type Phase } from "./Choreography";
 import { WATER } from "./config";
 import { CAM_TARGETS } from "./curves";
-import { Orb } from "./hero/Orb";
+import { aPhaseFromUrl, HOLD_CURVES, HOLD_SPIN, HOLD_TUNE, holdCurvesChanged, holdModeFromUrl, idleModeFromUrl, P2B_F1, P2B_F2, shardRateFromSpin, SPIN_P2B, type HoldMode } from "./hero/HoldR11";
+import { P4HOLD } from "./hero/HoldR11";
+import { ICE_R11A, iceR11 } from "./hero/IceMaterial";
+import { Orb, P4_CHARGE, P4ORB } from "./hero/Orb";
 import { Rings } from "./hero/Rings";
 import { Shards } from "./hero/Shards";
 import { clamp, ease, smoothstep } from "./math";
 import { DEFAULT_POST, PostChain, type PostParams } from "./pipeline/PostChain";
-import { RenderPipeline } from "./pipeline/RenderPipeline";
-import { AdaptiveScale, detectTier, PROFILES } from "./quality";
+import { createAAUniforms, P4PERF, RenderPipeline, type PassHooks } from "./pipeline/RenderPipeline";
+import { AdaptiveScale, detectTier, profileFor } from "./quality";
 import { createHeroState, LAYER, type HeroState, type QualityProfile, type TierName } from "./types";
 import { createSharedUniforms, cubeUVDefines } from "./uniforms";
+import { EnvEdge } from "./world/EnvEdge";
+import { LakeMirror } from "./world/LakeMirror";
+import { LakeHeight } from "./world/LakeHeight";
+import { LakeSchedule } from "./world/LakeSchedule";
 import { PlateEnvironment } from "./world/PlateEnvironment";
-import { Water } from "./world/Water";
+import { Water, loadLakeChop } from "./world/Water";
 
 export type HeroEngineOptions = {
   canvas: HTMLCanvasElement;
@@ -43,11 +50,23 @@ function introSpinIntegral() {
 }
 /** Panorama radiance clamp before prefiltering; the sun glint comes from the analytic light. */
 const PANO_CLAMP = 64;
+/** AA3: the lake-edge TAA's history weight while the camera moves (EnvEdge TAA_FRAG). */
+const LAKE_EDGE_TAA_WEIGHT = 0.5;
+/**
+ * AA5a glide (EnvEdge EdgeGlideOptions), tuned on the slow / medium sweeps against the 16-sample reference: history 0.85 at
+ * <= 0.15 px per frame of the pixel's own motion (where the 4 samples' coverage steps are farthest apart in time and the
+ * Catmull-Rom resample blurs least) down to 0.7 at >= 0.5 px; AA3's clip and resample; no silhouette blur on the TAA's band
+ * pixels while it runs (sigma 0.3 px: neighbour weight 0.004; the GT's own edge is ~0.3 px, EnvEdge's 0.6 px came on top of
+ * the TAA's averaging), back to 0.6 px over the still tail. (AA3: 0.5 at any speed, 0.6 px blur.)
+ */
+const GLIDE = { wSlow: 0.85, wFast: 0.7, v0: 0.15, v1: 0.5, gamma: 1.25, clip: 0, sigmaBand: 0.3, sharp: -0.5 };
 
 export class HeroEngine {
   readonly state: HeroState = createHeroState();
   readonly profile: QualityProfile;
   readonly gpu: string;
+  /** P4 round 1, lane orb (Q2 orb glass, Q4 hold charge, Q7 crystals): T1 / T2 only, T0 unchanged; `?p4orb=0` off (MAIN). */
+  private readonly p4: boolean;
   private renderer: THREE.WebGLRenderer;
   private shared = createSharedUniforms();
   private scene = new THREE.Scene();
@@ -58,12 +77,57 @@ export class HeroEngine {
   private choreo: Choreography;
   private env?: PlateEnvironment;
   private water?: Water;
+  /** Round 11 (baked environment): the lake's planar mirror and its target size in texels (the water's uEnvMirrorSize). */
+  private lakeMirror?: LakeMirror;
+  /** Lake v4 (WATER lane): the static max-mip heightfield of the baked meshes (built once in load with the r12 lake). */
+  private lakeHeight: LakeHeight | null = null;
+  /** Lake v4 frame budget (WATER lane): when the mirror, the walk and the cached term are drawn (`?lkperf=0`: as before). */
+  private lakeSched: LakeSchedule | null = null;
+  private lakeMirrorSize = new THREE.Vector2(1, 1);
+  /** Round 11 fix round (baked environment, MSAA tiers): soft environment silhouettes after the env pass. */
+  private envEdge?: EnvEdge;
+  /** AA3: the hold crest train's centre and reach for the lake-edge TAA (no history where its crests move the water). */
+  private taaRipple = new THREE.Vector4();
+  /** The simulation step of the frame being rendered (0 when frozen). */
+  private lastDt = 0;
+  /** AA3 step B: the lake mirror redrawn on every moving frame (`?slabflash=0`: every 3rd, as before). */
+  private slabFlashFix = false;
+  /** AA3 lake-edge TAA: no history inside the hold's crest train (lab `?debug&lktaacrest=0`: history there too). */
+  private taaCrest = true;
+  /** AA5c (also the lab's runtime switch, see the constructor): the late sky pass and the slim mirror materials. */
+  setMirrorCost(sky: boolean, slim: boolean) {
+    this.lakeMirror?.setSkyLate(sky);
+    if (this.env) this.env.mirrorSlim = slim;
+  }
+  private lakeMirrorPass = (on: boolean) => {
+    this.env?.setLakeMirrorPass(on);
+    if (this.water) this.water.group.visible = !on;
+  };
   private rings?: Rings;
   private orb?: Orb;
   private shards?: Shards;
+  /** Rings fix round 1: the belts' per-belt, per-axis widening this frame (HOLD_SPIN.shardOutA / shardOutB x spreadA). */
+  private readonly shardOut4 = [0, 0, 0, 0];
+  /** Rings fix round 2: the same plus each belt's depth share in front of its origin (HOLD_SPIN.shardFrontA / shardFrontB). */
+  private readonly shardOut6 = [0, 0, 0, 0, 0, 0];
   /** World Y of the hero parts at load, for the dolly lift (Rings.tune.holdLift). */
   private heroBase: { rings: number; orb: number; shards: number; center: number } | null = null;
+  /** Press-and-hold version: "r11" (default) or "r10" (`?hold=r10`, the round-10 hold exactly). */
+  readonly holdMode: HoldMode = holdModeFromUrl();
   private pmrem?: THREE.WebGLRenderTarget;
+  /** The clamped panorama the PMREM is built from (kept for a context restore, AA8 AJ-2: 1024 x 512 RGBA half = 4 MiB). */
+  private panorama?: THREE.DataTexture;
+  /**
+   * P4 (lane p4hold). N-1: a context restore restarts the render loop once the restored frame is complete (`?ctxrun=0`: AA8, the
+   * hero stayed blank until a tab switch or a scroll). R8-2: the panorama is not kept but read again for the restore (`?panokeep=1`:
+   * AA8's 4 MiB kept for the page's life). `?p4hold=0`: both off. While the restore waits for the panorama the loop stays stopped
+   * (restoring), so no frame is drawn with the empty PMREM; a start asked for meanwhile runs when it is done (runPending).
+   */
+  private readonly p4ctx = P4HOLD && (typeof location === "undefined" || new URLSearchParams(location.search).get("ctxrun") !== "0");
+  private readonly p4pano = P4HOLD && (typeof location === "undefined" || new URLSearchParams(location.search).get("panokeep") !== "1");
+  private restoreGen = 0;
+  private restoring = false;
+  private runPending = false;
   private postParams: PostParams = { ...DEFAULT_POST, lensCenter: new THREE.Vector2() };
   private raf = 0;
   private running = false;
@@ -77,7 +141,7 @@ export class HeroEngine {
   private resizeObserver: ResizeObserver;
   private intersection?: IntersectionObserver;
   private disposers: (() => void)[] = [];
-  private hooks = {
+  private hooks: PassHooks = {
     setReflectionPass: (on: boolean) => {
       this.rings?.setReflectionPass(on);
       this.orb?.setReflectionPass(on);
@@ -104,7 +168,7 @@ export class HeroEngine {
     const urlTier = typeof location !== "undefined" ? new URLSearchParams(location.search).get("tier") : null;
     const detected = detectTier(this.renderer.getContext() as WebGL2RenderingContext);
     const tier = (opts.tier ?? (urlTier as TierName | null) ?? detected.tier) as TierName;
-    this.profile = PROFILES[tier] ?? PROFILES[detected.tier];
+    this.profile = profileFor(tier) ?? profileFor(detected.tier);
     // `?ibi=0` / `?ibi=1` forces the ice-behind-ice split off / on (A/B captures and perf comparisons).
     const ibi = typeof location !== "undefined" ? new URLSearchParams(location.search).get("ibi") : null;
     if (ibi === "0" || ibi === "1") this.profile = { ...this.profile, iceBehindIce: ibi === "1" };
@@ -114,10 +178,14 @@ export class HeroEngine {
     if (opts.debug) console.info(`[hero] GPU "${detected.gpu}" -> ${this.profile.tier} (${detected.reason})`);
 
     this.pipeline = new RenderPipeline(this.renderer, this.profile, this.shared);
-    this.post = new PostChain(this.renderer, this.profile.post);
+    this.p4 = P4ORB && this.profile.tier !== "T0";
+    // (P4 Q4: the orb band's wider hold skirt, PostChain `holdGlow`; `?orbcharge=r11` off.)
+    this.post = new PostChain(this.renderer, this.profile.post, { p4: this.p4 && P4_CHARGE });
 
     // No lake impulse on press / release: the reference has none, and a click must do nothing.
     this.choreo = new Choreography(canvas, this.state, () => this.rig.camera);
+    this.choreo.holdMode = this.holdMode;
+    this.rig.holdMode = this.holdMode;
     this.choreo.onHoldChange = (on) => this.opts.onHoldChange?.(on);
 
     const reduced = typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -142,10 +210,20 @@ export class HeroEngine {
     const onLost = (e: Event) => {
       e.preventDefault();
       this.stop();
+      this.envEdge?.resetTAA();
       console.warn("[hero] WebGL context lost");
     };
     canvas.addEventListener("webglcontextlost", onLost);
     this.disposers.push(() => canvas.removeEventListener("webglcontextlost", onLost));
+    // AA8 (perf judge P-1): the restored context starts with empty targets, so the waterline TAA starts without history.
+    // (AA8 AJ-2: and the targets drawn only once at load are drawn again, restoreBaked.)
+    const onRestored = () => {
+      this.envEdge?.resetTAA();
+      if (this.p4ctx || this.p4pano) this.restoreAfterLoss();
+      else this.restoreBaked();
+    };
+    canvas.addEventListener("webglcontextrestored", onRestored);
+    this.disposers.push(() => canvas.removeEventListener("webglcontextrestored", onRestored));
     this.resize();
   }
 
@@ -164,9 +242,12 @@ export class HeroEngine {
       projOff,
       // Grazing near-floe rims broke into dashes at 4x (QC round 7, T04); T0 keeps 4.
       this.profile.tier === "T0" ? 4 : 16,
+      // Round 11: T0 keeps the re-aimed plate lake (the mirror pass is not in its budget).
+      this.profile.tier !== "T0",
     );
 
     clampHalfFloat(assets.panorama, PANO_CLAMP);
+    if (!this.p4pano) this.panorama = assets.panorama;
     const gen = new THREE.PMREMGenerator(this.renderer);
     this.pmrem = gen.fromEquirectangular(assets.panorama);
     gen.dispose();
@@ -182,28 +263,197 @@ export class HeroEngine {
       this.shared,
       envDefines,
       assets.extraPlates,
+      // (P4 round 3, lane p4atmos: the tier, so its environment hunks stay off on T0.)
+      null,
+      this.profile.tier,
     );
     setLayer(this.env.group, LAYER.ENV);
     this.scene.add(this.env.group);
     this.rig.setCoverage(this.env.coverage);
 
+    // Round 11: the baked environment's lake is a planar mirror of it (assets.sky is only set then). `?envlake=plate` keeps
+    // round 11 step 1's lake (the rest plate re-aimed through the projector depth).
+    if (assets.sky && assets.envProxy.scene.userData?.baked) {
+      const lq = typeof location !== "undefined" ? new URLSearchParams(location.search) : null;
+      // AA3 step B (20 Nov, the 20 Hz "slab-foot flash"): while the camera moves, the mirror target is redrawn on every frame
+      // instead of every 3rd (LakeSchedule.mirrorEvery 1, set below; MSAA tiers). A target drawn 1-2 frames earlier is exact
+      // for the scene, but its own parallax lookups (the strata and far-field marches through the target's occlusion, and the
+      // resampling of its texel grid) depend on the camera it was drawn from, so the reflections beside the waterline jumped
+      // on each redraw (1/3-cycle peak 6-17x the spectrum's median on the waterline band). The still camera keeps its schedule
+      // (the rest frame is unchanged). `?slabflash=0` keeps every 3rd moving frame.
+      this.slabFlashFix = this.profile.msaa > 0 && lq?.get("slabflash") !== "0";
+      this.lakeMirror = new LakeMirror(assets.sky, this.profile.tier);
+      // AA7 G-3 (the far-floe pale block at the governor's reduced scales): below render scale 1 the mirror target keeps the
+      // full-scale row count, so the AA5b guard's row bracketing sees the same rows as at scale 1 (LakeMirror.setSize).
+      // `?mrows=0` = AA7; off with the guard (`?ffblock=0`: AA3 exactly at every scale) and with the lab's `?lkmscale`.
+      this.lakeMirror.rowsFull = assets.lakeR12 && lq?.get("ffblock") !== "0" && lq?.get("mrows") !== "0" && lq?.get("lkmscale") === null;
+      // Frame budget (E-G3): T1 reuses the target for up to 2 frames while the camera is still; `?envmirrorrate=1` disables it.
+      const rate1 = lq?.get("envmirrorrate") === "1";
+      this.lakeMirror.reuse = this.profile.tier === "T1" && !rate1 ? 2 : 0;
+      // Fix round: a resize re-renders the mirror at once (no black lake); `?envfix=0` restores step 2 exactly.
+      this.lakeMirror.refreshOnResize = lq?.get("envfix") !== "0";
+      setLayer(this.lakeMirror.skyMesh, LAYER.ENV);
+      this.scene.add(this.lakeMirror.skyMesh);
+      this.lakeMirror.setSize(this.pipeline.size.width, this.pipeline.size.height, this.adaptive.scale);
+      this.lakeMirrorSize.set(this.lakeMirror.target.width, this.lakeMirror.target.height);
+      // AA5c (20 Nov, the cost of AA3 step B's every-frame mirror): the same mirror target for less work, bit-identical in Chrome
+      // and WebKit (tools/ident: mirror, walk and final hashes; WebKit 0 px), not in Firefox (159: ~160 lake px of the final frame
+      // differ by 1 level, max 1; invisible): the sky pass after the surfaces at the far plane (LakeMirror.setSkyLate), the baked
+      // surfaces through a fragment shader of their mirror branch alone (PlateEnvironment.mirrorSlim). `?mirrorcost=0` off (AA3
+      // exactly); lab (with ?debug) `?mcsky=0` / `?mcslim=0` one of them off.
+      if (lq?.get("mirrorcost") !== "0") {
+        const lab = !!this.opts.debug;
+        this.setMirrorCost(!(lab && lq?.get("mcsky") === "0"), !(lab && lq?.get("mcslim") === "0"));
+      }
+    }
+    const mirror = this.lakeMirror;
+    // Hotfix 2 (smooth waterline, 18 Nov): the plate lake's choices beside floes and rocks are soft blends on bilinear projector
+    // depth instead of per-pixel switches on nearest depth (Water SHORE_AA). `?shoreaa=0` keeps the switches exactly.
+    const shoreAA = typeof location === "undefined" || new URLSearchParams(location.search).get("shoreaa") !== "0";
+    // Lake v4 (WATER lane): the r12 lake finds the first floe / rock / shore face beyond each lake point in a heightfield of
+    // the baked meshes (one top-down render + read-back, here). `?lkv=3` keeps v3 (no heightfield).
+    if (mirror && assets.lakeR12 && (typeof location === "undefined" || new URLSearchParams(location.search).get("lkv") === null)) {
+      const solids: THREE.Mesh[] = [];
+      this.env.group.traverse((o) => {
+        const m = o as THREE.Mesh;
+        if (!m.isMesh || m.name === "BG001" || m.parent?.name === "BG001") return;
+        for (let a: THREE.Object3D | null = m; a; a = a.parent) if (a.name === "clouds") return;
+        solids.push(m);
+      });
+      this.lakeHeight = LakeHeight.build(this.renderer, solids);
+    }
     this.water = new Water(assets.plate, this.env.plateViewProj, this.env.plateGain, this.shared, envDefines, this.env.occlusion, {
       glitter: this.profile.tier !== "T0",
+      debug: !!this.opts.debug,
+      shore: shoreAA,
       projectors: this.env.projectorBinding,
+      mirror: mirror ? { texture: mirror.target.texture, size: this.lakeMirrorSize, uniforms: mirror.lookup, corr: assets.lakeCorr, r12: assets.lakeR12, height: this.lakeHeight } : undefined,
     });
     this.water.material.uniforms.uMirrorViewProj.value = this.pipeline.mirrorViewProj;
+    this.water.setWalkSize(this.pipeline.size.width, this.pipeline.size.height);
+    // p4w4 G1 (`?p4w4=0` / `?w4chop=0`: not fetched): the hold's near-water chop tile (89 KB), off the critical path.
+    if (this.water.w4Chop)
+      loadLakeChop(this.opts.assetBase + "lake_chop.png", Math.min(16, this.renderer.capabilities.getMaxAnisotropy())).then(
+        (t) => this.water?.setChopTile(t),
+        (e) => console.warn("[hero] lake chop", e),
+      );
+    if (mirror && this.water.scheduled) {
+      this.lakeSched = new LakeSchedule(mirror, this.water);
+      this.lakeSched.amortize = typeof location === "undefined" || new URLSearchParams(location.search).get("lkamort") !== "0";
+      this.lakeSched.bySpeed = typeof location === "undefined" || new URLSearchParams(location.search).get("lkdt") !== "0";
+      // (AA3 step B; the lab's `?lkmeach=N` still wins.)
+      if (this.slabFlashFix && (typeof location === "undefined" || new URLSearchParams(location.search).get("lkmeach") === null)) this.lakeSched.mirrorEvery = 1;
+    }
     this.water.material.uniforms.uReflection.value = this.pipeline.reflection?.texture ?? null;
     this.water.material.uniforms.uReflectionOn.value = this.pipeline.reflection ? 1 : 0;
     setLayer(this.water.group, LAYER.ENV);
     this.scene.add(this.water.group);
-    // Projector depth (once): no doubled mountains or rocks when the camera moves off the plate camera.
-    this.env.bakeDepth(this.renderer, [this.water.group]);
+    // Projector depth (once): no doubled mountains or rocks when the camera moves off the plate camera. Only where something
+    // projects: with the mirror lake (baked environment) nothing does.
+    if (!mirror) {
+      // (Bilinear only with the baked environment: the projected plates' own shader keeps its nearest depth tests.)
+      this.env.depthLinear = shoreAA && !!assets.envProxy.scene.userData?.baked;
+      this.env.bakeDepth(this.renderer, [this.water.group]);
+    } else this.env.bakeCloudDepth(this.renderer); // (P4 round 3 J5, p4env.ts `?p4crack=0`: the cards' crack guard)
+    // Round 11 fix round (judge1 minor): with the baked environment the skylines are geometric edges, crisper than the plates'
+    // DOF-blurred ones; EnvEdge blurs the environment at its depth discontinuities, before any hero object (MSAA tiers only:
+    // T0 is protected). The afterEnv hook only arms it: its full-screen triangle (in the scene) is drawn first inside the next
+    // render into the main target, so it adds no render pass of its own. `?envedge=0` or `?envfix=0` keeps step 2's edges.
+    const eq = typeof location !== "undefined" ? new URLSearchParams(location.search) : null;
+    const msaaBaked = this.env.bakedMaterials.length > 0 && this.profile.msaa > 0 && eq?.get("envfix") !== "0";
+    const edges = msaaBaked && eq?.get("envedge") !== "0";
+    // aaresolve (19 Nov, user: "the water's edge by the ice looks like low-quality anti-aliasing when the camera moves"): the
+    // floes' and rocks' outlines against the bright lake are resolved from tone-compressed samples (chunks.ts GLSL_AA_RESOLVE,
+    // RenderPipeline); EnvEdge's triangle writes the expanded resolve back. `?aaresolve=0` keeps the linear resolve exactly.
+    // AA3 (20 Nov, user: "benerin anti aliasing water"): also with the mirror lake (the default lake at T1 / T2). Its own passes
+    // (LakeSchedule: the mirror, the walk, the cache) all run before the environment pass, while the writer plane is off, and
+    // the baked materials' mirror branch returns before the compression: the mirror, walk and cache targets are bit-identical
+    // with the resolve on or off.
+    const aaResolve = msaaBaked && eq?.get("aaresolve") !== "0";
+    if (edges || aaResolve) {
+      // (The compression's knee, chunks.ts GLSL_AA_RESOLVE; a uniform so it can be tuned live: __hero.pipeline.aa.read.uAAKnee.
+      // 0.5 here; 0.6 when the waterline TAA runs with the glide, see below.)
+      const aaKnee = { value: 0.5 };
+      const aaRead = createAAUniforms(aaKnee);
+      const edge = new EnvEdge(this.renderer, this.scene, this.env.plateGain, aaResolve ? { uniforms: aaRead, edges } : undefined);
+      edge.setSize(this.pipeline.size.width, this.pipeline.size.height);
+      this.envEdge = edge;
+      if (edges) {
+        this.env.setEdgeAlpha(true);
+        this.water.material.defines.BAKED_EDGE = "";
+        this.water.material.needsUpdate = true;
+      }
+      this.hooks.afterEnv = (main) => edge.arm(this.renderer, main);
+      if (aaResolve) {
+        const aaWrite = createAAUniforms(aaKnee);
+        this.env.setAAResolve(aaWrite);
+        this.water.setAAResolve(aaWrite);
+        const env = this.env;
+        this.pipeline.enableAAResolve(aaWrite, aaRead, (cam, box) => env.cloudDip(cam, box));
+      }
+      // AA3 step C (20 Nov): temporal AA of the waterline band (EnvEdge TAA_FRAG), on the mirror lake; `?lktaa=0` off.
+      // Lab only (with ?debug): `?lktaa=1` also on the plate lake, `?lktaaw=<w>` the history weight, `?lktaacrest=0` history
+      // inside the hold's crest train too.
+      const taaQ = eq?.get("lktaa");
+      const lab = !!this.opts.debug;
+      if (aaResolve && edges && (mirror ? taaQ !== "0" : lab && taaQ === "1")) {
+        const tw = lab ? Number(eq?.get("lktaaw")) : NaN;
+        this.taaCrest = !(lab && eq?.get("lktaacrest") === "0");
+        this.taaRipple.set(WATER.rippleCenter[0], WATER.level, WATER.rippleCenter[2], 0);
+        const tc = lab ? Number(eq?.get("lktaaclip") ?? NaN) : NaN;
+        // AA5a glide (20 Nov): motion-adaptive history weight, clip, band blur, still-tail ramp (EnvEdge EdgeGlideOptions);
+        // `?lkglide=0` keeps AA3's TAA exactly. Lab only (with ?debug): lkgws / lkgwf / lkgv0 / lkgv1 (weights and their motion
+        // range, px per frame), lkggam / lkgclip (clip), lkgsb (band sigma), lkgres (history cubic, Keys a), lkgtail=0.
+        const gq = (k: string, d: number) => {
+          const v = lab ? Number(eq?.get(k)) : NaN;
+          return Number.isFinite(v) && eq?.get(k) !== null ? v : d;
+        };
+        const glide = eq?.get("lkglide") !== "0"
+          ? {
+              wSlow: gq("lkgws", GLIDE.wSlow),
+              wFast: gq("lkgwf", GLIDE.wFast),
+              v0: gq("lkgv0", GLIDE.v0),
+              v1: gq("lkgv1", GLIDE.v1),
+              gamma: gq("lkggam", GLIDE.gamma),
+              clip: gq("lkgclip", GLIDE.clip),
+              sigmaBand: gq("lkgsb", GLIDE.sigmaBand),
+              tail: !(lab && eq?.get("lkgtail") === "0"),
+              sharp: gq("lkgres", GLIDE.sharp),
+            }
+          : null;
+        // The knee with the glide (AA6 L10: 1.0; AA8 L11 knee study, 20 Nov: 0.6). 0.5 darkened thin dark features beyond BASE and
+        // the 16-sample GT (judge A-3); a larger knee lifts them, but it also lightens the floes' thin dark waterline lines away from
+        // the GT (AR-2) and lets more > 48-level waterline jumps through where the TAA does not smooth them (slow WR J48: 1.0 missed
+        // the L4 floor). Measured K 0.6 / 0.7 / 0.8 / 0.9 / 1.0 on the six G1 paths: only 0.6 keeps every G1 / L4 cell >= 1 point
+        // inside its bar, and it has the lowest summed GT error (thin dark features + waterline lines, medium + rest). The value
+        // also holds where the TAA does not run (hold crest train, hero reflection, frames without history, jumps, rest after
+        // the hand-over). Only with the glide, so `?lkglide=0` keeps 0.5 exactly.
+        if (glide) aaKnee.value = 0.6;
+        edge.enableTAA({
+          camera: this.rig.camera,
+          reflection: lab && eq?.get("lktaarefl") === "0" ? null : this.pipeline.reflection,
+          reflectionViewProj: this.pipeline.mirrorViewProj,
+          ripple: this.taaRipple,
+          weight: tw > 0 && tw < 1 ? tw : LAKE_EDGE_TAA_WEIGHT,
+          ...(tc >= 0 && tc <= 8 ? { clip: tc } : {}),
+          ...(lab && [2, 3, 4].includes(Number(eq?.get("lktaafar"))) ? { far: Number(eq?.get("lktaafar")) } : {}),
+          glide,
+        });
+      }
+    }
 
     this.rings = new Rings(assets.hero.scene, this.shared, envDefines, { ...this.profile.ice, split: this.profile.iceBehindIce });
+    this.rings.holdMode = this.holdMode;
+    // Rings C / D's idle tumble: the measured flips (round 11 P2b) or `?idle=r10` (also implied by the older-build switches).
+    this.rings.idleMode = idleModeFromUrl();
+    // The rotating hold's frame guard projects with the camera of the frame (CameraRig updates it before the rings).
+    this.rings.camera = this.rig.camera;
+    // Ring A's in-plane phase (round 11, measured from the reference's quarter joints); `?aphase=r10` / `?hold=r10`: 0.
+    this.rings.tune.aLoopPhaseDeg = aPhaseFromUrl();
     setLayer(this.rings.root, LAYER.RINGS);
     this.scene.add(this.rings.root);
 
-    this.orb = new Orb(assets.hero.scene, this.shared, envDefines, this.profile.orb);
+    this.orb = new Orb(assets.hero.scene, this.shared, envDefines, this.profile.orb, { p4: this.p4 });
     // The reference core clips to #feffff and glows (a soft bloom shoulder), keeping some swirl at
     // its edge; the QC panel found 1.2 a flat, dim 240-247 plateau.
     // QC round 2: too dim at rest and at the eye (x1.4), while the hold's boost clipped it flat (see Orb.update).
@@ -211,8 +461,13 @@ export class HeroEngine {
     setLayer(this.orb.mesh, LAYER.ORB);
     this.scene.add(this.orb.mesh);
 
-    this.shards = new Shards(assets.hero.scene, this.shared, envDefines, this.profile.shards);
+    this.shards = new Shards(assets.hero.scene, this.shared, envDefines, this.profile.shards, {
+      r11: iceR11(this.profile.ice) && !ICE_R11A,
+      p4: this.p4,
+    });
     setLayer(this.shards.mesh, LAYER.SHARDS);
+    // (p4perf, RenderPipeline P4PERF: the shards share the near rings' render on T1 / T2 and must stay after every ring.)
+    if (P4PERF) this.shards.mesh.renderOrder = 1;
     this.scene.add(this.shards.mesh);
     this.heroBase = {
       rings: this.rings.root.position.y,
@@ -252,9 +507,12 @@ export class HeroEngine {
     const d = this.choreo.drivers;
     const saved = { ...d };
     Object.assign(d, { splitB: 1, spreadA: 1, tiltA: 1, splay: 1, flatten: 0.5, expandPose: 1, faceInner: 1, camExpand: 1 });
+    const hold = { ...d.hold };
+    if (this.holdMode === "r11a") Object.assign(d.hold, { wA: 1, wI: 1, phi: 80, pushT: 0.3, pushL: 0.6, pushB: 0.3, pushR: 0.6, splitB: 1 });
     this.rings?.update(0, 0, d);
     this.pipeline.render(this.scene, this.rig.camera, this.hooks, WATER.level);
     Object.assign(d, saved);
+    Object.assign(d.hold, hold);
     this.rings?.update(0, 0, d);
   }
 
@@ -283,8 +541,65 @@ export class HeroEngine {
 
   private updateRunning() {
     if (!this.state.ready) return;
+    if (this.restoring) {
+      this.runPending = true;
+      return;
+    }
     if (this.visible && this.onScreen) this.start();
     else this.stop();
+  }
+
+  /**
+   * AA8 (judge AJ-2): a restored WebGL context hands back every render target empty. What is drawn each frame recovers by
+   * itself and three.js re-uploads every texture that keeps its data, but the PMREM of the panorama is drawn once at load: it
+   * stayed black, so the rings, orb and shards lost their environment light (black blotches on the rings) and the lake its
+   * ripple shading. Build it again from the kept panorama (same size, so the materials' cubeUV defines still hold) and redraw
+   * the lake passes on the next frame (as after a resize). The plate lake (T0, `?envlake=plate`) also bakes its projector
+   * depth maps once at load (no clouds and no lake reflections without them): bake them again. Old targets are dropped, not
+   * disposed: their GL objects belong to the lost context.
+   */
+  private restoreBaked(pano = this.panorama) {
+    if (pano && this.pmrem) {
+      const gen = new THREE.PMREMGenerator(this.renderer);
+      this.pmrem = gen.fromEquirectangular(pano);
+      gen.dispose();
+      pano.dispose();
+      this.shared.uEnvMap.value = this.pmrem.texture;
+    }
+    if (this.env && this.water && !this.lakeMirror) this.env.bakeDepth(this.renderer, [this.water.group], true);
+    else if (this.env && this.lakeMirror) this.env.bakeCloudDepth(this.renderer, true); // (P4 round 3 J5)
+    this.lakeSched?.invalidate();
+  }
+
+  /**
+   * P4 N-1 / R8-2: restoreBaked once the panorama is back (re-read from the browser's cache and clamped exactly as at load, or
+   * the kept one with `?panokeep=1`), then the loop restarts (updateRunning: only when visible and on screen; `?ctxrun=0` leaves
+   * it to the next visibility / intersection change, as AA8). A second loss during the reload drops the stale result. If the
+   * reload fails the restore goes on without it (the environment light stays empty, as before AA8) rather than leave the hero blank.
+   */
+  private restoreAfterLoss() {
+    const gen = ++this.restoreGen;
+    this.restoring = true;
+    const finish = (pano?: THREE.DataTexture) => {
+      if (gen !== this.restoreGen || this.renderer.getContext().isContextLost()) return;
+      this.restoring = false;
+      this.restoreBaked(pano);
+      const run = this.p4ctx || this.runPending;
+      this.runPending = false;
+      if (run) this.updateRunning();
+    };
+    if (this.panorama || !this.p4pano) finish(this.panorama);
+    else
+      reloadPanorama(this.opts.assetBase).then(
+        (p) => {
+          clampHalfFloat(p, PANO_CLAMP);
+          finish(p);
+        },
+        (e) => {
+          console.warn("[hero] panorama reload failed", e);
+          finish();
+        },
+      );
   }
 
   private trackFps(frameMs: number, now: number) {
@@ -315,11 +630,18 @@ export class HeroEngine {
     },
     /** The camera targets (mutable, read every frame): hold-framing captures tune `expand`. */
     camTargets: CAM_TARGETS,
+    /** r11 hold key tables and knobs (mutable; call holdChanged() after editing the tables). */
+    holdCurves: HOLD_CURVES,
+    holdTune: HOLD_TUNE,
+    holdChanged: () => holdCurvesChanged(),
+    /** Rotating hold (r11) knobs (mutable, read every frame). */
+    holdSpin: HOLD_SPIN,
   };
   private frozen = false;
 
   private frame(dt: number, warm: boolean) {
-    this.update(this.frozen ? 0 : dt, warm);
+    this.lastDt = this.frozen ? 0 : dt;
+    this.update(this.lastDt, warm);
     this.render();
   }
 
@@ -339,11 +661,15 @@ export class HeroEngine {
     const d = this.choreo.drivers;
     const p = s.pointer;
     const introK = warm ? 1 : intro;
+    // Steady hold (default): the camera frames ring A opened by its full constant push (Rings.openRadiusA, cached per push).
+    if (this.rings && this.holdMode === "r11" && HOLD_SPIN.steady) this.rig.holdRadius = this.rings.openRadiusA(HOLD_SPIN.pushA);
     this.rig.update(dt, s.time, d, introK);
     // The hero rises with the dolly (Rings.tune.holdLift); the camera stays on the hold plate's pose, so the plate stays
     // registered. The shared orb centre follows (ice lantern, ring split depth, lake glint and reflection occlusion).
     if (this.rings && this.heroBase) {
-      const lift = this.rings.tune.holdLift * d.camExpand;
+      // (r11: x the camera's hold-dolly share on this screen, 1 on landscape; fix round 2, narrow portrait screens. Steady hold:
+      // the framing share, so the orb keeps its place in the frame; holdShare = holdFit otherwise.)
+      const lift = (this.holdMode !== "r10" ? HOLD_TUNE.holdLift : this.rings.tune.holdLift) * d.camExpand * (this.holdMode === "r11" ? this.rig.holdShare : 1);
       this.rings.root.position.y = this.heroBase.rings + lift;
       if (this.orb) this.orb.mesh.position.y = this.heroBase.orb + lift;
       if (this.shards) this.shards.mesh.position.y = this.heroBase.shards + lift;
@@ -358,16 +684,47 @@ export class HeroEngine {
     d.spin = spin;
     // The reference keeps the orb and the shard belts steady through every state; only a hint.
     this.orb?.update(dt, d.energy * 0.5, d.camExpand * 0.5);
-    this.shards?.update(dt, introSpin, d.camExpand * 0.2, s.shatter * 0.25, d.camExpand);
+    if (this.holdMode === "r11" && SPIN_P2B) {
+      // P2b: the crystals go into the reference's slow motion with the ring clock (shardRateFromSpin, 0.5 at full hold; their own
+      // hold factor is bypassed), and their belt no longer contracts (HOLD_SPIN.shardContract 0) but widens with ring A's opening
+      // (HOLD_SPIN.shardOut), so they stay outside the opened arcs. Older builds: the line below, unchanged.
+      // (Rings fix round 1, P2B_F1: each belt widens by its own share across the view / in depth, HOLD_SPIN.shardOutA / B.)
+      let out: number | number[] = HOLD_SPIN.shardOut * d.spreadA;
+      if (P2B_F1) {
+        const o4 = this.shardOut4, a = HOLD_SPIN.shardOutA, b = HOLD_SPIN.shardOutB;
+        o4[0] = a[0] * d.spreadA;
+        o4[1] = a[1] * d.spreadA;
+        o4[2] = b[0] * d.spreadA;
+        o4[3] = b[1] * d.spreadA;
+        out = o4;
+        if (P2B_F2) {
+          // (Rings fix round 2: plus each belt's depth share in front of its origin.)
+          const o6 = this.shardOut6;
+          for (let i = 0; i < 4; i++) o6[i] = o4[i];
+          o6[4] = HOLD_SPIN.shardFrontA * d.spreadA;
+          o6[5] = HOLD_SPIN.shardFrontB * d.spreadA;
+          out = o6;
+        }
+      }
+      // (Rings fix round 2, P2B_F2: HOLD_SPIN.shardHoldFx 0 drops the round-10 hold spread and shatter throw of the crystals.)
+      const fx = HOLD_SPIN.shardHoldFx;
+      this.shards?.update(dt, introSpin * shardRateFromSpin(d.spin), d.camExpand * 0.2 * fx, s.shatter * 0.25 * fx, d.camExpand * HOLD_SPIN.shardContract, true, out);
+    } else this.shards?.update(dt, introSpin, d.camExpand * 0.2, s.shatter * 0.25, d.camExpand);
 
     const u = this.shared;
     u.uTime.value = s.time;
+    // Round 11 ATMOS: the clouds' wrapped wind drift (Atmos.ts; a no-op with ?atmos=r10).
+    this.env?.updateAtmos(s.time);
     u.uFrame.value = (u.uFrame.value + 1) % 65536;
     u.uOrbGlow.value = ((this.orb?.intensity ?? 1.8) / 1.8) * (1 + 0.15 * d.energy) * (0.3 + 0.7 * intro);
-    u.uHold.value = d.camExpand;
+    // Dolly progress for the environment (near-lake plate weight, DOF, haze, the fog bank): r11 x the camera's hold-dolly share
+    // on this screen (exactly 1 on landscape), so a narrow portrait screen whose camera stays near the rest pose keeps the rest
+    // look (with the full share the near-lake plate faded and the foreground rocks went flat grey; fix round 2).
+    const holdFit = this.holdMode === "r11" ? this.rig.holdFit : 1;
+    u.uHold.value = d.camExpand * holdFit;
     // Rises with the dolly and lingers ~2 s after a release (QC rounds 7-8: the reference keeps the bank through F453 / F460).
     // Choreography times it from the release itself, so debug poses and captures show the real value.
-    u.uFogHold.value = d.fogHold;
+    u.uFogHold.value = d.fogHold * holdFit;
     u.uShatter.value = s.shatter;
     u.uHover.value = s.hover;
     u.uImpulse.value = s.impulse;
@@ -387,6 +744,20 @@ export class HeroEngine {
     const p = s.pointer;
     const intro = u.uIntro.value;
     this.env?.updateProjectors(this.rig.camera.position);
+    if (this.lakeSched) {
+      // Lake v4 frame budget: the mirror, the walk and the cached term, as LakeSchedule decides.
+      this.lakeSched.frame(this.renderer, this.scene, this.rig.camera, WATER.level, LAYER.ENV, this.lakeMirrorPass, u.uFocusDist.value, u.uHold.value, u.uDofBlur.value, s.time);
+    } else {
+      this.lakeMirror?.render(this.renderer, this.scene, this.rig.camera, WATER.level, LAYER.ENV, this.lakeMirrorPass);
+      // Lake v4: the half-resolution walk term follows the mirror (redrawn when the camera moved).
+      if (this.lakeMirror && this.lakeMirror.reused === 0) this.water?.renderWalk(this.renderer, this.rig.camera);
+    }
+    if (this.envEdge) {
+      // AA3 lake-edge TAA: in the hold, the crest train's reach (Water LK_WAVEB: its sharp crests move 1.1 m/s), else none;
+      // and the frame's step / scale.
+      this.taaRipple.w = u.uHold.value > 0 && this.taaCrest ? 8.2 + 13.3 * smoothstep(0, 1, u.uHold.value) : 0;
+      this.envEdge.taaFrame(this.lastDt, this.renderer.getPixelRatio() * this.adaptive.scale);
+    }
     this.pipeline.render(this.scene, this.rig.camera, this.hooks, WATER.level);
 
     const pp = this.postParams;
@@ -403,6 +774,8 @@ export class HeroEngine {
     pp.lensCenter.set((p.x - rect.left) * sx, buf.y - (p.y - rect.top) * sx);
     pp.lensRadius = 40 * sx;
     pp.lensStrength = p.active && p.type === "mouse" ? s.hold : 0;
+    // P4 Q4: the hold charges the orb's glow with the dolly (PostChain ignores it without its p4 option).
+    pp.holdGlow = u.uHold.value;
     this.post.render(this.pipeline.main.texture, pp);
   }
 
@@ -417,6 +790,13 @@ export class HeroEngine {
     const scale = this.adaptive.scale;
     this.pipeline.setSize(buf.x * scale, buf.y * scale);
     this.post.setSize(this.pipeline.size.width, this.pipeline.size.height);
+    if (this.lakeMirror) {
+      this.lakeMirror.setSize(this.pipeline.size.width, this.pipeline.size.height, scale);
+      this.lakeMirrorSize.set(this.lakeMirror.target.width, this.lakeMirror.target.height);
+    }
+    this.water?.setWalkSize(this.pipeline.size.width, this.pipeline.size.height);
+    this.lakeSched?.invalidate();
+    this.envEdge?.setSize(this.pipeline.size.width, this.pipeline.size.height);
     this.rig.setAspect(w / h);
     this.state.renderScale = scale;
   }
@@ -428,6 +808,10 @@ export class HeroEngine {
     for (const d of this.disposers) d();
     this.choreo.dispose();
     this.pipeline.dispose();
+    this.lakeMirror?.dispose();
+    this.lakeHeight?.dispose();
+    this.water?.disposeWalk();
+    this.envEdge?.dispose();
     this.env?.dispose();
     this.post.dispose();
     this.pmrem?.dispose();

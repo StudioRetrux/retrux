@@ -1,0 +1,12 @@
+== pair a whole region
+T1d2_fmain_a N 100 725x225 dt p50 26.6 | blips/frame all 2337, dt 26-40 2590 (n 64) | errs 0
+T1d2_fwl2_a N 100 725x225 dt p50 28.2 | blips/frame all 2369, dt 26-40 2427 (n 83) | errs 0
+== pair a lip band (buffer 90-450 x 58-118)
+T1d2_fmain_a N 100 360x60 dt p50 26.6 | blips/frame all 45, dt 26-40 54 (n 64) | errs 0
+T1d2_fwl2_a N 100 360x60 dt p50 28.2 | blips/frame all 47, dt 26-40 47 (n 83) | errs 0
+== pair b whole region
+T1d2_fmain_b N 100 725x225 dt p50 26.8 | blips/frame all 2315, dt 26-40 2193 (n 57) | errs 0
+T1d2_fwl2_b N 100 725x225 dt p50 28.3 | blips/frame all 2340, dt 26-40 2468 (n 89) | errs 0
+== pair b lip band (buffer 90-450 x 58-118)
+T1d2_fmain_b N 100 360x60 dt p50 26.8 | blips/frame all 44, dt 26-40 39 (n 57) | errs 0
+T1d2_fwl2_b N 100 360x60 dt p50 28.3 | blips/frame all 50, dt 26-40 53 (n 89) | errs 0

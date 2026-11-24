@@ -1,0 +1,8 @@
+[
+ {"name":"v0","js":""},
+ {"name":"b1","js":"var u=__hero.orb.material.uniforms;u.uP4HitC.value.set(1,1.68,0,0);u.uP4Hit.value.z=5;u.uP4HitB.value.z=0.5;u.uP4HitB.value.w=0.72"},
+ {"name":"b2","js":"var u=__hero.orb.material.uniforms;u.uP4HitC.value.set(1,1.68,0,0);u.uP4Hit.value.z=5;u.uP4Hit.value.w=6;u.uP4HitB.value.z=0.5;u.uP4HitB.value.w=0.72"},
+ {"name":"b3","js":"var u=__hero.orb.material.uniforms;u.uP4HitC.value.set(1,1.68,0,0);u.uP4Hit.value.z=4;u.uP4Hit.value.w=6;u.uP4HitB.value.z=0.45;u.uP4HitB.value.w=0.65"},
+ {"name":"b4","js":"var u=__hero.orb.material.uniforms;u.uP4HitC.value.set(1,1.68,0.35,0);u.uP4Hit.value.z=6;u.uP4Hit.value.w=6;u.uP4HitB.value.z=0.5;u.uP4HitB.value.w=0.72"},
+ {"name":"b5","js":"var u=__hero.orb.material.uniforms;u.uP4HitC.value.set(1,1.68,0.35,0);u.uP4Hit.value.z=5;u.uP4Hit.value.w=10;u.uP4HitB.value.z=0.5;u.uP4HitB.value.w=0.72"}
+]

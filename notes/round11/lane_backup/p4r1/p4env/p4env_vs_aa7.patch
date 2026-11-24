@@ -1,0 +1,242 @@
+--- a/retrux-web/app/hero/engine/assets.ts
++++ b/retrux-web/app/hero/engine/assets.ts
+@@ -4,6 +4,7 @@
+ import { EXRLoader } from "three/examples/jsm/loaders/EXRLoader.js";
+ import { ASSETS } from "./config";
+ import { DEFAULT_PLATE_META, EXTRA_PROJECTORS, type PlateMeta, type ProjectorKey } from "./world/PlateEnvironment";
++import { P4ENV } from "./p4env";
+ 
+ export type HeroAssets = {
+   envProxy: GLTF;
+@@ -34,6 +35,16 @@
+   lakeR12: boolean;
+ };
+ 
++/**
++ * P4 round 1, ENV lane (p4env.ts `?p4tex=0`): repaired copies of baked textures, by manifest node (G4: the orbit-exposed seams;
++ * G3: the dolly-only artefacts). Each is MAIN's texture with only the texels behind one artefact changed (WORK p4env
++ * tools/fixtex.py, numbers in the lane's HANDOFF.md).
++ */
++const P4_TEX: Record<string, string> = {
++  // G4: the bright hairlines on the far range's face at the snow mound's foot (left orbits): the fix round's back-face patch
++  // (tools4/patch_backfaces.py) gave texels hidden at rest the rest ray's colour; 5,729 texels there revert to step 2's values.
++  Object_2010: "baked/Object_2_010_p4.webp",
++};
+ /** The baked environment's files (pipeline bake_env_m9.py), under the asset base. */
+ const ENV_BAKED = { glb: "env_baked.glb", manifest: "env_baked.json", sky: "sky_world.exr", skyLake: "sky_lake.exr", lakeCorr: "lake_corr.png" };
+ 
+@@ -218,8 +229,11 @@
+       // hairline cracks, now carry Cycles' own colour along their rest ray (manifest `texture`); `textureS2` is step 2's
+       // texture, used with `?envtex=s2` or `?envfix=0` (and by `?envwisp=0`, which restores step 1).
+       const texS2 = fixOff || qs?.get("envtex") === "s2";
++      // P4 round 1, ENV lane G4 / G3 (p4env.ts `?p4tex=0`): targeted texel repairs of the default textures (P4_TEX), only where
++      // the default pick is in effect, so `?envtex=s2`, `?envfix=0` and `?envwisp=0` keep their meaning.
++      const p4 = (o: (typeof entries)[number], f: string) => (P4ENV.tex && f === o.texture ? (P4_TEX[o.node] ?? f) : f);
+       const pick = (o: (typeof entries)[number]) =>
+-        wisp ? (texS2 ? (o.textureS2 ?? o.texture) : o.texture) : (o.textureWithWisp ?? o.textureS2 ?? o.texture);
++        p4(o, wisp ? (texS2 ? (o.textureS2 ?? o.texture) : o.texture) : (o.textureWithWisp ?? o.textureS2 ?? o.texture));
+       const texs = await Promise.all(entries.map((o) => tex(`baked_${o.node}`, pick(o), true)));
+       const map: Record<string, THREE.Texture> = {};
+       entries.forEach((o, i) => {
+--- a/retrux-web/app/hero/engine/world/Atmos.ts
++++ b/retrux-web/app/hero/engine/world/Atmos.ts
+@@ -1076,6 +1076,54 @@
+ export function rangeCrestTable(): Float32Array {
+   const t = new Float32Array(256);
+   for (let i = 0; i < CREST.length; i++) t[CREST_FROM + i] = CREST[i];
++  return t;
++}
++
++/**
++ * P4 round 1, ENV lane G1 (p4env.ts, `?p4crest=0`; the P3 panel's critical cursor-orbit glitch: "a translucent, bluer copy of
++ * the iceberg's summit ... and a sliver beside the far white peak, revealed by sideways parallax"). CREST is the rest plate's
++ * WHOLE skyline, and the shader tested it at a fixed 250 m. Two errors showed once the pointer orbit moved the camera ~1.8 m:
++ *  - columns 179-195 are the iceberg (Plane.015, 66-67 m), 231-233 the snow mound (gfsw.001, 55 m), 239-247 and 251-255 the
++ *    shore plain (Plane.014, 90-99 m): objects NEARER than the card, which hide it by depth already. Their cut-out parallaxed
++ *    1690 x 1.8 x (1/67 - 1/250) ~ 33 px away from the real iceberg and left bare BG.001 sky in its shape (the ghost);
++ *  - the far ranges themselves are not at 250 m: the "far white peak" (columns 163-178) is Object_2.009 at 164 m (a ~6 px
++ *    sliver along its right flank), the rest of Object_2.009 199-220 m, Object_2.010 227-283 m.
++ * Measured by raycasting the engine's own baked meshes through the plate camera (WORK p4env tools/crest_ray.mjs,
++ * crest_ray2.json; clouds and BG.001 excluded). CREST_P4 keeps CREST wherever the skyline is a far range (so the rest frame
++ * cannot change: at the rest camera every depth projects to the same plate texel), and in the near columns takes the far
++ * ranges' own skyline behind the near object (the geometric skyline + the table's median offset over the far columns,
++ * +0.00103, clamped 0.0015 under the near object's crest), which the near object covers at rest. CREST_P4_DEPTH is each
++ * column's skyline depth (world -z from the rest camera, m; 250 where no geometry stands at the table's crest: columns
++ * 115-128, the plate's base mist behind the hero, kept exactly as before).
++ */
++const CREST_P4: number[] = [
++  0.476, 0.476, 0.4753, 0.4753, 0.4753, 0.4745, 0.476, 0.476, 0.4753, 0.476, 0.476, 0.4753, 0.4863, 0.4902, 0.4894, 0.487,
++  0.4863, 0.487, 0.4949, 0.5035, 0.5035, 0.5067, 0.5059, 0.509, 0.5075, 0.5106, 0.5153, 0.5122, 0.5059, 0.5059, 0.5075, 0.509,
++  0.5098, 0.509, 0.5075, 0.509, 0.509, 0.5067, 0.4988, 0.5043, 0.5082, 0.5098, 0.5075, 0.5059, 0.5067, 0.5067, 0.5059, 0.5082,
++  0.5082, 0.5106, 0.5177, 0.5263, 0.5342, 0.5357, 0.5334, 0.5334, 0.5342, 0.5342, 0.5342, 0.5397, 0.5389, 0.5295, 0.5137,
++  0.5043, 0.503, 0.5027, 0.4966, 0.4877, 0.4758, 0.4738, 0.4676, 0.4619, 0.4596, 0.4589, 0.4699, 0.4706, 0.4782, 0.4817,
++  0.4815, 0.4837, 0.4826, 0.4886, 0.4894, 0.4839, 0.4823, 0.4839, 0.4855, 0.4847, 0.4847, 0.4847, 0.4808, 0.48, 0.4823,
++  0.4847, 0.4831, 0.4815, 0.4831, 0.4823, 0.4831, 0.4839, 0.4776, 0.4745, 0.4792, 0.4808, 0.4855, 0.4941, 0.4973, 0.4965,
++  0.4957, 0.4965, 0.4996, 0.4965, 0.4831, 0.4776, 0.4768, 0.4705, 0.4589, 0.4552, 0.4502, 0.4501, 0.4462, 0.4446, 0.4423,
++  0.436, 0.4266, 0.4179, 0.4156, 0.4156, 0.4148, 0.4184, 0.4164, 0.424, 0.4232, 0.4336, 0.4336, 0.4305, 0.419, 0.4203, 0.4175,
++  0.4155, 0.413,
++];
++const CREST_P4_DEPTH: number[] = [
++  250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 250, 202, 202, 202, 202, 200, 219, 219, 199, 200, 216, 216,
++  215, 215, 215, 214, 214, 214, 214, 213, 213, 213, 213, 213, 213, 210, 208, 208, 207, 206, 206, 205, 205, 205, 204, 165, 165,
++  165, 165, 165, 165, 164, 164, 164, 165, 165, 166, 166, 166, 167, 167, 168, 168, 168, 168, 166, 165, 165, 164, 164, 283, 267,
++  266, 282, 281, 280, 279, 278, 277, 277, 277, 276, 276, 275, 275, 275, 275, 273, 271, 270, 269, 269, 268, 267, 267, 267, 267,
++  232, 232, 232, 232, 232, 232, 232, 231, 231, 231, 232, 232, 233, 234, 234, 234, 232, 231, 230, 230, 229, 229, 228, 228, 228,
++  228, 228, 228, 227, 227, 227, 249, 246, 228, 228, 241, 237, 236, 236, 236, 234,
++];
++/** P4 G1: the far ranges' skyline (R, plate uv y) and its depth (G, m) per plate column, RG pairs over 256 columns. */
++export function rangeCrestTableP4(): Float32Array {
++  const t = new Float32Array(512);
++  for (let i = 0; i < 256; i++) t[2 * i + 1] = 250;
++  for (let i = 0; i < CREST_P4.length; i++) {
++    t[2 * (CREST_FROM + i)] = CREST_P4[i];
++    t[2 * (CREST_FROM + i) + 1] = CREST_P4_DEPTH[i];
++  }
+   return t;
+ }
+ 
+--- a/retrux-web/app/hero/engine/world/PlateEnvironment.ts
++++ b/retrux-web/app/hero/engine/world/PlateEnvironment.ts
+@@ -1,6 +1,7 @@
+ import * as THREE from "three";
+ import { CLOUDS, HERO_CENTER, PLATE, REF_ASPECT, REST_CAMERA } from "../config";
+ import { CAM_TARGETS } from "../curves";
++import { P4ENV } from "../p4env";
+ import { GLSL_AA_RESOLVE, GLSL_COMMON, GLSL_ENV } from "../shaders/chunks";
+ import type { SharedUniforms } from "../uniforms";
+ import {
+@@ -39,6 +40,7 @@
+   hazeEnvelopeT,
+   RANGE_DEPTH,
+   rangeCrestTable,
++  rangeCrestTableP4,
+   wispPuff,
+   type AtmosFlags,
+   type CardGeom,
+@@ -535,9 +537,29 @@
+  * prologue and register budget for it; this program draws the same value (same vertex shader, defines and uniforms), so the
+  * mirror target is bit-identical (tools/ident: mirror / walk / final hashes) at a smaller fragment cost. `?mirrorcost=0` off.
+  */
++/**
++ * P4 round 1, ENV lane G4 (p4env.ts `?p4card=0`; the P3 panel: "thin black slashes on the dark ridge, min luma 34-46" in the
++ * right orbits, and "a few dark specks" on it at q00). Not the bake: `?atmoscardlight=0` removes every one of them (ridge box
++ * pixels under luma 50: 287 -> 0 at the right orbit, 307 -> 0 at rest, same session time), `?atmos=r10` too. The drifting
++ * cards' light (Atmos.ts cardLit) changes a texel by kappa dE in LUMA units on its own hue, the same for a dark crevice texel as
++ * for snow: wherever the cards take light away (dE < 0, any time but F000's) the darkest crevices are driven to 0, which is
++ * time-dependent (the panel caught it in the orbit captures). The floor: the cards' light takes at most 40 % of a texel's value
++ * (F000 is unchanged: dE = 0 there by construction). Built by replacing the two returns, so `?p4card=0` links MAIN's source.
++ */
++const CARD_LIGHT_FRAG_SRC = (() => {
++  if (!P4ENV.card) return GLSL_CARD_LIGHT_FRAG;
++  const a = "return max(c + uCardKappa * k * vCardDE * h, vec3(0.0));";
++  const b = "return c * max(1.0 + uCardKappa * k * vCardDE / max(l, 0.03), 0.0);";
++  if (!GLSL_CARD_LIGHT_FRAG.includes(a) || !GLSL_CARD_LIGHT_FRAG.includes(b)) throw new Error("p4env: cardLit returns not found");
++  return GLSL_CARD_LIGHT_FRAG.replace(a, "return max(c + uCardKappa * k * vCardDE * h, c * 0.6);").replace(
++    b,
++    "return c * max(1.0 + uCardKappa * k * vCardDE / max(l, 0.03), 0.6);",
++  );
++})();
++
+ const PLATE_MIRROR_FRAG = /* glsl */ `
+ #ifdef ATMOS_CARDLIGHT
+-${GLSL_CARD_LIGHT_FRAG}
++${CARD_LIGHT_FRAG_SRC}
+ #endif
+ uniform float uPlateGain;
+ uniform float uHold;
+@@ -600,7 +622,7 @@
+ ${GLSL_PLATE_MIST}
+ ${GLSL_ATMOS_MIST}
+ #ifdef ATMOS_CARDLIGHT
+-${GLSL_CARD_LIGHT_FRAG}
++${CARD_LIGHT_FRAG_SRC}
+ #endif
+ #ifdef AA_RESOLVE
+ ${GLSL_AA_RESOLVE}
+@@ -1263,7 +1285,32 @@
+   if (aaIn(gl_FragCoord.xy)) gl_FragColor.rgb = aaCompress(lit) * gl_FragColor.a;
+ #endif
+ }
++`;
++
++/**
++ * P4 round 1, ENV lane G1 (p4env.ts `?p4crest=0`): the cloud shader with the depth-aware far-range crest (Atmos.ts CREST_P4).
++ * Built from CLOUD_FRAG by replacing its crest lookup, so with the switch off the linked program is MAIN's, byte for byte.
++ */
++const CLOUD_FRAG_P4 = (() => {
++  const from = `    vec3 rd = normalize(vCloudWorld - cameraPosition);
++    vec4 rc = uPlateViewProjF * vec4(cameraPosition + rd * (250.0 / max(-rd.z, 0.2)), 1.0);
++    vec2 ruv = rc.xy / rc.w * 0.5 + 0.5;
+ `;
++  const to = `    vec3 rd = normalize(vCloudWorld - cameraPosition);
++    // P4 G1 (Atmos.ts CREST_P4): the table holds only the far ranges, and each column is tested at its own skyline depth
++    // (G, m behind the rest camera): two fixed-point steps from 250 m (column -> its depth -> the ray there -> its column).
++    // At the rest camera every depth lands on the same plate texel, so the rest frame is the old one.
++    float rk = 1.0 / max(-rd.z, 0.2);
++    vec4 rc = uPlateViewProjF * vec4(cameraPosition + rd * (250.0 * rk), 1.0);
++    float rdz = texture2D(uRangeCrest, vec2(clamp(rc.x / rc.w * 0.5 + 0.5, 0.0, 1.0), 0.5)).g;
++    rc = uPlateViewProjF * vec4(cameraPosition + rd * ((cameraPosition.z - uPlateCamPos.z + rdz) * rk), 1.0);
++    rdz = texture2D(uRangeCrest, vec2(clamp(rc.x / rc.w * 0.5 + 0.5, 0.0, 1.0), 0.5)).g;
++    rc = uPlateViewProjF * vec4(cameraPosition + rd * ((cameraPosition.z - uPlateCamPos.z + rdz) * rk), 1.0);
++    vec2 ruv = rc.xy / rc.w * 0.5 + 0.5;
++`;
++  if (!CLOUD_FRAG.includes(from)) throw new Error("p4env: CLOUD_FRAG crest lookup not found");
++  return CLOUD_FRAG.replace(from, to);
++})();
+ 
+ export class PlateEnvironment {
+   readonly group = new THREE.Group();
+@@ -1539,10 +1586,13 @@
+     let crest: THREE.DataTexture | null = null;
+     if (atmos.range) {
+       cloudDefines.CLOUD_RANGE = "";
+-      const tab = rangeCrestTable();
++      // (P4 G1: the RG table, far-range crest + depth, Atmos.ts CREST_P4; `?p4crest=0` the R table as before.)
++      const tab = P4ENV.crest ? rangeCrestTableP4() : rangeCrestTable();
+       const h = new Uint16Array(tab.length);
+       for (let i = 0; i < tab.length; i++) h[i] = THREE.DataUtils.toHalfFloat(tab[i]);
+-      crest = new THREE.DataTexture(h, tab.length, 1, THREE.RedFormat, THREE.HalfFloatType);
++      crest = P4ENV.crest
++        ? new THREE.DataTexture(h, tab.length / 2, 1, THREE.RGFormat, THREE.HalfFloatType)
++        : new THREE.DataTexture(h, tab.length, 1, THREE.RedFormat, THREE.HalfFloatType);
+       crest.minFilter = crest.magFilter = THREE.LinearFilter;
+       crest.wrapS = crest.wrapT = THREE.ClampToEdgeWrapping;
+       crest.needsUpdate = true;
+@@ -1559,7 +1609,7 @@
+       const mat = new THREE.ShaderMaterial({
+         name: "rx-cloud",
+         vertexShader: CLOUD_VERT,
+-        fragmentShader: CLOUD_FRAG,
++        fragmentShader: crest && P4ENV.crest ? CLOUD_FRAG_P4 : CLOUD_FRAG,
+         defines: { ...envDefines, ...this.projectorBinding.defines, ...cloudDefines },
+         uniforms: {
+           ...this.projectorBinding.uniforms,
+--- a/retrux-web/app/hero/engine/p4env.ts
++++ b/retrux-web/app/hero/engine/p4env.ts
+@@ -0,0 +1,26 @@
++/**
++ * P4 round 1, ENV lane (p4env; the P3 panel's tasks G1 / G4 / G3, notes/round11/p3/r11_1_plan.json).
++ *
++ * Switches (each restores MAIN's behaviour of its part exactly; read once at module load):
++ *   ?p4env=0     the whole lane off (MAIN exactly: same programs, same textures, same frames)
++ *   ?p4crest=0   G1 off: the CLOUD_RANGE occluder as MAIN (the rest plate's whole skyline, evaluated at 250 m)
++ *   ?p4tex=0     G4 off (texels): MAIN's baked textures (no texel repairs)
++ *   ?p4card=0    G4 off (slits): MAIN's card light (the drifting cards may take a dark texel's light down to black)
++ */
++export type P4EnvFlags = {
++  /** G1: the crest occluder holds only the far ranges (deeper than RANGE_DEPTH), each column tested at its own depth. */
++  crest: boolean;
++  /** G4 / G3: the repaired baked textures (the `*_p4.webp` beside MAIN's). */
++  tex: boolean;
++  /** G4: the drifting cards' light takes at most 40 % of a texel's value (no black crevice slits / specks). */
++  card: boolean;
++};
++
++export function p4envFromUrl(): P4EnvFlags {
++  const q = typeof location !== "undefined" ? new URLSearchParams(location.search) : null;
++  const off = q?.get("p4env") === "0";
++  const on = (k: string) => !off && q?.get(k) !== "0";
++  return { crest: on("p4crest"), tex: on("p4tex"), card: on("p4card") };
++}
++
++export const P4ENV: P4EnvFlags = p4envFromUrl();

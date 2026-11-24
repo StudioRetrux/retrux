@@ -1,0 +1,26 @@
+frames 40 thr 16: lake+band px-frames 9914400; |X-R|>thr 64314; toward GT 38746, AWAY from GT 8727
+-- dark (away from GT): px 6842, events >= 6 px: 39
+  k15-39 (25f) x566-580 y483-487 n1139 nmax48 dmean-32 dmax67
+  k0-39 (40f) x961-982 y746-755 n1104 nmax17 dmean-38 dmax69
+  k0-39 (40f) x251-268 y538-540 n537 nmax12 dmean-33 dmax43
+  k0-39 (40f) x212-224 y497-499 n536 nmax14 dmean-29 dmax40
+  k1-31 (31f) x804-812 y463-464 n467 nmax16 dmean-26 dmax41
+  k0-39 (40f) x285-288 y494-496 n371 nmax10 dmean-33 dmax43
+  k0-39 (40f) x198-201 y495-497 n306 nmax10 dmean-53 dmax101
+  k0-39 (40f) x310-320 y541-541 n301 nmax8 dmean-25 dmax29
+  k0-39 (40f) x556-564 y538-538 n239 nmax5 dmean-21 dmax24
+  k0-39 (40f) x1216-1219 y494-495 n214 nmax6 dmean-18 dmax20
+  k0-39 (40f) x1437-1439 y697-698 n200 nmax5 dmean-33 dmax37
+  k11-25 (15f) x722-735 y463-463 n184 nmax14 dmean-24 dmax30
+-- bright (away from GT): px 1885, events >= 6 px: 11
+  k0-39 (40f) x317-324 y493-504 n1127 nmax25 dmean17 dmax20
+  k0-39 (40f) x114-119 y535-538 n389 nmax10 dmean51 dmax103
+  k0-39 (40f) x310-313 y526-526 n129 nmax4 dmean17 dmax18
+  k0-39 (40f) x224-225 y537-537 n66 nmax2 dmean17 dmax19
+  k0-39 (40f) x1324-1324 y490-491 n43 nmax2 dmean23 dmax26
+  k0-39 (40f) x114-114 y528-528 n40 nmax1 dmean24 dmax24
+  k19-39 (21f) x313-313 y517-517 n21 nmax1 dmean17 dmax17
+  k10-18 (9f) x431-432 y521-521 n18 nmax2 dmean28 dmax29
+  k0-2 (3f) x319-322 y499-504 n14 nmax6 dmean16 dmax17
+  k0-3 (4f) x431-432 y521-521 n8 nmax2 dmean28 dmax29
+  k0-0 (1f) x319-321 y502-504 n6 nmax6 dmean17 dmax17

@@ -1,18 +1,18 @@
 // Click vs hold vs re-press: samples the choreography drivers every frame and reports the largest
 // frame-to-frame jump of each driver and of every ring's orientation (degrees).
 import { createRequire } from "node:module";
-const require = createRequire("E:/Retrux Hero R&D/hero-pipeline/tools/package.json");
+const require = createRequire("/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/hero-pipeline/tools/package.json");
 const { chromium } = require("playwright-core");
 const browser = await chromium.launch({
-  executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+  executablePath: (process.env.CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"),
   headless: true,
-  args: ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"],
+  args: [(process.platform === "win32" ? "--use-angle=d3d11" : "--use-angle=metal"), "--enable-gpu", "--ignore-gpu-blocklist"],
 });
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 766 } });
   const errs = [];
   page.on("pageerror", (e) => errs.push(e.message));
-  await page.goto("http://localhost:5173/?tier=T0&scale=0.5", { waitUntil: "domcontentloaded" });
+  await page.goto(((process.env.LAB || "http://localhost:5173") + "/?tier=T0&scale=0.5"), { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => document.documentElement.dataset.heroReady === "1", null, { timeout: 180000 });
   await page.waitForTimeout(4500);
   await page.evaluate(() => {

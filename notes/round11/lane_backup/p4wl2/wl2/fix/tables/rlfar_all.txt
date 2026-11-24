@@ -1,0 +1,4 @@
+T1d2_fmain N 100 725x225 dt p50 26.1 | blips/frame all 2257, dt 26-40 2460 (n 40) | errs 0
+T1d2_ffix N 100 725x225 dt p50 27.5 | blips/frame all 2291, dt 26-40 2432 (n 77) | errs 0
+T1d2_fmain2 N 100 725x225 dt p50 26.1 | blips/frame all 2247, dt 26-40 2008 (n 39) | errs 0
+T1d2_ffix2 N 100 725x225 dt p50 27.9 | blips/frame all 2284, dt 26-40 2289 (n 85) | errs 0

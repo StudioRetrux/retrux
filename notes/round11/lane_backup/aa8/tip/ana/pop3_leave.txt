@@ -1,0 +1,30 @@
+### leave mask=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work6/refl/caps/leave_bmask gt=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work6/refl/caps/leave_gt
+leave_TIP vs leave_A7: frames 120 (120/120), frames differing 120, px > 8: 79325, max 122, first 0, pose mismatches 0, W 1440/1440 rows 380-766/380-766
+A7: flagged px 2250, events >= 6 px: 65, px in them 1049
+TIP: flagged px 1926, events >= 6 px: 55, px in them 705
+-- A7 top 4
+  k16-26 x1115-1137 y693-703 n60 emax93 frames 16/2/54/53 17/2/77/68 18/5/64/60 18/2/48/58 ...
+  k9-17 x210-243 y523-531 n80 emax64 frames 9/2/46/50 10/7/52/49 11/4/49/64 12/21/64/65 ...
+  k11-20 x538-568 y564-572 n58 emax68 frames 11/3/54/50 12/1/44/54 12/1/59/64 12/4/58/53 ...
+  k100-109 x170-186 y536-540 n31 emax125 frames 100/5/120/85 101/3/53/66 102/6/95/81 103/2/125/105 ...
+-- TIP top 4
+  k98-109 x169-187 y536-540 n48 emax139 frames 98/8/139/92 99/1/46/-41 100/4/121/98 101/1/50/-47 ...
+  k16-26 x1115-1137 y693-703 n60 emax93 frames 16/2/54/53 17/2/77/68 18/5/64/60 18/2/48/58 ...
+  k7-18 x92-114 y557-567 n32 emax109 frames 7/2/70/-67 8/1/84/-81 9/2/83/4 10/1/76/-78 ...
+  k34-45 x138-153 y545-552 n27 emax123 frames 34/2/123/-91 35/2/76/-65 36/2/108/-104 37/3/98/-107 ...
+-- popnew TIP vs A7 (new pops)
+new pops (X flagged, ref not, X != ref): 112 px, 62 clusters, >= 6 px: 2
+  k57-57 x1275-1278 y504-506 n10 emax63
+  k39-41 x666-672 y554-555 n9 emax66
+  k25-26 x654-659 y563-564 n4 emax56
+  k20-20 x657-659 y567-568 n4 emax54
+  k100-101 x1293-1293 y500-501 n4 emax53
+  k11-12 x851-855 y497-498 n4 emax51
+  k107-108 x173-173 y537-538 n3 emax62
+  k24-24 x976-980 y490-490 n4 emax44
+-- popnew A7 vs TIP (pops TIP removes)
+new pops (X flagged, ref not, X != ref): 330 px, 61 clusters, >= 6 px: 13
+  k9-16 x210-243 y525-531 n42 emax64
+  k11-20 x538-568 y564-572 n39 emax68
+  k21-25 x339-354 y514-519 n37 emax68
+  k31-36 x551-572 y554-558 n25 emax57

@@ -1,0 +1,5 @@
+-- leave K06 vs A6: new pops (X flagged, ref not, X != ref): 0 px, 0 clusters, >= 6 px: 0 
+-- leave K07 vs A6: new pops (X flagged, ref not, X != ref): 0 px, 0 clusters, >= 6 px: 0 
+-- leave K08 vs A6: new pops (X flagged, ref not, X != ref): 0 px, 0 clusters, >= 6 px: 0 
+-- leave K09 vs A6: new pops (X flagged, ref not, X != ref): 0 px, 0 clusters, >= 6 px: 0 
+-- leave K10 vs A6: new pops (X flagged, ref not, X != ref): 1 px, 1 clusters, >= 6 px: 0   k30-30 x494-494 y562-562 n1 emax41 

@@ -1,0 +1,6 @@
+[slot] verify_int1:t0late: taken (load 4.1)
+t0/main_t90.png 390 844 t 96.34999999999582
+t0/int1_t90.png 390 844 t 96.34999999999582
+t0/int1off_t90.png 390 844 t 96.34999999999582
+T0 DONE
+[slot] verify_int1:t0late: freed (exit 0)

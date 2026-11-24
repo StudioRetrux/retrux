@@ -1,0 +1,7 @@
+[slot] aa8-polish ctx waiting (load 10.8 / max 30, slots 3, holders [{"label":"aa8-polish knee A6","pid":49891,"at":1795189556427,"slot":0},{"label":"aa8-polish knee K06","pid":51274,"at":1795189625858,"slot":1},{"label":"aa8-polish knee K07","pid":51329,"at":1795189627871,"slot":2}])
+[slot] aa8-polish ctx: taken (load 11.0)
+22:50:18 p8 def 30s
+22:50:48 p8 lktaa0 60s
+22:51:15 a7 def 87s
+22:51:44 a7 lktaa0 116s
+[slot] aa8-polish ctx: freed (exit 0)

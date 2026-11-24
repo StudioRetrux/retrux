@@ -1,0 +1,1 @@
+rl/a2_M1: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 33.1 p90 35.4 ms | mirror 149 walk 148 cache 1 cacheOn 2 | errs 0 forced 0 | render ms p50 1.6/2.0/2.7 cap ms p50 0.0/0.1/0.2 gap p50/p90/max 33.1/35.3/58.2

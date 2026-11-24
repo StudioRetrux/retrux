@@ -1,0 +1,563 @@
+--- /Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/lane_backup/p4wl3c/merge/mainbak_Water.ts	2026-11-23 07:28:56
++++ /Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/retrux-web/app/hero/engine/world/Water.ts	2026-11-23 07:28:56
+@@ -1638,7 +1638,281 @@
+   t.anisotropy = maxAnisotropy;
+   t.needsUpdate = true;
+   return t;
++}
++/** p4wl: the lane switch (`?p4wl=0` off = MAIN exactly). */
++export function p4wlOn(lq: URLSearchParams | null) {
++  return lq?.get("p4wl") !== "0";
++}
++/**
++ * p4wl: the water's walk read (lkWalkRead: LK_CACHEN + LK_HALF + LK_WALKREPROJ; used by the moving frames and by the rest
++ * cache pass alike) is the pixel's own walk (lkWalkTerm, the quarter pass's own function), and the quarter pass is not drawn.
++ * Tried and rejected (lane LOG 12:20-12:43): per pixel only where a quarter tap holds a face (+14 % T1 sweep frame), only where
++ * the four taps disagree (+9-11 %), the pixel walk with the quarter pass's bump footprint (blocks stay), the quarter texel as the
++ * mean of 4 / 9 walks over its footprint (-15 % pops only), a full-size walk target on every 2nd moving frame (+10 %). This one
++ * removes the blocks but costs +8.7 % of the T1 sweep frame and adds pixel speckle (judge WL-J3): opt-in only (`?wlwalk=px`).
++ */
++const P4WL_WALK: P4Edit[] = [
++  {
++    find: "vec4 lkWalkRead(float dist, vec3 V, vec3 lkN, vec2 lkSig) {\n",
++    repl: "vec4 lkWalkRead(float dist, vec3 V, vec3 lkN, vec2 lkSig) {\n  return lkWalkTerm(dist, V, lkN, lkSig, vWorldPos);   // p4wl: per pixel (no quarter-size texels)\n",
++  },
++];
++/**
++ * p4wl fixer (judge WL-J1 / J3: the fix must reach T1 at MAIN's cost): the band-limited quarter walk. The quarter pass stores what
++ * is smooth over the lake (LK_WALKPX: the faces' mean colour and the horizon elevation they raise, -0.2 no face, -1 / -0.5 under /
++ * next to a footprint) and the water takes the share of its OWN rays under each tap's horizon (its own coherent elevation and
++ * spread: the steep part, per pixel), then interpolates those shares. MAIN interpolated the share itself, a steep function of the
++ * quarter pixel's own bump, point-sampled at 1 / 16 of the pixels: the 4 x 4 px blocks. Taps under / next to a footprint: the
++ * pixel walks itself (MAIN's LK_WALKEDGE). Same quarter pass and cost as MAIN. The default on every tier with the quarter walk
++ * (T1, T2; T0 has no walk); `?wlwalk=q` = MAIN's quarter read, `?wlwalk=px` = the per-pixel walk (P4WL_WALK).
++ */
++const P4WL_BAND: P4Edit[] = [
++  {
++    // the quarter pass walks the unbumped reflection's azimuth (the horizon is then a function of the lake point alone)
++    find: "    vec4 wT = lkWalkTerm(dist0, V0, n0, sg0, vWorldPos);\n",
++    repl: "    vec4 wT = lkWalkTerm(dist0, V0, vec3(0.0, 1.0, 0.0), sg0, vWorldPos);   // p4wl: P4WL_BAND\n",
++  },
++  {
++    find: "vec4 lkWalkRead(float dist, vec3 V, vec3 lkN, vec2 lkSig) {\n",
++    fnEnd: "\n}\n",
++    repl: /* glsl */ `vec4 lkWalkRead(float dist, vec3 V, vec3 lkN, vec2 lkSig) {
++  // p4wl: the band-limited read (P4WL_BAND)
++  vec4 lkWc = uLkWalkVP * vec4(vWorldPos, 1.0);
++  vec2 wsz = vec2(textureSize(uLkWalk, 0));
++  vec2 q = (lkWc.xy / lkWc.w * 0.5 + 0.5) * wsz - 0.5;
++  ivec2 i0 = ivec2(floor(q));
++  vec2 f = q - floor(q);
++  ivec2 mx = ivec2(wsz) - 1;
++  vec4 t00 = texelFetch(uLkWalk, clamp(i0, ivec2(0), mx), 0);
++  vec4 t10 = texelFetch(uLkWalk, clamp(i0 + ivec2(1, 0), ivec2(0), mx), 0);
++  vec4 t01 = texelFetch(uLkWalk, clamp(i0 + ivec2(0, 1), ivec2(0), mx), 0);
++  vec4 t11 = texelFetch(uLkWalk, clamp(i0 + ivec2(1, 1), ivec2(0), mx), 0);
++  vec4 wt = vec4((1.0 - f.x) * (1.0 - f.y), f.x * (1.0 - f.y), (1.0 - f.x) * f.y, f.x * f.y);
++  vec4 ta = vec4(t00.a, t10.a, t01.a, t11.a);
++  if (dot(wt, 1.0 - step(-0.35, ta)) > 0.01) return lkWalkTerm(dist, V, lkN, lkSig, vWorldPos);
++  vec3 rcW = reflect(-V, lkN);
++  float mu = asin(clamp(rcW.y, -1.0, 1.0));
++  float sE = max(2.0 * 0.07 * lkSig.y, 1e-4);
++  vec4 F4 = step(-0.15, ta) * vec4(lkPhiT((ta.x - mu) / sE), lkPhiT((ta.y - mu) / sE), lkPhiT((ta.z - mu) / sE), lkPhiT((ta.w - mu) / sE));
++  vec4 a4 = wt * F4;
++  return vec4(t00.rgb * a4.x + t10.rgb * a4.y + t01.rgb * a4.z + t11.rgb * a4.w, a4.x + a4.y + a4.z + a4.w);
++}
++`,
++  },
++];
++/**
++ * wl2g (round 2 of the water lane, 22 Nov; re-judge WL-RJ1): the quarter walk ANCHORED IN LAKE SPACE. `?wl2g=0` = p4wl exactly.
++ * Root cause of the remaining crenellated contour (the shelf's dark reflection right of the left shelf reshaping every frame): the
++ * quarter pass rasterised the lake with the frame's own camera, so its texel grid lived in screen space and slid across the lake
++ * with every camera step; each tap point-samples a horizon / face colour that jumps where the walk changes obstacle cell, and the
++ * sliding grid put new lake points under the taps every frame. Here the pass rasterises the lake through a FIXED anchor
++ * view-projection (the camera at the anchor time, its frustum widened by the guard WL2G_GUARD, the target enlarged by the same
++ * factor: the texel footprint equals the quarter texel there) while it still walks from the frame's own camera (cameraPosition):
++ * every lake point keeps its texel while the camera moves, its value changes only with the view (smooth, except where a face's
++ * silhouette really crosses it). The water reads the texels through the same anchor matrix (uLkWalkVP), bilinear, P4WL_BAND's
++ * per-pixel share kept. The anchor is re-taken only when the frame's lake leaves the guard or the anchor texel grows past the
++ * frame's quarter texel by WL2G_TOL (the hold's dolly; a resize). A scissor keeps the pass to the frame's own lake (+ a margin),
++ * so it draws the same texels as the quarter pass. Lab: `?wl2gg=` guard, `?wl2gt=` scale tolerance.
++ */
++export function wl2gOn(lq: URLSearchParams | null) {
++  return lq?.get("wl2g") !== "0";
++}
++const WL2G_GUARD = 1.25;
++const WL2G_OVER = 1.35;
++const WL2G_TOL = 1.0;
++const WL2G_AZ = 0.004;
++/**
++ * wl2g (build 2): the anchored texel keeps its lake point, but its walk still followed the frame's azimuth (the view's, camera to
++ * lake point), and the walk's horizon jumps wherever a slightly turned ray enters other heightfield cells: same-pose sheets showed
++ * the contour reshaping as before with the grid fixed (WORK st/E_d1_shelf.png). So the walk pass walks two FIXED azimuths of a
++ * lattice (step WL2G_AZ rad) that bracket the view's azimuth and blends them by its fraction: every texel's horizon and face
++ * colour is then a continuous function of the camera (two fixed samples while the camera stays in a bin; the blend weight hands
++ * over continuously at the bin edges). A walk without a face counts as the start elevation emin (no share). Walk pass only.
++ */
++function wl2gWalkFrag(src: string) {
++  const a = "    vec4 wT = lkWalkTerm(dist0, V0, vec3(0.0, 1.0, 0.0), sg0, vWorldPos);   // p4wl: P4WL_BAND\n    gl_FragColor = lkHits > 0.5 ? vec4(wT.rgb / max(wT.a, 1e-4), lkWalkE) : vec4(0.0, 0.0, 0.0, -0.2);\n";
++  if (src.split(a).length !== 2) throw new Error("wl2g: walk pass anchor moved");
++  return src.replace(
++    a,
++    /* glsl */ `    // wl2g: two fixed azimuths around the view's, blended (wl2gWalkFrag)
++    vec2 wlH = normalize(-V0.xz + vec2(1e-6, 0.0));
++    float wlA = atan(wlH.y, wlH.x) / WL2G_AZ;
++    float wlA0 = floor(wlA);
++    float wlF = wlA - wlA0;
++    float wlR = length(V0.xz);
++    float wlEmin = asin(min(0.9 * clamp(V0.y, 0.002, 0.99), 0.01));
++    vec3 wlVa = vec3(-cos(wlA0 * WL2G_AZ) * wlR, V0.y, -sin(wlA0 * WL2G_AZ) * wlR);
++    vec4 wA = lkWalkTerm(dist0, wlVa, vec3(0.0, 1.0, 0.0), sg0, vWorldPos);
++    float wlHa = lkHits;
++    float wlEa = lkWalkE;
++    vec3 wlVb = vec3(-cos((wlA0 + 1.0) * WL2G_AZ) * wlR, V0.y, -sin((wlA0 + 1.0) * WL2G_AZ) * wlR);
++    vec4 wB = lkWalkTerm(dist0, wlVb, vec3(0.0, 1.0, 0.0), sg0, vWorldPos);
++    float wlHb = lkHits;
++    float wlEb = lkWalkE;
++    if (wlHa < 0.5 && wlHb < 0.5) gl_FragColor = vec4(0.0, 0.0, 0.0, -0.2);
++    else {
++      vec3 cA = wA.rgb / max(wA.a, 1e-4);
++      vec3 cB = wB.rgb / max(wB.a, 1e-4);
++      if (wlHa < 0.5) { cA = cB; wlEa = wlEmin; }
++      if (wlHb < 0.5) { cB = cA; wlEb = wlEmin; }
++      gl_FragColor = vec4(mix(cA, cB, wlF), mix(wlEa, wlEb, wlF));
++    }
++`,
++  );
++}
++/**
++ * wl2g (build 3): the water's read interpolates the HORIZON of the four lake-fixed taps and takes its own rays' share under it
++ * once (P4WL_BAND took a share per tap, a steep step of each tap's horizon against the pixel's own elevation, then blended the
++ * steps: the contour was quantised to the texel grid and advanced tap by tap as the elevation moved with the camera, crenellated).
++ * A smooth iso-line of a lake-fixed field moves continuously. Taps without a face count as the start elevation emin (no share);
++ * the colour is the face taps' mean. Marked taps (under / next to a footprint) still walk per pixel. OPT-IN `?wl2gread=1` (the
++ * default keeps P4WL_BAND's per-tap read: on the lake-fixed taps it is as stable, with less 60 fps sparkle at rest).
++ */
++const WL2G_READ: P4Edit[] = [
++  {
++    find: "  vec4 F4 = step(-0.15, ta) * vec4(lkPhiT((ta.x - mu) / sE), lkPhiT((ta.y - mu) / sE), lkPhiT((ta.z - mu) / sE), lkPhiT((ta.w - mu) / sE));\n  vec4 a4 = wt * F4;\n  return vec4(t00.rgb * a4.x + t10.rgb * a4.y + t01.rgb * a4.z + t11.rgb * a4.w, a4.x + a4.y + a4.z + a4.w);\n",
++    repl: /* glsl */ `  // wl2g: the horizon interpolated over the lake-fixed taps, the pixel's share under it once (WL2G_READ)
++  vec4 hv = step(-0.15, ta);
++  float hs = dot(wt, hv);
++  if (hs < 1e-4) return vec4(0.0);
++  float eMin = asin(min(0.9 * clamp(V.y, 0.002, 0.99), 0.01));
++  float eT = dot(wt, mix(vec4(eMin), ta, hv));
++  vec4 cw = wt * hv;
++  vec3 cF = (t00.rgb * cw.x + t10.rgb * cw.y + t01.rgb * cw.z + t11.rgb * cw.w) / hs;
++  float FW = lkPhiT((eT - mu) / sE);
++  return vec4(cF * FW, FW);
++`,
++  },
++];
++/**
++ * wl2 fixer (final judge WL2-FJ1, 22 Nov): in the real loop (dt ~33 ms, the camera moving) the open water in front of the left ice
++ * sheets popped +66-106 % more than MAIN at T1 DPR 2. Bisected in that loop (fix WORK rl/rl2_bisect.txt): `?wlwalk=q` (MAIN's read,
++ * the rest of p4wl on) = MAIN, so P4WL_BAND's read is the whole cause; widening its share by the pixel's footprint of mu
++ * (sE' = sqrt(sE^2 + (k fwidth mu)^2), k 1-8) did not help. Root cause: the share Phi((tap horizon - mu) / sE) took mu and sE from
++ * the PIXEL's bump, whose finest octaves are coherent at the pixel's footprint: a face's reflection broken by ripple stripes a few
++ * px wide that the camera's step between real frames moves by more than half a period (temporal aliasing), so they flip every
++ * frame. MAIN's quarter pass took the share from the bump at the quarter texel's footprint (those octaves incoherent: in the
++ * spread). Fix at the source, no extra noise: lkBump keeps a second set of coherent sums with the coherence of a footprint
++ * WL2FJ_Q times the pixel's (min with the pixel's own), moves the variance it drops into a second spread (LEAN), and the share
++ * takes mu and sE from that band-limited normal / spread (wlN4 / wlSig4). The shading keeps the pixel's own normal.
++ * `?wl2fj=0` = wl2 before this fix (wl2g :5164) exactly; lab `?wl2fjq=` (Q), `?wl2fjs=` (0: the pixel's own spread sE with the
++ * band-limited mu; 1 = default: the band-limited spread too).
++ */
++const WL2FJ_Q = 4.0;
++const WL2FJ_S = 1.0;
++function wl2fjEdits(q: number, sv: number): P4Edit[] {
++  const Q = q.toFixed(4);
++  const S = sv.toFixed(4);
++  return [
++    {
++      find: "vec3 lkBump(vec3 Pw, vec3 dPx, vec3 dPy, float kDof, out vec2 sig) {\n",
++      repl:
++        "vec3 wlN4 = vec3(0.0, 1.0, 0.0);   // wl2 fixer (WL2-FJ1): the last lkBump's normal / spread band-limited to WL2FJ_Q x its footprint\n" +
++        "vec2 wlSig4 = vec2(0.0);\n" +
++        "vec3 lkBump(vec3 Pw, vec3 dPx, vec3 dPy, float kDof, out vec2 sig) {\n",
++    },
++    {
++      find: "  float nc = 0.0, hx = 0.0, hy = 0.0, vx = 0.0, vy = 0.0;\n",
++      repl: "  float nc = 0.0, hx = 0.0, hy = 0.0, vx = 0.0, vy = 0.0;\n  float wlHx = 0.0, wlHy = 0.0, wlVx = 0.0, wlVy = 0.0;   // wl2 fixer\n",
++    },
++    {
++      find: "    // Octaves whose coherent share is negligible only add their variance (no noise evaluation).\n",
++      repl:
++        `    float wlCx = min(cx, lkCoh(Lx * kDof * ${Q}) * lkAvg(Ly * kDof * ${Q}));   // wl2 fixer: the coherence at Q x the footprint\n` +
++        `    float wlCy = min(cy, lkCoh(Ly * kDof * ${Q}) * lkAvg(Lx * kDof * ${Q}));\n` +
++        "    float wlS2 = amp * f * 0.6888;\n    wlS2 *= wlS2;\n" +
++        "    // Octaves whose coherent share is negligible only add their variance (no noise evaluation).\n",
++    },
++    {
++      find: "        hx += amp * min(cx / Tx, 1.0) * (n2.y - n2.x);\n",
++      repl: "        hx += amp * min(cx / Tx, 1.0) * (n2.y - n2.x);\n        wlHx += amp * min(wlCx / Tx, 1.0) * (n2.y - n2.x);\n        wlVx += (cx * cx - wlCx * wlCx) * wlS2;\n",
++    },
++    {
++      find: "        hy += amp * min(cy / Ty, 1.0) * (n2.y - n2.x);\n",
++      repl: "        hy += amp * min(cy / Ty, 1.0) * (n2.y - n2.x);\n        wlHy += amp * min(wlCy / Ty, 1.0) * (n2.y - n2.x);\n        wlVy += (cy * cy - wlCy * wlCy) * wlS2;\n",
++    },
++    {
++      find: "      hx += amp * min(cx / Tx, 1.0) * (n3.y - n3.x);\n      hy += amp * min(cy / Ty, 1.0) * (n3.z - n3.x);\n",
++      repl:
++        "      hx += amp * min(cx / Tx, 1.0) * (n3.y - n3.x);\n      hy += amp * min(cy / Ty, 1.0) * (n3.z - n3.x);\n" +
++        "      wlHx += amp * min(wlCx / Tx, 1.0) * (n3.y - n3.x);\n      wlHy += amp * min(wlCy / Ty, 1.0) * (n3.z - n3.x);\n" +
++        "      wlVx += (cx * cx - wlCx * wlCx) * wlS2;\n      wlVy += (cy * cy - wlCy * wlCy) * wlS2;\n",
++    },
++    {
++      find: "  vec3 No = normalize(abs(det) * vec3(0.0, 0.0, 1.0) - 0.07 * sign(det) * sg);\n  return vec3(No.x, No.z, -No.y);\n",
++      repl:
++        "  vec3 No = normalize(abs(det) * vec3(0.0, 0.0, 1.0) - 0.07 * sign(det) * sg);\n" +
++        "  vec3 wlNo = normalize(abs(det) * vec3(0.0, 0.0, 1.0) - 0.07 * sign(det) * ((rp * wlHx) * Rx + (rp * wlHy) * Ry));   // wl2 fixer\n" +
++        "  wlN4 = vec3(wlNo.x, wlNo.z, -wlNo.y);\n  wlSig4 = rp * sqrt(vec2(vx + wlVx, vy + wlVy));\n" +
++        "  return vec3(No.x, No.z, -No.y);\n",
++    },
++    {
++      // P4WL_BAND's read: the share's mu / sE from the band-limited normal / spread
++      find: "  vec3 rcW = reflect(-V, lkN);\n  float mu = asin(clamp(rcW.y, -1.0, 1.0));\n  float sE = max(2.0 * 0.07 * lkSig.y, 1e-4);\n",
++      repl:
++        "  vec3 rcW = reflect(-V, wlN4);   // wl2 fixer (WL2-FJ1)\n  float mu = asin(clamp(rcW.y, -1.0, 1.0));\n" +
++        `  float sE = max(2.0 * 0.07 * sqrt(mix(lkSig.y * lkSig.y, wlSig4.y * wlSig4.y, ${S})), 1e-4);\n`,
++    },
++  ];
++}
++/**
++ * wl3a (round 3 of the water lane, 23 Nov; re-judge WL2-RJ1: the water in front of the left ice sheets still popped ~10 % more
++ * than MAIN in the real loop at T1 DPR 2). `?wl3a=0` = wl2 exactly. Bisected same-pose at the real loop's step (dt 1/30, rl's
++ * pointer circle, T1 DPR 2; WORK tools/capdt.mjs): the share's mu is NOT the cause any more (a flat mu, or WL2FJ_Q 8 / 16: no
++ * change); the excess sat in the near open water (CSS y 575-620, x 0-100) where the band walk's taps held NO face. Root cause:
++ * P4WL_BAND's walk pass walks with the flat normal and records a face only where its share of the FLAT reflection exceeds 0.002
++ * (lkWalkTerm's gate); the low floes in front of the near water sit far below that reflection, so the taps said "no face" while
++ * the pixel's own rays (rippled, wide spread) do reach them; those rays went to the remainder (lkReflect4's strata, looked up
++ * with the pixel's full-resolution normal). MAIN's quarter walk used the bumped normal, so its taps recorded those faces
++ * (near-water zone blips MAIN 146 | wl2 202 | gate 0: 179). Fix at the source: (W) the walk pass records every face that rises above its horizon ray (share
++ * gate 0; the read's own Phi gives the pixel's share), (E) the marked taps' per-pixel walk takes the band-limited normal /
++ * spread (WL2FJ's wlN4 / wlSig4) instead of the pixel's own, (S) the read's share takes the pixel's own spread (WL2FJ's mu kept).
++ * Sub-switches `?wl3aw=0`, `?wl3ae=0`, `?wl3as=0` (each part off).
++ */
++export function wl3aOn(lq: URLSearchParams | null) {
++  return lq?.get("wl3a") !== "0";
++}
++function wl3aReadEdits(lq: URLSearchParams | null): P4Edit[] {
++  const e: P4Edit[] = [];
++  if (lq?.get("wl3ae") !== "0")
++    e.push({
++      find: "  if (dot(wt, 1.0 - step(-0.35, ta)) > 0.01) return lkWalkTerm(dist, V, lkN, lkSig, vWorldPos);\n",
++      repl: "  if (dot(wt, 1.0 - step(-0.35, ta)) > 0.01) return lkWalkTerm(dist, V, wlN4, wlSig4, vWorldPos);   // wl3a (E)\n",
++    });
++  return e;
++}
++/**
++ * wl3a (W): the walk pass records every face above its horizon ray (lkWalkTerm's share gate 0.002 -> 0), walk pass only.
++ * wl3c (round 3c, judge WL3A-J1): with gate 0 alone the far column at x ~1334 shortened (T1 rest 67 -> 44 px). lkWalkTerm stops
++ * after 4 recorded faces (hits > 3.5): the tiny-share faces in front of the far slabs used up that cap before the bright slab face,
++ * so the stored horizon / colour ended early. The cap now has its own counter: a face counts when its share under wl2's own
++ * first-face rule exceeds WL3C_G (wl2: 0.002). Measured (same pose, dt 1/30, T1 DPR 2): the left water's gain comes from the early
++ * stop itself (WL3C_G 0.002: left 364 = W off; 0: 332 but the column cut), the column needs the cap to skip faces of share
++ * < ~0.0004 (0.0003: cut); 0.0004: column 67, left 347 (MAIN 340, wl2 394). A camera-distance or walk-distance rule cannot separate
++ * the two (same camera distance ~30-35 m; both sets of tiny faces lie 15-25 m along the walk). `?wl3c=0` = the round-3 wl3a (one
++ * counter, gate 0); `?wl3cg=<g>` moves WL3C_G (lab).
++ */
++const WL3C_G = 0.0004;
++function wl3aWalkFrag(src: string, capC: boolean, g = WL3C_G) {
++  const e: P4Edit[] = [{ find: "      if (share > 0.002) {\n", repl: "      if (share > 0.0) {   // wl3a (W)\n" }];
++  if (capC)
++    e.push(
++      { find: "  float hits = 0.0;\n", repl: "  float hits = 0.0;\n  float hitsC = 0.0;   // wl3c: the 4-face cap's own counter\n" },
++      {
++        find: "      float share = first ? FN : FN - Fc;\n",
++        repl: `      float share = first ? FN : FN - Fc;\n      if ((hitsC < 0.5 ? FN : FN - Fc) > ${g.toFixed(5)}) hitsC += 1.0;   // wl3c\n`,
++      },
++      { find: "      if (Fc > 0.995 || hits > 3.5) break;\n", repl: "      if (Fc > 0.995 || hitsC > 3.5) break;   // wl3c\n" },
++    );
++  return p4Apply(src, e, "WL3AW");
+ }
++/** wl2g: the walk pass's vertex shader (the lake through the anchor view-projection uLkWalkAP). */
++function wl2gWalkVert(src: string) {
++  const a = "varying vec3 vWorldPos;\n";
++  const b = "  gl_Position = projectionMatrix * viewMatrix * wp;\n";
++  if (!src.includes(a) || !src.includes(b)) throw new Error("wl2g: WATER_VERT anchor moved");
++  return src.replace(a, a + "uniform mat4 uLkWalkAP;   // wl2g: the walk's anchor view-projection\n").replace(b, "  gl_Position = uLkWalkAP * wp;   // wl2g\n");
++}
+ /** (P4 water G6) The water reads the quarter-size walk (LK_HALF: lake v4, `?lkhalf` not 0). */
+ function walkHalfWanted(lq: URLSearchParams | null) {
+   return lq?.get("lkhalf") !== "0";
+@@ -3226,6 +3500,57 @@
+           // lane is out by uHold 0.06 (p04-p07 are int3's water; p08 uHold 0.048 ~10 %); w 1: int3's Q8 lobe on the near water
+           // (fixer: z 1, the lane's colour fades out over the hold as int3's own ring shading, smoothstep(0, 1, uHold); x unused)
+           mirrorUniforms.uRxaR = { value: rx("rxar", [0, 0.6, 1, 1]) };
++        }
++        // p4wl (22 Nov, client: "masih ada flicker juga di desktop" + flicker tulil.mov): ROOT CAUSE of the waterline flicker while
++        // the camera moves = the quarter-size walk (LK_HALF, walkDiv 4). The walk term depends on the pixel's own bumped reflection
++        // (its coherent elevation and azimuth) and on the heightfield cell the low rays enter, i.e. it varies per pixel; the quarter
++        // pass point-samples it at 1 / 16 of the pixels and the water interpolates those texels, so every camera step moves the
++        // texel grid over new lake points and the faces' reflections (the left shelf / floe feet, x 0-420 at 1512 x 860) come out
++        // as 4 x 4 px blocks that change shape every frame (T2 stepped capture: lane_backup/p4wl/p4wl/st_sel.png; ?lkhalf=0 has no
++        // blocks). Fix at the source (P4WL_WALK): the water walks at its own pixel, in the moving frames and in the rest cache alike,
++        // and the quarter pass is not drawn (renderWalk returns). `?p4wl=0` = MAIN exactly (no text change, the quarter pass as before).
++        // That per-pixel walk costs +8.7 % of the T1 sweep frame and adds pixel speckle (judge WL-J3): opt-in `?wlwalk=px`.
++        // The DEFAULT (fixer, judge WL-J1 / J3 / J4) is the band-limited quarter walk P4WL_BAND on every tier with the quarter
++        // walk (T1, T2): the quarter pass stores the faces' colour and horizon (LK_WALKPX, walked along the unbumped reflection),
++        // the water takes its own rays' share under each tap's horizon. `?wlwalk=q` = MAIN's quarter read.
++        const wlw = lq?.get("wlwalk");
++        if (p4wlOn(lq) && defines.LK_CACHEN !== undefined && defines.LK_HALF !== undefined && wlw === "px") {
++          frag = p4Apply(frag, P4WL_WALK, "WL");
++          this.walkPerPixel = true;
++        } else if (p4wlOn(lq) && defines.LK_CACHEN !== undefined && defines.LK_HALF !== undefined && defines.LK_WALKSEL !== undefined && wlw !== "q") {
++          defines.LK_WALKPX = "";
++          frag = p4Apply(frag, P4WL_BAND, "WLB");
++          // wl2g: the band walk's texels anchored in lake space (renderWalkAnchored); `?wl2g=0` = p4wl exactly.
++          if (wl2gOn(lq)) {
++            this.walkAnchored = true;
++            // (WL2G_READ is opt-in, `?wl2gread=1`: same contour stability as P4WL_BAND's per-tap read on the anchored lake-fixed
++            // taps (WORK st/s3_zoom.png), but a little more 60 fps sparkle at rest: shelf water 0.2 -> 0.4, lips 1.1 -> 1.3 blips / frame)
++            if (lq?.get("wl2gread") === "1") frag = p4Apply(frag, WL2G_READ, "WL2G");
++            // wl2 fixer (WL2-FJ1): the share from the band-limited bump (wl2fjEdits); `?wl2fj=0` = before the fix
++            if (lq?.get("wl2fj") !== "0") {
++              const qq = Number(lq?.get("wl2fjq"));
++              const sq2 = Number(lq?.get("wl2fjs"));
++              // wl3a (S): the share's spread is the pixel's own (= `?wl2fjs=0`); `?wl3a=0` / `?wl3as=0` keep WL2FJ_S
++              const w3 = wl3aOn(lq);
++              const s3 = w3 && lq?.get("wl3as") !== "0" ? 0 : WL2FJ_S;
++              frag = p4Apply(frag, wl2fjEdits(qq >= 1 && qq <= 16 ? qq : WL2FJ_Q, lq?.get("wl2fjs") != null && sq2 >= 0 && sq2 <= 1 ? sq2 : s3), "WL2FJ");
++              if (w3) {
++                frag = p4Apply(frag, wl3aReadEdits(lq), "WL3A");
++                this.wl3aWalk = lq?.get("wl3aw") !== "0";
++                this.wl3aCap = lq?.get("wl3c") !== "0";
++                const cg = Number(lq?.get("wl3cg"));
++                if (lq?.get("wl3cg") != null && cg >= 0 && cg <= 0.01) this.wl3aCapG = cg;
++              }
++            }
++            const gq = Number(lq?.get("wl2gg"));
++            if (gq >= 1 && gq <= 2) this.walkGuard = gq;
++            const tq = Number(lq?.get("wl2gt"));
++            if (tq >= 0.5 && tq <= 4) this.walkTol = tq;
++            const sq = Number(lq?.get("wl2gs"));
++            if (sq >= 0.5 && sq <= 2) this.walkOver = sq;
++            const aq = Number(lq?.get("wl2gaz"));
++            if (aq > 0 && aq <= 0.1) this.walkAz = aq;
++          }
+         }
+         // (No far-water rest correction: it was a fit of the ENV lane's model to the plate.)
+       } else if (opts.mirror.corr) {
+@@ -3301,14 +3626,19 @@
+     if (walkHalf) {
+       const wq = typeof location !== "undefined" ? Number(new URLSearchParams(location.search).get("lkwdiv")) : 0;
+       if (wq >= 1 && wq <= 8) this.walkDiv = wq;
+-      const wd = { ...defines, LK_WALKPASS: "" };
++      const wd: Record<string, string> = { ...defines, LK_WALKPASS: "" };
++      // wl2g: the walk pass's azimuth lattice (wl2gWalkFrag; `?wl2gaz=0` keeps build 1's single walk at the view's azimuth)
++      const wlAz = this.walkAnchored && (typeof location === "undefined" || new URLSearchParams(location.search).get("wl2gaz") !== "0");
++      if (wlAz) wd.WL2G_AZ = this.walkAz.toFixed(6);
+       delete (wd as Record<string, string>).LK_HALF;
+       delete (wd as Record<string, string>).LK_CACHE;
++      // wl2g: the anchor view-projection the walk pass rasterises the lake with (the water itself does not declare it).
++      if (this.walkAnchored) this.material.uniforms.uLkWalkAP = { value: new THREE.Matrix4() };
+       // Same uniforms object: every per-frame value the water gets, the walk pass gets.
+       this.walkMaterial = new THREE.ShaderMaterial({
+         name: "rx-water-walk",
+-        vertexShader: WATER_VERT,
+-        fragmentShader: frag,
++        vertexShader: this.walkAnchored ? wl2gWalkVert(WATER_VERT) : WATER_VERT,
++        fragmentShader: this.wl3aWalk ? wl3aWalkFrag(wlAz ? wl2gWalkFrag(frag) : frag, this.wl3aCap, this.wl3aCapG) : wlAz ? wl2gWalkFrag(frag) : frag,
+         defines: wd,
+         uniforms: this.material.uniforms,
+         depthTest: false,
+@@ -3457,12 +3787,40 @@
+    * and in the hold; lab `?lkwdiv=`).
+    */
+   walkDiv = 4;
++  /** p4wl: the water walks per pixel; the quarter-size walk pass is not drawn. */
++  walkPerPixel = false;
++  /** wl2g: the walk pass rasterises the lake through a fixed anchor (lake-space texels); its guard and scale tolerance. */
++  walkAnchored = false;
++  /** wl3a (W): the walk pass records every face above its horizon ray (wl3aWalkFrag). */
++  wl3aWalk = false;
++  /** wl3c: (W)'s 4-face cap counts only the faces whose wl2-rule share exceeds wl3aCapG (wl3aWalkFrag). */
++  wl3aCap = false;
++  wl3aCapG = WL3C_G;
++  walkGuard = WL2G_GUARD;
++  walkTol = WL2G_TOL;
++  walkOver = WL2G_OVER;
++  walkAz = WL2G_AZ;
++  /** wl2g: the anchor (valid until the frame's lake leaves it), how many times it was taken (lab), the main target's size. */
++  private wlAnchorOk = false;
++  wlAnchors = 0;
++  private wlMain = new THREE.Vector2(1, 1);
++  private wlAP = new THREE.Matrix4();
++  private wlCur = new THREE.Matrix4();
++  private wlV = new THREE.Vector3();
++  private wlX = new THREE.Vector4();
++  private wlC = new THREE.Vector4();
+ 
+   /** The main HDR target's size (px): the walk target is 1 / walkDiv of it. */
+   setWalkSize(width: number, height: number) {
+     if (!this.walkTarget) return;
+     const k = this.walkDiv;
+-    this.walkTarget.setSize(Math.max(1, Math.ceil(width / k)), Math.max(1, Math.ceil(height / k)));
++    if (this.walkAnchored) {
++      // wl2g: the anchor's frustum is the guard wider, its target the guard larger (the quarter texel at the anchor's pose).
++      const g = this.walkGuard * this.walkOver;
++      this.walkTarget.setSize(Math.max(1, Math.ceil((width / k) * g)), Math.max(1, Math.ceil((height / k) * g)));
++      this.wlMain.set(Math.max(1, width), Math.max(1, height));
++      this.wlAnchorOk = false;
++    } else this.walkTarget.setSize(Math.max(1, Math.ceil(width / k)), Math.max(1, Math.ceil(height / k)));
+     (this.material.uniforms.uLkWalkInv.value as THREE.Vector2).set(1 / Math.max(1, width), 1 / Math.max(1, height));
+     // The cache is read per pixel (texelFetch at gl_FragCoord): the main target's own size.
+     this.cacheTarget?.setSize(Math.max(1, width), Math.max(1, height));
+@@ -3474,7 +3832,11 @@
+    * the frame's camera. Static scene and bump: only needed when the camera moved (the lake mirror rendered this frame).
+    */
+   renderWalk(renderer: THREE.WebGLRenderer, camera: THREE.Camera) {
+-    if (!this.walkTarget || !this.walkScene) return;
++    if (!this.walkTarget || !this.walkScene || this.walkPerPixel) return;
++    if (this.walkAnchored && (camera as THREE.PerspectiveCamera).isPerspectiveCamera) {
++      this.renderWalkAnchored(renderer, camera as THREE.PerspectiveCamera);
++      return;
++    }
+     const prev = renderer.getRenderTarget();
+     const prevAuto = renderer.autoClear;
+     renderer.getClearColor(this.walkPrevClear);
+@@ -3492,6 +3854,142 @@
+     renderer.autoClear = prevAuto;
+   }
+ 
++  /**
++   * wl2g: the frame's lake seen through the anchor (A = its view-projection): whether it stays inside the anchor's target (2 texels
++   * in), the largest anchor texel in the frame's quarter texels (scale), and its bounding box in anchor texels (the scissor). The
++   * frame's screen on a 9 x 9 grid: below the horizon the ray's point on the lake plane (two views of a plane: a homography, so the
++   * edges map to lines), above it the horizon direction (the lake's far edge lies below it).
++   */
++  private wlProbe(camera: THREE.PerspectiveCamera, A: THREE.Matrix4, box: number[] | null) {
++    const tgt = this.walkTarget!;
++    const Wt = tgt.width;
++    const Ht = tgt.height;
++    const Wq = this.wlMain.x / this.walkDiv;
++    const Hq = this.wlMain.y / this.walkDiv;
++    const cp = camera.position;
++    const cam = this.wlCur;
++    const v = this.wlV;
++    const X = this.wlX;
++    const c = this.wlC;
++    let inside = true;
++    let scale = 0;
++    let x0 = Infinity;
++    let y0 = Infinity;
++    let x1 = -Infinity;
++    let y1 = -Infinity;
++    const toT = (m: THREE.Matrix4, w: number, h: number, out: number[]) => {
++      c.copy(X).applyMatrix4(m);
++      if (c.w <= 1e-6) return false;
++      out[0] = (c.x / c.w) * 0.5 * w;
++      out[1] = (c.y / c.w) * 0.5 * h;
++      return true;
++    };
++    const pa = [0, 0];
++    const pb = [0, 0];
++    const qa = [0, 0];
++    const qb = [0, 0];
++    const q0 = [0, 0];
++    for (let j = 0; j <= 8; j++) {
++      for (let i = 0; i <= 8; i++) {
++        v.set(-1 + i / 4, -1 + j / 4, 0.5).unproject(camera).sub(cp).normalize();
++        let lake = v.y < -1e-4 && (WATER.level - cp.y) / v.y < 5000;
++        if (lake) {
++          const t = (WATER.level - cp.y) / v.y;
++          X.set(cp.x + v.x * t, WATER.level, cp.z + v.z * t, 1);
++          // (only the lake's own points count: the plane beyond its planes holds no water)
++          lake = X.x >= WATER.far.min[0] && X.x <= WATER.far.max[0] && X.z >= WATER.far.min[2] && X.z <= WATER.near.max[2];
++        } else X.set(v.x, 0, v.z, 0);
++        if (!toT(A, Wt, Ht, pa)) {
++          inside = false;
++          continue;
++        }
++        const tx = pa[0] + 0.5 * Wt;
++        const ty = pa[1] + 0.5 * Ht;
++        if (lake && (tx < 2 || ty < 2 || tx > Wt - 2 || ty > Ht - 2)) inside = false;
++        x0 = Math.min(x0, tx);
++        y0 = Math.min(y0, ty);
++        x1 = Math.max(x1, tx);
++        y1 = Math.max(y1, ty);
++        if (!lake) continue;
++        // scale: the largest stretch of one anchor texel in the frame's quarter texels (sigma_max of J = Jframe Janchor^-1,
++        // from 2 cm steps along x and z on the lake)
++        const px = X.x;
++        const pz = X.z;
++        const ax = pa[0];
++        const ay = pa[1];
++        X.set(px, WATER.level, pz, 1);
++        if (!toT(cam, Wq, Hq, q0)) continue;
++        X.set(px + 0.02, WATER.level, pz, 1);
++        if (!toT(cam, Wq, Hq, qa) || !toT(A, Wt, Ht, pb)) continue;
++        const c00 = qa[0] - q0[0], c10 = qa[1] - q0[1], a00 = pb[0] - ax, a10 = pb[1] - ay;
++        X.set(px, WATER.level, pz + 0.02, 1);
++        if (!toT(cam, Wq, Hq, qb) || !toT(A, Wt, Ht, pb)) continue;
++        const c01 = qb[0] - q0[0], c11 = qb[1] - q0[1], a01 = pb[0] - ax, a11 = pb[1] - ay;
++        const det = a00 * a11 - a01 * a10;
++        if (Math.abs(det) < 1e-12) continue;
++        const i00 = a11 / det, i01 = -a01 / det, i10 = -a10 / det, i11 = a00 / det;
++        const j00 = c00 * i00 + c01 * i10, j01 = c00 * i01 + c01 * i11, j10 = c10 * i00 + c11 * i10, j11 = c10 * i01 + c11 * i11;
++        const T = j00 * j00 + j01 * j01 + j10 * j10 + j11 * j11;
++        const D = j00 * j11 - j01 * j10;
++        scale = Math.max(scale, Math.sqrt(0.5 * (T + Math.sqrt(Math.max(0, T * T - 4 * D * D)))));
++      }
++    }
++    if (box) {
++      box[0] = x0;
++      box[1] = y0;
++      box[2] = x1;
++      box[3] = y1;
++    }
++    return { inside, scale };
++  }
++  private wlBox = [0, 0, 0, 0];
++
++  /** wl2g: the walk pass through the lake-space anchor (see wl2gOn): same texels as the quarter pass, fixed to the lake. */
++  private renderWalkAnchored(renderer: THREE.WebGLRenderer, camera: THREE.PerspectiveCamera) {
++    const tgt = this.walkTarget!;
++    camera.updateMatrixWorld();
++    this.wlCur.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
++    const AP = this.material.uniforms.uLkWalkAP.value as THREE.Matrix4;
++    let ok = this.wlAnchorOk;
++    if (ok) {
++      const r = this.wlProbe(camera, AP, this.wlBox);
++      ok = r.inside && r.scale <= this.walkTol;
++    }
++    if (!ok) {
++      // (re)anchor: the frame's camera, its frustum the guard wider (focal lengths and off-axis terms / guard)
++      const g = this.walkGuard;
++      const P = this.wlAP.copy(camera.projectionMatrix);
++      const e = P.elements;
++      for (const k of [0, 4, 8, 12, 1, 5, 9, 13]) e[k] /= g;
++      AP.multiplyMatrices(P, camera.matrixWorldInverse);
++      this.wlAnchorOk = true;
++      this.wlAnchors++;
++      this.wlProbe(camera, AP, this.wlBox);
++    }
++    // the frame's own lake (+ 4 texels: a later frame may read through this walk before the next draw)
++    const b = this.wlBox;
++    const sx0 = Math.max(0, Math.floor(b[0]) - 4);
++    const sy0 = Math.max(0, Math.floor(b[1]) - 4);
++    const sx1 = Math.min(tgt.width, Math.ceil(b[2]) + 4);
++    const sy1 = Math.min(tgt.height, Math.ceil(b[3]) + 4);
++    tgt.scissor.set(sx0, sy0, Math.max(0, sx1 - sx0), Math.max(0, sy1 - sy0));
++    tgt.scissorTest = true;
++    const prev = renderer.getRenderTarget();
++    const prevAuto = renderer.autoClear;
++    renderer.getClearColor(this.walkPrevClear);
++    const prevAlpha = renderer.getClearAlpha();
++    renderer.autoClear = false;
++    renderer.setRenderTarget(tgt);
++    renderer.setClearColor(0x000000, 0);
++    renderer.clear(true, false, false);
++    renderer.render(this.walkScene!, camera);
++    // the water reads the walk through the anchor (LK_WALKREPROJ)
++    (this.material.uniforms.uLkWalkVP.value as THREE.Matrix4).copy(AP);
++    renderer.setRenderTarget(prev);
++    renderer.setClearColor(this.walkPrevClear, prevAlpha);
++    renderer.autoClear = prevAuto;
++  }
++
+   disposeWalk() {
+     this.walkTarget?.dispose();
+     this.walkMaterial?.dispose();

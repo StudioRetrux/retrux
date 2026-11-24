@@ -1,0 +1,1 @@
+rl/T1d2_fmain2: 100 frames 725x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 26.1 p90 29.0 ms | mirror 98 walk 98 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p50 1.4/2.4/2.7 cap ms p50 0.0/0.1/0.2 gap p50/p90/max 26.2/29.2/52.4

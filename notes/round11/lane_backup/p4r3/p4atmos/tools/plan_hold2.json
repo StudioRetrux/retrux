@@ -1,0 +1,8 @@
+[
+ {"name":"p04_pop","pose":["expand",0.9],"t":40},
+ {"name":"p06_sustain","pose":["expand",2.97],"t":40},
+ {"name":"p07_r033","pose":["release",0.33],"t":40},
+ {"name":"p08_r057","pose":["release",0.57],"t":40},
+ {"name":"r090","pose":["release",0.9],"t":40},
+ {"name":"r140","pose":["release",1.4],"t":40}
+]

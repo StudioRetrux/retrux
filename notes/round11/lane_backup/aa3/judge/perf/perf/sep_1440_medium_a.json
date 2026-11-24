@@ -1,0 +1,77 @@
+{
+ "summ": {
+  "lane": {
+   "wallMedOfMeds": 26.3,
+   "gpuMedOfMeds": 36.867,
+   "wallP90": 41.5,
+   "wallMax": 60.7,
+   "gpuP90": 61.68,
+   "gpuMax": 85.805,
+   "perPair": {
+    "wall": [
+     23.5,
+     26.2,
+     39.2,
+     26.3
+    ],
+    "gpu": [
+     33.809,
+     36.719,
+     57.715,
+     36.867
+    ]
+   },
+   "ratioGpuPairs": [
+    0.603,
+    1.038,
+    1.746,
+    0.929
+   ],
+   "ratioWallPairs": [
+    0.646,
+    1.074,
+    1.823,
+    1.008
+   ],
+   "ratioGpuMed": 1.038,
+   "ratioWallMed": 1.074
+  },
+  "base": {
+   "wallMedOfMeds": 26.1,
+   "gpuMedOfMeds": 39.669,
+   "wallP90": 43.6,
+   "wallMax": 66.1,
+   "gpuP90": 69.35,
+   "gpuMax": 116.385,
+   "perPair": {
+    "wall": [
+     36.4,
+     24.4,
+     21.5,
+     26.1
+    ],
+    "gpu": [
+     56.103,
+     35.368,
+     33.062,
+     39.669
+    ]
+   },
+   "ratioGpuPairs": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "ratioWallPairs": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "ratioGpuMed": 1,
+   "ratioWallMed": 1
+  }
+ },
+ "logs": []
+}

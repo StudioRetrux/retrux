@@ -1,0 +1,21 @@
+M      e2_M1      n 147 dtp50 50.0 | left all 629 band 631 | shelf all 593 band 595 | right all 966 band 971
+M      e2_M2      n   5 dtp50 31.0 | left all 347 band 305 | shelf all 248 band 290 | right all 655 band 488
+M      e2_M3      n 105 dtp50 50.0 | left all 478 band 598 | shelf all 435 band 564 | right all 927 band 1036
+M      e2_M4      n  98 dtp50 50.0 | left all 470 band 639 | shelf all 427 band 596 | right all 883 band 1076
+M      d2_M1      n  42 dtp50 32.1 | left all 433 band 404 | shelf all 315 band 341 | right all 726 band 843
+M      d2_M2      n 139 dtp50 50.0 | left all 638 band 673 | shelf all 635 band 672 | right all 1037 band 1078
+L      e2_L1      n 148 dtp50 50.0 | left all 591 band 591 | shelf all 573 band 573 | right all 1007 band 1007
+L      e2_L2      n 104 dtp50 50.0 | left all 491 band 554 | shelf all 443 band 507 | right all 910 band 1008
+L      e2_L3      n 101 dtp50 50.0 | left all 454 band 558 | shelf all 409 band 525 | right all 898 band 1042
+L      e2_L4      n 100 dtp50 50.0 | left all 450 band 567 | shelf all 399 band 524 | right all 918 band 1061
+L      d2_L1      n   2 dtp50 32.5 | left all 306 band 64 | shelf all 217 band 42 | right all 667 band 162
+POOLED dt 45-51:
+  M      n  536 dt mean 49.92 | left 616 | shelf 586 | right 1016
+  L      n  455 dt mean 50.00 | left 568 | shelf 534 | right 1023
+1-ms bins left (vs M):
+  45-46  M n   2   -1  L n   0   -1
+  46-47  M n   4   -1  L n   0   -1
+  47-48  M n   6   -1  L n   0   -1
+  48-49  M n   2   -1  L n   1   -1
+  49-50  M n   3   -1  L n   0   -1
+  50-51  M n 519  622  L n 454  568

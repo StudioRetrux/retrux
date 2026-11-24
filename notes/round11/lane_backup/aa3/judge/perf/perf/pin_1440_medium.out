@@ -1,0 +1,132 @@
+{
+ "port": "5181",
+ "path": "medium",
+ "vw": 1440,
+ "vh": 766,
+ "dsf": 1,
+ "tier": "T1",
+ "block": 60,
+ "cycles": 8,
+ "main": [
+  1440,
+  766
+ ],
+ "scale": 1,
+ "load1minBefore": 7.68,
+ "load1minAfter": 18.68,
+ "summ": {
+  "full": {
+   "n": 480,
+   "med": 25.2,
+   "p90": 29.3,
+   "p99": 42.1,
+   "max": 43.6,
+   "top5": [
+    43.6,
+    42.9,
+    42.7,
+    42.2,
+    42.1
+   ],
+   "ratioMedVsRef": 1.1004,
+   "pairedBlockRatioMed": 1.0961,
+   "pairedBlockRatios": [
+    1.142,
+    1.112,
+    1.072,
+    1.087,
+    1.096,
+    1.087,
+    1.111,
+    1.064
+   ],
+   "taaRuns": 480,
+   "mirrorDraws": 480
+  },
+  "noC": {
+   "n": 480,
+   "med": 24.6,
+   "p90": 30.2,
+   "p99": 52.5,
+   "max": 57.5,
+   "top5": [
+    57.5,
+    54.3,
+    53.9,
+    52.7,
+    52.5
+   ],
+   "ratioMedVsRef": 1.0742,
+   "pairedBlockRatioMed": 1.083,
+   "pairedBlockRatios": [
+    1.093,
+    1.108,
+    1.03,
+    1.087,
+    1.083,
+    1.066,
+    1.075,
+    1.03
+   ],
+   "taaRuns": 0,
+   "mirrorDraws": 480
+  },
+  "noB": {
+   "n": 480,
+   "med": 23.9,
+   "p90": 27.5,
+   "p99": 40.1,
+   "max": 52.2,
+   "top5": [
+    52.2,
+    43.7,
+    42.1,
+    40.6,
+    40.1
+   ],
+   "ratioMedVsRef": 1.0437,
+   "pairedBlockRatioMed": 1.0306,
+   "pairedBlockRatios": [
+    1.124,
+    1.086,
+    0.979,
+    1.026,
+    1.004,
+    1.031,
+    1.062,
+    1.004
+   ],
+   "taaRuns": 480,
+   "mirrorDraws": 160
+  },
+  "none": {
+   "n": 480,
+   "med": 22.9,
+   "p90": 26.1,
+   "p99": 38.1,
+   "max": 40.7,
+   "top5": [
+    40.7,
+    40.4,
+    38.8,
+    38.6,
+    38.1
+   ],
+   "ratioMedVsRef": 1,
+   "pairedBlockRatioMed": 1,
+   "pairedBlockRatios": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "taaRuns": 0,
+   "mirrorDraws": 160
+  }
+ },
+ "logs": []
+}

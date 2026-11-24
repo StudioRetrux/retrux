@@ -1,0 +1,103 @@
+{
+ "qs": "envlake=plate&p4env3=0",
+ "port": "5174",
+ "logs": [],
+ "counts": null,
+ "targets": {
+  "reflection": {
+   "w": 720,
+   "h": 383,
+   "hash": "7a3e0d41f1b509b6"
+  },
+  "main": {
+   "w": 1440,
+   "h": 766,
+   "hash": "bb7c67660f1bf4f1"
+  },
+  "refraction": {
+   "w": 720,
+   "h": 383,
+   "hash": "cb9520881aabec27"
+  },
+  "back": {
+   "w": 720,
+   "h": 383,
+   "hash": "37808bc5a79af006"
+  },
+  "bloom0": {
+   "w": 720,
+   "h": 383,
+   "hash": "71e0f68b0a4f5d30"
+  },
+  "bloom1": {
+   "w": 360,
+   "h": 192,
+   "hash": "472774d69c2e6c89"
+  },
+  "bloom2": {
+   "w": 180,
+   "h": 96,
+   "hash": "496e6705630f2626"
+  },
+  "bloom3": {
+   "w": 90,
+   "h": 48,
+   "hash": "164317bc8c629477"
+  },
+  "bloom4": {
+   "w": 45,
+   "h": 24,
+   "hash": "1c6798f7b5eb87f0"
+  },
+  "final": {
+   "w": 1440,
+   "h": 766,
+   "hash": "ff75b0d77196fa90"
+  }
+ },
+ "programs": {
+  "rx-plate-baked|ShaderMaterial": [
+   "1ed4ea1b859299c4",
+   "be1bc3ec9effc050"
+  ],
+  "rx-cloud|ShaderMaterial": [
+   "538cdd48b165cffd",
+   "6f72c5c50fc082eb"
+  ],
+  "rx-water|ShaderMaterial": [
+   "32aedce5c5397762",
+   "77afecf481a0e1a8"
+  ],
+  "rx-env-edge|ShaderMaterial": [
+   "1ea302cc34d6fd6d",
+   "8ba971e9c4c84907"
+  ],
+  "rx-ice|ShaderMaterial": [
+   "5f7fe51fa602fd62",
+   "cb222752a0a90438"
+  ],
+  "rx-orb|ShaderMaterial": [
+   "0040889e9fcf5f6c",
+   "0f58e933ab3faa9e"
+  ],
+  "rx-shards|ShaderMaterial": [
+   "5aadb723f86467a6",
+   "872f589eb8686534"
+  ],
+  "rx-ice-back|ShaderMaterial": [
+   "c0500856298d5e5c"
+  ],
+  "rx-blit|ShaderMaterial": [
+   "c67046d98d3f65d6"
+  ],
+  "rx-bloom-down|ShaderMaterial": [
+   "0b625468806619b2"
+  ],
+  "rx-bloom-up|ShaderMaterial": [
+   "58eac2048918d3bd"
+  ],
+  "rx-grade|ShaderMaterial": [
+   "e25e3da261b9904b"
+  ]
+ }
+}

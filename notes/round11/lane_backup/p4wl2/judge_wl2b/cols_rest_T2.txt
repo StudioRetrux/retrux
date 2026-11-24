@@ -1,0 +1,4 @@
+REF ncols 13 len med 82 mean 66.9 max 102 exc20 med 22.3 peak med 201.0 water med 174.5
+T2_5162 ncols 11 len med 57 mean 54.5 max 101 exc20 med 15.0 peak med 209.5 water med 183.6
+T2_5163 ncols 11 len med 57 mean 55.4 max 102 exc20 med 15.6 peak med 208.7 water med 184.4
+T2_5166 ncols 11 len med 55 mean 50.5 max 89 exc20 med 15.7 peak med 208.7 water med 184.4

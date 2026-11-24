@@ -1,0 +1,5 @@
+T2 5166 vs 5162 mean|d| 0.632 max 70 px>2 94307 px>8 23604 bbox>2 (np.int64(0), np.int64(463), np.int64(1439), np.int64(763))
+   sky/top 0-430          mean 0.003 px>2 0 px>8 0 max 1
+   left 0-480x430-766     mean 1.461 px>2 31405 px>8 8870 max 70
+   mid 480-880x430-766    mean 1.302 px>2 24641 px>8 5127 max 36
+   far 880-1440x430-766   mean 1.513 px>2 38261 px>8 9607 max 68

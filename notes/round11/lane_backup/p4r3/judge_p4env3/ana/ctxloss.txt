@@ -1,0 +1,4 @@
+lane t1        | frame: max 55 n>2 8027 n>8 1223 | sky+clouds y0-330: max 1 n>2 0 n>8 0 | massif x0-560 y160-440: max 1 n>2 0 n>8 0 | lake y440-766: max 55 n>2 8027 n>8 1223
+lane t2_ptrTR  | frame: max 0 n>2 0 n>8 0 | sky+clouds y0-330: max 0 n>2 0 n>8 0 | massif x0-560 y160-440: max 0 n>2 0 n>8 0 | lake y440-766: max 0 n>2 0 n>8 0
+MAIN t1        | frame: max 55 n>2 7997 n>8 1222 | sky+clouds y0-330: max 1 n>2 0 n>8 0 | massif x0-560 y160-440: max 1 n>2 0 n>8 0 | lake y440-766: max 55 n>2 7997 n>8 1222
+MAIN t2_ptrTR  | frame: max 0 n>2 0 n>8 0 | sky+clouds y0-330: max 0 n>2 0 n>8 0 | massif x0-560 y160-440: max 0 n>2 0 n>8 0 | lake y440-766: max 0 n>2 0 n>8 0

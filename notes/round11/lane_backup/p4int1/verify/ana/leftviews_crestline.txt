@@ -1,0 +1,4 @@
+left: x880-1140 y290-430 int1 vs MAIN max 136 n>6 3232 bbox (np.int64(880), np.int64(290), np.int64(1059), np.int64(429)); int1 vs env lane qc_fix max 176 n>6 3524
+top_left: x880-1140 y290-430 int1 vs MAIN max 104 n>6 3303 bbox (np.int64(880), np.int64(290), np.int64(1058), np.int64(429)); int1 vs env lane qc_fix max 144 n>6 2819
+bottom_left: x880-1140 y290-430 int1 vs MAIN max 155 n>6 4556 bbox (np.int64(880), np.int64(297), np.int64(1056), np.int64(429)); int1 vs env lane qc_fix max 159 n>6 4117
+orb: x880-1140 y290-430 int1 vs MAIN max 130 n>6 4335 bbox (np.int64(880), np.int64(290), np.int64(1085), np.int64(429)); int1 vs env lane qc_fix max 131 n>6 4274

@@ -1,0 +1,6 @@
+[slot] judge-perf:pin1440med waiting (load 8.2 / max 24, slots 2, holders [{"label":"judge-motion:capB","pid":19143,"at":1795158903265,"slot":0},{"label":"judge-artifacts:fastrev","pid":19192,"at":1795158909171,"slot":1}])
+[slot] judge-perf:pin1440med waiting (load 6.6 / max 24, slots 2, holders [{"label":"judge-motion:capB","pid":19143,"at":1795158903265,"slot":0},{"label":"judge-artifacts:fastrev","pid":19192,"at":1795158909171,"slot":1}])
+[slot] judge-perf:pin1440med waiting (load 8.1 / max 24, slots 2, holders [{"label":"judge-motion:capB","pid":19143,"at":1795158903265,"slot":0},{"label":"judge-artifacts:holdre-b","pid":19837,"at":1795159055068,"slot":1}])
+[slot] judge-perf:pin1440med waiting (load 9.1 / max 24, slots 2, holders [{"label":"judge-motion:capC","pid":20326,"at":1795159143022,"slot":0},{"label":"judge-artifacts:holdre-b","pid":19837,"at":1795159055068,"slot":1}])
+[slot] judge-perf:pin1440med waiting (load 9.5 / max 24, slots 2, holders [{"label":"judge-motion:capC","pid":20326,"at":1795159143022,"slot":0},{"label":"judge-artifacts:holdre-b","pid":19837,"at":1795159055068,"slot":1}])
+[slot] judge-perf:pin1440med waiting (load 8.5 / max 24, slots 2, holders [{"label":"judge-motion:capC","pid":20326,"at":1795159143022,"slot":0},{"label":"judge-artifacts:holdre-l","pid":20788,"at":1795159235091,"slot":1}])

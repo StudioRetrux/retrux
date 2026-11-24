@@ -1,0 +1,4 @@
+base_slow      mean|dF| 3.573 alt amp raw 0.0082 detrended 0.0019 even/odd mean 3.565 3.582
+aa3_slow       mean|dF| 3.386 alt amp raw 0.0089 detrended 0.0008 even/odd mean 3.377 3.395
+fix_slow       mean|dF| 3.324 alt amp raw 0.0089 detrended 0.0006 even/odd mean 3.315 3.333
+slow_gt        mean|dF| 3.161 alt amp raw 0.0087 detrended 0.0010 even/odd mean 3.152 3.169

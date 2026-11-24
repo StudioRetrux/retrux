@@ -1,0 +1,3 @@
+#!/bin/zsh
+t0=$(date +%s); p=$1
+node /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/tip/tools/mocap.mjs --port 5198 --path $p --rows 380,766 --frames 120 --qs "fftipc=1" --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/tip/caps/${p}_C > /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/tip/logs/cap_${p}C.log 2>&1; echo "$p $(( $(date +%s) - t0 ))s"

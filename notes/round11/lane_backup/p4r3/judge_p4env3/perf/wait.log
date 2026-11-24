@@ -1,0 +1,15 @@
+07:07:25 waiting: perf holders 2 load 5.76
+07:07:56 waiting: perf holders 2 load 8.45
+07:08:27 waiting: perf holders 2 load 7.09
+07:08:59 waiting: perf holders 2 load 11.55
+07:09:30 waiting: perf holders 2 load 8.66
+07:10:01 waiting: perf holders 2 load 8.17
+07:10:32 waiting: perf holders 2 load 6.98
+07:11:03 waiting: perf holders 1 load 5.68
+07:11:34 waiting: perf holders 1 load 7.61
+07:12:06 waiting: perf holders 1 load 9.45
+07:12:37 waiting: perf holders 0 load 9.95
+07:13:02 start (load 7.56)
+rest start 07:13:02 load { 7.56 7.67 7.97 }
+rest done 07:18:30
+PERFDONE 07:18:30

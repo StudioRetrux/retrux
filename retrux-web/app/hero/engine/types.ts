@@ -23,6 +23,8 @@ export type QualityProfile = {
   /** Adaptive render-scale range (multiplied with the DPR). */
   minScale: number;
   maxScale: number;
+  /** The render scale a session starts at (default: maxScale); the governor moves it between minScale and maxScale. */
+  startScale?: number;
   /** MSAA samples on the main HDR target (0 = off). */
   msaa: number;
   /** Size of the refraction copy relative to the main target. */
@@ -37,7 +39,8 @@ export type QualityProfile = {
    * (over a fresh screen copy) the near half, which refracts it. Costs one more copy and a second ring draw.
    */
   iceBehindIce: boolean;
-  orb: { marchSteps: number };
+  /** r11: the round-11 orb look even at 8 steps (T0 since 19 Nov; Orb.ts otherwise needs > 8 steps). */
+  orb: { marchSteps: number; r11?: boolean };
   shards: { count: number };
   post: { bloomLevels: number; fxaa: boolean; grain: boolean; chromatic: boolean };
 };

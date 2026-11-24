@@ -1,0 +1,9 @@
+/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work7/motion/caps/pump  A=a7 B=a6 M=base  frames 260  W 1440  T 8 lv
+  k   i  ev/act                scale taa(w/still)  |dF| A   B      M   | |A-B|  A>B3x3 (dark)  A>M3x3  B>M3x3   per box A>B / A>M
+  0   0                           1 0.50/20        0.00   0.00   0.00 |   0.15      0 (   0)     443     452   FS:0/0 WR:0/0 DR:0/0 FF:0/438 FR:0/5 RS:0/0
+  1   1                           1 0.50/0         0.88   0.88   0.89 |   0.15      0 (   0)     440     447   FS:0/0 WR:0/0 DR:0/0 FF:0/434 FR:0/6 RS:0/0
+  2   2                           1 0.50/0         0.54   0.54   0.53 |   0.15      0 (   0)     433     439   FS:0/0 WR:0/0 DR:0/0 FF:0/426 FR:0/6 RS:0/1
+TOTAL band px-frames 17130324: A>B3x3 6 (dark 1, max 13) = 0.4 per M band px; A>M3x3 138003 (max 107); B>M3x3 141658
+largest |dF| A frames: k24 14.38 (B 14.39, M 15.49), k25 14.36 (B 14.37, M 15.00), k26 14.34 (B 14.36, M 14.99), k27 14.31 (B 14.32, M 15.20), k28 14.24 (B 14.25, M 14.77), k23 14.16 (B 14.17, M 14.73)
+largest |dF| A/B ratio: k182 1.04/1.04, k243 8.95/8.94, k248 8.78/8.77, k209 7.41/7.41, k245 9.18/9.18, k249 8.61/8.61
+hot (|excess| >= 16 vs B): 0 

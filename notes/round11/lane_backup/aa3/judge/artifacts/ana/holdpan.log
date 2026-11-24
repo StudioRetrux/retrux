@@ -1,0 +1,2 @@
+[slot] judge-artifacts:holdpan waiting (load 13.4 / max 24, slots 2, holders [{"label":"aa4y batch1","pid":35735,"at":1795161066198,"slot":0},{"label":"!judge-perf:rt","pid":35442,"at":1795161057357,"slot":1}])
+[slot] judge-artifacts:holdpan: taken (load 12.6)

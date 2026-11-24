@@ -1,0 +1,10 @@
+[slot] judge-artrefl b3 AA7 fast/diag/leave/rest: taken (load 20.3)
+[cap] /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work7/artrefl/caps/fast_A7: 120 frames; 0 errors/warnings
+fast t 40s
+[cap] /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work7/artrefl/caps/diag_A7: 120 frames; 0 errors/warnings
+diag t 370s
+[cap] /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work7/artrefl/caps/leave_A7: 240 frames; 0 errors/warnings
+leave t 436s
+[cap] /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work7/artrefl/caps/rest_A7: 40 frames; 0 errors/warnings
+rest t 456s
+[slot] judge-artrefl b3 AA7 fast/diag/leave/rest: freed (exit 0)

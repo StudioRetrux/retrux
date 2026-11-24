@@ -1,0 +1,20 @@
+{
+ "note": "script args for wf_5aa78d43-654 (p4-rip3.js)",
+ "args": {
+  "argsFile": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/args/p4pri3-rip3.args.json",
+  "brief": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/briefs/p4r4_common.md",
+  "brief2": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/briefs/p4pri2_common.md",
+  "round": "p4pri3",
+  "basePort": 5173,
+  "mainPort": 5179,
+  "lane": {
+   "key": "rxf",
+   "lane": "p4rxf",
+   "port": 5177
+  },
+  "buildMin": 150,
+  "judgeMin": 50,
+  "fixMin": 75,
+  "rejudgeMin": 40
+ }
+}

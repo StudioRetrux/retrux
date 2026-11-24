@@ -1,0 +1,15 @@
+[slot] aa8-integ C: taken (load 4.3)
+23:39:51 done --port 5199 --qs aaresolve=0&slabflash=0&lktaa=0&lkglide=0&ffblock=0&mirrorcost=0&fftip=0 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/integ/ident/i8_all6t.json
+23:40:04 done --port 5182 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/integ/ident/b_t1.json
+23:40:17 done --port 5199 --tier T2 --qs aaresolve=0&slabflash=0&lktaa=0&lkglide=0&ffblock=0&mirrorcost=0&fftip=0 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/integ/ident/i8_t2all6t.json
+23:40:31 done --port 5182 --tier T2 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/integ/ident/b_t2.json
+23:40:44 done --port 5199 --qs envlake=plate --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/integ/ident/i8_plate.json
+23:40:57 done --port 5182 --qs envlake=plate --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/integ/ident/b_plate.json
+23:41:10 done --port 5199 --mobile --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/integ/ident/i8_t0.json
+23:41:23 done --port 5182 --mobile --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/integ/ident/b_t0.json
+23:41:51 ctx def
+23:42:19 ctx lktaa0
+[cap] /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/integ/caps/slow_I8: 160 frames; 0 errors/warnings
+23:42:52 cap slow_I8
+i_C 194s
+[slot] aa8-integ C: freed (exit 0)

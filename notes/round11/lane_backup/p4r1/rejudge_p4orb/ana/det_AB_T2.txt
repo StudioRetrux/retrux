@@ -1,0 +1,18 @@
+== p05_t3.3  orb (723,393) R 100.4  clock 3.68/3.68  lane-orb (723,393)
+  OFF   box>=248   9.0% >=250   6.9% | disc L10/50/90 230/250/254 sd  9.7 | rim(0.85-1.02R) L 183 RGB [163. 185. 223.] B-R +60 (L>200 +41) | skirt 1.1-1.4R L 182 B-R +57 | bright r 76 | p99 251 p99.9 255
+  LANE  box>=248   9.7% >=250   7.1% | disc L10/50/90 226/249/253 sd 11.1 | rim(0.85-1.02R) L 222 RGB [211. 223. 237.] B-R +25 (L>200 +24) | skirt 1.1-1.4R L 187 B-R +49 | bright r 78 | p99 250 p99.9 254
+  inner disc (r<0.8R, L>225 both) n 18217 lane-off RGB [-0.2 -1.1 -1.2]
+  ice annuli dL (lane-off, crystals masked): 1.02-1.25R +2.33 | 1.25-1.50R +1.31 | 1.50-2.00R +0.55 | 2.00-2.50R +0.33 | 2.50-3.50R +0.11
+  far (r>3.5R, no crystals) px changed>2: 0.03%  max 20
+== p06_t3.3  orb (722,393) R 100.4  clock 3.68/3.68  lane-orb (722,393)
+  OFF   box>=248  18.7% >=250  14.4% | disc L10/50/90 199/253/255 sd 26.0 | rim(0.85-1.02R) L 186 RGB [165. 188. 224.] B-R +59 (L>200 +41) | skirt 1.1-1.4R L 191 B-R +45 | bright r 82 | p99 253 p99.9 255
+  LANE  box>=248  21.8% >=250  15.8% | disc L10/50/90 222/253/255 sd 14.8 | rim(0.85-1.02R) L 224 RGB [214. 225. 238.] B-R +24 (L>200 +23) | skirt 1.1-1.4R L 195 B-R +40 | bright r 84 | p99 253 p99.9 255
+  inner disc (r<0.8R, L>225 both) n 17650 lane-off RGB [ 0.7 -0.1 -0.1]
+  ice annuli dL (lane-off, crystals masked): 1.02-1.25R +2.94 | 1.25-1.50R +1.75 | 1.50-2.00R +0.71 | 2.00-2.50R +0.32 | 2.50-3.50R +0.13
+  far (r>3.5R, no crystals) px changed>2: 0.06%  max 19
+== q00_tn  orb (723,387) R 74.7  clock 4.74/4.74  lane-orb (723,387)
+  OFF   box>=248   3.3% >=250   2.4% | disc L10/50/90 204/226/253 sd 24.1 | rim(0.85-1.02R) L 206 RGB [189. 209. 228.] B-R +39 (L>200 +32) | skirt 1.1-1.4R L 199 B-R +41 | bright r 37 | p99 228 p99.9 253
+  LANE  box>=248   2.6% >=250   0.1% | disc L10/50/90 203/226/252 sd 21.4 | rim(0.85-1.02R) L 207 RGB [190. 210. 228.] B-R +38 (L>200 +33) | skirt 1.1-1.4R L 199 B-R +40 | bright r 36 | p99 228 p99.9 252
+  inner disc (r<0.8R, L>225 both) n 6241 lane-off RGB [-1.  -0.8 -0.9]
+  ice annuli dL (lane-off, crystals masked): 1.02-1.25R -0.19 | 1.25-1.50R -0.13 | 1.50-2.00R -0.03 | 2.00-2.50R -0.00 | 2.50-3.50R -0.00
+  far (r>3.5R, no crystals) px changed>2: 0.00%  max 10

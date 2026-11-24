@@ -1,0 +1,32 @@
+### hold, FINAL build (hold_Z) vs ?p4water=0 (= AA8, hold_M0), mask from the AA8 capture, GT = AA8
+new pops (X flagged, ref not, X != ref): 4200 px, 737 clusters, >= 6 px: 140
+  k67-93 x1317-1381 y712-753 n685 emax87
+  k75-98 x1388-1419 y731-747 n335 emax109
+  k318-320 x397-456 y742-755 n95 emax92
+  k79-96 x1318-1335 y753-765 n87 emax92
+  k319-321 x414-459 y737-743 n65 emax99
+  k320-322 x433-461 y729-737 n60 emax93
+  k313-313 x1028-1046 y678-685 n51 emax77
+  k68-72 x1312-1326 y718-731 n45 emax68
+### bottom strip y686-766 frame-to-frame |dL| by phase
+A8     press mean 5.45 p99 30.1 >12 12.83% | sustain mean 1.64 p99 18.3 >12 2.24% | release mean 8.42 p99 48.7 >12 21.83% | after mean 4.43 p99 27.5 >12 9.81%
+LANE   press mean 6.13 p99 32.7 >12 16.06% | sustain mean 2.19 p99 21.0 >12 3.26% | release mean 9.04 p99 49.6 >12 24.93% | after mean 4.43 p99 27.1 >12 9.78%
+### lake band y480-686
+A8     press mean 4.75 p99 40.8 >12 10.18% | sustain mean 1.99 p99 33.7 >12 3.67% | release mean 7.48 p99 55.0 >12 17.69% | after mean 4.06 p99 34.1 >12 8.04%
+LANE   press mean 4.56 p99 40.4 >12 9.76% | sustain mean 1.98 p99 33.6 >12 3.65% | release mean 7.21 p99 54.3 >12 16.93% | after mean 3.90 p99 33.2 >12 7.85%
+### popnew restricted to rows above the bottom strip (y380-686): count from the list
+clusters >= 6 px listed: 140
+  bottom edge in y<600           :   0 clusters, px 0
+  bottom edge in 600-660         :   9 clusters, px 94
+  bottom edge in 660-686         :  18 clusters, px 280
+  bottom edge in strip y686-766  : 113 clusters, px 2671
+  the ones with y1 < 660:
+   k314-314 x1265-1275 y647-651 n18 emax62
+   k320-324 x1059-1066 y622-633 n17 emax54
+   k314-314 x1277-1282 y647-651 n10 emax63
+   k332-335 x1090-1096 y608-611 n10 emax56
+   k321-324 x1102-1112 y627-633 n10 emax54
+   k316-316 x1067-1078 y652-653 n8 emax65
+   k317-317 x1071-1078 y646-647 n8 emax59
+   k316-316 x1078-1086 y652-652 n7 emax63
+   k324-325 x1089-1094 y622-625 n6 emax55

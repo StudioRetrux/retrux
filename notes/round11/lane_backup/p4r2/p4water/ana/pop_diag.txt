@@ -1,0 +1,31 @@
+### diag mask=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work5/aa5a/caps/diag_mask gt=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work6/refl/caps/diag_gt
+A8: flagged px 1719, events >= 6 px: 48, px in them 620
+LANE: flagged px 1614, events >= 6 px: 46, px in them 605
+-- A8 top 4
+  k89-116 x87-146 y544-551 n116 emax135 frames 89/3/85/119 90/2/61/101 91/3/83/91 92/5/130/94 ...
+  k1-12 x115-140 y559-566 n28 emax132 frames 1/1/52/-135 2/2/76/-107 3/2/101/-115 4/2/53/-99 ...
+  k82-91 x922-935 y758-763 n41 emax71 frames 82/1/41/34 83/3/49/35 84/3/42/-66 85/3/52/38 ...
+  k114-119 x1178-1187 y666-669 n27 emax97 frames 114/3/57/44 115/1/50/46 116/6/81/47 117/2/46/37 ...
+-- LANE top 4
+  k89-115 x87-146 y544-548 n107 emax133 frames 89/4/84/108 90/3/57/48 91/3/91/89 92/5/129/92 ...
+  k2-20 x112-152 y551-563 n42 emax131 frames 2/1/56/-103 3/1/59/-83 4/1/63/-73 5/1/83/-94 ...
+  k82-91 x922-935 y758-763 n38 emax71 frames 82/1/41/32 83/2/47/36 84/2/42/-78 85/2/52/39 ...
+  k114-119 x1178-1187 y666-669 n27 emax96 frames 114/3/56/44 115/1/49/46 116/6/81/47 117/2/45/36 ...
+-- popnew LANE vs A8 (new pops)
+new pops (X flagged, ref not, X != ref): 156 px, 90 clusters, >= 6 px: 0
+  k67-68 x165-166 y526-526 n4 emax113
+  k97-101 x1365-1372 y505-505 n5 emax64
+  k69-69 x1271-1274 y513-515 n5 emax59
+  k56-57 x1284-1285 y517-519 n4 emax62
+  k83-84 x143-144 y520-520 n3 emax81
+  k26-26 x1014-1015 y503-505 n4 emax60
+  k57-58 x1435-1438 y521-523 n3 emax77
+  k66-66 x1010-1011 y499-501 n4 emax55
+  k46-46 x176-177 y530-530 n2 emax105
+  k77-77 x995-995 y493-496 n4 emax52
+-- popnew A8 vs LANE (pops the lane removes)
+new pops (X flagged, ref not, X != ref): 227 px, 151 clusters, >= 6 px: 2
+  k97-101 x1089-1097 y492-493 n7 emax52
+  k83-86 x1338-1341 y571-572 n6 emax56
+  k78-79 x1342-1345 y575-575 n5 emax61
+  k64-64 x1348-1351 y581-581 n4 emax57

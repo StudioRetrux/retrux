@@ -1,0 +1,5 @@
+m_p04 vs off_p04                               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 18 differ: - | logs 0/0
+m_p06 vs off_p06                               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 18 differ: - | logs 0/0
+m_p06 vs lane_p06                              DIFFER    final DIFF | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: mirror,walk,cache,cacheN,final | programs 18 differ: - | logs 0/0
+m_p07 vs off_p07                               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 18 differ: - | logs 0/0
+m_T0_p06 vs off_T0_p06                         IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0

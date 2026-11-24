@@ -1,0 +1,67 @@
+== slow  texLake AA8 1.0072 (AA7 1.0075)  texSolid AA8 1.0005 (AA7 1.0001)
+   FS  MC32 AA8  -75.7 AA7  -74.4 d  -1.3 | GT  -94 fix  -75 | bar -50.0 margin +25.7 | MCE AA8 2.766 AA7 2.781 FIX 3.000 GT 2.980 [j32 AA8 -28 AA7 -22 GT -15 m +18.0; j48 AA8 -53 AA7 -42 GT -12 m +46.3]
+   WR  MC32 AA8  -73.9 AA7  -73.9 d  +0.0 | GT  -89 fix  -74 | bar -50.0 margin +23.9 [j32 AA8 -33 AA7 -32 GT -25 m +12.9; j48 AA8 -35 AA7 -32 GT -39 m +1.8]
+   DR  MC32 AA8  -87.3 AA7  -87.3 d  +0.0 | GT  -87 fix  -84 | bar -50.0 margin +37.3 [j32 AA8 -40 AA7 -36 GT -5 m +40.4; j48 AA8 -87 AA7 -84 GT -25 m +66.9]
+   FF  MC32 AA8  -83.3 AA7  -83.0 d  -0.3 | GT  -55 fix  -73 | bar -50.0 margin +33.3 [j32 AA8 -83 AA7 -82 GT -35 m +53.0; j48 AA8 -91 AA7 -91 GT -64 m +31.3]
+   FR  MC32 AA8  -74.5 AA7  -74.0 d  -0.4 | GT  -58 fix  -52 | bar -50.0 margin +24.5 [j32 AA8 -85 AA7 -84 GT -66 m +23.4; j48 AA8 -89 AA7 -87 GT -82 m +12.3]
+   RS  MC32 AA8  -90.2 AA7  -90.2 d  +0.0 | GT  -73 fix  -86 | bar -50.0 margin +40.2 [j32 AA8 -63 AA7 -62 GT -49 m +19.9; j48 AA8 -71 AA7 -69 GT -71 m +5.0]
+   tot MC32 AA8  -82.5 AA7  -82.1 d  -0.3 | GT  -61 fix  -73 | bar -50.0 margin +32.5 [j32 AA8 -63 AA7 -62 GT -29 m +39.7; j48 AA8 -83 AA7 -81 GT -55 m +32.6]
+== medium  texLake AA8 1.0103 (AA7 1.0106)  texSolid AA8 1.0002 (AA7 0.9999)
+   FS  MC32 AA8  -83.7 AA7  -82.4 d  -1.2 | GT  -68 fix  -83 | bar -50.0 margin +33.7 | MCE AA8 2.107 AA7 2.117 FIX 2.281 GT 2.268 [j32 AA8 -11 AA7 -10 GT -9 m +6.4; j48 AA8 -8 AA7 -5 GT -1 m +12.0]
+   WR  MC32 AA8  -69.1 AA7  -68.3 d  -0.8 | GT  -68 fix  -65 | bar -50.0 margin +19.1 [j32 AA8 -20 AA7 -20 GT -13 m +12.1; j48 AA8 -21 AA7 -21 GT -16 m +9.9]
+   DR  MC32 AA8  -87.3 AA7  -86.4 d  -0.9 | GT  -73 fix  -81 | bar -50.0 margin +37.3 [j32 AA8 -11 AA7 -10 GT -8 m +8.3; j48 AA8 -19 AA7 -18 GT -10 m +13.6]
+   FF  MC32 AA8  -84.6 AA7  -84.3 d  -0.3 | GT  -59 fix  -74 | bar -50.0 margin +34.6 [j32 AA8 -45 AA7 -45 GT -17 m +33.1; j48 AA8 -69 AA7 -68 GT -35 m +38.6]
+   FR  MC32 AA8  -73.7 AA7  -72.6 d  -1.1 | GT  -66 fix  -60 | bar -50.0 margin +23.7 [j32 AA8 -45 AA7 -44 GT -17 m +33.1; j48 AA8 -63 AA7 -61 GT -34 m +34.4]
+   RS  MC32 AA8  -90.8 AA7  -90.8 d  +0.0 | GT  -83 fix  -87 | bar -50.0 margin +40.8 [j32 AA8 -37 AA7 -37 GT -19 m +23.4; j48 AA8 -34 AA7 -34 GT -9 m +30.4]
+   tot MC32 AA8  -82.5 AA7  -82.0 d  -0.5 | GT  -62 fix  -73 | bar -50.0 margin +32.5 [j32 AA8 -33 AA7 -33 GT -14 m +23.7; j48 AA8 -48 AA7 -47 GT -25 m +28.3]
+== fast  texLake AA8 1.0105 (AA7 1.0108)  texSolid AA8 1.0002 (AA7 0.9999)
+   FS  MC32 AA8  -23.3 AA7  -21.7 d  -1.6 | GT  -25 fix  -36 | bar -20.2 margin  +3.0 | MCE AA8 3.749 AA7 3.767 FIX 3.936 GT 4.027 [j32 AA8 -5 AA7 -4 GT -6 m +4.0; j48 AA8 -6 AA7 -2 GT +3 m +13.7]
+   WR  MC32 AA8  -52.4 AA7  -51.7 d  -0.7 | GT  -43 fix  -47 | bar -40.0 margin +12.4 [j32 AA8 -24 AA7 -24 GT -17 m +11.1; j48 AA8 -21 AA7 -21 GT -19 m +7.3]
+   DR  MC32 AA8  -82.7 AA7  -82.4 d  -0.3 | GT  -82 fix  -79 | bar -40.0 margin +42.7 [j32 AA8 -5 AA7 -4 GT -4 m +6.0; j48 AA8 -9 AA7 -8 GT -2 m +11.9]
+   FF  MC32 AA8  -84.4 AA7  -84.1 d  -0.4 | GT  -56 fix  -72 | bar -40.0 margin +44.4 [j32 AA8 -39 AA7 -39 GT -12 m +32.1; j48 AA8 -49 AA7 -49 GT -24 m +30.3]
+   FR  MC32 AA8  -77.7 AA7  -78.0 d  +0.3 | GT  -71 fix  -55 | bar -40.0 margin +37.7 [j32 AA8 -11 AA7 -11 GT -5 m +10.9; j48 AA8 -7 AA7 -7 GT +0 m +12.6]
+   RS  MC32 AA8  -85.1 AA7  -84.9 d  -0.2 | GT  -61 fix  -71 | bar -40.0 margin +45.1 [j32 AA8 -60 AA7 -60 GT -23 m +42.5; j48 AA8 -72 AA7 -72 GT -43 m +33.7]
+   tot MC32 AA8  -74.1 AA7  -73.6 d  -0.5 | GT  -54 fix  -65 | bar -40.0 margin +34.1 [j32 AA8 -26 AA7 -26 GT -10 m +20.9; j48 AA8 -30 AA7 -30 GT -15 m +20.9]
+== diag  texLake AA8 1.0105 (AA7 1.0108)  texSolid AA8 1.0001 (AA7 0.9998)
+   FS  MC32 AA8  -39.2 AA7  -36.9 d  -2.3 | GT  -34 fix  -59 | bar -29.4 margin  +9.7 | MCE AA8 2.986 AA7 3.004 FIX 3.216 GT 3.336 [j32 AA8 -15 AA7 -13 GT -11 m +9.0; j48 AA8 -14 AA7 -11 GT -2 m +16.7]
+   WR  MC32 AA8  -59.1 AA7  -58.0 d  -1.1 | GT  -50 fix  -52 | bar -40.0 margin +19.1 [j32 AA8 -15 AA7 -15 GT -12 m +8.1; j48 AA8 -11 AA7 -11 GT -8 m +7.7]
+   DR  MC32 AA8  -86.2 AA7  -85.6 d  -0.5 | GT  -84 fix  -83 | bar -40.0 margin +46.2 [j32 AA8 -14 AA7 -13 GT -10 m +8.7; j48 AA8 -19 AA7 -18 GT -8 m +15.4]
+   FF  MC32 AA8  -86.0 AA7  -85.6 d  -0.3 | GT  -61 fix  -74 | bar -40.0 margin +46.0 [j32 AA8 -39 AA7 -39 GT -14 m +30.0; j48 AA8 -52 AA7 -52 GT -27 m +30.0]
+   FR  MC32 AA8  -80.9 AA7  -80.9 d  +0.0 | GT  -62 fix  -57 | bar -40.0 margin +40.9 [j32 AA8 -12 AA7 -12 GT -1 m +15.9; j48 AA8 -10 AA7 -9 GT +4 m +19.2]
+   RS  MC32 AA8  -84.3 AA7  -82.0 d  -2.3 | GT  -63 fix  -74 | bar -40.0 margin +44.3 [j32 AA8 -36 AA7 -36 GT -23 m +18.0; j48 AA8 -26 AA7 -24 GT -21 m +9.1]
+   tot MC32 AA8  -78.6 AA7  -78.1 d  -0.6 | GT  -60 fix  -69 | bar -40.0 margin +38.6 [j32 AA8 -26 AA7 -26 GT -11 m +20.2; j48 AA8 -33 AA7 -32 GT -16 m +22.0]
+== reverse  texLake AA8 1.0071 (AA7 1.0074)  texSolid AA8 1.0002 (AA7 0.9999)
+   FS  MC32 AA8  -21.0 AA7  -19.5 d  -1.6 | GT  -19 fix  -36 | bar -14.4 margin  +6.6 | MCE AA8 3.838 AA7 3.854 FIX 4.044 GT 4.162 [j32 AA8 -6 AA7 -5 GT -6 m +5.4; j48 AA8 -7 AA7 -4 GT +4 m +15.9]
+   WR  MC32 AA8  -65.4 AA7  -64.7 d  -0.7 | GT  -52 fix  -54 | bar -40.0 margin +25.4 [j32 AA8 -18 AA7 -18 GT -14 m +8.6; j48 AA8 -16 AA7 -16 GT -16 m +4.5]
+   DR  MC32 AA8  -77.7 AA7  -74.4 d  -3.3 | GT  -70 fix  -73 | bar -40.0 margin +37.7 [j32 AA8 -6 AA7 -6 GT -4 m +6.9; j48 AA8 -5 AA7 -4 GT +1 m +10.8]
+   FF  MC32 AA8  -83.9 AA7  -83.5 d  -0.4 | GT  -52 fix  -72 | bar -40.0 margin +43.9 [j32 AA8 -35 AA7 -35 GT -10 m +30.5; j48 AA8 -47 AA7 -47 GT -21 m +30.9]
+   FR  MC32 AA8  -78.8 AA7  -78.3 d  -0.6 | GT  -70 fix  -55 | bar -40.0 margin +38.8 [j32 AA8 -6 AA7 -6 GT +1 m +11.4; j48 AA8 -3 AA7 -3 GT +6 m +13.5]
+   RS  MC32 AA8  -83.5 AA7  -82.2 d  -1.3 | GT  -68 fix  -73 | bar -40.0 margin +43.5 [j32 AA8 -64 AA7 -63 GT -33 m +35.6; j48 AA8 -75 AA7 -75 GT -47 m +33.3]
+   tot MC32 AA8  -74.7 AA7  -74.0 d  -0.7 | GT  -52 fix  -65 | bar -40.0 margin +34.7 [j32 AA8 -22 AA7 -22 GT -7 m +19.4; j48 AA8 -26 AA7 -26 GT -10 m +20.8]
+== leave  texLake AA8 1.0086 (AA7 1.0089)  texSolid AA8 1.0001 (AA7 0.9999)
+   FS  MC32 AA8  -39.9 AA7  -37.3 d  -2.6 | GT  -33 fix  -58 | bar -28.5 margin +11.4 | MCE AA8 2.732 AA7 2.743 FIX 2.907 GT 2.964 [j32 AA8 -7 AA7 -7 GT -8 m +3.9; j48 AA8 -10 AA7 -8 GT -2 m +12.8]
+   WR  MC32 AA8  -67.1 AA7  -66.4 d  -0.7 | GT  -54 fix  -60 | bar -40.0 margin +27.1 [j32 AA8 -16 AA7 -16 GT -12 m +9.1; j48 AA8 -10 AA7 -9 GT -7 m +8.2]
+   DR  MC32 AA8  -91.8 AA7  -91.3 d  -0.5 | GT  -74 fix  -85 | bar -40.0 margin +51.8 [j32 AA8 -8 AA7 -8 GT -7 m +6.0; j48 AA8 -13 AA7 -11 GT -5 m +12.1]
+   FF  MC32 AA8  -83.8 AA7  -83.3 d  -0.4 | GT  -59 fix  -71 | bar -40.0 margin +43.8 [j32 AA8 -41 AA7 -41 GT -13 m +32.8; j48 AA8 -62 AA7 -61 GT -33 m +33.7]
+   FR  MC32 AA8  -79.1 AA7  -78.9 d  -0.2 | GT  -69 fix  -58 | bar -40.0 margin +39.1 [j32 AA8 -21 AA7 -21 GT -5 m +20.7; j48 AA8 -27 AA7 -27 GT -9 m +22.6]
+   RS  MC32 AA8  -92.1 AA7  -90.7 d  -1.3 | GT  -85 fix  -91 | bar -40.0 margin +52.1 [j32 AA8 -36 AA7 -36 GT -14 m +27.4; j48 AA8 -36 AA7 -35 GT -11 m +29.3]
+   tot MC32 AA8  -79.3 AA7  -78.7 d  -0.6 | GT  -59 fix  -69 | bar -40.0 margin +39.3 [j32 AA8 -27 AA7 -27 GT -11 m +21.3; j48 AA8 -38 AA7 -37 GT -19 m +23.8]
+
+no gate / L4 / MCE miss (AA8)
+
+no cell where AA8 is worse than AA7 beyond 1 pt (MC32) / 2 pts (J)
+
+TIGHTEST MARGINS (points inside the bar; L11 = slow / medium / reverse all boxes + FS L9 fast / diag / leave):
+   +1.78  L11   slow WR j48 AA8 -35.4 bar -33.6 (abs 2.41 vs BASE 3.73, GT 2.29)
+   +3.02  L11   fast FS MC32 AA8 -23.3 bar -20.2 (L9)
+   +3.94  L11   leave FS j32 AA8 -7.4 bar -3.4 (abs 35.05 vs BASE 37.84, GT 34.65)
+   +4.04  L11   fast FS j32 AA8 -5.1 bar -1.1 (abs 45.54 vs BASE 48, GT 45.08)
+   +4.54  L11   reverse WR j48 AA8 -15.9 bar -11.4 (abs 21.88 vs BASE 26.03, GT 21.76)
+   +5.00  L11   slow RS j48 AA8 -71.2 bar -66.2 (abs 0.15 vs BASE 0.52, GT 0.15)
+   +5.38  L11   reverse FS j32 AA8 -5.9 bar -0.5 (abs 47.36 vs BASE 50.33, GT 47.55)
+   +5.98  info  fast DR j32 AA8 -4.6 bar +1.4 (abs 128.08 vs BASE 134.27, GT 129.4)
+   +6.01  info  leave DR j32 AA8 -8.1 bar -2.1 (abs 93.07 vs BASE 101.28, GT 94.09)
+   +6.41  L11   medium FS j32 AA8 -10.8 bar -4.4 (abs 26.59 vs BASE 29.81, GT 27.01)
+   +6.63  L11   reverse FS MC32 AA8 -21.0 bar -14.4 (L9)
+   +6.91  L11   reverse DR j32 AA8 -6.2 bar +0.7 (abs 119.53 vs BASE 127.48, GT 121.96)
+  L11 cells below +1.0: none

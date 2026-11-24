@@ -11,14 +11,14 @@ const { chromium } = require("playwright-core");
 const out = process.argv[2];
 fs.mkdirSync(out, { recursive: true });
 const browser = await chromium.launch({
-  executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+  executablePath: (process.env.CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"),
   headless: true,
-  args: ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"],
+  args: [(process.platform === "win32" ? "--use-angle=d3d11" : "--use-angle=metal"), "--enable-gpu", "--ignore-gpu-blocklist"],
 });
 const page = await browser.newPage({ viewport: { width: 1440, height: 766 } });
 const logs = [];
 page.on("pageerror", (e) => logs.push("pageerror " + e.message));
-await page.goto("http://localhost:5173/?tier=T1", { waitUntil: "domcontentloaded" });
+await page.goto(((process.env.LAB || "http://localhost:5173") + "/?tier=T1"), { waitUntil: "domcontentloaded" });
 await page.waitForFunction(() => document.documentElement.dataset.heroReady === "1", null, { timeout: 120000 });
 // Hide the HTML overlay so critics see the scene itself (a separate shot keeps it).
 const shot = async (name, overlay = false) => {

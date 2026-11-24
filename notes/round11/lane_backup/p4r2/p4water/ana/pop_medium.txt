@@ -1,0 +1,31 @@
+### medium mask=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work5/aa5b/caps/medium_bmask gt=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/aa3/caps/medium_gt
+A8: flagged px 3043, events >= 6 px: 99, px in them 1280
+LANE: flagged px 2749, events >= 6 px: 74, px in them 1071
+-- A8 top 4
+  k13-39 x1098-1144 y683-708 n171 emax100 frames 13/1/41/40 14/1/48/67 15/5/65/60 16/1/44/51 ...
+  k197-209 x123-139 y542-551 n39 emax121 frames 197/4/92/82 198/1/56/-55 199/4/88/113 200/1/69/87 ...
+  k14-23 x545-574 y562-571 n63 emax70 frames 14/4/45/44 15/5/62/58 16/7/70/62 17/11/70/62 ...
+  k227-234 x84-95 y558-564 n33 emax117 frames 227/4/97/88 228/1/62/60 229/4/74/98 229/2/47/56 ...
+-- LANE top 4
+  k13-39 x1098-1144 y683-708 n171 emax98 frames 13/1/41/40 14/1/47/67 15/6/65/56 16/2/44/47 ...
+  k8-23 x93-118 y552-567 n34 emax103 frames 8/1/55/-77 9/1/66/-73 10/1/60/-87 11/2/86/-64 ...
+  k14-22 x545-563 y564-571 n49 emax71 frames 14/4/45/44 15/4/62/57 16/7/71/63 17/11/71/63 ...
+  k13-17 x219-240 y525-530 n53 emax64 frames 13/12/60/51 14/4/52/66 14/2/64/72 15/2/45/87 ...
+-- popnew LANE vs A8 (new pops)
+new pops (X flagged, ref not, X != ref): 214 px, 139 clusters, >= 6 px: 0
+  k54-55 x1418-1420 y506-509 n5 emax76
+  k60-61 x1421-1422 y506-508 n4 emax80
+  k225-228 x1366-1369 y517-519 n5 emax62
+  k186-186 x1116-1116 y511-514 n4 emax56
+  k193-193 x1111-1112 y512-514 n4 emax56
+  k235-237 x1361-1363 y521-523 n4 emax56
+  k212-212 x1375-1376 y511-512 n3 emax74
+  k1-2 x1401-1401 y533-534 n3 emax68
+  k178-178 x1121-1121 y511-513 n3 emax67
+  k185-187 x135-137 y514-514 n3 emax63
+-- popnew A8 vs LANE (pops the lane removes)
+new pops (X flagged, ref not, X != ref): 376 px, 228 clusters, >= 6 px: 7
+  k19-20 x245-258 y590-592 n14 emax59
+  k25-27 x594-600 y537-539 n8 emax51
+  k22-22 x184-191 y565-565 n7 emax50
+  k30-31 x265-271 y582-583 n7 emax48

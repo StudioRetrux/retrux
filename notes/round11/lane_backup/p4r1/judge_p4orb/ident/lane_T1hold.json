@@ -1,0 +1,148 @@
+{
+ "qs": "",
+ "port": "5176",
+ "logs": [],
+ "counts": {
+  "frames": 21,
+  "mirror": 20,
+  "walk": 20,
+  "cache": 1,
+  "cacheOn": 1
+ },
+ "targets": {
+  "mirror": {
+   "w": 720,
+   "h": 383,
+   "hash": "fe7cb2de69e3df65"
+  },
+  "walk": {
+   "w": 360,
+   "h": 192,
+   "hash": "872f78b74255f6ac"
+  },
+  "cache": {
+   "w": 1440,
+   "h": 766,
+   "hash": "627870621c35e721"
+  },
+  "cacheN": {
+   "w": 1440,
+   "h": 766,
+   "hash": "3d99bfa907f9288a"
+  },
+  "reflection": {
+   "w": 720,
+   "h": 383,
+   "hash": "37808bc5a79af006"
+  },
+  "main": {
+   "w": 1440,
+   "h": 766,
+   "hash": "fe0873ee1b5c3ea1"
+  },
+  "refraction": {
+   "w": 720,
+   "h": 383,
+   "hash": "b641d59dc51de196"
+  },
+  "back": {
+   "w": 720,
+   "h": 383,
+   "hash": "37808bc5a79af006"
+  },
+  "bloom0": {
+   "w": 720,
+   "h": 383,
+   "hash": "7a6b2a85247fad42"
+  },
+  "bloom1": {
+   "w": 360,
+   "h": 192,
+   "hash": "77c3c454e5f21f37"
+  },
+  "bloom2": {
+   "w": 180,
+   "h": 96,
+   "hash": "f44563b59215347e"
+  },
+  "bloom3": {
+   "w": 90,
+   "h": 48,
+   "hash": "6a86b56dbe97bba6"
+  },
+  "bloom4": {
+   "w": 45,
+   "h": 24,
+   "hash": "2072beb63243bb91"
+  },
+  "final": {
+   "w": 1440,
+   "h": 766,
+   "hash": "e8d22b0a1f769361"
+  }
+ },
+ "programs": {
+  "rx-plate-baked|ShaderMaterial": [
+   "865d1fc4f9872720",
+   "c2fd1b9b7ccb47d4"
+  ],
+  "rx-cloud|ShaderMaterial": [
+   "22d6a4db6fc1c96b",
+   "24d3b650aa3e2507"
+  ],
+  "rx-lake-sky-late|ShaderMaterial": [
+   "a10817089f4156ec",
+   "fafcf1c5758c8a16"
+  ],
+  "rx-water|ShaderMaterial": [
+   "1ba36f6ab8fbb3e0",
+   "dece2f6151ef07a0"
+  ],
+  "rx-env-edge|ShaderMaterial": [
+   "60e89ca1a7fe7f1c",
+   "9a638914bc06080a"
+  ],
+  "rx-ice|ShaderMaterial": [
+   "02bd3315218f0821",
+   "f628c67efad10b19"
+  ],
+  "rx-orb|ShaderMaterial": [
+   "0cff6ba8d65d6f3b",
+   "19675bc38b463c2b"
+  ],
+  "rx-shards|ShaderMaterial": [
+   "5aadb723f86467a6",
+   "872f589eb8686534"
+  ],
+  "rx-ice-back|ShaderMaterial": [
+   "c0500856298d5e5c"
+  ],
+  "rx-plate-baked-mirror|ShaderMaterial": [
+   "0cf122483cb0ba4d"
+  ],
+  "rx-water-walk|ShaderMaterial": [
+   "afe7e3a4e2ff6395"
+  ],
+  "rx-lake-edge-taa|ShaderMaterial": [
+   "a1284f90bb614762"
+  ],
+  "rx-blit|ShaderMaterial": [
+   "c67046d98d3f65d6"
+  ],
+  "rx-bloom-down|ShaderMaterial": [
+   "0b625468806619b2"
+  ],
+  "rx-bloom-up|ShaderMaterial": [
+   "58eac2048918d3bd"
+  ],
+  "rx-grade|ShaderMaterial": [
+   "e25e3da261b9904b"
+  ],
+  "rx-water-cache|ShaderMaterial": [
+   "db014a0e0a51518c"
+  ],
+  "rx-water-cache-n|ShaderMaterial": [
+   "7d72a4b00a433e09"
+  ]
+ }
+}

@@ -1,0 +1,167 @@
+{
+ "vw": 1440,
+ "vh": 766,
+ "qs": "scale=1",
+ "rest": 8000,
+ "load1minBefore": 6.23,
+ "load1minAfter": 7.99,
+ "results": [
+  {
+   "name": "lane",
+   "rep": 0,
+   "loadMs": 4189,
+   "boot": {
+    "programs": 24,
+    "names": [
+     "rx-plate-baked",
+     "rx-cloud",
+     "rx-lake-sky-late",
+     "rx-water",
+     "rx-env-edge",
+     "rx-ice",
+     "rx-orb",
+     "rx-shards",
+     "rx-ice-back",
+     "rx-plate-baked-mirror",
+     "rx-lake-sky-late",
+     "rx-cloud",
+     "rx-water-walk",
+     "rx-ice",
+     "rx-plate-baked",
+     "rx-water",
+     "rx-lake-edge-taa",
+     "rx-blit",
+     "rx-env-edge",
+     "rx-orb",
+     "rx-shards",
+     "rx-bloom-down",
+     "rx-bloom-up",
+     "rx-grade"
+    ],
+    "taaProgram": true,
+    "taa": {
+     "weight": 0.5,
+     "runs": 45,
+     "still": 0,
+     "valid": true
+    },
+    "tier": "T1",
+    "scale": 1
+   },
+   "firstRealFramesCpu": [
+    5.9,
+    5.1,
+    2.3,
+    2.2,
+    4.2,
+    2.3,
+    2.1,
+    2.4
+   ],
+   "warmFramesCpu": [
+    320.5
+   ],
+   "first": {
+    "frames": 93,
+    "ivlFirst10": [
+     89.1,
+     36.5,
+     39.6,
+     64.3,
+     60.6,
+     66,
+     74.1,
+     71.9,
+     92.5,
+     62.3
+    ],
+    "ivlMax": 106.4,
+    "ivlMed": 66.5,
+    "cpuFirst10": [
+     2.8,
+     3.1,
+     4.4,
+     3,
+     2.7,
+     2.5,
+     3,
+     2.6,
+     3,
+     2.5
+    ],
+    "cpuMax": 5.7,
+    "cpuMed": 2.8
+   },
+   "afterRest": {
+    "frames": 94,
+    "ivlFirst10": [
+     40.7,
+     31.9,
+     44.2,
+     34,
+     38.4,
+     39.2,
+     48.9,
+     41.8,
+     46.7,
+     42.3
+    ],
+    "ivlMax": 81.4,
+    "ivlMed": 41,
+    "cpuFirst10": [
+     3.5,
+     3.3,
+     3.2,
+     2.4,
+     2.8,
+     2.8,
+     2.2,
+     2.2,
+     2.2,
+     2.1
+    ],
+    "cpuMax": 4,
+    "cpuMed": 2.6
+   },
+   "rest": {
+    "frames": 162,
+    "ivlMed": 39,
+    "ivlMax": 86.7,
+    "cpuMed": 2.1
+   },
+   "taa": {
+    "beforeMotion": {
+     "weight": -1,
+     "runs": 110,
+     "still": 86,
+     "valid": false
+    },
+    "afterFirst": {
+     "weight": 0.5,
+     "runs": 208,
+     "still": 0,
+     "valid": true
+    },
+    "afterLongRest": {
+     "weight": -1,
+     "runs": 287,
+     "still": 135,
+     "valid": false
+    },
+    "afterSecond": {
+     "weight": 0.5,
+     "runs": 386,
+     "still": 0,
+     "valid": true
+    }
+   },
+   "programsEnd": 26,
+   "taaProgramEnd": true,
+   "newAfterBoot": [
+    "rx-water-cache",
+    "rx-water-cache-n"
+   ],
+   "logs": []
+  }
+ ]
+}

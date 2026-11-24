@@ -1,0 +1,18 @@
+06:04:36 start
+[slot] rejudge_p4water:ident waiting (load 5.1 / max 30, slots 3, holders [{"label":"lead:sweep","pid":2264,"at":1795215826435,"slot":0},{"label":"p4ice3:perf","pid":2366,"at":1795215861587,"slot":1},{"label":"p4env3:ab4","pid":1786,"at":1795215796994,"slot":2}])
+[slot] rejudge_p4water:ident: taken (load 5.6)
+[slot] rejudge_p4water:ident: freed (exit 0)
+06:06:14 ident done
+[slot] rejudge_p4water:hold: taken (load 5.5)
+cap hold_R rc 0 06:07:53
+cap hold_O rc 0 06:10:20
+[slot] rejudge_p4water:hold: freed (exit 0)
+[slot] rejudge_p4water:w1: taken (load 15.2)
+w1 done 06:11:53
+[slot] rejudge_p4water:w1: freed (exit 0)
+[slot] rejudge_p4water:ptr: taken (load 10.2)
+ptr done 0 06:13:29
+[slot] rejudge_p4water:ptr: freed (exit 0)
+06:13:29 load before perf:  6:13  up  9:26, 1 user, load averages: 6.19 9.85 9.62
+06:17:23 perf rc 0 load  6:17  up  9:30, 1 user, load averages: 5.80 7.86 8.79
+CHAIN_DONE

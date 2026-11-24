@@ -1,0 +1,88 @@
+--- a/retrux-web/app/hero/engine/HeroEngine.ts
++++ b/retrux-web/app/hero/engine/HeroEngine.ts
+@@ -112,6 +112,8 @@
+   /** Press-and-hold version: "r11" (default) or "r10" (`?hold=r10`, the round-10 hold exactly). */
+   readonly holdMode: HoldMode = holdModeFromUrl();
+   private pmrem?: THREE.WebGLRenderTarget;
++  /** The clamped panorama the PMREM is built from (kept for a context restore, AA8 AJ-2: 1024 x 512 RGBA half = 4 MiB). */
++  private panorama?: THREE.DataTexture;
+   private postParams: PostParams = { ...DEFAULT_POST, lensCenter: new THREE.Vector2() };
+   private raf = 0;
+   private running = false;
+@@ -198,7 +200,11 @@
+     canvas.addEventListener("webglcontextlost", onLost);
+     this.disposers.push(() => canvas.removeEventListener("webglcontextlost", onLost));
+     // AA8 (perf judge P-1): the restored context starts with empty targets, so the waterline TAA starts without history.
+-    const onRestored = () => this.envEdge?.resetTAA();
++    // (AA8 AJ-2: and the targets drawn only once at load are drawn again, restoreBaked.)
++    const onRestored = () => {
++      this.envEdge?.resetTAA();
++      this.restoreBaked();
++    };
+     canvas.addEventListener("webglcontextrestored", onRestored);
+     this.disposers.push(() => canvas.removeEventListener("webglcontextrestored", onRestored));
+     this.resize();
+@@ -224,6 +230,7 @@
+     );
+ 
+     clampHalfFloat(assets.panorama, PANO_CLAMP);
++    this.panorama = assets.panorama;
+     const gen = new THREE.PMREMGenerator(this.renderer);
+     this.pmrem = gen.fromEquirectangular(assets.panorama);
+     gen.dispose();
+@@ -507,6 +514,27 @@
+     if (!this.state.ready) return;
+     if (this.visible && this.onScreen) this.start();
+     else this.stop();
++  }
++
++  /**
++   * AA8 (judge AJ-2): a restored WebGL context hands back every render target empty. What is drawn each frame recovers by
++   * itself and three.js re-uploads every texture that keeps its data, but the PMREM of the panorama is drawn once at load: it
++   * stayed black, so the rings, orb and shards lost their environment light (black blotches on the rings) and the lake its
++   * ripple shading. Build it again from the kept panorama (same size, so the materials' cubeUV defines still hold) and redraw
++   * the lake passes on the next frame (as after a resize). The plate lake (T0, `?envlake=plate`) also bakes its projector
++   * depth maps once at load (no clouds and no lake reflections without them): bake them again. Old targets are dropped, not
++   * disposed: their GL objects belong to the lost context.
++   */
++  private restoreBaked() {
++    if (this.panorama && this.pmrem) {
++      const gen = new THREE.PMREMGenerator(this.renderer);
++      this.pmrem = gen.fromEquirectangular(this.panorama);
++      gen.dispose();
++      this.panorama.dispose();
++      this.shared.uEnvMap.value = this.pmrem.texture;
++    }
++    if (this.env && this.water && !this.lakeMirror) this.env.bakeDepth(this.renderer, [this.water.group], true);
++    this.lakeSched?.invalidate();
+   }
+ 
+   private trackFps(frameMs: number, now: number) {
+--- a/retrux-web/app/hero/engine/world/PlateEnvironment.ts
++++ b/retrux-web/app/hero/engine/world/PlateEnvironment.ts
+@@ -1822,12 +1822,14 @@
+   /**
+    * Renders the projectors' depth maps once (the proxies, the lake and the projectors never move) and switches
+    * the projection-shadow fill on. `extra` holds the other plate-projected surfaces (the lake planes).
++   * `restored` (AA8 AJ-2, after a WebGL context restore): the old maps belong to the lost context, so they are dropped, not
++   * disposed.
+    */
+-  bakeDepth(renderer: THREE.WebGLRenderer, extra: THREE.Object3D[]) {
++  bakeDepth(renderer: THREE.WebGLRenderer, extra: THREE.Object3D[], restored = false) {
+     const ext = renderer.extensions;
+     if (!ext.has("EXT_color_buffer_float") && !ext.has("EXT_color_buffer_half_float")) return;
+     const p1 = this.bakeProjector(renderer, extra, this.plateCamera, this.plateViewProj, this.coverage);
+-    this.depthTarget?.dispose();
++    if (!restored) this.depthTarget?.dispose();
+     this.depthTarget = p1.target;
+     const cam = this.plateCamera;
+     this.occlusion.uPlateDepth.value = p1.target.texture;
+@@ -1838,7 +1840,7 @@
+     this.occlusion.uPlateDepthOn.value = 1;
+     for (const p of this.projectors) {
+       const b = this.bakeProjector(renderer, extra, p.camera, p.viewProj, p.coverage);
+-      p.target?.dispose();
++      if (!restored) p.target?.dispose();
+       p.target = b.target;
+       const P = EXTRA_PROJECTORS.find((e) => e.key === p.key)!.P;
+       const u = p.uniforms;

@@ -1,0 +1,63 @@
+== q00_rest
+q00 MAIN                       c=(714,336) r~33 box>=248   1.2% >=250   0.6% | disc L10/50/90 201/252/253 sd 24.5 | rim L 207 RGB [188. 210. 230.] B-R +42 | skirt L 195 B-R +50 | frame p99 227 p99.9 252
+      shards n  16813 L med  68.3 p95 146.5 sat med 0.750 hue 211.0
+q00 LANE                       c=(714,337) r~33 box>=248   1.0% >=250   0.0% | disc L10/50/90 206/251/253 sd 20.3 | rim L 216 RGB [198. 219. 232.] B-R +34 | skirt L 203 B-R +43 | frame p99 227 p99.9 251
+      shards n  15127 L med  64.6 p95 150.0 sat med 0.772 hue 210.7
+q00 LANE_prev                  c=(715,337) r~33 box>=248   1.0% >=250   0.0% | disc L10/50/90 206/251/253 sd 20.1 | rim L 216 RGB [198. 219. 232.] B-R +34 | skirt L 200 B-R +45 | frame p99 227 p99.9 251
+      shards n  14982 L med  64.3 p95 148.5 sat med 0.774 hue 210.7
+q00 REF ref_F000               c=(707,336) r~29 box>=248   2.2% >=250   1.9% | disc L10/50/90 192/252/255 sd 25.4 | rim L 224 RGB [211. 227. 238.] B-R +27 | skirt L 208 B-R +39 | frame p99 231 p99.9 253
+      shards n  12540 L med  89.7 p95 163.5 sat med 0.629 hue 212.3
+== q03_eye
+q03 MAIN                       c=(722,354) r~45 box>=248   4.6% >=250   3.7% | disc L10/50/90 226/253/254 sd 11.9 | rim L 229 RGB [216. 232. 240.] B-R +24 | skirt L 220 B-R +30 | frame p99 228 p99.9 254
+      shards n  17785 L med  70.7 p95 145.9 sat med 0.738 hue 211.1
+q03 LANE                       c=(723,354) r~44 box>=248   3.6% >=250   1.0% | disc L10/50/90 214/251/252 sd 21.8 | rim L 223 RGB [209. 225. 238.] B-R +29 | skirt L 214 B-R +35 | frame p99 228 p99.9 252
+      shards n  15110 L med  64.3 p95 146.3 sat med 0.773 hue 210.7
+q03 LANE_prev                  c=(721,354) r~45 box>=248   4.2% >=250   1.2% | disc L10/50/90 226/251/253 sd  9.8 | rim L 229 RGB [216. 232. 239.] B-R +23 | skirt L 215 B-R +35 | frame p99 228 p99.9 252
+      shards n  15491 L med  65.0 p95 146.4 sat med 0.768 hue 210.8
+q03 REF loop_F045              c=(716,350) r~48 box>=248   6.0% >=250   5.0% | disc L10/50/90 198/252/255 sd 24.5 | rim L 229 RGB [218. 231. 242.] B-R +24 | skirt L 221 B-R +30 | frame p99 231 p99.9 255
+      shards n  14686 L med 115.0 p95 168.4 sat med 0.565 hue 215.2
+== p04_expand_pop
+p04 MAIN                       c=(704,348) r~41 box>=248   2.0% >=250   0.9% | disc L10/50/90 207/251/253 sd 19.5 | rim L 216 RGB [202. 219. 233.] B-R +31 | skirt L 216 B-R +32 | frame p99 227 p99.9 253
+      shards n   7124 L med 132.5 p95 160.8 sat med 0.536 hue 224.2
+p04 LANE                       c=(702,347) r~43 box>=248   1.3% >=250   0.0% | disc L10/50/90 213/250/252 sd 16.4 | rim L 224 RGB [213. 227. 237.] B-R +24 | skirt L 221 B-R +28 | frame p99 228 p99.9 252
+      shards n   3147 L med 143.1 p95 162.4 sat med 0.459 hue 224.2
+p04 LANE_prev                  c=(702,349) r~42 box>=248   0.0% >=250   0.0% | disc L10/50/90 208/247/250 sd 17.8 | rim L 221 RGB [211. 223. 233.] B-R +22 | skirt L 218 B-R +27 | frame p99 227 p99.9 249
+      shards n   3514 L med 141.3 p95 161.3 sat med 0.461 hue 224.3
+p04 REF ref_F358               c=(677,432) r~34 box>=248   1.5% >=250   1.3% | disc L10/50/90 190/232/252 sd 21.7 | rim L 232 RGB [218. 235. 243.] B-R +25 | skirt L 216 B-R +39 | frame p99 231 p99.9 251
+      shards n   8304 L med 152.2 p95 177.7 sat med 0.447 hue 222.7
+== p05_expand
+p05 MAIN                       c=(715,399) r~83 box>=248  17.6% >=250  14.0% | disc L10/50/90 197/253/254 sd 25.0 | rim L 217 RGB [201. 220. 240.] B-R +38 | skirt L 196 B-R +47 | frame p99 253 p99.9 254
+      shards n  14629 L med 129.5 p95 159.5 sat med 0.518 hue 224.4
+p05 LANE                       c=(717,389) r~92 box>=248  25.0% >=250  19.3% | disc L10/50/90 252/253/254 sd  6.8 | rim L 229 RGB [220. 231. 241.] B-R +21 | skirt L 204 B-R +35 | frame p99 253 p99.9 254
+      shards n   8007 L med 128.9 p95 161.7 sat med 0.487 hue 224.6
+p05 LANE_prev                  c=(716,398) r~85 box>=248   0.0% >=250   0.0% | disc L10/50/90 209/248/249 sd 17.4 | rim L 226 RGB [216. 227. 237.] B-R +20 | skirt L 206 B-R +33 | frame p99 248 p99.9 250
+      shards n   6899 L med 128.7 p95 159.6 sat med 0.485 hue 224.4
+p05 REF ref_F402               c=(709,408) r~80 box>=248  16.2% >=250  14.3% | disc L10/50/90 198/252/255 sd 24.2 | rim L 228 RGB [215. 230. 242.] B-R +26 | skirt L 215 B-R +34 | frame p99 252 p99.9 255
+      shards n   8492 L med 152.4 p95 174.1 sat med 0.445 hue 222.7
+== p06_sustain
+p06 MAIN                       c=(721,370) r~72 box>=248  16.2% >=250  12.2% | disc L10/50/90 208/253/254 sd 19.5 | rim L 212 RGB [197. 215. 234.] B-R +38 | skirt L 194 B-R +48 | frame p99 253 p99.9 254
+      shards n  10339 L med 128.2 p95 164.3 sat med 0.546 hue 223.9
+p06 LANE                       c=(725,368) r~74 box>=248  17.8% >=250  12.7% | disc L10/50/90 248/253/254 sd 10.4 | rim L 226 RGB [216. 228. 237.] B-R +21 | skirt L 203 B-R +36 | frame p99 252 p99.9 254
+      shards n   3272 L med 137.2 p95 158.2 sat med 0.457 hue 224.5
+p06 LANE_prev                  c=(723,368) r~73 box>=248   0.0% >=250   0.0% | disc L10/50/90 243/247/249 sd 12.4 | rim L 220 RGB [210. 222. 231.] B-R +21 | skirt L 201 B-R +36 | frame p99 247 p99.9 249
+      shards n   4805 L med 140.1 p95 161.1 sat med 0.456 hue 224.3
+p06 REF ref_F420               c=(695,414) r~45 box>=248   2.9% >=250   2.4% | disc L10/50/90 178/236/254 sd 27.6 | rim L 221 RGB [206. 224. 237.] B-R +31 | skirt L 221 B-R +33 | frame p99 236 p99.9 253
+      shards n  18945 L med 136.7 p95 170.2 sat med 0.506 hue 221.5
+== p07_release_snap
+p07 MAIN                       c=(718,418) r~34 box>=248   2.6% >=250   1.6% | disc L10/50/90 219/253/254 sd 14.9 | rim L 223 RGB [210. 225. 235.] B-R +25 | skirt L 215 B-R +31 | frame p99 227 p99.9 253
+      shards n   6004 L med 130.2 p95 158.4 sat med 0.538 hue 224.0
+p07 LANE                       c=(718,417) r~35 box>=248   2.0% >=250   0.0% | disc L10/50/90 218/251/253 sd 15.8 | rim L 220 RGB [208. 223. 233.] B-R +25 | skirt L 212 B-R +33 | frame p99 228 p99.9 252
+      shards n   3420 L med 131.7 p95 160.6 sat med 0.488 hue 224.5
+p07 LANE_prev                  c=(718,417) r~35 box>=248   1.9% >=250   0.0% | disc L10/50/90 221/251/253 sd 13.8 | rim L 222 RGB [211. 224. 234.] B-R +23 | skirt L 207 B-R +35 | frame p99 228 p99.9 252
+      shards n   3320 L med 129.7 p95 160.6 sat med 0.495 hue 224.4
+p07 REF ref_F453               c=(720,387) r~55 box>=248  11.0% >=250   9.9% | disc L10/50/90 217/253/255 sd 15.7 | rim L 242 RGB [236. 243. 248.] B-R +12 | skirt L 203 B-R +38 | frame p99 235 p99.9 255
+      shards n  13039 L med 116.1 p95 168.8 sat med 0.550 hue 218.3
+== p08_release_home
+p08 MAIN                       c=(723,328) r~26 box>=248   0.5% >=250   0.1% | disc L10/50/90 199/243/253 sd 24.0 | rim L 219 RGB [205. 222. 233.] B-R +28 | skirt L 207 B-R +39 | frame p99 227 p99.9 246
+      shards n   7046 L med 119.7 p95 156.3 sat med 0.575 hue 222.8
+p08 LANE                       c=(720,327) r~26 box>=248   0.3% >=250   0.0% | disc L10/50/90 198/248/252 sd 24.1 | rim L 218 RGB [204. 221. 233.] B-R +29 | skirt L 214 B-R +32 | frame p99 227 p99.9 246
+      shards n   4821 L med 108.7 p95 157.7 sat med 0.570 hue 222.3
+p08 LANE_prev                  c=(718,328) r~25 box>=248   0.3% >=250   0.0% | disc L10/50/90 199/247/252 sd 23.4 | rim L 219 RGB [204. 221. 232.] B-R +28 | skirt L 213 B-R +32 | frame p99 227 p99.9 246
+      shards n   4891 L med 111.0 p95 157.3 sat med 0.563 hue 222.3
+p08 REF ref_F460               c=(723,382) r~49 box>=248   5.1% >=250   4.5% | disc L10/50/90 209/243/255 sd 18.9 | rim L 231 RGB [218. 233. 243.] B-R +25 | skirt L 212 B-R +35 | frame p99 234 p99.9 255
+      shards n  11001 L med  95.7 p95 167.0 sat med 0.607 hue 213.1

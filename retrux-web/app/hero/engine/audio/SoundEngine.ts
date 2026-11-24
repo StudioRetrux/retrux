@@ -70,6 +70,17 @@ const NOISE_SECONDS = 2;
 const NOISE_RMS = 0.2;
 /** One-shots start this far ahead, so their attack ramps are never cut short. */
 const LOOKAHEAD = 0.02;
+/**
+ * User, 19 Nov: "ilangin semua sound existing selain dari yang baru" = remove every existing sound except the new
+ * Magnific ones. false: the procedural bed, the press / hold / shatter / chime events and the UI ticks stay silent
+ * (their bus is muted and nothing triggers them); only the score and its freeze / unfreeze one-shots play.
+ */
+const PROCEDURAL = false;
+/**
+ * Magnific score level into the master. v2 (user, 19 Nov: "musicnya too hi profile"): the -22 LUFS low-profile loop
+ * lands near -25.5 LUFS at the default volume 0.8, a background layer.
+ */
+const MUSIC_LEVEL = Math.pow(10, -1.5 / 20);
 /** Envelope tails run this many time constants (about -60 dB) before their source stops. */
 const TAIL = 7;
 const CONTROL_DT = 1 / 30;
@@ -107,7 +118,9 @@ const TICKS: readonly (readonly Tick[])[] = [
   [[1318.51, 2.76, 0.07], [1479.98, 2.41, 0.06], [1760, 3.01, 0.055]],
 ];
 const LISTEN: AddEventListenerOptions = { capture: true, passive: true };
-const UNLOCK_EVENTS = ["pointerdown", "pointerup", "keydown", "touchend"] as const;
+// (22 Nov, client on an iPhone: the Sound icon waved but nothing played. iOS only lets audio start inside touchend / click /
+// keyup-class gestures, so `click` joins the list; each unlock also plays a one-sample silent buffer, see kick().)
+const UNLOCK_EVENTS = ["pointerdown", "pointerup", "keydown", "touchend", "click"] as const;
 
 type Graph = {
   ctx: AudioContext;
@@ -648,6 +661,8 @@ export class SoundEngine {
   private live = 0;
   private suspendTimer = 0;
   private unlockArmed = false;
+  /** iOS: the context a one-sample silent buffer was started in from a gesture (WebKit keeps a resumed context silent until then). */
+  private kicked: AudioContext | null = null;
   private reducedMq: MediaQueryList | null = null;
   private noHoverMq: MediaQueryList | null = null;
   private pointerKind = "mouse";
@@ -661,6 +676,10 @@ export class SoundEngine {
   private nextLap = 0;
   private nextCreak = 0;
   private tickAt = [-Infinity, -Infinity];
+  /** Magnific score (public/hero/audio): looping bed + time-freeze chain, loaded on the first enable. */
+  private music: { src: AudioBufferSourceNode; lp: BiquadFilterNode; gain: GainNode } | null = null;
+  private musicLoading = false;
+  private sfx: { freeze: AudioBuffer | null; unfreeze: AudioBuffer | null } = { freeze: null, unfreeze: null };
   private tickVariant = [-1, -1];
 
   constructor(private getState: () => HeroState) {
@@ -697,7 +716,31 @@ export class SoundEngine {
       this.on = false;
       return;
     }
+    if (on) this.kick();
     await this.applyMaster();
+  }
+
+  /**
+   * Call inside a press gesture while sound is off: builds and starts the context silently (master at 0), so a hold
+   * that follows can switch sound on outside the gesture (autoplay rules; user, 19 Nov: sound starts on the first
+   * press-and-hold). Sleeps again after 4 s if nothing switched it on.
+   */
+  prime() {
+    if (this.disposed || this.on || typeof window === "undefined") return;
+    if (!this.g && !this.build()) return;
+    const g = this.g;
+    if (!g) return;
+    if (g.ctx.state !== "running") {
+      try {
+        void g.ctx.resume().catch(() => undefined);
+      } catch {
+        // Blocked: the hold's own setEnabled re-arms the unlock on the next gesture.
+      }
+    }
+    window.clearTimeout(this.suspendTimer);
+    this.suspendTimer = window.setTimeout(() => {
+      if (!this.audible && this.g === g && running(g.ctx)) g.ctx.suspend().catch(() => undefined);
+    }, 4000);
   }
 
   /** Master volume, 0..1 (default 0.8), applied with a short ramp. */
@@ -718,6 +761,7 @@ export class SoundEngine {
     // Edges are tracked while muted too, so switching on mid-gesture never fires stale one-shots.
     // A click does nothing, so the press sound waits until the press has become a hold.
     const pressEdge = s.holding && !this.wasPressed;
+    const releaseEdge = !s.holding && this.wasPressed;
     this.wasPressed = s.holding;
     if (pressEdge) this.pressTime = 0;
     else if (s.holding) this.pressTime += dt;
@@ -737,6 +781,9 @@ export class SoundEngine {
     if (!g || !this.audible || g.ctx.state !== "running") return;
     const now = g.ctx.currentTime;
     const t = now + LOOKAHEAD;
+    if (pressEdge) this.timeFreeze(g, t, true);
+    if (releaseEdge) this.timeFreeze(g, t, false);
+    if (!PROCEDURAL) return;
     if (pressEdge) this.tink(g, t, s.pointer.nx);
     // The one-frame pop of a hold hits harder than the slow split of a click.
     if (hit) this.shatterHit(g, t, clamp(0.6 + rate / 8, 0.6, 1), s.pointer.nx);
@@ -758,6 +805,7 @@ export class SoundEngine {
 
   /** UI one-shot: three variants per kind, at least 0.4 s apart per kind; hover is ignored for touch. */
   tick(kind: "hover" | "click") {
+    if (!PROCEDURAL) return;
     const g = this.g;
     if (!g || !this.audible || g.ctx.state !== "running" || this.live >= MAX_LIVE) return;
     const i = kind === "hover" ? 0 : 1;
@@ -779,6 +827,75 @@ export class SoundEngine {
     this.track(v);
   }
 
+  /**
+   * The Magnific score: "Silent Lake Beneath Snowy Peaks" (77.5 s seamless loop, -20 LUFS) plus the freeze /
+   * unfreeze one-shots. Decoded once and looped as a buffer (gapless). Missing files leave the procedural bed alone.
+   */
+  private async loadMusic(g: Graph) {
+    if (this.musicLoading || this.music) return;
+    this.musicLoading = true;
+    const get = async (name: string) => {
+      try {
+        const res = await fetch(`/hero/audio/${name}.mp3`);
+        if (!res.ok) return null;
+        return await g.ctx.decodeAudioData(await res.arrayBuffer());
+      } catch {
+        return null;
+      }
+    };
+    // `?music=alt` plays the second v2 candidate (A/B).
+    const alt = typeof location !== "undefined" && new URLSearchParams(location.search).get("music") === "alt";
+    const [bed, freeze, unfreeze] = await Promise.all([get(alt ? "ambient_alt" : "ambient"), get("freeze"), get("unfreeze")]);
+    this.sfx = { freeze, unfreeze };
+    if (!bed || this.disposed || this.g !== g) return;
+    const src = g.ctx.createBufferSource();
+    src.buffer = bed;
+    src.loop = true;
+    const lp = filterNode(g.ctx, "lowpass", 18000, 0.5);
+    const gain = gainNode(g.ctx, 0);
+    src.connect(lp).connect(gain).connect(g.master);
+    const t = g.ctx.currentTime + LOOKAHEAD;
+    src.start(t);
+    // Fade the score in (it is the only bed now: straight into the master, no limiter needed at -8 dBTP).
+    gain.gain.setTargetAtTime(MUSIC_LEVEL, t, 1.2);
+    this.music = { src, lp, gain };
+    // Loaded mid-hold (sound switched on by the first press-and-hold): start in the frozen state, no swell.
+    if (this.wasPressed) {
+      src.playbackRate.setValueAtTime(0.5, t);
+      lp.frequency.setValueAtTime(650, t);
+      gain.gain.setTargetAtTime(MUSIC_LEVEL * db(-3), t, 1.2);
+    }
+  }
+
+  /**
+   * Time freeze (user, 19 Nov: "when press and hold ensure there is a time freeze efek on the back sound"): the score
+   * slows to half speed (an octave down, like time stretching to a stop), closes behind a 650 Hz low-pass and dips 3 dB,
+   * with the freeze swell on top; the release spins it back up with the unfreeze bloom.
+   */
+  private timeFreeze(g: Graph, t: number, on: boolean) {
+    const m = this.music;
+    if (m) {
+      const p = m.src.playbackRate;
+      p.cancelScheduledValues(t);
+      p.setValueAtTime(p.value, t);
+      p.setTargetAtTime(on ? 0.5 : 1, t, on ? 0.45 : 0.32);
+      m.lp.frequency.cancelScheduledValues(t);
+      m.lp.frequency.setValueAtTime(m.lp.frequency.value, t);
+      m.lp.frequency.setTargetAtTime(on ? 650 : 18000, t, on ? 0.35 : 0.5);
+      m.gain.gain.cancelScheduledValues(t);
+      m.gain.gain.setValueAtTime(m.gain.gain.value, t);
+      m.gain.gain.setTargetAtTime(on ? MUSIC_LEVEL * db(-3) : MUSIC_LEVEL, t, 0.4);
+    }
+    const buf = on ? this.sfx.freeze : this.sfx.unfreeze;
+    if (!buf || this.live >= MAX_LIVE) return;
+    const src = g.ctx.createBufferSource();
+    src.buffer = buf;
+    const gain = gainNode(g.ctx, on ? db(-4) : db(-6));
+    src.connect(gain).connect(g.master);
+    // The freeze swell peaks 1.8 s in: start 0.6 s into it so the peak lands as the hold settles.
+    src.start(t, on ? 0.6 : 0);
+  }
+
   /** Fades out quickly, closes the AudioContext and removes every listener. */
   dispose() {
     if (this.disposed) return;
@@ -793,6 +910,12 @@ export class SoundEngine {
     const g = this.g;
     this.g = null;
     this.tension = null;
+    try {
+      this.music?.src.stop();
+    } catch {
+      // already stopped
+    }
+    this.music = null;
     if (!g) return;
     g.ctx.removeEventListener("statechange", this.onState);
     if (g.ctx.state !== "running") return closeContext(g.ctx);
@@ -812,6 +935,8 @@ export class SoundEngine {
       return false;
     }
     ctx.addEventListener("statechange", this.onState);
+    if (!PROCEDURAL) this.g.bus.gain.value = 0;
+    void this.loadMusic(this.g);
     const now = ctx.currentTime;
     this.nextLap = now + rand(1.5, 4);
     this.nextCreak = now + rand(8, 18);
@@ -832,6 +957,7 @@ export class SoundEngine {
       this.nextCreak = Math.max(this.nextCreak, now + rand(6, 14));
     }
     this.wasAudible = audible;
+    this.setSession(audible);
     if (audible) return this.resume();
     // Once the fade is inaudible the context sleeps: no audio CPU while muted or hidden.
     this.suspendTimer = window.setTimeout(() => {
@@ -874,6 +1000,7 @@ export class SoundEngine {
 
   private onUnlock = () => {
     const ctx = this.g?.ctx;
+    if (ctx && this.audible) this.kick();
     if (!ctx || !this.audible || ctx.state === "running" || ctx.state === "closed") {
       this.disarmUnlock();
       return;
@@ -885,6 +1012,47 @@ export class SoundEngine {
       () => undefined,
     );
   };
+
+  /**
+   * Call from inside any user gesture (touchend / click / keyup) while sound may be on: resumes the context and, once per
+   * context, starts a one-sample silent buffer. iOS Safari keeps a context that was created or resumed outside a gesture silent
+   * (sometimes reporting "running") until a source starts inside one.
+   */
+  gesture() {
+    if (this.disposed || !this.on || !this.g) return;
+    this.kick();
+    if (this.g.ctx.state !== "running") void this.resume();
+  }
+
+  private kick() {
+    const ctx = this.g?.ctx;
+    if (!ctx || ctx.state === "closed") return;
+    try {
+      if (ctx.state !== "running") void ctx.resume().catch(() => undefined);
+      if (this.kicked !== ctx) {
+        const src = ctx.createBufferSource();
+        src.buffer = ctx.createBuffer(1, 1, ctx.sampleRate);
+        src.connect(ctx.destination);
+        src.start(0);
+        this.kicked = ctx;
+      }
+    } catch {
+      // Not in a gesture, or a legacy context: the next gesture retries.
+    }
+  }
+
+  /**
+   * iOS / Safari 16.4+: while the visitor has sound on, the page is a media player ("playback"), so the score plays like any
+   * video would; off, the session goes back to the browser's default. No-op elsewhere.
+   */
+  private setSession(audible: boolean) {
+    try {
+      const s = (navigator as Navigator & { audioSession?: { type: string } }).audioSession;
+      if (s && typeof s.type === "string") s.type = audible ? "playback" : "auto";
+    } catch {
+      // Not supported.
+    }
+  }
 
   /** Recovers from outside suspensions (iOS "interrupted", device changes) while sound should play. */
   private onState = () => {

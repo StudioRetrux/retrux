@@ -1,0 +1,3 @@
+run1 move lane 43.55 main 44.8 pairedMed 0.956 paired [0.956, 0.718, 0.966, 1.472, 0.955, 0.722]
+run1 rest lane 40.3 main 36.1 pairedMed 1.135 paired [1.05, 1.092, 1.177, 1.555, 1.648, 0.983]
+run1 hold lane 41.8 main 41.05 pairedMed 1.014 paired [1.223, 1.032, 0.927, 1.089, 0.99, 0.996]

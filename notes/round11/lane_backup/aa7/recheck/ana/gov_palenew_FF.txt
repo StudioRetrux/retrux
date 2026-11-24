@@ -1,0 +1,156 @@
+A=fin B=mr0 C=base box 0,450,700,560 k26-49 T20
+k26 brighter-than-both 3 (bbox 317,532,592,540)  darker-than-both 11
+k27 brighter-than-both 24 (bbox 12,492,601,546)  darker-than-both 52
+k28 brighter-than-both 15 (bbox 4,491,619,556)  darker-than-both 115
+k29 brighter-than-both 30 (bbox 411,490,562,537)  darker-than-both 84
+k30 brighter-than-both 13 (bbox 133,502,655,559)  darker-than-both 4
+k31 brighter-than-both 10 (bbox 130,502,649,559)  darker-than-both 80
+k32 brighter-than-both 24 (bbox 124,501,645,559)  darker-than-both 85
+k33 brighter-than-both 7 (bbox 162,520,589,559)  darker-than-both 47
+k34 brighter-than-both 16 (bbox 136,517,623,559)  darker-than-both 38
+k35 brighter-than-both 13 (bbox 581,558,591,559)  darker-than-both 40
+k36 brighter-than-both 30 (bbox 215,519,587,558)  darker-than-both 27
+k37 brighter-than-both 13 (bbox 108,517,619,559)  darker-than-both 23
+k38 brighter-than-both 61 (bbox 101,485,601,559)  darker-than-both 37
+k39 brighter-than-both 34 (bbox 96,483,609,558)  darker-than-both 93
+k40 brighter-than-both 23 (bbox 88,482,617,558)  darker-than-both 230
+k41 brighter-than-both 19 (bbox 84,481,622,557)  darker-than-both 127
+k42 brighter-than-both 5 (bbox 291,485,544,559)  darker-than-both 135
+k43 brighter-than-both 94 (bbox 75,512,540,555)  darker-than-both 113
+k44 brighter-than-both 16 (bbox 77,517,546,558)  darker-than-both 94
+k45 brighter-than-both 36 (bbox 74,515,543,557)  darker-than-both 115
+k46 brighter-than-both 71 (bbox 67,512,624,556)  darker-than-both 102
+k47 brighter-than-both 92 (bbox 64,511,542,555)  darker-than-both 173
+k48 brighter-than-both 64 (bbox 62,510,540,554)  darker-than-both 102
+k49 brighter-than-both 21 (bbox 168,509,591,555)  darker-than-both 156
+total brighter-than-both 734  darker-than-both 2083
+A=mr0 B=fin C=base box 0,450,700,560 k26-49 T20
+k26 brighter-than-both 6 (bbox 266,522,276,537)  darker-than-both 0
+k27 brighter-than-both 4 (bbox 267,507,641,536)  darker-than-both 3
+k28 brighter-than-both 0  darker-than-both 0
+k29 brighter-than-both 135 (bbox 6,490,578,548)  darker-than-both 2
+k30 brighter-than-both 40 (bbox 303,490,370,545)  darker-than-both 4
+k31 brighter-than-both 0  darker-than-both 0
+k32 brighter-than-both 0  darker-than-both 1
+k33 brighter-than-both 6 (bbox 124,542,304,558)  darker-than-both 6
+k34 brighter-than-both 0  darker-than-both 0
+k35 brighter-than-both 2 (bbox 113,556,113,557)  darker-than-both 1
+k36 brighter-than-both 6 (bbox 108,556,575,558)  darker-than-both 13
+k37 brighter-than-both 3 (bbox 564,557,566,557)  darker-than-both 20
+k38 brighter-than-both 0  darker-than-both 5
+k39 brighter-than-both 3 (bbox 210,516,212,516)  darker-than-both 13
+k40 brighter-than-both 0  darker-than-both 0
+k41 brighter-than-both 0  darker-than-both 0
+k42 brighter-than-both 2 (bbox 81,554,82,554)  darker-than-both 0
+k43 brighter-than-both 0  darker-than-both 0
+k44 brighter-than-both 1 (bbox 72,553,72,553)  darker-than-both 1
+k45 brighter-than-both 13 (bbox 77,512,520,554)  darker-than-both 7
+k46 brighter-than-both 2 (bbox 451,557,452,557)  darker-than-both 1
+k47 brighter-than-both 3 (bbox 268,507,519,558)  darker-than-both 2
+k48 brighter-than-both 1 (bbox 68,551,68,551)  darker-than-both 9
+k49 brighter-than-both 2 (bbox 511,550,512,550)  darker-than-both 13
+total brighter-than-both 229  darker-than-both 101
+A=fin B=mr0 C=base box 0,450,700,560 k51-74 T20
+k51 brighter-than-both 77 (bbox 174,489,558,556)  darker-than-both 190
+k52 brighter-than-both 35 (bbox 233,475,459,553)  darker-than-both 162
+k53 brighter-than-both 74 (bbox 140,474,457,553)  darker-than-both 211
+k54 brighter-than-both 51 (bbox 174,486,562,556)  darker-than-both 213
+k55 brighter-than-both 69 (bbox 240,473,565,555)  darker-than-both 201
+k56 brighter-than-both 78 (bbox 178,473,568,550)  darker-than-both 225
+k57 brighter-than-both 56 (bbox 283,471,572,550)  darker-than-both 187
+k58 brighter-than-both 55 (bbox 300,471,472,550)  darker-than-both 201
+k59 brighter-than-both 49 (bbox 198,470,504,550)  darker-than-both 155
+k60 brighter-than-both 30 (bbox 203,502,479,548)  darker-than-both 159
+k61 brighter-than-both 36 (bbox 199,470,479,547)  darker-than-both 159
+k62 brighter-than-both 31 (bbox 203,502,482,547)  darker-than-both 199
+k63 brighter-than-both 49 (bbox 207,501,486,546)  darker-than-both 138
+k64 brighter-than-both 83 (bbox 209,500,489,546)  darker-than-both 113
+k65 brighter-than-both 117 (bbox 213,501,490,546)  darker-than-both 152
+k66 brighter-than-both 125 (bbox 219,499,236,507)  darker-than-both 192
+k67 brighter-than-both 103 (bbox 225,499,492,545)  darker-than-both 170
+k68 brighter-than-both 109 (bbox 130,497,494,546)  darker-than-both 88
+k69 brighter-than-both 105 (bbox 134,496,498,546)  darker-than-both 80
+k70 brighter-than-both 105 (bbox 139,496,501,545)  darker-than-both 112
+k71 brighter-than-both 109 (bbox 142,496,500,546)  darker-than-both 101
+k72 brighter-than-both 108 (bbox 144,496,502,546)  darker-than-both 126
+k73 brighter-than-both 106 (bbox 147,496,504,546)  darker-than-both 129
+k74 brighter-than-both 114 (bbox 150,496,509,546)  darker-than-both 135
+total brighter-than-both 1874  darker-than-both 3798
+A=mr0 B=fin C=base box 0,450,700,560 k51-74 T20
+k51 brighter-than-both 4 (bbox 197,477,268,550)  darker-than-both 1
+k52 brighter-than-both 34 (bbox 59,476,281,550)  darker-than-both 0
+k53 brighter-than-both 0  darker-than-both 4
+k54 brighter-than-both 1 (bbox 304,475,304,475)  darker-than-both 1
+k55 brighter-than-both 9 (bbox 306,474,313,475)  darker-than-both 0
+k56 brighter-than-both 0  darker-than-both 0
+k57 brighter-than-both 0  darker-than-both 0
+k58 brighter-than-both 0  darker-than-both 4
+k59 brighter-than-both 0  darker-than-both 2
+k60 brighter-than-both 0  darker-than-both 0
+k61 brighter-than-both 0  darker-than-both 10
+k62 brighter-than-both 0  darker-than-both 23
+k63 brighter-than-both 0  darker-than-both 17
+k64 brighter-than-both 0  darker-than-both 53
+k65 brighter-than-both 0  darker-than-both 39
+k66 brighter-than-both 0  darker-than-both 25
+k67 brighter-than-both 0  darker-than-both 66
+k68 brighter-than-both 1 (bbox 314,521,314,521)  darker-than-both 39
+k69 brighter-than-both 0  darker-than-both 33
+k70 brighter-than-both 1 (bbox 640,481,640,481)  darker-than-both 21
+k71 brighter-than-both 0  darker-than-both 5
+k72 brighter-than-both 0  darker-than-both 0
+k73 brighter-than-both 0  darker-than-both 0
+k74 brighter-than-both 2 (bbox 277,513,278,513)  darker-than-both 0
+total brighter-than-both 52  darker-than-both 343
+A=fin B=mr0 C=base box 0,450,700,560 k76-99 T20
+k76 brighter-than-both 24 (bbox 162,496,650,542)  darker-than-both 875
+k77 brighter-than-both 28 (bbox 180,498,651,542)  darker-than-both 839
+k78 brighter-than-both 5 (bbox 179,498,180,500)  darker-than-both 828
+k79 brighter-than-both 8 (bbox 244,499,246,503)  darker-than-both 820
+k80 brighter-than-both 4 (bbox 154,496,161,497)  darker-than-both 713
+k81 brighter-than-both 67 (bbox 153,497,649,540)  darker-than-both 795
+k82 brighter-than-both 66 (bbox 150,497,259,516)  darker-than-both 841
+k83 brighter-than-both 57 (bbox 144,498,163,502)  darker-than-both 708
+k84 brighter-than-both 71 (bbox 139,499,250,517)  darker-than-both 693
+k85 brighter-than-both 73 (bbox 134,499,642,549)  darker-than-both 726
+k86 brighter-than-both 27 (bbox 128,500,630,546)  darker-than-both 692
+k87 brighter-than-both 23 (bbox 123,501,628,546)  darker-than-both 858
+k88 brighter-than-both 6 (bbox 117,501,123,546)  darker-than-both 913
+k89 brighter-than-both 10 (bbox 111,543,114,546)  darker-than-both 840
+k90 brighter-than-both 19 (bbox 103,543,108,547)  darker-than-both 911
+k91 brighter-than-both 15 (bbox 97,544,602,556)  darker-than-both 955
+k92 brighter-than-both 5 (bbox 94,545,96,546)  darker-than-both 853
+k93 brighter-than-both 2 (bbox 88,546,89,546)  darker-than-both 1014
+k94 brighter-than-both 1 (bbox 253,532,253,532)  darker-than-both 848
+k95 brighter-than-both 2 (bbox 249,532,250,532)  darker-than-both 755
+k96 brighter-than-both 6 (bbox 203,523,587,549)  darker-than-both 614
+k97 brighter-than-both 3 (bbox 244,532,245,533)  darker-than-both 332
+k98 brighter-than-both 3 (bbox 581,546,583,546)  darker-than-both 284
+k99 brighter-than-both 32 (bbox 265,503,273,510)  darker-than-both 289
+total brighter-than-both 557  darker-than-both 17996
+A=mr0 B=fin C=base box 0,450,700,560 k76-99 T20
+k76 brighter-than-both 1 (bbox 150,529,150,529)  darker-than-both 15
+k77 brighter-than-both 2 (bbox 150,484,247,529)  darker-than-both 23
+k78 brighter-than-both 0  darker-than-both 8
+k79 brighter-than-both 15 (bbox 142,489,330,522)  darker-than-both 5
+k80 brighter-than-both 29 (bbox 139,490,303,541)  darker-than-both 0
+k81 brighter-than-both 0  darker-than-both 0
+k82 brighter-than-both 18 (bbox 141,490,292,542)  darker-than-both 0
+k83 brighter-than-both 44 (bbox 136,486,290,543)  darker-than-both 3
+k84 brighter-than-both 2 (bbox 559,543,560,543)  darker-than-both 0
+k85 brighter-than-both 7 (bbox 129,492,566,543)  darker-than-both 2
+k86 brighter-than-both 17 (bbox 133,488,580,543)  darker-than-both 0
+k87 brighter-than-both 5 (bbox 572,543,576,543)  darker-than-both 0
+k88 brighter-than-both 5 (bbox 114,489,196,493)  darker-than-both 0
+k89 brighter-than-both 15 (bbox 193,489,322,499)  darker-than-both 3
+k90 brighter-than-both 0  darker-than-both 0
+k91 brighter-than-both 76 (bbox 114,505,541,546)  darker-than-both 0
+k92 brighter-than-both 190 (bbox 94,500,544,549)  darker-than-both 1
+k93 brighter-than-both 8 (bbox 246,536,546,546)  darker-than-both 0
+k94 brighter-than-both 10 (bbox 84,546,547,548)  darker-than-both 0
+k95 brighter-than-both 6 (bbox 82,546,549,547)  darker-than-both 0
+k96 brighter-than-both 5 (bbox 546,546,550,546)  darker-than-both 0
+k97 brighter-than-both 2 (bbox 549,546,550,546)  darker-than-both 0
+k98 brighter-than-both 0  darker-than-both 0
+k99 brighter-than-both 0  darker-than-both 0
+total brighter-than-both 457  darker-than-both 60

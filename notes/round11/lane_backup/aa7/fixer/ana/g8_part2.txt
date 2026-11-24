@@ -1,0 +1,2 @@
+G8a_final?mirrorcost=0_vs_final_default        DIFFER    final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 17 differ: rx-lake-sky|ShaderMaterial,rx-lake-sky-late|ShaderMaterial,rx-plate-baked-mirror|ShaderMaterial | logs 0/0
+G8f_final_T0_vs_BASE_T0                        IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0

@@ -1,0 +1,1194 @@
+diff --git a/retrux-web/app/hero/engine/CameraRig.ts b/retrux-web/app/hero/engine/CameraRig.ts
+index e9ef830..506ef23 100644
+--- a/retrux-web/app/hero/engine/CameraRig.ts
++++ b/retrux-web/app/hero/engine/CameraRig.ts
+@@ -2,6 +2,7 @@ import * as THREE from "three";
+ import { HERO_CENTER, REF_ASPECT, REST_CAMERA } from "./config";
+ import { CAM_TARGETS } from "./curves";
+ import type { Drivers } from "./Choreography";
++import { HOLD_SPIN, type HoldMode } from "./hero/HoldR11";
+ import { lerp, Spring } from "./math";
+ import type { PlateCoverage } from "./world/PlateEnvironment";
+ 
+@@ -41,6 +42,22 @@ export class CameraRig {
+   private coverage: PlateCoverage | null = null;
+   private aspect = REF_ASPECT;
+   reducedMotion = false;
++  /**
++   * r11 (default): the hold dolly follows the measured EXPAND_CAM / RELEASE_CAM (the choreography driver, itself blended at
++   * every phase change) instead of the omega-14 springs, which lagged the lunge by ~0.3 s (live F358: 37 % of the dolly where
++   * the reference shows ~78 %). The full-hold pose is unchanged (the hold plates stay registered). "r10" (`?hold=r10`): the
++   * springs, as before.
++   */
++  holdMode: HoldMode = "r11";
++  /**
++   * Rotating hold (r11, fix round 2): the share of the hold dolly the camera takes on this screen. 1 on landscape screens
++   * (exactly the step-3 dolly); on narrow portrait screens the dolly stops where ring A (HOLD_SPIN.fitR) still fits the
++   * frame's width with the guard margin (390x844: the full dolly cut the outer ring by ~92-100 px on both sides). The
++   * camera then stays on the rest -> hold path, so the projected plates stay registered. HeroEngine scales the hero's lift
++   * by the same share.
++   */
++  holdFit = 1;
++  private tanV = 0;
+ 
+   constructor() {
+     this.setAspect(REF_ASPECT);
+@@ -61,6 +78,7 @@ export class CameraRig {
+     const maxTanV = this.coverage ? tanV0 * Math.min(this.coverage.top, this.coverage.bottom) * 0.97 : tanV0 * 1.04;
+     const tanV = Math.min(tanH0 / aspect, maxTanV);
+     this.camera.fov = (2 * Math.atan(tanV)) / DEG;
++    this.tanV = tanV;
+     this.camera.aspect = aspect;
+     this.camera.updateProjectionMatrix();
+     // How far the vertical pan may go before the frame's top / bottom edge leaves the plate (with a margin): on a
+@@ -112,11 +130,15 @@ export class CameraRig {
+     el = lerp(el, T.collapse.el, d.camCollapse);
+     pitch = lerp(pitch, T.collapse.pitch, d.camCollapse);
+ 
+-    r = lerp(r, T.expand.r, d.camExpand);
+-    el = lerp(el, T.expand.el, d.camExpand);
+-    // A pure rotation on top of the hold projector's pose (no parallax): the hold framed the background ~20 px too high
+-    // (QC round 7, T09: right iceberg peak 440 vs F420's 460).
+-    pitch = lerp(pitch, T.expand.pitch + HOLD_PITCH_TRIM, d.camExpand);
++    // r11 (rotating hold) and r11a (step-2 arrangement) share the measured dolly; r10 keeps the springs.
++    const r11 = this.holdMode !== "r10";
++    if (!r11) {
++      r = lerp(r, T.expand.r, d.camExpand);
++      el = lerp(el, T.expand.el, d.camExpand);
++      // A pure rotation on top of the hold projector's pose (no parallax): the hold framed the background ~20 px too high
++      // (QC round 7, T09: right iceberg peak 440 vs F420's 460).
++      pitch = lerp(pitch, T.expand.pitch + HOLD_PITCH_TRIM, d.camExpand);
++    }
+ 
+     // Intro: rise from low and close to the rest pose.
+     const k = 1 - intro;
+@@ -129,9 +151,33 @@ export class CameraRig {
+     this.az.target = az;
+     this.el.target = el;
+     this.pitch.target = pitch;
++    if (r11) {
++      // The hold dolly on top of the sprung idle / pointer camera, exactly on the measured curve (any smoothing lags the
++      // lunge: omega 60 still left the live pop at 70 % of the dolly where the reference shows ~78 %).
++      this.holdFit = this.holdMode === "r11" ? this.fitShare() : 1;
++      const k = d.camExpand * this.holdFit;
++      const rr = lerp(this.r.update(dt), T.expand.r, k);
++      const ee = lerp(this.el.update(dt), T.expand.el, k);
++      const pp = lerp(this.pitch.update(dt), T.expand.pitch + HOLD_PITCH_TRIM, k);
++      this.apply(rr, this.az.update(dt), ee, pp, time);
++      return;
++    }
+     this.apply(this.r.update(dt), this.az.update(dt), this.el.update(dt), this.pitch.update(dt), time);
+   }
+ 
++  /** Share of the hold dolly at which a ring of radius HOLD_SPIN.fitR spans the frame's width less the guard margin (<= 1). */
++  private fitShare() {
++    const R = HOLD_SPIN.fitR;
++    if (!(R > 0)) return 1;
++    const a = this.aspect;
++    const tanH = this.tanV * a * (1 - HOLD_SPIN.guardMargin / Math.max(0.1, a));
++    const need = R / Math.max(tanH, 1e-3);
++    const r0 = CAM_TARGETS.rest.r;
++    const r1 = CAM_TARGETS.expand.r;
++    if (need <= r1) return 1;
++    return Math.max(0, Math.min(1, (r0 - need) / (r0 - r1)));
++  }
++
+   private apply(r: number, azDeg: number, elDeg: number, pitchDeg: number, time: number) {
+     const az = azDeg * DEG;
+     const el = elDeg * DEG;
+diff --git a/retrux-web/app/hero/engine/Choreography.ts b/retrux-web/app/hero/engine/Choreography.ts
+index 37c18ff..2ef6d1c 100644
+--- a/retrux-web/app/hero/engine/Choreography.ts
++++ b/retrux-web/app/hero/engine/Choreography.ts
+@@ -11,6 +11,23 @@ import {
+ } from "./curves";
+ import { clamp, damp, lerp, sampleCurve, sampleKeys, smoothstep, Spring } from "./math";
+ import type { HeroState } from "./types";
++import {
++  copyHoldParams,
++  createHoldParams,
++  expandCamR11,
++  HOLD_KEYS,
++  HOLD_SPIN,
++  holdParams,
++  releaseParams,
++  RELEASE_FROM_TP,
++  releaseCamR11,
++  spinOpenAt,
++  spinRateAt,
++  SPIN_S3,
++  zeroHoldParams,
++  type HoldMode,
++  type HoldParams,
++} from "./hero/HoldR11";
+ 
+ /**
+  * Interaction state machine, reconstructed from the reference video:
+@@ -71,12 +88,30 @@ export type Drivers = {
+   spin: number;
+   /** 0..1 visual excitement for shaders / audio. */
+   energy: number;
++  /** Round 11 hold pose (HoldR11.ts, `?hold=r11a`); all zero in idle and in the other modes. */
++  hold: HoldParams;
++  /** Rotating hold (r11): 0..1 weight of rings C / D's extra flip (Rings integrates and lands it); 0 at rest and in r10 / r11a. */
++  cdSpin: number;
+ };
+ 
+ /** A press shorter than this is a click (no reaction); the hold timeline starts here. */
+ const HOLD_ARM = 0.25;
+ const COLLAPSE_LEN = 2.5;
+ const RELEASE_LEN = 0.8;
++/**
++ * r11: ring A's hand-back to the tumble (alignA's fall, the r11 hold weight and the tumble-clock freeze) runs 0.55-1.0 s
++ * instead of 0.55-0.85 s, and the release lasts until those fades have ended. (At 0.8 s the idle phase cut the last ~10 %
++ * of the hand-back into one frame: a 15 deg step, the turn limit; and the 0.3 s hand-back reached 15 deg / frame at some
++ * press moments.)
++ */
++const RELEASE_LEN_R11 = 1.05;
++const R11_HANDBACK_END = 1.0;
++/**
++ * r11: the dolly keeps its momentum for this long after a release (s): the release curve starts at rest, so a release during
++ * the lunge would otherwise stop the camera dead in one frame. The offset v0 t (1 - t / T)^2 matches the camera's speed at the
++ * release and is gone after T (a release from a settled hold moves < 1 px).
++ */
++const R11_CAM_KICK_T = 0.2;
+ /** Seconds over which a phase change blends from the drivers' previous values. */
+ const PHASE_BLEND = 0.35;
+ const DWELL_SPEED = 40; // px/s
+@@ -96,15 +131,55 @@ export class Choreography {
+   readonly drivers: Drivers = {
+     orbitAz: 0, orbitEl: 0, tilt: 0, camCollapse: 0, camExpand: 0, align: 0, open: 0, flatten: 0, splay: 0,
+     splitB: 0, spreadA: 0, relaxA: 0, tiltA: 0, popPose: 0, alignA: 0, alignInner: 0, gapA: 0,
+-    expandPose: 0, faceInner: 0, portal: 0, bandInner: 1, fogHold: 0, spin: 1, energy: 0,
++    expandPose: 0, faceInner: 0, portal: 0, bandInner: 1, fogHold: 0, spin: 1, energy: 0, hold: createHoldParams(), cdSpin: 0,
+   };
++  /**
++   * "r11" (default: the rotating hold), "r11a" (`?hold=r11a`: the step-2 arrangement) or "r10" (`?hold=r10`: the round-10 hold,
++   * unchanged). Set by HeroEngine before the first update.
++   */
++  holdMode: HoldMode = "r11";
++  /** r11: the hold pose when the pointer went up (the release starts from it) and the phase-change blend source. */
++  private holdRel = createHoldParams();
++  private holdFrom: HoldParams | null = null;
++  private holdNow = createHoldParams();
++  /** r11: camExpand's last value and speed (per s), the release's momentum term, and whether a phase change blends it. */
++  private camPrev = 0;
++  private camVel = 0;
++  /**
++   * r11 (fix round 2): the opening's velocity, kept like the camera's at a re-press (openKick over openKickT s, C1 at both
++   * ends); without it the closing opening stopped dead when a re-press became a hold (A's quarters: up to 4 m/s -> 0 in one
++   * frame, 239 m/s^2). openBlend false skips the phase blend for the opening there (it already starts where it is).
++   */
++  private openPrev = 0;
++  private openVel = 0;
++  private openKick = 0;
++  private openKickT = 0;
++  private openBlend = true;
++  /**
++   * r11 (fix round 2): the time the values a re-pressed hold starts from belong to (the previous frame; the switch happens
++   * inside update), so the momentum terms advance by v dt in the switch frame instead of repeating last frame's value (a
++   * one-frame stop of the camera and the opening at every re-press; step 3 had it too). lastDt: this update's dt.
++   */
++  private kickAnchor = 0;
++  private lastDt = 0;
++  private camKick = 0;
++  private camBlend = true;
++  /**
++   * r11 (rotating hold): a press during the release, still inside the click window. The release keeps running (a click does
++   * nothing, so it must not cut the release short); once the press lasts HOLD_ARM it becomes a hold that starts from the
++   * current clock rate, opening and camera (spinFrom / openFrom / camFrom), with the camera's momentum (camKick).
++   */
++  private rePress = false;
++  private spinFrom = 1;
++  private openFrom = 0;
++  private camFrom = 0;
+   phase: Phase = "idle";
+   private phaseT = 0;
+   private now = 0;
+   private pressAt = 0;
+   /** The current press has lasted HOLD_ARM: it is a hold, not a click. */
+   private armed = false;
+-  private releaseFrom = { splitB: 0, cam: 0, spreadA: 0, relaxA: 0, tiltA: 0, expandPose: 0, faceInner: 0 };
++  private releaseFrom = { splitB: 0, cam: 0, spreadA: 0, relaxA: 0, tiltA: 0, expandPose: 0, faceInner: 0, spin: 1 };
+   /** The last release (time, dolly progress then): the fog bank lingers from it (drivers.fogHold). */
+   private fogFrom = { at: -1e9, from: 0 };
+   /** Driver values when the phase last changed; the new phase blends from them over PHASE_BLEND. */
+@@ -135,8 +210,14 @@ export class Choreography {
+   /** Debug / validation: show `phase` exactly `t` seconds into its timeline (null resumes). */
+   debugPose(phase: Phase | null, t = 0) {
+     this.debug = phase ? { phase, t } : null;
++    this.rePress = false;
++    this.spinFrom = 1;
++    this.openFrom = 0;
++    this.camFrom = 0;
++    this.openKick = 0;
+     if (!phase) this.toIdle();
+     this.blendFrom = null;
++    this.holdFrom = null;
+   }
+ 
+   /** Debug / validation: pin the pointer at normalized coordinates (null releases it). */
+@@ -208,6 +289,13 @@ export class Choreography {
+     if (this.state.pressed === down) return;
+     this.state.pressed = down;
+     if (down) {
++      if (this.phase === "release" && this.holdMode === "r11") {
++        // Rotating hold: the release goes on through the click window (see rePress).
++        this.rePress = true;
++        this.pressAt = this.now;
++        this.armed = false;
++        return;
++      }
+       // A press during the release return starts a new hold from wherever the rings are (blended).
+       if (this.phase === "idle" || this.phase === "release") {
+         if (this.phase === "release") this.setPhase("press");
+@@ -218,13 +306,23 @@ export class Choreography {
+         this.pressAt = this.now;
+         this.armed = false;
+       }
++    } else if (this.rePress) {
++      // A click during the release: nothing happens, the release goes on.
++      this.rePress = false;
+     } else if (this.phase === "press" && !this.armed) {
+       // A click does nothing.
+       this.phase = "idle";
+       this.phaseT = 0;
+     } else if (this.phase === "press" || this.phase === "expand") {
+       const d = this.drivers;
+-      this.releaseFrom = { splitB: d.splitB, cam: d.camExpand, spreadA: d.spreadA, relaxA: d.relaxA, tiltA: d.tiltA, expandPose: d.expandPose, faceInner: d.faceInner };
++      // (r11: the clock rate the hold was easing to, so the release ramps it back up from there and never dips first.)
++      const tpNow = Math.max(0, this.now - this.pressAt - HOLD_ARM);
++      const spinFrom = this.phase === "expand" ? this.spinFrom + (spinRateAt(tpNow) - 1) * (this.spinFrom - HOLD_SPIN.slow) / (1 - HOLD_SPIN.slow) : 1;
++      this.releaseFrom = { splitB: d.splitB, cam: d.camExpand, spreadA: d.spreadA, relaxA: d.relaxA, tiltA: d.tiltA, expandPose: d.expandPose, faceInner: d.faceInner, spin: spinFrom };
++      if (this.holdMode !== "r10") {
++        if (this.holdMode === "r11a") copyHoldParams(d.hold, this.holdRel);
++        this.camKick = this.camVel;
++      }
+       this.fogFrom = { at: this.now, from: Math.max(d.fogHold, d.camExpand) };
+       this.setPhase("release");
+       // bandInner only shows through alignInner (0 in a hold), so the release may start it at its own first value:
+@@ -237,6 +335,29 @@ export class Choreography {
+   private setPhase(phase: Phase) {
+     const d = this.drivers;
+     this.blendFrom = Object.fromEntries(BLENDED.map((k) => [k, d[k]])) as Record<(typeof BLENDED)[number], number>;
++    // The release starts from the hold pose itself (releaseParams at t = 0 is that pose), so only the other phase changes
++    // blend the hold vector; blending it at the release too delayed the whole release by ~0.1 s.
++    if (this.holdMode === "r11" && phase === "expand") {
++      // Rotating hold: the hold starts from the current clock rate, opening and camera (1 / 0 / 0 from rest; mid-release
++      // values after a re-press), keeping the camera's momentum.
++      this.spinFrom = d.spin;
++      this.openFrom = d.spreadA;
++      this.camFrom = d.camExpand;
++      this.camKick = this.camVel;
++      // A closing opening keeps closing for a moment and turns smoothly; the extra closing v tp (1 - tp / T)^2 dips at most
++      // 4 v T / 27, held to 90 % of the opening by T (<= 0.35 s).
++      this.openKick = SPIN_S3 ? 0 : Math.min(0, this.openVel);
++      this.kickAnchor = this.now - this.lastDt;
++      this.openKickT = this.openKick < 0 ? Math.min(0.35, (0.9 * 27 * d.spreadA) / (4 * -this.openKick)) : 0;
++    }
++    if (this.holdMode !== "r10") {
++      if (this.holdMode === "r11a") this.holdFrom = phase === "release" ? null : copyHoldParams(d.hold, this.holdFrom ?? createHoldParams());
++      // The dolly follows its measured curve exactly whenever the new phase starts where the camera is (the release, a hold
++      // from rest); only a jump (a re-press during a release) is blended.
++      const tp0 = Math.max(0, this.now - this.pressAt - HOLD_ARM);
++      this.camBlend = !(phase === "release" || (phase === "expand" && (this.holdMode === "r11" || Math.abs(d.camExpand - expandCamR11(tp0)) < 0.002)));
++      this.openBlend = !(this.holdMode === "r11" && !SPIN_S3 && phase === "expand");
++    }
+     this.blendT = 0;
+     this.phase = phase;
+     this.phaseT = 0;
+@@ -265,6 +386,7 @@ export class Choreography {
+ 
+   update(dt: number) {
+     this.now += dt;
++    this.lastDt = dt;
+     this.phaseT += dt;
+     const s = this.state;
+     if (this.debug) {
+@@ -272,6 +394,7 @@ export class Choreography {
+       this.phase = g.phase === "press" ? "expand" : g.phase;
+       this.phaseT = g.t;
+       this.blendFrom = null;
++      this.holdFrom = null;
+       if (g.phase === "expand" || g.phase === "press") {
+         // t = seconds into the hold timeline (after the click window).
+         this.pressAt = this.now - g.t - HOLD_ARM;
+@@ -282,7 +405,11 @@ export class Choreography {
+         s.holding = false;
+       }
+       if (g.phase === "release") {
+-        this.releaseFrom = { splitB: 1, cam: 0.967, spreadA: 1, relaxA: 1, tiltA: 1, expandPose: 1, faceInner: 1 };
++        this.releaseFrom = { splitB: 1, cam: 0.967, spreadA: 1, relaxA: 1, tiltA: 1, expandPose: 1, faceInner: 1, spin: HOLD_SPIN.slow };
++        if (this.holdMode !== "r10") {
++          if (this.holdMode === "r11a") holdParams(RELEASE_FROM_TP, this.holdRel);
++          this.camKick = 0;
++        }
+         this.fogFrom = { at: this.now - g.t, from: 0.967 };
+       } else {
+         this.fogFrom = { at: -1e9, from: 0 };
+@@ -330,19 +457,43 @@ export class Choreography {
+     // --- phases
+     let camCollapse = 0, camExpand = 0, open = 0, flatten = 0, splay = 0, splitB = 0;
+     let spreadA = 0, relaxA = 0, tiltA = 0, expandPose = 0, faceInner = 0, spin = 1, energy = 0.3 * d.tilt;
+-    let popPose = 0, alignA = 0, alignInner = 0, gapA = 0, portal = 0, bandInner = 1;
++    let popPose = 0, alignA = 0, alignInner = 0, gapA = 0, portal = 0, bandInner = 1, cdSpin = 0;
+     const t = this.phaseT;
+ 
++    if (this.rePress && this.now - this.pressAt >= HOLD_ARM) {
++      // Rotating hold: a press during the release has become a hold.
++      this.rePress = false;
++      this.setPhase("expand");
++      this.setHolding(true);
++    }
+     if (this.phase === "press" && !this.armed && this.now - this.pressAt >= HOLD_ARM) {
+       // Held past the click window: this is a hold.
+       this.setPhase("expand");
+       this.setHolding(true);
+     }
+-    if (this.phase === "expand") {
++    if (this.phase === "expand" && this.holdMode === "r11") {
++      // The rotating hold (the user's rule, 2026-11-15): no alignment, no pop pose, no arrangement. The tumble keeps running
++      // in its own direction, slowed (spin), ring A's quarters and ring B's halves open on top (spreadA / splitB, offsets in
++      // each ring's own frame), rings C / D flip forward (cdSpin), and the camera dollies in on the measured curve.
++      const tp = Math.max(0, this.now - this.pressAt - HOLD_ARM);
++      // From rest spinFrom = 1, openFrom = camFrom = 0: exactly the curves; after a re-press they start where things are.
++      camExpand = this.camFrom + (1 - this.camFrom) * expandCamR11(tp);
++      // (Momentum terms from the values' own time: tk >= one frame in the switch frame; step 3 used tp, `?spin=s3`.)
++      const tk = SPIN_S3 ? tp : Math.max(tp, this.now - this.kickAnchor);
++      if (tk < R11_CAM_KICK_T) camExpand += this.camKick * tk * (1 - tk / R11_CAM_KICK_T) ** 2;
++      let open = this.openFrom + (1 - this.openFrom) * spinOpenAt(tp);
++      if (this.openKick < 0 && tk < this.openKickT) open = Math.max(0, open + this.openKick * tk * (1 - tk / this.openKickT) ** 2);
++      spreadA = open;
++      splitB = open;
++      cdSpin = smoothstep(HOLD_SPIN.cd0, HOLD_SPIN.cd1, tp);
++      spin = this.spinFrom - (this.spinFrom - HOLD_SPIN.slow) * smoothstep(HOLD_SPIN.slow0, HOLD_SPIN.slow1, tp);
++      energy = Math.max(energy, smoothstep(0, 0.9, tp));
++    } else if (this.phase === "expand") {
+       const tp = this.now - this.pressAt - HOLD_ARM;
+       // The rings pass through the frontal alignment as the charge starts (F335-F343).
+-      align = Math.max(align, bump(tp, 0.0, 0.22, 0.32, 0.72));
+-      camExpand = sampleKeys(EXPAND_CAM, tp);
++      align = Math.max(align, this.holdMode === "r11a" ? smoothstep(0.0, 0.22, tp) : bump(tp, 0.0, 0.22, 0.32, 0.72));
++      if (this.holdMode === "r11a") holdParams(Math.max(0, tp), this.holdNow);
++      camExpand = this.holdMode === "r11a" ? expandCamR11(tp) : sampleKeys(EXPAND_CAM, tp);
+       splitB = tp < 0.65 ? 0 : sampleCurve(EXPAND_POP, tp - 0.65, 0.5);
+       // The quarters drift out through the sustain (~80 % at F402, full by F420).
+       spreadA = smoothstep(1.05, 2.8, tp);
+@@ -368,12 +519,27 @@ export class Choreography {
+       spin = 1 - 0.35 * bump(t, 0.3, 0.6, 1.8, 2.2);
+       energy = Math.max(energy, 0.7 * bump(t, 0, 0.3, 1.9, 2.4));
+       if (t >= COLLAPSE_LEN) this.toIdle();
++    } else if (this.phase === "release" && this.holdMode === "r11") {
++      // Rotating hold, release: the openings close, the clock speeds back up from where it was (never reversed, never reset),
++      // the camera returns on the measured curve (with the lunge's momentum if it is cut short); C / D land their flip forward.
++      const f = this.releaseFrom;
++      camExpand = f.cam * (1 - releaseCamR11(t));
++      if (t < R11_CAM_KICK_T) camExpand += this.camKick * t * (1 - t / R11_CAM_KICK_T) ** 2;
++      const close = 1 - smoothstep(HOLD_SPIN.close0, HOLD_SPIN.close1, t);
++      spreadA = f.spreadA * close;
++      splitB = f.splitB * close;
++      spin = f.spin + (1 - f.spin) * smoothstep(HOLD_SPIN.rel0, HOLD_SPIN.rel1, t);
++      energy = Math.max(energy, 1 - smoothstep(0, 0.7, t));
++      if (t >= RELEASE_LEN_R11) this.toIdle();
+     } else if (this.phase === "release") {
+       const f = this.releaseFrom;
+       // (QC round 4: at F453 B was still mid-snap; it is closed by ~0.3 s now.)
+       const back = sampleCurve(RELEASE_RETURN, t + 0.08, 0.667);
+       splitB = f.splitB * (1 - back);
+-      camExpand = f.cam * (1 - sampleKeys(RELEASE_CAM, t));
++      if (this.holdMode === "r11a") {
++        camExpand = f.cam * (1 - releaseCamR11(t));
++        if (t < R11_CAM_KICK_T) camExpand += this.camKick * t * (1 - t / R11_CAM_KICK_T) ** 2;
++      } else camExpand = f.cam * (1 - sampleKeys(RELEASE_CAM, t));
+       // The inner rings resolve first; ring A's arcs keep a small gap and re-join last (F453: A one broken circle of
+       // four even arcs around face-on inner rings and a fully exposed orb; A closes F456-F460).
+       spreadA = f.spreadA * (1 - smoothstep(0.05, 0.3, t));
+@@ -381,7 +547,7 @@ export class Choreography {
+       relaxA = f.relaxA * (1 - smoothstep(0.05, 0.3, t));
+       tiltA = f.tiltA * (1 - smoothstep(0.05, 0.28, t));
+       alignInner = bump(t, 0.05, 0.25, 0.5, 0.8);
+-      alignA = bump(t, 0.15, 0.3, 0.6, 0.85);
++      alignA = bump(t, 0.15, 0.3, 0.6, this.holdMode === "r11a" ? R11_HANDBACK_END : 0.85);
+       // F453: the inner rings are a tilted whirlpool (C ~40 deg of its 70, an ellipse around the fully exposed orb);
+       // by F460 C is the band across the orb. (0 at F453 read as a face-on "target", QC round 6.)
+       bandInner = 0.57 + 0.43 * smoothstep(0.35, 0.55, t);
+@@ -390,7 +556,8 @@ export class Choreography {
+       // Reassembly passes through a near-frontal vortex (alignInner / alignA above, F453-F462).
+       spin = 0.2 + 0.8 * smoothstep(0.3, 0.75, t);
+       energy = Math.max(energy, 1 - smoothstep(0, 0.7, t));
+-      if (t >= RELEASE_LEN) this.toIdle();
++      if (this.holdMode === "r11a") releaseParams(this.holdRel, t, this.holdNow);
++      if (t >= (this.holdMode === "r11a" ? RELEASE_LEN_R11 : RELEASE_LEN)) this.toIdle();
+     }
+ 
+     d.camCollapse = camCollapse;
+@@ -411,13 +578,33 @@ export class Choreography {
+     d.faceInner = faceInner;
+     d.portal = portal;
+     d.bandInner = bandInner;
++    d.cdSpin = cdSpin;
++    if (this.holdMode === "r11a") {
++      if (this.phase !== "expand" && this.phase !== "release") zeroHoldParams(this.holdNow);
++      copyHoldParams(this.holdNow, d.hold);
++    }
+     // A phase change never jumps: blend from the values the drivers had when it happened.
+     if (this.blendFrom) {
+       this.blendT += dt;
+       const k = smoothstep(0, PHASE_BLEND, this.blendT);
+       const from = this.blendFrom;
+-      for (const key of BLENDED) d[key] = lerp(from[key], d[key], k);
+-      if (k >= 1) this.blendFrom = null;
++      for (const key of BLENDED) {
++        if (key === "camExpand" && !this.camBlend) continue;
++        if ((key === "spreadA" || key === "splitB") && !this.openBlend) continue;
++        d[key] = lerp(from[key], d[key], k);
++      }
++      const hf = this.holdFrom;
++      if (hf) for (const key of HOLD_KEYS) d.hold[key] = lerp(hf[key], d.hold[key], k);
++      if (k >= 1) {
++        this.blendFrom = null;
++        this.holdFrom = null;
++      }
++    }
++    if (this.holdMode !== "r10") {
++      if (dt > 1e-4) this.camVel = (d.camExpand - this.camPrev) / dt;
++      this.camPrev = d.camExpand;
++      if (dt > 1e-4) this.openVel = (d.spreadA - this.openPrev) / dt;
++      this.openPrev = d.spreadA;
+     }
+     d.spin = damp(d.spin, spin, 0.2, dt);
+     d.energy = energy;
+@@ -439,6 +626,11 @@ export class Choreography {
+   private toIdle() {
+     this.phase = "idle";
+     this.phaseT = 0;
++    if (this.rePress) {
++      // The release ended inside a press's click window: the press goes on as a normal press from here.
++      this.rePress = false;
++      this.phase = "press";
++    }
+   }
+ 
+   dispose() {
+diff --git a/retrux-web/app/hero/engine/HeroEngine.ts b/retrux-web/app/hero/engine/HeroEngine.ts
+index c2022d3..46b1d69 100644
+--- a/retrux-web/app/hero/engine/HeroEngine.ts
++++ b/retrux-web/app/hero/engine/HeroEngine.ts
+@@ -4,6 +4,7 @@ import { CameraRig } from "./CameraRig";
+ import { Choreography, type Phase } from "./Choreography";
+ import { WATER } from "./config";
+ import { CAM_TARGETS } from "./curves";
++import { aPhaseFromUrl, HOLD_CURVES, HOLD_SPIN, HOLD_TUNE, holdCurvesChanged, holdModeFromUrl, type HoldMode } from "./hero/HoldR11";
+ import { Orb } from "./hero/Orb";
+ import { Rings } from "./hero/Rings";
+ import { Shards } from "./hero/Shards";
+@@ -63,6 +64,8 @@ export class HeroEngine {
+   private shards?: Shards;
+   /** World Y of the hero parts at load, for the dolly lift (Rings.tune.holdLift). */
+   private heroBase: { rings: number; orb: number; shards: number; center: number } | null = null;
++  /** Press-and-hold version: "r11" (default) or "r10" (`?hold=r10`, the round-10 hold exactly). */
++  readonly holdMode: HoldMode = holdModeFromUrl();
+   private pmrem?: THREE.WebGLRenderTarget;
+   private postParams: PostParams = { ...DEFAULT_POST, lensCenter: new THREE.Vector2() };
+   private raf = 0;
+@@ -118,6 +121,8 @@ export class HeroEngine {
+ 
+     // No lake impulse on press / release: the reference has none, and a click must do nothing.
+     this.choreo = new Choreography(canvas, this.state, () => this.rig.camera);
++    this.choreo.holdMode = this.holdMode;
++    this.rig.holdMode = this.holdMode;
+     this.choreo.onHoldChange = (on) => this.opts.onHoldChange?.(on);
+ 
+     const reduced = typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+@@ -200,6 +205,11 @@ export class HeroEngine {
+     this.env.bakeDepth(this.renderer, [this.water.group]);
+ 
+     this.rings = new Rings(assets.hero.scene, this.shared, envDefines, { ...this.profile.ice, split: this.profile.iceBehindIce });
++    this.rings.holdMode = this.holdMode;
++    // The rotating hold's frame guard projects with the camera of the frame (CameraRig updates it before the rings).
++    this.rings.camera = this.rig.camera;
++    // Ring A's in-plane phase (round 11, measured from the reference's quarter joints); `?aphase=r10` / `?hold=r10`: 0.
++    this.rings.tune.aLoopPhaseDeg = aPhaseFromUrl();
+     setLayer(this.rings.root, LAYER.RINGS);
+     this.scene.add(this.rings.root);
+ 
+@@ -252,9 +262,12 @@ export class HeroEngine {
+     const d = this.choreo.drivers;
+     const saved = { ...d };
+     Object.assign(d, { splitB: 1, spreadA: 1, tiltA: 1, splay: 1, flatten: 0.5, expandPose: 1, faceInner: 1, camExpand: 1 });
++    const hold = { ...d.hold };
++    if (this.holdMode === "r11a") Object.assign(d.hold, { wA: 1, wI: 1, phi: 80, pushT: 0.3, pushL: 0.6, pushB: 0.3, pushR: 0.6, splitB: 1 });
+     this.rings?.update(0, 0, d);
+     this.pipeline.render(this.scene, this.rig.camera, this.hooks, WATER.level);
+     Object.assign(d, saved);
++    Object.assign(d.hold, hold);
+     this.rings?.update(0, 0, d);
+   }
+ 
+@@ -315,6 +328,12 @@ export class HeroEngine {
+     },
+     /** The camera targets (mutable, read every frame): hold-framing captures tune `expand`. */
+     camTargets: CAM_TARGETS,
++    /** r11 hold key tables and knobs (mutable; call holdChanged() after editing the tables). */
++    holdCurves: HOLD_CURVES,
++    holdTune: HOLD_TUNE,
++    holdChanged: () => holdCurvesChanged(),
++    /** Rotating hold (r11) knobs (mutable, read every frame). */
++    holdSpin: HOLD_SPIN,
+   };
+   private frozen = false;
+ 
+@@ -343,7 +362,8 @@ export class HeroEngine {
+     // The hero rises with the dolly (Rings.tune.holdLift); the camera stays on the hold plate's pose, so the plate stays
+     // registered. The shared orb centre follows (ice lantern, ring split depth, lake glint and reflection occlusion).
+     if (this.rings && this.heroBase) {
+-      const lift = this.rings.tune.holdLift * d.camExpand;
++      // (r11: x the camera's hold-dolly share on this screen, 1 on landscape; fix round 2, narrow portrait screens.)
++      const lift = (this.holdMode !== "r10" ? HOLD_TUNE.holdLift : this.rings.tune.holdLift) * d.camExpand * (this.holdMode === "r11" ? this.rig.holdFit : 1);
+       this.rings.root.position.y = this.heroBase.rings + lift;
+       if (this.orb) this.orb.mesh.position.y = this.heroBase.orb + lift;
+       if (this.shards) this.shards.mesh.position.y = this.heroBase.shards + lift;
+@@ -364,10 +384,14 @@ export class HeroEngine {
+     u.uTime.value = s.time;
+     u.uFrame.value = (u.uFrame.value + 1) % 65536;
+     u.uOrbGlow.value = ((this.orb?.intensity ?? 1.8) / 1.8) * (1 + 0.15 * d.energy) * (0.3 + 0.7 * intro);
+-    u.uHold.value = d.camExpand;
++    // Dolly progress for the environment (near-lake plate weight, DOF, haze, the fog bank): r11 x the camera's hold-dolly share
++    // on this screen (exactly 1 on landscape), so a narrow portrait screen whose camera stays near the rest pose keeps the rest
++    // look (with the full share the near-lake plate faded and the foreground rocks went flat grey; fix round 2).
++    const holdFit = this.holdMode === "r11" ? this.rig.holdFit : 1;
++    u.uHold.value = d.camExpand * holdFit;
+     // Rises with the dolly and lingers ~2 s after a release (QC rounds 7-8: the reference keeps the bank through F453 / F460).
+     // Choreography times it from the release itself, so debug poses and captures show the real value.
+-    u.uFogHold.value = d.fogHold;
++    u.uFogHold.value = d.fogHold * holdFit;
+     u.uShatter.value = s.shatter;
+     u.uHover.value = s.hover;
+     u.uImpulse.value = s.impulse;
+diff --git a/retrux-web/app/hero/engine/hero/Rings.ts b/retrux-web/app/hero/engine/hero/Rings.ts
+index 7156f8c..9b582a8 100644
+--- a/retrux-web/app/hero/engine/hero/Rings.ts
++++ b/retrux-web/app/hero/engine/hero/Rings.ts
+@@ -4,6 +4,7 @@ import type { Drivers } from "../Choreography";
+ import { hash1, lerp, smoothstep } from "../math";
+ import type { SharedUniforms } from "../uniforms";
+ import { createBackDepthMaterial, createIceMaterial, iceSilhouette, type IceQuality } from "./IceMaterial";
++import { A_TURN_AXIS, HOLD_SPIN, HOLD_TUNE, holdViewFrame, SPIN_S3, targetA, targetB, targetBPop, targetCD, type HoldMode } from "./HoldR11";
+ import { RING_MOCAP, RING_MOCAP_STEP } from "./ringMocap";
+ 
+ /**
+@@ -122,6 +123,8 @@ const N_B_HOLD = new THREE.Vector3(0, 0, 1).applyQuaternion(Q_B_EXPAND);
+  * motion stays below it: the Default Loop tumble peaks at ~200 deg/s (A), the pop at ~15 deg per 60 Hz frame.
+  */
+ const MAX_TURN = 900 * DEG;
++/** Ring A's centre-line radius (m): its quarters' cut faces span 1.979-2.401 m. */
++const A_CENTRE_R = 2.19;
+ /** Share of ring B's world-Y split kept once the hold pose is in (the pop opens it fully first). */
+ // F404-F428 hold the GLB split (+0.47 / -0.57 m): two stacked near-edge-on bands with the orb behind them. (0.55 with
+ // the raised half left to chance read as a coil with the orb exposed, QC round 2; 0.3 as an open bowl, round 4.)
+@@ -130,6 +133,51 @@ const MAX_TURN = 900 * DEG;
+ // probe_holdbounds worst top 24, bottom 704.)
+ const B_SPLIT_HELD = 0.35;
+ 
++/**
++ * Rotating hold, frame guard: the largest push p >= 0 for which a point whose clip coordinate along one axis is c + p d (w:
++ * cw + p dw) stays within -L w .. L w; 0 if it is outside already at p = 0.
++ */
++function pushLimit(c: number, d: number, cw: number, dw: number, L: number) {
++  const up = L * cw - c;
++  const dn = L * cw + c;
++  if (up < 0 || dn < 0) return 0;
++  let m = Infinity;
++  const su = d - L * dw;
++  if (su > 1e-9) m = Math.min(m, up / su);
++  const sd = -(d + L * dw);
++  if (sd > 1e-9) m = Math.min(m, dn / sd);
++  return m;
++}
++/** C1 saturation with sat(x) <= min(x, 1): identity up to 0.75, 1 from 1.25 (the guard never pushes past its limit). */
++function sat(x: number) {
++  if (x <= 0.75) return Math.max(0, x);
++  if (x >= 1.25) return 1;
++  return x - (x - 0.75) * (x - 0.75);
++}
++/** Points of a geometry that are extreme in one of `n` directions (Fibonacci sphere): its convex hull's main vertices. */
++function hullPoints(g: THREE.BufferGeometry, n = 96) {
++  const pos = g.attributes.position;
++  const pick = new Set<number>();
++  const golden = Math.PI * (3 - Math.sqrt(5));
++  for (let k = 0; k < n; k++) {
++    const y = 1 - (2 * (k + 0.5)) / n;
++    const r = Math.sqrt(1 - y * y);
++    const dx = Math.cos(golden * k) * r, dz = Math.sin(golden * k) * r;
++    let best = -Infinity, bi = 0;
++    for (let i = 0; i < pos.count; i++) {
++      const v = pos.getX(i) * dx + pos.getY(i) * y + pos.getZ(i) * dz;
++      if (v > best) {
++        best = v;
++        bi = i;
++      }
++    }
++    pick.add(bi);
++  }
++  const out: number[] = [];
++  for (const i of pick) out.push(pos.getX(i), pos.getY(i), pos.getZ(i));
++  return out;
++}
++
+ /** Unit normal of the best-fit plane (smallest principal axis) from a packed covariance [xx xy xz yy yz zz]. */
+ function smallestPrincipalAxis(m: number[]) {
+   const a = [
+@@ -280,6 +328,8 @@ type Piece = {
+   holdW: number;
+   /** Ring A: hold slot 0-3 (top, left, bottom, right on screen), latched when the hold starts. */
+   slot: number;
++  /** Rings A / B: hull points of the piece (pivot frame, flat xyz), for the rotating hold's frame guard. */
++  hull: number[] | null;
+ };
+ 
+ export class Rings {
+@@ -397,6 +447,7 @@ export class Rings {
+           splitSign: def.id === "B" ? (centroid.y >= 0 ? 1 : -1) : 0,
+           holdW: 0.5,
+           slot: def.id === "A" ? pi % 4 : -1,
++          hull: def.id === "A" || def.id === "B" ? hullPoints(mesh.geometry) : null,
+         });
+       });
+     });
+@@ -589,6 +640,13 @@ export class Rings {
+     loopTipDeg: [5, 2, 8, 8],
+     loopTipAt: [0, 0.5, 0.5, 0.5],
+     loopTipWidth: 0.45,
++    /**
++     * Ring A's in-plane phase (round 11): a turn of A about its own axis (deg, + = counter-clockwise in its face-on frame)
++     * on top of the mocap, which cannot see a symmetric ring's spin. HeroEngine sets it from `?aphase` (0 = the round-10
++     * phase, bit-identical). aLoopPhaseRate (deg / s of the loop clock) must keep the 4 s loop closed (a multiple of 90).
++     */
++    aLoopPhaseDeg: 0,
++    aLoopPhaseRate: 0,
+     /** Ring D's residual tilt in the release's reassembly: at the snap (F453, about (1, 0.35, 0)) and home (F460, about X). */
+     dRelSnapDeg: 38,
+     dRelHomeDeg: 45,
+@@ -638,6 +696,417 @@ export class Rings {
+   private aPhiAcc = 0;
+   private aPhiPrev = 0;
+ 
++  /**
++   * "r11" (default): the rotating hold (the tumble slowed, A / B opened on top, C / D flipping forward); "r11a" (`?hold=r11a`):
++   * the step-2 deterministic arrangement of HoldR11.ts; "r10" (`?hold=r10`): the round-10 hold below, unchanged.
++   */
++  holdMode: HoldMode = "r11";
++  /** r11: the hold view frame, each ring's latched symmetry (which congruent piece takes which slot) and scratch. */
++  private r11View = new THREE.Quaternion();
++  private r11G = [new THREE.Quaternion(), new THREE.Quaternion(), new THREE.Quaternion(), new THREE.Quaternion()];
++  private r11GInv = [new THREE.Quaternion(), new THREE.Quaternion(), new THREE.Quaternion(), new THREE.Quaternion()];
++  private r11T = new THREE.Quaternion();
++  private r11Q = new THREE.Quaternion();
++  private r11V = new THREE.Vector3();
++
++  /** Rotating hold (r11): the camera of this frame (set by HeroEngine; CameraRig updates it before the rings), for the guard. */
++  camera: THREE.PerspectiveCamera | null = null;
++  private vp = new THREE.Matrix4();
++  private hasVP = false;
++  /**
++   * Rotating hold, rings C / D: the extra flip E = base * R(k, theta) on the ring's own frame (identity until the first hold),
++   * its rate (deg/s), the latched diameter k (in the ring's plane) and the landing plan after a release. A landed flip is a
++   * multiple of 180 deg about a diameter, a symmetry of a solid ring, and becomes the new base.
++   */
++  private cdE = [0, 1, 2, 3].map(() => new THREE.Quaternion());
++  private cdBase = [0, 1, 2, 3].map(() => new THREE.Quaternion());
++  private cdK = [0, 1, 2, 3].map(() => new THREE.Vector3(1, 0, 0));
++  private cdTheta = [0, 0, 0, 0];
++  private cdOmega = [0, 0, 0, 0];
++  private cdLatched = [false, false, false, false];
++  private cdUsed = [false, false, false, false];
++  private cdPlan: ({ t: number; T: number; th0: number; w0: number; dlt: number } | null)[] = [null, null, null, null];
++  /** Last frame's ring orientation without the flip (tumble * base), and whether it is valid, for the flip's floor. */
++  private cdPrevPre = [0, 1, 2, 3].map(() => new THREE.Quaternion());
++  private cdPrevOk = [false, false, false, false];
++  /** The flip rate applied last frame (deg/s; the held rate raised by the floor), where a landing starts from. */
++  private cdApplied = [0, 0, 0, 0];
++  private cdView = new THREE.Quaternion();
++  /** Debug / probes: rings C / D's flip (deg), its rate (deg/s) and the world axis it turns about. */
++  readonly cdState = [0, 1, 2, 3].map(() => ({ theta: 0, omega: 0, axis: [0, 0, 0] as number[], landing: false }));
++
++  /**
++   * Rotating hold: the landing of a flip after the release, forward to the next multiple of 180 deg, as a cubic Hermite from
++   * (theta, omega) to (target, 0). With T = 1.5 dlt / omega the rate is omega (1 - u^2): it only decelerates, from the
++   * release on, with no jerk at the start. Targets nearer than HOLD_SPIN.cdLandNear wait for the next multiple (a softer
++   * stop); a long way is capped at cdLandMax s (the rate then first rises a little, still never negative: omega T <= 3 dlt).
++   */
++  private planLanding(theta: number, omega: number) {
++    const S = HOLD_SPIN;
++    const step = 180;
++    const below = Math.floor(theta / step) * step;
++    let dlt = below + step - theta;
++    let T: number;
++    if (theta - below < S.cdBack && omega < 25) {
++      // A flip that has barely started (a hold released early) settles back by those few degrees.
++      dlt = below - theta;
++      T = Math.min(2, Math.max(0.8, Math.abs(dlt) / 20));
++    } else {
++      while (dlt < S.cdLandNear) dlt += step;
++      // (cdLandMin <= T: with dlt >= cdLandNear = 40 deg and omega <= ~80 deg/s, omega T <= 3 dlt still holds.)
++      T = Math.max(S.cdLandMin, Math.min(S.cdLandMax, (1.5 * dlt) / Math.max(omega, 1e-3)));
++      // Fix round 2: a fast flip (the floor's compensation can lift it past 100 deg/s) lands one symmetry further on, so the
++      // Hermite rate omega (1 - u)(1 - 3u) + 6 dlt u (1 - u) / T never turns negative (omega T <= 3 dlt).
++      if (!SPIN_S3) {
++        while (omega * T > 3 * dlt + 1e-9) {
++          dlt += step;
++          T = Math.max(S.cdLandMin, Math.min(S.cdLandMax, (1.5 * dlt) / Math.max(omega, 1e-3)));
++        }
++      }
++    }
++    return { t: 0, T, th0: theta, w0: omega, dlt };
++  }
++
++  /** Rotating hold: advances ring i's (C / D) extra flip and applies it on q's own frame (q = tumble -> q * E). */
++  private flipCD(i: number, q: THREE.Quaternion, dt: number, d: Drivers) {
++    const S = HOLD_SPIN;
++    const w = d.cdSpin;
++    if (w > 0) {
++      if (!this.cdLatched[i]) {
++        // The flip continues the ring's own motion: k = the in-plane part of its current angular velocity in its own frame
++        // (the turn about a diameter that it is making right now), so the rotation keeps its sense and only slows. A ring
++        // that is momentarily still takes the diameter nearest the hold view axis (clockwise on screen).
++        this.cdBase[i].copy(this.cdE[i]);
++        this.cdTheta[i] = 0;
++        const qb = this.qs.copy(q).multiply(this.cdBase[i]);
++        const k = this.v.set(0, 0, 0);
++        if (this.prevValid && dt > 1e-4) {
++          // World angular velocity from last frame's orientation to this one (both with the same base), into the ring frame.
++          const dq = this.qa.copy(qb).multiply(this.qb.copy(this.prevQ[i]).invert());
++          if (dq.w < 0) dq.set(-dq.x, -dq.y, -dq.z, -dq.w);
++          k.set(dq.x, dq.y, dq.z).applyQuaternion(this.qr.copy(qb).invert());
++          k.z = 0;
++          if (k.lengthSq() < (0.5 * DEG * dt) ** 2) k.set(0, 0, 0);
++        }
++        if (k.lengthSq() === 0) {
++          holdViewFrame(this.cdView);
++          k.set(0, 0, 1).applyQuaternion(this.cdView).applyQuaternion(this.qr.copy(qb).invert());
++          k.z = 0;
++          if (k.lengthSq() < 1e-6) k.set(1, 0, 0);
++          k.negate();
++        }
++        this.cdK[i].copy(k.normalize());
++        this.cdLatched[i] = true;
++        this.cdUsed[i] = true;
++      }
++      this.cdPlan[i] = null;
++      this.cdOmega[i] += (w * S.cdRate[i] - this.cdOmega[i]) * (1 - Math.exp(-dt * S.cdResp));
++      // Floor: the slowed tumble underneath may turn against the flip for a while (C's own nod); the flip then speeds up so
++      // the ring's total turn about the flip axis stays >= cdFloor of its rate (the compensation is capped at cdFloorCap).
++      let rate = this.cdOmega[i];
++      if (this.cdPrevOk[i] && dt > 1e-4) {
++        const pre = this.qs.copy(q).multiply(this.cdBase[i]);
++        const dq = this.qa.copy(pre).multiply(this.qb.copy(this.cdPrevPre[i]).invert());
++        if (dq.w < 0) dq.set(-dq.x, -dq.y, -dq.z, -dq.w);
++        const kw = this.v.copy(this.cdK[i]).applyQuaternion(pre);
++        const m = (2 * (dq.x * kw.x + dq.y * kw.y + dq.z * kw.z)) / dt / DEG;
++        const wf = SPIN_S3 ? w : Math.min(1, w * S.cdFloorRamp);
++        rate = Math.max(rate, wf * S.cdFloor * S.cdRate[i] - Math.max(m, -S.cdFloorCap));
++      }
++      this.cdApplied[i] = rate;
++      this.cdTheta[i] += rate * dt;
++    } else if (this.cdLatched[i]) {
++      const plan = (this.cdPlan[i] ??= this.planLanding(this.cdTheta[i], this.cdApplied[i]));
++      plan.t = Math.min(plan.T, plan.t + dt);
++      const u = plan.t / plan.T;
++      const h10 = u * u * u - 2 * u * u + u;
++      const h01 = -2 * u * u * u + 3 * u * u;
++      this.cdTheta[i] = plan.th0 + plan.T * plan.w0 * h10 + plan.dlt * h01;
++      this.cdOmega[i] = (plan.T * plan.w0 * (3 * u * u - 4 * u + 1) + plan.dlt * (6 * u - 6 * u * u)) / plan.T;
++      this.cdApplied[i] = this.cdOmega[i];
++      if (plan.t >= plan.T) {
++        // Landed on a multiple of 180 deg: a symmetry of the ring, kept as the new base.
++        this.cdBase[i].multiply(this.qa.setFromAxisAngle(this.cdK[i], (plan.th0 + plan.dlt) * DEG)).normalize();
++        this.cdE[i].copy(this.cdBase[i]);
++        this.cdTheta[i] = 0;
++        this.cdOmega[i] = 0;
++        this.cdLatched[i] = false;
++        this.cdPlan[i] = null;
++      }
++    }
++    if (this.cdLatched[i]) this.cdE[i].copy(this.cdBase[i]).multiply(this.qa.setFromAxisAngle(this.cdK[i], this.cdTheta[i] * DEG));
++    // The tumble * base of this frame for next frame's floor (invalid for a frame when the base changes at a landing).
++    this.cdPrevOk[i] = this.cdLatched[i] || !this.cdPlan[i];
++    this.cdPrevPre[i].copy(q).multiply(this.cdBase[i]);
++    const st = this.cdState[i];
++    st.theta = this.cdTheta[i];
++    st.omega = this.cdApplied[i];
++    st.landing = !!this.cdPlan[i];
++    const ax = this.v.copy(this.cdK[i]).applyQuaternion(this.qs.copy(q).multiply(this.cdBase[i]));
++    st.axis[0] = ax.x;
++    st.axis[1] = ax.y;
++    st.axis[2] = ax.z;
++    // Never touched (no hold yet): the idle stays bit-identical.
++    if (this.cdUsed[i]) q.multiply(this.cdE[i]);
++  }
++
++  /**
++   * Rotating hold: the push (m, <= want) of piece p along its radial (ring frame q) that keeps every hull point inside the frame
++   * by HOLD_SPIN.guardMargin, solved exactly (a point's clip coordinates are linear in the push), through a C1 saturation.
++   */
++  private guardPush(p: Piece, q: THREE.Quaternion, want: number) {
++    const hull = p.hull;
++    if (!(want > 0) || !hull || !this.hasVP) return want;
++    const e = this.vp.elements;
++    const margin = HOLD_SPIN.guardMargin;
++    const Ly = 1 - margin;
++    const Lx = 1 - margin / Math.max(0.1, this.camera?.aspect ?? 1);
++    const D = this.v3.copy(p.radial).applyQuaternion(q);
++    const dx = e[0] * D.x + e[4] * D.y + e[8] * D.z;
++    const dy = e[1] * D.x + e[5] * D.y + e[9] * D.z;
++    const dw = e[3] * D.x + e[7] * D.y + e[11] * D.z;
++    const root = this.root.position;
++    const P = this.v4;
++    let pMax = want * 1.25;
++    for (let j = 0; j < hull.length; j += 3) {
++      P.set(p.rest.x + hull[j], p.rest.y + hull[j + 1], p.rest.z + hull[j + 2]).applyQuaternion(q).add(root);
++      const cx = e[0] * P.x + e[4] * P.y + e[8] * P.z + e[12];
++      const cy = e[1] * P.x + e[5] * P.y + e[9] * P.z + e[13];
++      const cw = e[3] * P.x + e[7] * P.y + e[11] * P.z + e[15];
++      if (cw <= 1e-6) continue;
++      pMax = Math.min(pMax, pushLimit(cx, dx, cw, dw, Lx), pushLimit(cy, dy, cw, dw, Ly));
++      if (pMax <= 0) return 0;
++    }
++    return want * sat(pMax / want);
++  }
++
++  /**
++   * Rotating hold (fix round 2): the share s (0..1) of a piece's offset `off` (ring frame q) that keeps every hull point inside
++   * the frame by HOLD_SPIN.guardMargin, solved exactly as guardPush does for a radial push, through the same C1 saturation.
++   */
++  private guardScale(p: Piece, q: THREE.Quaternion, off: THREE.Vector3) {
++    const hull = p.hull;
++    if (!hull || !this.hasVP || !(off.lengthSq() > 1e-12)) return 1;
++    const e = this.vp.elements;
++    const margin = HOLD_SPIN.guardMargin;
++    const Ly = 1 - margin;
++    const Lx = 1 - margin / Math.max(0.1, this.camera?.aspect ?? 1);
++    const D = this.v3.copy(off).applyQuaternion(q);
++    const dx = e[0] * D.x + e[4] * D.y + e[8] * D.z;
++    const dy = e[1] * D.x + e[5] * D.y + e[9] * D.z;
++    const dw = e[3] * D.x + e[7] * D.y + e[11] * D.z;
++    const root = this.root.position;
++    const P = this.v4;
++    let sMax = 1.25;
++    for (let j = 0; j < hull.length; j += 3) {
++      P.set(p.rest.x + hull[j], p.rest.y + hull[j + 1], p.rest.z + hull[j + 2]).applyQuaternion(q).add(root);
++      const cx = e[0] * P.x + e[4] * P.y + e[8] * P.z + e[12];
++      const cy = e[1] * P.x + e[5] * P.y + e[9] * P.z + e[13];
++      const cw = e[3] * P.x + e[7] * P.y + e[11] * P.z + e[15];
++      if (cw <= 1e-6) continue;
++      sMax = Math.min(sMax, pushLimit(cx, dx, cw, dw, Lx), pushLimit(cy, dy, cw, dw, Ly));
++      if (sMax <= 0) return 0;
++    }
++    return sat(sMax);
++  }
++  private offV = new THREE.Vector3();
++  private spinQ = new THREE.Quaternion();
++  /** Rotating hold: each piece's guard share last frame (-1: not opened) and its opening last frame. */
++  private guardS: number[] = [];
++  private openLast: number[] = [];
++
++  /** Debug / probes: the last rotating-hold push of each piece (m) and what was asked for. */
++  readonly pushState: { want: number; got: number }[] = [];
++
++  /**
++   * Rotating hold, piece offsets: ring A's quarters move out along their radials (more when the push points sideways on
++   * screen, where the frame is wide) and ring B's halves apart along theirs, both in the ring's own frame, so they keep turning
++   * with the ring; exactly the rest pose when the opening is 0.
++   */
++  private poseSpin(p: Piece, d: Drivers, k: number, dt: number) {
++    const ring = DEFS[p.ring].id;
++    if (ring !== "A" && ring !== "B") return;
++    const open = ring === "A" ? d.spreadA : d.splitB;
++    if (!(open > 0)) {
++      p.pivot.position.copy(p.rest);
++      p.pivot.quaternion.identity();
++      this.pushState[k] = { want: 0, got: 0 };
++      this.guardS[k] = -1;
++      return;
++    }
++    const q = this.groups[p.ring].quaternion;
++    const S = HOLD_SPIN;
++    if (!SPIN_S3) {
++      // Fix round 2: one offset vector in the ring's own frame (so it turns with the ring): A's radial push plus the flex
++      // along A's axis, B's radial split; the frame guard scales the whole vector. No rotation is added to any piece.
++      const off = this.offV;
++      if (ring === "A") {
++        let side = 0;
++        let flex = 0;
++        if (this.camera) {
++          const D = this.v3.copy(p.radial).applyQuaternion(q).transformDirection(this.camera.matrixWorldInverse);
++          // Share of the push along the frame's long side: x on landscape (exactly step 3's D.x^2), y on portrait.
++          const wx = smoothstep(0.8, 1.2, this.camera.aspect);
++          side = wx * D.x * D.x + (1 - wx) * D.y * D.y;
++          if (S.flexA > 0) {
++            // View direction in the ring frame (ring centre -> camera); the quarter's radial u is in the ring plane.
++            const vr = this.v4.setFromMatrixPosition(this.camera.matrixWorld).sub(this.root.position).normalize();
++            vr.applyQuaternion(this.spinQ.copy(q).invert());
++            flex = -S.flexA * (p.radial.x * vr.x + p.radial.y * vr.y) * vr.z;
++          }
++        }
++        off.copy(p.radial).multiplyScalar(S.pushA + S.pushASide * side);
++        off.z += flex;
++      } else off.copy(p.radial).multiplyScalar(S.pushB);
++      off.multiplyScalar(open);
++      const len = off.length();
++      // The guard's share never exceeds what the frame allows (sNow). It tightens at once, but it lets a piece out again
++      // only through a smooth follower, and never while the opening closes: at a release the camera pulls back and the
++      // frame suddenly allows more, which made a guarded quarter fly out and back (a 3 m/s jolt 0.17 s after the release).
++      const sNow = this.guardScale(p, q, off);
++      const last = this.guardS[k] ?? -1;
++      let s = sNow;
++      if (last >= 0 && sNow > last) {
++        const closing = open < (this.openLast[k] ?? open) - 1e-7;
++        s = closing ? last : Math.min(sNow, last + (sNow - last) * (1 - Math.exp(-dt * S.guardRelax)));
++      }
++      this.guardS[k] = s;
++      this.openLast[k] = open;
++      this.pushState[k] = { want: len, got: len * s };
++      p.pivot.position.copy(off).multiplyScalar(s).add(p.rest);
++      p.pivot.quaternion.identity();
++      return;
++    }
++    let want: number;
++    if (ring === "A") {
++      // Sideways share of the push direction in view space (the frame is ~1.9x wider than tall).
++      let side = 0;
++      if (this.camera) {
++        const D = this.v3.copy(p.radial).applyQuaternion(q).transformDirection(this.camera.matrixWorldInverse);
++        side = D.x * D.x;
++      }
++      want = open * (S.pushA + S.pushASide * side);
++    } else want = open * S.pushB;
++    const got = this.guardPush(p, q, want);
++    this.pushState[k] = { want, got };
++    p.pivot.position.copy(p.radial).multiplyScalar(got).add(p.rest);
++    p.pivot.quaternion.identity();
++  }
++
++  /**
++   * r11: picks the symmetry g of ring i (a rotation of its local frame that maps the ring onto itself) for which
++   * canonical * g is nearest to the ring's current orientation q, so the press moment never changes the arrangement on
++   * screen, only which congruent piece goes where. A: 4 quarter turns x flip; B: 2 half turns x flip; C / D: any turn
++   * about the axis x flip.
++   */
++  private latchSymmetry(i: number, q: THREE.Quaternion, canonical: THREE.Quaternion) {
++    const g = this.r11G[i];
++    const m = this.r11Q.copy(canonical).invert().multiply(q); // q = canonical * m: the symmetry nearest to m
++    if (i >= 2) {
++      // Twist of m about z, or of Rx(pi)^-1 m (flipped), whichever is nearer.
++      let best = -1;
++      for (const flip of [false, true]) {
++        const f = this.qr.identity();
++        if (flip) f.setFromAxisAngle(X, Math.PI);
++        const r = this.qs.copy(f).invert().multiply(m);
++        const len = Math.hypot(r.w, r.z) || 1;
++        const tw = this.qt.set(0, 0, r.z / len, r.w / len);
++        const cand = this.qa.copy(f).multiply(tw);
++        const dot = Math.abs(cand.dot(m));
++        if (dot > best) {
++          best = dot;
++          g.copy(cand);
++        }
++      }
++    } else {
++      const steps = i === 0 ? 4 : 2;
++      let best = -1;
++      for (const flip of [false, true]) {
++        for (let k = 0; k < steps; k++) {
++          const cand = this.qa.setFromAxisAngle(Z, (k * 2 * Math.PI) / steps);
++          if (flip) cand.premultiply(this.qb.setFromAxisAngle(X, Math.PI));
++          const dot = Math.abs(cand.dot(m));
++          if (dot > best) {
++            best = dot;
++            g.copy(cand);
++          }
++        }
++      }
++    }
++    this.r11GInv[i].copy(g).invert();
++    if (i === 0) {
++      // Slots (0 top, 1 left, 2 bottom, 3 right) from where g puts each quarter in the canonical frame.
++      for (const p of this.pieces) {
++        if (p.ring !== 0) continue;
++        const v = this.r11V.copy(p.radial).applyQuaternion(g);
++        const a = Math.atan2(v.y, v.x);
++        p.slot = (((Math.round(a / (Math.PI / 2)) - 1) % 4) + 4) % 4;
++      }
++    }
++  }
++
++  /**
++   * r11 piece pose. Ring A: the canonical slot transform (slide about the ring axis, radial push, tilt about the arc
++   * tangent), conjugated by the latched symmetry so it lands on whichever quarter holds that slot; exactly the rest pose
++   * when the hold is out. Ring B: the halves part along their own radial, in B's plane (the GLB split): across the view in
++   * the hold, so the lid never reads as two bands.
++   */
++  private poseR11(p: Piece, d: Drivers, time: number) {
++    const H = d.hold;
++    if (p.ring === 0) {
++      const s = p.slot;
++      const key = (["T", "L", "B", "R"] as const)[s];
++      const th = (Math.PI / 2) * (s + 1);
++      const sig = H[`sig${key}`] * DEG, push = H[`push${key}`], tilt = H[`tilt${key}`] * DEG;
++      const roll = H[`roll${key}`] * DEG, spin = H[`spin${key}`] * DEG, hng = H[`hng${key}`] * DEG;
++      if (!sig && !push && !tilt && !roll && !spin && !hng) {
++        // Out of the hold: exactly the rest pose (no float noise from the slot math; uJoined holds, idle is bit-identical).
++        p.pivot.position.copy(p.rest);
++        p.pivot.quaternion.identity();
++        return;
++      }
++      const g = this.r11G[0], gi = this.r11GInv[0];
++      const rLen = p.rest.length();
++      // Canonical position and orientation of slot s.
++      const slide = this.qt.setFromAxisAngle(Z, sig);
++      const pos = this.v.set(Math.cos(th), Math.sin(th), 0).multiplyScalar(rLen + push).applyQuaternion(slide);
++      const tan = this.v2.set(-Math.sin(th), Math.cos(th), 0);
++      const rad = this.v3.set(Math.cos(th), Math.sin(th), 0);
++      // Rotation about the piece's own centre: spin (ring axis), then roll (radial), then tilt (tangent), all in the slot's
++      // canonical frame before the slide carries it along the ring.
++      const qs = this.qs
++        .copy(slide)
++        .multiply(this.qa.setFromAxisAngle(Z, spin))
++        .multiply(this.qb.setFromAxisAngle(rad, roll))
++        .multiply(this.qr.setFromAxisAngle(tan, tilt));
++      if (hng) {
++        // Hinge: a rigid turn about the line through the counter-clockwise cap (centre line, mid section) that lies in the
++        // screen plane of the hold view (HOLD_TUNE.hingeAxisDeg from vertical, clockwise), so that cap stays put and the
++        // clockwise end swings towards (+) or away from the camera: the arc is foreshortened with that cut face turned to
++        // the camera. Canonical slot frame = hold view * roll * turn (targetA), so the view axis is mapped back through them.
++        const c = this.r11V.set(Math.cos(th + Math.PI / 4), Math.sin(th + Math.PI / 4), 0).multiplyScalar(A_CENTRE_R).addScaledVector(rad, -rLen);
++        const cap = c.applyQuaternion(qs).add(pos);
++        const ha = HOLD_TUNE.hingeAxisDeg[s] * DEG;
++        const qv = this.qa.setFromAxisAngle(Z, H.rollA * DEG).multiply(this.qb.setFromAxisAngle(A_TURN_AXIS, (H.phi - 120) * DEG)).invert();
++        const ax = this.v4.set(Math.sin(ha), Math.cos(ha), 0).applyQuaternion(qv);
++        const qh = this.qt.setFromAxisAngle(ax, -hng);
++        pos.sub(cap).applyQuaternion(qh).add(cap);
++        qs.premultiply(qh);
++      }
++      p.pivot.position.copy(pos).applyQuaternion(gi);
++      p.pivot.quaternion.copy(gi).multiply(qs).multiply(g);
++    } else if (p.half !== 0) {
++      // The halves slide past each other along the cut line (canonical x: the far half right, the near half left), so the
++      // lid never parts: F358's bar grows longer, F416-F448's lid sits left of the orb with the far half's end showing as
++      // the seam block at its right (A2 R6). Expressed through the latched symmetry so either physical half can be "far".
++      const far = this.r11V.copy(p.radial).applyQuaternion(this.r11G[1]).y > 0;
++      const dx = d.splitB * H.splitB * (far ? 0.47 : -0.57);
++      p.pivot.position.copy(this.v.set(dx, 0, 0).applyQuaternion(this.r11GInv[1])).add(p.rest);
++      this.qb.setFromAxisAngle(p.wobbleAxis, d.splay * 0.3 * Math.sin(time * 1.3 + p.rand * 6.28));
++      p.pivot.quaternion.copy(this.qb);
++    }
++  }
++
+   /** Poses every ring; returns how face-on the set is (mean |axis.z|^4, 1 = the eye). */
+   update(dt: number, time: number, d: Drivers): number {
+     if (this.tune.bTiltDeg !== this.tunedTilt) {
+@@ -662,7 +1131,20 @@ export class Rings {
+     // The hold plane's in-plane axes (ring A's phase is measured against them).
+     const HX = this.hx.set(1, 0, 0).applyQuaternion(this.qHold);
+     const HY = this.hy.set(0, 1, 0).applyQuaternion(this.qHold);
+-    this.tau += dt * d.spin;
++    // Hold modes: r11 the rotating hold (default), r11a the step-2 arrangement (`?hold=r11a`), r10 (`?hold=r10`).
++    const r11 = this.holdMode === "r11a";
++    const spinHold = this.holdMode === "r11";
++    const r10 = this.holdMode === "r10";
++    const H = d.hold;
++    // r11a: the tumble clock stops while the hold owns the rings (it resumes in the release's hand-over), so the release
++    // returns the rings to the pose they left at the charge's eye. r11 / r10: the clock runs at d.spin (slowed in a hold).
++    this.tau += r11 ? dt * d.spin * (1 - H.freeze) : dt * d.spin;
++    if (r11) holdViewFrame(this.r11View);
++    this.hasVP = false;
++    if (spinHold && this.camera) {
++      this.vp.multiplyMatrices(this.camera.projectionMatrix, this.camera.matrixWorldInverse);
++      this.hasVP = true;
++    }
+     const phase = (this.tau - EYE_TIME) * OMEGA;
+     let alignment = 0;
+ 
+@@ -676,6 +1158,11 @@ export class Rings {
+         const kf = tl / RING_MOCAP_STEP;
+         const k0 = Math.min(Math.floor(kf), keys.length - 2);
+         q.fromArray(keys[k0]).slerp(this.qb.fromArray(keys[k0 + 1]), kf - k0);
++        if (i === 0) {
++          // Ring A's in-plane phase (its quarter joints): a turn about its own axis, measured from the reference's joints.
++          const ap = this.tune.aLoopPhaseDeg + this.tune.aLoopPhaseRate * tl;
++          if (ap) q.multiply(this.qa.setFromAxisAngle(Z, ap * DEG));
++        }
+       } else {
+         // Fallback: the hand-tuned chain, applied first to last (q = R_n ... R_2 R_1).
+         for (const [axis, rate] of def.tumble) q.premultiply(this.qa.setFromAxisAngle(axis, rate * phase));
+@@ -688,6 +1175,8 @@ export class Rings {
+         dx = Math.min(dx, 4 - dx) / Math.max(this.tune.loopTipWidth, 1e-3);
+         if (dx < 1) q.premultiply(this.qa.setFromAxisAngle(X, tipDeg * DEG * (0.5 + 0.5 * Math.cos(Math.PI * dx))));
+       }
++      // Rotating hold: rings C / D flip forward on top of their slowed tumble (they only nod at rest).
++      if (spinHold && i >= 2) this.flipCD(i, q, dt, d);
+       if (d.open > 0) {
+         this.qa.setFromAxisAngle(X, def.open[0] * d.open).multiply(this.qb.setFromAxisAngle(Y, def.open[1] * d.open));
+         q.multiply(this.qa);
+@@ -719,9 +1208,28 @@ export class Rings {
+         }
+       }
+       if (d.flatten > 0) q.slerp(Q_FLAT, d.flatten);
++      if (r11) {
++        // The deterministic hold (HoldR11.ts): canonical target * latched symmetry, blended in by the hold weight.
++        const w = i === 0 ? H.wA : H.wI;
++        const T = this.r11T;
++        if (i === 0) targetA(this.r11View, H, T);
++        else if (i === 1) targetB(this.r11View, H, T);
++        else targetCD(this.r11View, i === 2 ? H.psiC : H.psiD, T);
++        if (w <= 0) {
++          // Latched while the hold is out: A against its release pose (face-on, quarters at 12 / 3 / 6 / 9) so the
++          // hand-back to the tumble is the shortest turn; B against its pop bar; C / D against face-on.
++          const canon = this.qLim;
++          if (i === 0) canon.copy(this.r11View);
++          else if (i === 1) targetBPop(this.r11View, canon);
++          else canon.copy(this.r11View);
++          this.latchSymmetry(i, q, canon);
++        } else {
++          q.slerp(T.multiply(this.r11G[i]), Math.min(1, w));
++        }
++      }
+       // Ring B's cut-across side is latched whenever the hold pose is (nearly) out.
+-      if (def.id === "B" && d.expandPose < 0.01) this.spinCutAcross(q, i, true, 0);
+-      if (d.expandPose > 0) {
++      if (r10 && def.id === "B" && d.expandPose < 0.01) this.spinCutAcross(q, i, true, 0);
++      if (r10 && d.expandPose > 0) {
+         // Hold (F357-F442, slow motion): every ring keeps tumbling slowly underneath; its axis is only
+         // drawn towards the hold pose. A turns face-on (its quarters drift out and keep revolving), B
+         // lies nearly flat (its halves split into two stacked bands), and the inner rings C / D lean
+@@ -778,7 +1286,7 @@ export class Rings {
+         }
+       }
+       // The pop: for a moment the slabs snap into an X (then ease into the hold pose).
+-      if (popAxis && d.popPose > 0) this.toward(q, popAxis, this.popSign[i], POP_WEIGHT[i] * d.popPose);
++      if (r10 && popAxis && d.popPose > 0) this.toward(q, popAxis, this.popSign[i], POP_WEIGHT[i] * d.popPose);
+       // Safety net: no ring turns faster than MAX_TURN. Frozen / paused frames (dt 0 or long) snap.
+       if (this.prevValid && dt > 1e-4 && dt < 0.25) {
+         const ang = this.prevQ[i].angleTo(q);
+@@ -796,10 +1304,19 @@ export class Rings {
+ 
+     // Hold slots: which quarter takes which place is decided from where each sits on screen once ring A has
+     // turned face-on, just before the quarters start to move, and kept for the whole hold.
+-    if (d.spreadA < 0.005 && d.tiltA < 0.005) this.latchSlots();
++    if (r10 && d.spreadA < 0.005 && d.tiltA < 0.005) this.latchSlots();
+ 
+-    for (const p of this.pieces) {
++    for (let k = 0; k < this.pieces.length; k++) {
++      const p = this.pieces[k];
+       const group = this.groups[p.ring];
++      if (r11) {
++        this.poseR11(p, d, time);
++        continue;
++      }
++      if (spinHold) {
++        this.poseSpin(p, d, k, dt);
++        continue;
++      }
+       if (DEFS[p.ring].id === "A") {
+         // Quarters (F404-F428): each drifts out by its own amount, slides a little along the ring (uneven
+         // gaps), steps in front of or behind the ring plane, and tilts about its arc to show its deep face,

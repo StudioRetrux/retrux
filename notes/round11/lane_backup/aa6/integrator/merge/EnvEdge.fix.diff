@@ -1,0 +1,51 @@
+120c120
+<  * coverage levels over time on the pixels whose 3x3 (+ 4 taps 2 px out) holds both lake and a solid surface, and nowhere else:
+---
+>  * coverage levels over time on the pixels whose 3x3 (+ 4 taps 3 px out) holds both lake and a solid surface, and nowhere else:
+148a149,152
+> // the clip: variance box (uClipG standard deviations) intersected with the 3x3 min / max; 0 = the min / max alone
+> uniform float uClipG;
+> // the 4 far taps' distance (px; 3 since the fix round: 2 left the outer rows of the waterline band untouched)
+> uniform int uFar;
+152a157,159
+> // the previous frame's compressed region (aaIn's uniforms when the history was written)
+> uniform vec3 uPrevAAPlane;
+> uniform mat3 uPrevAAExc;
+153a161,164
+> bool taaInPrev(vec2 px) {
+>   vec3 q = vec3(px, 1.0);
+>   return dot(q, uPrevAAPlane) < 0.0 && !all(greaterThanEqual(q * uPrevAAExc, vec3(0.0)));
+> }
+215c226
+<     ivec2 o = i == 0 ? ivec2(2, 0) : (i == 1 ? ivec2(-2, 0) : (i == 2 ? ivec2(0, 2) : ivec2(0, -2)));
+---
+>     ivec2 o = (i == 0 ? ivec2(1, 0) : (i == 1 ? ivec2(-1, 0) : (i == 2 ? ivec2(0, 1) : ivec2(0, -1)))) * uFar;
+221a233,237
+>   // (fix, judge A-1: a colour tap outside the compressed region holds a linear value: no blend next to the region's edge, where
+>   // the clip box and the history would mix both spaces; the far taps only classify, by alpha)
+>   for (int j = -1; j <= 1; j++)
+>     for (int i = -1; i <= 1; i++)
+>       if (!aaIn(vec2(clamp(ip + ivec2(i, j), ivec2(0), n)) + 0.5)) return;
+226a243,245
+>   // (fix: the history's 4 x 4 texel footprint inside the previous frame's compressed region, else no history)
+>   vec2 hp = puv * uSize;
+>   if (!(taaInPrev(hp + vec2(-2.0)) && taaInPrev(hp + vec2(2.0, -2.0)) && taaInPrev(hp + vec2(-2.0, 2.0)) && taaInPrev(hp + vec2(2.0)))) return;
+230c249
+<   h = clamp(h, max(mn, mu - 1.25 * sd), min(mx, mu + 1.25 * sd));
+---
+>   h = uClipG > 0.0 ? clamp(h, max(mn, mu - uClipG * sd), min(mx, mu + uClipG * sd)) : clamp(h, mn, mx);
+260a280,283
+>   /** (lab) the clip's variance box in standard deviations (default 1.25); 0 = the 3x3 min / max alone. */
+>   clip?: number;
+>   /** (lab) the band test's 4 far taps, px from the pixel (default 3). */
+>   far?: number;
+418a442,443
+>         uClipG: { value: opts.clip ?? 1.25 },
+>         uFar: { value: opts.far ?? 3 },
+422a448,449
+>         uPrevAAPlane: { value: new THREE.Vector3(0, 0, 1) },
+>         uPrevAAExc: { value: new THREE.Matrix3() },
+530a558,560
+>     // (the region this output was written in: the next frame's history is compressed only inside it)
+>     (u.uPrevAAPlane.value as THREE.Vector3).copy(u.uAAPlane.value as THREE.Vector3);
+>     (u.uPrevAAExc.value as THREE.Matrix3).copy(u.uAAExc.value as THREE.Matrix3);

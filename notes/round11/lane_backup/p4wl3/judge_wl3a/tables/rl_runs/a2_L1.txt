@@ -1,0 +1,4 @@
+rl/a2_L1: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 35.9 p90 50.0 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p50 2.1/2.5/3.3 cap ms p50 0.0/0.1/0.2 gap p50/p90/max 35.8/70.3/127.5
+a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/judge_wl3a/tools/rl.mjs:29:25
+
+Node.js v24.13.0

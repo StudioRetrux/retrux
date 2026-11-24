@@ -1,0 +1,21 @@
+[slot] judge_p4wl:perf-rest: taken (load 4.2)
+0 A {"held":null,"n":309,"med":18.700000000000728,"mean":19.370550161812297,"p95":37.100000000000364,"boot":3513,"waited":0,"load0":4.2,"load1":4.3,"others":[]} load 4.3
+0 B {"held":null,"n":317,"med":18.100000000000364,"mean":18.923343848580437,"p95":36.69999999999891,"boot":3921,"waited":0,"load0":4.1,"load1":3.6,"others":[]} load 3.6
+# pair 0 VALID; valid so far 1/6
+1 B {"held":null,"n":316,"med":18.299999999999272,"mean":19.01867088607595,"p95":36.900000000001455,"boot":3568,"waited":0,"load0":3.3,"load1":2.9,"others":[]} load 2.9
+1 A {"held":null,"n":307,"med":18.80000000000109,"mean":19.61661237785016,"p95":37.600000000000364,"boot":3574,"waited":0,"load0":3,"load1":2.7,"others":[]} load 2.7
+# pair 1 VALID; valid so far 2/6
+2 A {"held":null,"n":313,"med":18.399999999999636,"mean":19.136102236421728,"p95":36.79999999999927,"boot":3712,"waited":0,"load0":2.6,"load1":3,"others":[]} load 3.0
+2 B {"held":null,"n":316,"med":18.19999999999891,"mean":18.975316455696206,"p95":36.5,"boot":3789,"waited":0,"load0":2.8,"load1":3.1,"others":[]} load 3.1
+# pair 2 VALID; valid so far 3/6
+3 B {"held":null,"n":317,"med":18.100000000000364,"mean":18.977602523659307,"p95":36.5,"boot":3792,"waited":0,"load0":3.1,"load1":3.2,"others":[]} load 3.2
+3 A {"held":null,"n":319,"med":18.300000000000182,"mean":18.837304075235107,"p95":36.69999999999891,"boot":3633,"waited":0,"load0":3.2,"load1":3.2,"others":[]} load 3.2
+# pair 3 VALID; valid so far 4/6
+4 A {"held":null,"n":317,"med":18.19999999999891,"mean":18.938170347003155,"p95":37,"boot":3651,"waited":0,"load0":3.1,"load1":3,"others":[]} load 3.0
+4 B {"held":null,"n":318,"med":18.19999999999891,"mean":18.89748427672956,"p95":36.899999999999636,"boot":3534,"waited":0,"load0":3,"load1":3,"others":[]} load 3.0
+# pair 4 VALID; valid so far 5/6
+5 B {"held":null,"n":319,"med":18.600000000000364,"mean":18.915673981191222,"p95":36.5,"boot":3555,"waited":0,"load0":4.6,"load1":4.2,"others":[]} load 4.2
+5 A {"held":null,"n":320,"med":18.100000000000364,"mean":18.757187500000004,"p95":36.399999999999636,"boot":3574,"waited":0,"load0":6.6,"load1":5.9,"others":[]} load 5.9
+# pair 5 VALID; valid so far 6/6
+{"valid":6,"pairs":6,"paired_med":0.9891304347825689,"paired_mean":0.9978516366930857,"A_med":18.399999999999636,"B_med":18.19999999999891,"A_boot":3633,"B_boot":3789}
+[slot] judge_p4wl:perf-rest: freed (exit 0)

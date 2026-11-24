@@ -1,6 +1,7 @@
 import { HeroEngine } from "../app/hero/engine/HeroEngine";
 import { SoundEngine } from "../app/hero/engine/audio/SoundEngine";
 import { Cursor } from "../app/hero/engine/ui/Cursor";
+import { InkText } from "../app/hero/engine/ui/Ink";
 import { Loader } from "../app/hero/engine/ui/Loader";
 import { revealHeroText } from "../app/hero/engine/ui/Reveal";
 import { mountSoundWave } from "../app/hero/engine/ui/SoundWave";
@@ -18,11 +19,32 @@ const debug = params.has("debug");
 const loader = new Loader(document.body);
 document.querySelector("[data-cover]")?.remove();
 
+// P4 R4-Q1 (lane p4h4): HeroExperience.tsx's onHoldChange, so a hold in the lab takes the copy ([data-hero-copy]: the
+// headline + subline, and "Scroll to Explore" in the bottom-centre slot of production's "Coming Soon") away like ink and the
+// release brings it back, with data-hero-hold on <html>. The entrance stays the lab's own (revealHeroText). Captures read
+// data-hero-ink: "shown" from the start, "out" / "in" while the ink runs, "gone" / "shown" once it has finished (the attribute's
+// presence tells shoot_sweep.mjs that the ink is wired). `?p4h4=0` / `?labink=0`: off (no attribute, no ink).
+const ink = params.get("p4h4") !== "0" && params.get("labink") !== "0" ? new InkText(() => Array.from(document.querySelectorAll<HTMLElement>("[data-hero-copy]"))) : null;
+let inkRun = 0;
+if (ink) document.documentElement.dataset.heroInk = "shown";
+const onHoldChange = ink
+  ? (on: boolean) => {
+      const root = document.documentElement;
+      root.toggleAttribute("data-hero-hold", on);
+      const gen = ++inkRun;
+      root.dataset.heroInk = on ? "out" : "in";
+      void (on ? ink.out() : ink.in(0.05)).then(() => {
+        if (gen === inkRun) root.dataset.heroInk = on ? "gone" : "shown";
+      });
+    }
+  : undefined;
+
 const engine = new HeroEngine({
   canvas,
   assetBase: "/hero/",
   debug,
   onProgress: (p) => loader.setProgress(p),
+  onHoldChange,
 });
 (window as unknown as { __hero: HeroEngine }).__hero = engine;
 

@@ -1,0 +1,6 @@
+#!/bin/zsh
+for t0 in 3.3 5.1; do
+node /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/p4orb/fix/tools/detab.mjs --port 5176 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/p4orb/fix/ab2/t$t0 --tag off --qs p4orb=0 --poses p05,p06 --tau0 $t0
+node /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/p4orb/fix/tools/detab.mjs --port 5176 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/p4orb/fix/ab2/t$t0 --tag lane --poses p05,p06 --tau0 $t0
+node /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/p4orb/fix/tools/detab.mjs --port 5176 --out /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/p4orb/fix/ab2/t$t0 --tag fix1 --poses p05,p06 --tau0 $t0 --js "(()=>{const o=__hero.orb;o.holdCut=0.3;const u=o.material.uniforms;u.uP4Orb.value.y=6;u.uP4OrbB.value.y=0;})()"
+done

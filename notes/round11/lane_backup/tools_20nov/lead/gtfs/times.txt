@@ -1,0 +1,3 @@
+fast 25s
+diag 27s
+leave 27s

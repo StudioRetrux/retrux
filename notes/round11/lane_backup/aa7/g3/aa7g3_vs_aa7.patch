@@ -1,0 +1,58 @@
+--- a/retrux-web/app/hero/engine/HeroEngine.ts
++++ b/retrux-web/app/hero/engine/HeroEngine.ts
+@@ -251,6 +251,10 @@
+       // (the rest frame is unchanged). `?slabflash=0` keeps every 3rd moving frame.
+       this.slabFlashFix = this.profile.msaa > 0 && lq?.get("slabflash") !== "0";
+       this.lakeMirror = new LakeMirror(assets.sky, this.profile.tier);
++      // AA7 G-3 (the far-floe pale block at the governor's reduced scales): below render scale 1 the mirror target keeps the
++      // full-scale row count, so the AA5b guard's row bracketing sees the same rows as at scale 1 (LakeMirror.setSize).
++      // `?mrows=0` = AA7; off with the guard (`?ffblock=0`: AA3 exactly at every scale) and with the lab's `?lkmscale`.
++      this.lakeMirror.rowsFull = assets.lakeR12 && lq?.get("ffblock") !== "0" && lq?.get("mrows") !== "0" && lq?.get("lkmscale") === null;
+       // Frame budget (E-G3): T1 reuses the target for up to 2 frames while the camera is still; `?envmirrorrate=1` disables it.
+       const rate1 = lq?.get("envmirrorrate") === "1";
+       this.lakeMirror.reuse = this.profile.tier === "T1" && !rate1 ? 2 : 0;
+@@ -258,7 +262,7 @@
+       this.lakeMirror.refreshOnResize = lq?.get("envfix") !== "0";
+       setLayer(this.lakeMirror.skyMesh, LAYER.ENV);
+       this.scene.add(this.lakeMirror.skyMesh);
+-      this.lakeMirror.setSize(this.pipeline.size.width, this.pipeline.size.height);
++      this.lakeMirror.setSize(this.pipeline.size.width, this.pipeline.size.height, this.adaptive.scale);
+       this.lakeMirrorSize.set(this.lakeMirror.target.width, this.lakeMirror.target.height);
+       // AA5c (20 Nov, the cost of AA3 step B's every-frame mirror): the same mirror target for less work, bit-identical (tools/ident:
+       // mirror, walk and final hashes): the sky pass after the surfaces at the far plane (LakeMirror.setSkyLate), the baked
+@@ -681,7 +685,7 @@
+     this.pipeline.setSize(buf.x * scale, buf.y * scale);
+     this.post.setSize(this.pipeline.size.width, this.pipeline.size.height);
+     if (this.lakeMirror) {
+-      this.lakeMirror.setSize(this.pipeline.size.width, this.pipeline.size.height);
++      this.lakeMirror.setSize(this.pipeline.size.width, this.pipeline.size.height, scale);
+       this.lakeMirrorSize.set(this.lakeMirror.target.width, this.lakeMirror.target.height);
+     }
+     this.water?.setWalkSize(this.pipeline.size.width, this.pipeline.size.height);
+--- a/retrux-web/app/hero/engine/world/LakeMirror.ts
++++ b/retrux-web/app/hero/engine/world/LakeMirror.ts
+@@ -207,10 +207,21 @@
+    */
+   refreshOnResize = true;
+ 
+-  /** Main HDR target size in pixels. */
+-  setSize(width: number, height: number) {
++  /**
++   * AA7 G-3 (20 Nov, the far-floe pale block at the governor's reduced render scales): below render scale 1 the target keeps
++   * the full-scale ROW count (rows = the full-scale height x scale[1]; columns still follow the render scale). With rows
++   * 1 / scale taller (0.7: 268 instead of 383 rows on T1 at 1440x766) the near far floe's thin left end no longer covered a
++   * row centre, so the AA5b guard's two bracketing rows were the floe's sunlit inside and the far shore over the face's top
++   * and nothing was replaced (debug renders: AA7 lane_backup/aa7/g3/LOG.md). At scale 1 the size is AA7's exactly. Set by
++   * HeroEngine (only with the guard: the r12 lake and `?ffblock` not 0; `?mrows=0` or the lab's `?lkmscale` keep AA7's sizing).
++   */
++  rowsFull = false;
++
++  /** Main HDR target size in pixels; `renderScale` = the adaptive governor's scale that size was made with. */
++  setSize(width: number, height: number, renderScale = 1) {
++    const sy = this.rowsFull && renderScale > 0 && renderScale < 1 ? this.scale[1] / renderScale : this.scale[1];
+     const w = Math.max(2, Math.round(width * this.scale[0]));
+-    const h = Math.max(2, Math.round(height * this.scale[1]));
++    const h = Math.max(2, Math.round(height * sy));
+     const changed = w !== this.target.width || h !== this.target.height;
+     this.target.setSize(w, h);
+     if (changed && this.refreshOnResize) {

@@ -1,0 +1,4 @@
+scale 1: frames 45 | 3x3 12 px (0.27/frame, max 13, darker 11) | 5x5 7 (0.16/frame, max 8) | 7x7 4 (0.09/frame, max 8)
+scale 0.9: frames 25 | 3x3 152 px (6.08/frame, max 14, darker 143) | 5x5 30 (1.20/frame, max 13) | 7x7 8 (0.32/frame, max 9)
+scale 0.8: frames 25 | 3x3 141 px (5.64/frame, max 11, darker 114) | 5x5 22 (0.88/frame, max 9) | 7x7 15 (0.60/frame, max 9)
+scale 0.7: frames 25 | 3x3 278 px (11.12/frame, max 20, darker 171) | 5x5 22 (0.88/frame, max 8) | 7x7 11 (0.44/frame, max 6)

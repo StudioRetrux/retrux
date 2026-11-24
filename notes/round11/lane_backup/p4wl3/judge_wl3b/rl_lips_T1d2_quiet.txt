@@ -1,0 +1,10 @@
+M      pM_b         N 150 dt p10/50/90 24.9/26.6/29.6 | lips 422 band 2654 | errs 0
+L      pL_b         N 150 dt p10/50/90 27.4/29.2/31.5 | lips 546 band 3258 | errs 0
+B      pB_b         N 150 dt p10/50/90 26.4/29.9/32.3 | lips 514 band 3117 | errs 0
+POOLED dt-controlled (both steps inside the band), blips / frame:
+dt   0-999 | M n 148 lips   422 band  2654 || L n 148 lips   546 band  3258 || B n 148 lips   514 band  3117
+dt  20-26  | M n  25 lips   552 band  3287 || L n   2 lips     4 band   745 || B n   2 lips     5 band   898
+dt  26-30  | M n  80 lips   331 band  2427 || L n  75 lips   649 band  3544 || B n  47 lips   557 band  3053
+dt  28-34  | M n  31 lips   534 band  2356 || L n 113 lips   561 band  3346 || B n  98 lips   548 band  3298
+dt  30-36  | M n   8 lips   779 band  2646 || L n  33 lips   444 band  3211 || B n  56 lips   544 band  3208
+dt  26-40  | M n  94 lips   384 band  2433 || L n 140 lips   568 band  3353 || B n 131 lips   546 band  3253

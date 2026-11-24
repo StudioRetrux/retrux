@@ -1,0 +1,76 @@
+[slot] !judge-perf:rest waiting (load 8.9 / max 24, slots 2, holders [{"label":"aa4x batch4","pid":36858,"at":1795161230252,"slot":0},{"label":"judge-artifacts:holdpan","pid":36693,"at":1795161166409,"slot":1}])
+[slot] !judge-perf:rest waiting (load 9.8 / max 24, slots 2, holders [{"label":"aa4x batch4","pid":36858,"at":1795161230252,"slot":0},{"label":"judge-artifacts:holdpan","pid":36693,"at":1795161166409,"slot":1}])
+[slot] !judge-perf:rest: taken (load 9.7)
+{
+ "port": "5181",
+ "path": "rest",
+ "vw": 1440,
+ "vh": 766,
+ "dsf": 1,
+ "tier": "T1",
+ "block": 60,
+ "cycles": 6,
+ "main": [
+  1440,
+  766
+ ],
+ "scale": 1,
+ "load1minBefore": 9.7,
+ "load1minAfter": 13.69,
+ "summ": {
+  "full": {
+   "n": 360,
+   "med": 24.5,
+   "p90": 30.9,
+   "p99": 49.4,
+   "max": 57.9,
+   "top5": [
+    57.9,
+    55,
+    50.5,
+    49.4,
+    47.9
+   ],
+   "ratioMedVsRef": 1.0124,
+   "pairedBlockRatioMed": 1.0122,
+   "pairedBlockRatios": [
+    0.991,
+    1.129,
+    1.012,
+    0.976,
+    1.004,
+    1.046
+   ],
+   "taaRuns": 45,
+   "mirrorDraws": 48
+  },
+  "none": {
+   "n": 360,
+   "med": 24.2,
+   "p90": 30.9,
+   "p99": 47.7,
+   "max": 52.4,
+   "top5": [
+    52.4,
+    52.2,
+    48.4,
+    47.7,
+    45.6
+   ],
+   "ratioMedVsRef": 1,
+   "pairedBlockRatioMed": 1,
+   "pairedBlockRatios": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "taaRuns": 0,
+   "mirrorDraws": 42
+  }
+ },
+ "logs": []
+}
+[slot] !judge-perf:rest: freed (exit 0)

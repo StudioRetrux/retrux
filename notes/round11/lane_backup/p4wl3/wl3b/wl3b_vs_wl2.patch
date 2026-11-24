@@ -1,0 +1,149 @@
+--- a/retrux-web/app/hero/engine/world/Water.ts
++++ b/retrux-web/app/hero/engine/world/Water.ts
+@@ -1854,6 +1854,129 @@
+         `  float sE = max(2.0 * 0.07 * sqrt(mix(lkSig.y * lkSig.y, wlSig4.y * wlSig4.y, ${S})), 1e-4);\n`,
+     },
+   ];
++}
++/**
++ * wl3b (round 3 of the water, job B; client: "reflection yang bongkahan es belakang ... vertical line gitu doang, kasar banget",
++ * "bibir air jelek.mov"). `?wl3b=0` = wl2 (:5167) exactly (no text, no define). Rides on P4WL_BAND + wl2g (lake-anchored taps).
++ * - WL3B_K: beyond WL3B_D0..D1 m (camera distance, smoothstep) the faces' share takes a wider spread along the view (sE x K) =
++ *   ref_F000's longer, brighter columns under the far slabs / floes (Cycles' rough water stretches each face's reflection down the
++ *   screen). Applied after the share's mu / sE are formed (wl3a owns those lines), to the per-pixel fallback walk's spread, and to
++ *   the walk pass's spread (its 0.002 share threshold decides which faces a tap stores). `?wl3bk=` (1 = off).
++ * - WL3B_CAPD: the walk's face cap 4 -> 8 (every lake point by default). With K the wider spread lets small faces in front of the
++ *   left shelf use up wl2's 4 hits, the walk stops short of the shelf's taller faces and the bright remainder shows through: pale
++ *   holes in the far-left shelf reflection that reshape every frame (stepped fast T1 DPR 2 left box blips wl2 1648 -> K only 1869;
++ *   with cap 8 1620). With K the cap no longer dims the x ~1208 column (wl2b's cap 8 without K did: 61 -> 34 px): rows 510-585
++ *   excess wl2 9.5 | K + cap 8 12.0 | REF 10.4. `?wl3bcap=0` = wl2's 4; lab `?wl3bcap=<m>` (+ `?wl3bcapw=1`: 8 only while the
++ *   camera distance t (or, capw 1, the face's distance d from the lake point) is below <m>).
++ * - WL3B_LIP: the slab-foot lip. The face's horizon tN was sampled at d + cL x {0.25, 0.75, 1.5, 3} from the reached cell's ENTRY d,
++ *   and its colour looked up at d: d steps with the heightfield cells (0.31-1.25 m) along every foot not aligned with the grid = the
++ *   notched / toothed lip that crawls as the camera moves. Here both are anchored to where the bilinear (level-0) surface crosses
++ *   the current horizon ray (tN) / half the cell's top (the colour), found by bisection: continuous in the lake point P.
++ *   `?wl3blip=0` = wl2's sampling.
++ */
++export function wl3bOn(lq: URLSearchParams | null) {
++  return lq?.get("wl3b") !== "0";
++}
++const WL3B_K = 2.6;
++const WL3B_D0 = 25;
++const WL3B_D1 = 35;
++const WL3B_CAPD = 10000;   // = every lake point (the walk ends at LK_DMAX)
++const WL3B_COLS: P4Edit[] = [
++  {
++    // the read's per-pixel fallback walk (taps under / next to a footprint) with the far faces' spread
++    find: "  if (dot(wt, 1.0 - step(-0.35, ta)) > 0.01) return lkWalkTerm(dist, V, lkN, lkSig, vWorldPos);\n",
++    repl:
++      "  float wl3bK = mix(1.0, WL3B_K, smoothstep(WL3B_D0, WL3B_D1, dist));   // wl3b: the far faces' spread along the view\n" +
++      "  if (dot(wt, 1.0 - step(-0.35, ta)) > 0.01) return lkWalkTerm(dist, V, lkN, vec2(lkSig.x, lkSig.y * wl3bK), vWorldPos);\n",
++  },
++  {
++    // the faces' share (after its mu / sE are formed)
++    find: "  vec4 F4 = step(-0.15, ta) * vec4(lkPhiT((ta.x - mu) / sE), ",
++    repl: "  sE *= wl3bK;   // wl3b\n  vec4 F4 = step(-0.15, ta) * vec4(lkPhiT((ta.x - mu) / sE), ",
++  },
++  {
++    // the walk pass walks with the same spread (its share threshold decides which faces a tap stores)
++    find: "    vec3 n0 = lkBump(vWorldPos, wDx0, wDy0, kDof0, sg0);\n",
++    repl:
++      "    vec3 n0 = lkBump(vWorldPos, wDx0, wDy0, kDof0, sg0);\n" +
++      "    sg0.y *= mix(1.0, WL3B_K, smoothstep(WL3B_D0, WL3B_D1, dist0));   // wl3b: the far faces' spread\n",
++  },
++];
++const WL3B_CAP: P4Edit[] = [
++  {
++    find: "      if (Fc > 0.995 || hits > 3.5) break;\n",
++    repl: "      if (Fc > 0.995 || hits > ((WL3B_CAPW == 0 ? t : d) < WL3B_CAPD ? 7.5 : 3.5)) break;   // wl3b: 8 faces within WL3B_CAPD m (WL3B_CAPW 0: of the camera, 1: of the lake point), 4 beyond\n",
++  },
++];
++const WL3B_LIP: P4Edit[] = [
++  {
++    // tN anchored to the bilinear surface's crossing of the current horizon ray (not to the cell entry d)
++    find: "    float tN = m;\n    float cL = cell * exp2(float(L));\n    for (int k = 0; k < 4; k++) {\n      float dk = d + cL * ",
++    repl: /* glsl */ `    float tN = m;
++    float cL = cell * exp2(float(L));
++    float wl3bS = d;   // wl3b: the crossing (falls back to the entry d when the bilinear surface does not cross in the cell)
++    {
++      float sLo = max(d - 0.5 * cell, 0.05);
++      float sHi = dExit + 0.5 * cell;
++      if (lkHgtAt(P.xz + hz0 * sHi) - y0 > m * sHi && lkHgtAt(P.xz + hz0 * sLo) - y0 <= m * sLo) {
++        for (int b = 0; b < WL3B_NB; b++) {
++          float sM = 0.5 * (sLo + sHi);
++          if (lkHgtAt(P.xz + hz0 * sM) - y0 > m * sM) sHi = sM; else sLo = sM;
++        }
++        wl3bS = 0.5 * (sLo + sHi);
++      }
++    }
++    for (int k = 0; k < 4; k++) {
++      float dk = wl3bS + cL * `,
++  },
++  {
++    // the face's colour looked up where the bilinear surface crosses half the cell's top (continuous in P)
++    find: "        float dF = d;\n",
++    repl: /* glsl */ `        float dF = wl3bS;   // wl3b
++        {
++          float hT = y0 + 0.5 * max(H - y0, 0.0);
++          float sLo = max(wl3bS - 0.5 * cell, 0.05);
++          float sHi = dExit + 0.5 * cell;
++          if (lkHgtAt(P.xz + hz0 * sHi) > hT && lkHgtAt(P.xz + hz0 * sLo) <= hT) {
++            for (int b = 0; b < WL3B_NB; b++) {
++              float sM = 0.5 * (sLo + sHi);
++              if (lkHgtAt(P.xz + hz0 * sM) > hT) sHi = sM; else sLo = sM;
++            }
++            dF = 0.5 * (sLo + sHi);
++          }
++        }
++`,
++  },
++];
++const WL3B_PX: P4Edit[] = [
++  {
++    // (lab, `?wlwalk=px`) the per-pixel walk with the far faces' spread
++    find: "  return lkWalkTerm(dist, V, lkN, lkSig, vWorldPos);   // p4wl: per pixel (no quarter-size texels)\n",
++    repl: "  return lkWalkTerm(dist, V, lkN, vec2(lkSig.x, lkSig.y * mix(1.0, WL3B_K, smoothstep(WL3B_D0, WL3B_D1, dist))), vWorldPos);   // p4wl: per pixel + wl3b\n",
++  },
++];
++/** wl3b: applies the lane's edits (band read + walk pass, or the lab's per-pixel walk). `?wl3b=0`: none (wl2 exactly). */
++function wl3bApply(frag: string, lq: URLSearchParams | null, defines: Record<string, string>, px: boolean) {
++  if (!wl3bOn(lq) || !frag.includes(px ? WL3B_PX[0].find : WL3B_COLS[1].find)) return frag;
++  const wn = (k: string, d: number, lo: number, hi: number) => {
++    const v = Number(lq?.get(k));
++    return lq?.get(k) != null && Number.isFinite(v) && v >= lo && v <= hi ? v : d;
++  };
++  defines.WL3B_K = wn("wl3bk", WL3B_K, 1, 6).toFixed(3);
++  defines.WL3B_D0 = wn("wl3bd0", WL3B_D0, 0, 200).toFixed(3);
++  defines.WL3B_D1 = wn("wl3bd1", WL3B_D1, 0.5, 300).toFixed(3);
++  frag = p4Apply(frag, px ? WL3B_PX : WL3B_COLS, "WL3B");
++  const capd = wn("wl3bcap", WL3B_CAPD, 0, 500);
++  if (capd > 0) {
++    defines.WL3B_CAPD = capd.toFixed(3);
++    defines.WL3B_CAPW = lq?.get("wl3bcapw") === "1" ? "1" : "0";
++    frag = p4Apply(frag, WL3B_CAP, "WL3BC");
++  }
++  if (lq?.get("wl3blip") !== "0") {
++    defines.WL3B_NB = String(Math.round(wn("wl3bnb", 5, 2, 8)));
++    frag = p4Apply(frag, WL3B_LIP, "WL3BL");
++  }
++  return frag;
+ }
+ /** wl2g: the walk pass's vertex shader (the lake through the anchor view-projection uLkWalkAP). */
+ function wl2gWalkVert(src: string) {
+@@ -3465,6 +3588,7 @@
+         const wlw = lq?.get("wlwalk");
+         if (p4wlOn(lq) && defines.LK_CACHEN !== undefined && defines.LK_HALF !== undefined && wlw === "px") {
+           frag = p4Apply(frag, P4WL_WALK, "WL");
++          frag = wl3bApply(frag, lq, defines, true);   // wl3b (lab: the per-pixel walk with the lane, e.g. its GT)
+           this.walkPerPixel = true;
+         } else if (p4wlOn(lq) && defines.LK_CACHEN !== undefined && defines.LK_HALF !== undefined && defines.LK_WALKSEL !== undefined && wlw !== "q") {
+           defines.LK_WALKPX = "";
+@@ -3489,6 +3613,8 @@
+             if (sq >= 0.5 && sq <= 2) this.walkOver = sq;
+             const aq = Number(lq?.get("wl2gaz"));
+             if (aq > 0 && aq <= 0.1) this.walkAz = aq;
++            // wl3b (job B: the far columns, the slab-foot lips; WL3B_* above). `?wl3b=0` = wl2 exactly.
++            frag = wl3bApply(frag, lq, defines, false);
+           }
+         }
+         // (No far-water rest correction: it was a fit of the ENV lane's model to the plate.)

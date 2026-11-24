@@ -1,0 +1,2 @@
+T1 DPR2 (buf 1800) stepped fast left CSS x0-420 y470-620         MAIN 1287 | LANE 1066 | px 1281
+T1 DPR2 (buf 1800) stepped fast shelfwater CSS x280-480 y440-520 MAIN 324 | LANE 309 | px 318

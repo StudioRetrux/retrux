@@ -1,0 +1,17 @@
+MAIN   c3_main_a  N 150 dt p10/50/90 29.3/30.8/34.6 | blips/frame left 353 shelf 250 right 645 | scales [1] errs 0
+MAIN   c3_main_b  N 150 dt p10/50/90 30.4/50.0/50.0 | blips/frame left 511 shelf 469 right 924 | scales [1] errs 0
+Q4     c3_q4_a    N 150 dt p10/50/90 30.1/34.3/38.8 | blips/frame left 454 shelf 280 right 710 | scales [1] errs 0
+Q4     c3_q4_b    N 150 dt p10/50/90 30.1/31.6/34.2 | blips/frame left 389 shelf 229 right 659 | scales [1] errs 0
+Q2     c3_q2_a    N 150 dt p10/50/90 50.0/50.0/50.0 | blips/frame left 784 shelf 547 right 1051 | scales [1] errs 0
+Q8     c3_q8_a    N 150 dt p10/50/90 29.9/31.4/33.1 | blips/frame left 382 shelf 235 right 688 | scales [1] errs 0
+
+POOLED, dt-controlled (both steps of the blip inside the band); n = frames:
+dt   0-999 | MAIN n 296 left  432 shelf  359 right  784 || Q4 n 296 left  422 shelf  254 right  684 || Q2 n 148 left  784 shelf  547 right 1051 || Q8 n 148 left  382 shelf  235 right  688
+dt  28-31  | MAIN n  73 left  376 shelf  267 right  582 || Q4 n  40 left  238 shelf  118 right  524 || Q2 n   0 left   -1 shelf   -1 right   -1 || Q8 n  31 left  410 shelf  252 right  709
+dt  30-33  | MAIN n  80 left  265 shelf  198 right  662 || Q4 n 106 left  324 shelf  180 right  611 || Q2 n   0 left   -1 shelf   -1 right   -1 || Q8 n  95 left  323 shelf  199 right  682
+dt  28-34  | MAIN n 133 left  320 shelf  228 right  626 || Q4 n 172 left  383 shelf  214 right  627 || Q2 n   0 left   -1 shelf   -1 right   -1 || Q8 n 133 left  394 shelf  240 right  697
+dt  30-36  | MAIN n 109 left  289 shelf  212 right  656 || Q4 n 199 left  406 shelf  237 right  662 || Q2 n   0 left   -1 shelf   -1 right   -1 || Q8 n 122 left  377 shelf  231 right  670
+sheet MAIN frames 69 - 72 dt [np.float64(31.5), np.float64(31.2), np.float64(32.4), np.float64(34.5)]
+sheet Q4 frames 96 - 99 dt [np.float64(31.4), np.float64(30.0), np.float64(30.7), np.float64(30.9)]
+sheet Q2 frames 60 - 63 dt [np.float64(50.0), np.float64(50.0), np.float64(50.0), np.float64(50.0)]
+sheet Q8 frames 75 - 78 dt [np.float64(30.9), np.float64(31.8), np.float64(32.9), np.float64(32.2)]

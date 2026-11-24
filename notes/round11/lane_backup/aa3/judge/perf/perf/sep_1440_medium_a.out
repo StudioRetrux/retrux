@@ -1,0 +1,82 @@
+pair 0 lane: wall med 23.50 ms, gpu med 33.81 ms (n 180)
+pair 0 base: wall med 36.40 ms, gpu med 56.10 ms (n 180)
+pair 1 base: wall med 24.40 ms, gpu med 35.37 ms (n 180)
+pair 1 lane: wall med 26.20 ms, gpu med 36.72 ms (n 180)
+pair 2 lane: wall med 39.20 ms, gpu med 57.71 ms (n 180)
+pair 2 base: wall med 21.50 ms, gpu med 33.06 ms (n 180)
+pair 3 base: wall med 26.10 ms, gpu med 39.67 ms (n 180)
+pair 3 lane: wall med 26.30 ms, gpu med 36.87 ms (n 180)
+{
+ "lane": {
+  "wallMedOfMeds": 26.3,
+  "gpuMedOfMeds": 36.867,
+  "wallP90": 41.5,
+  "wallMax": 60.7,
+  "gpuP90": 61.68,
+  "gpuMax": 85.805,
+  "perPair": {
+   "wall": [
+    23.5,
+    26.2,
+    39.2,
+    26.3
+   ],
+   "gpu": [
+    33.809,
+    36.719,
+    57.715,
+    36.867
+   ]
+  },
+  "ratioGpuPairs": [
+   0.603,
+   1.038,
+   1.746,
+   0.929
+  ],
+  "ratioWallPairs": [
+   0.646,
+   1.074,
+   1.823,
+   1.008
+  ],
+  "ratioGpuMed": 1.038,
+  "ratioWallMed": 1.074
+ },
+ "base": {
+  "wallMedOfMeds": 26.1,
+  "gpuMedOfMeds": 39.669,
+  "wallP90": 43.6,
+  "wallMax": 66.1,
+  "gpuP90": 69.35,
+  "gpuMax": 116.385,
+  "perPair": {
+   "wall": [
+    36.4,
+    24.4,
+    21.5,
+    26.1
+   ],
+   "gpu": [
+    56.103,
+    35.368,
+    33.062,
+    39.669
+   ]
+  },
+  "ratioGpuPairs": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "ratioWallPairs": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "ratioGpuMed": 1,
+  "ratioWallMed": 1
+ }
+}

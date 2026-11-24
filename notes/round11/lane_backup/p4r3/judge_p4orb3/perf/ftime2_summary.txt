@@ -1,0 +1,6 @@
+rest lane mean 44.00 med 43.60 | main mean 44.01 med 43.80 | pooled mean ratio 1.000
+rest pairedMeanRatios [1.035, 0.949, 0.977, 1.023, 1.031, 0.99, 0.989, 1.008, 0.995, 0.987, 0.987, 1.028] | loadMax 6.29
+rest median of paired mean ratios 0.992, of paired median ratios 1.002
+hold lane mean 56.25 med 54.70 | main mean 55.87 med 54.00 | pooled mean ratio 1.007
+hold pairedMeanRatios [1.004, 1.069, 0.933, 1.019, 1.082, 1.054, 1.027, 1.01, 0.931, 1.05, 0.898, 1.037] | loadMax 6.83
+hold median of paired mean ratios 1.023, of paired median ratios 1.025

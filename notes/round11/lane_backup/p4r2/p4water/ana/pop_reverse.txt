@@ -1,0 +1,31 @@
+### reverse mask=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work5/aa5b/caps/reverse_bmask gt=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work5/aa5b/caps/reverse_gt
+A8: flagged px 2120, events >= 6 px: 60, px in them 875
+LANE: flagged px 1975, events >= 6 px: 61, px in them 858
+-- A8 top 4
+  k58-81 x942-1013 y751-763 n86 emax89 frames 58/6/60/-50 59/4/55/-52 60/3/57/-54 60/2/58/-51 ...
+  k73-85 x82-113 y544-550 n57 emax99 frames 73/1/61/100 74/5/70/64 75/3/91/117 75/2/65/-62 ...
+  k30-39 x141-159 y541-548 n31 emax134 frames 30/1/41/-53 31/5/134/-97 32/2/96/-104 33/2/132/-115 ...
+  k59-69 x124-149 y537-543 n37 emax102 frames 59/2/71/88 60/2/93/92 60/1/52/66 61/1/77/93 ...
+-- LANE top 4
+  k58-81 x942-1013 y751-763 n84 emax89 frames 58/7/59/-47 59/3/54/-55 60/3/57/-53 60/2/59/-50 ...
+  k73-85 x82-113 y544-550 n48 emax98 frames 73/1/65/110 74/4/71/97 75/2/91/115 75/1/41/-44 ...
+  k31-41 x141-161 y540-545 n32 emax133 frames 31/5/133/-95 32/2/95/-104 33/2/131/-111 34/4/102/-78 ...
+  k18-36 x545-591 y494-498 n51 emax68 frames 18/1/44/58 19/1/44/58 20/1/46/55 21/1/43/53 ...
+-- popnew LANE vs A8 (new pops)
+new pops (X flagged, ref not, X != ref): 126 px, 73 clusters, >= 6 px: 2
+  k76-79 x1084-1090 y514-518 n10 emax59
+  k61-63 x1391-1396 y501-503 n8 emax67
+  k38-42 x153-157 y514-515 n5 emax104
+  k66-67 x119-120 y514-514 n4 emax68
+  k29-31 x132-133 y518-518 n4 emax64
+  k38-40 x1426-1428 y506-508 n4 emax57
+  k92-94 x43-45 y522-522 n3 emax74
+  k33-34 x1134-1136 y515-517 n4 emax54
+  k81-82 x73-74 y522-522 n3 emax63
+  k111-112 x1293-1297 y498-499 n3 emax62
+-- popnew A8 vs LANE (pops the lane removes)
+new pops (X flagged, ref not, X != ref): 198 px, 131 clusters, >= 6 px: 1
+  k71-71 x212-219 y548-548 n7 emax56
+  k11-11 x1063-1064 y489-491 n5 emax58
+  k68-68 x222-226 y546-546 n5 emax51
+  k30-30 x1123-1125 y515-517 n4 emax54

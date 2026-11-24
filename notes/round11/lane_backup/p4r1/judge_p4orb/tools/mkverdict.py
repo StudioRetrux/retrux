@@ -1,0 +1,16 @@
+import json, sys
+B = "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/lane_backup/p4r1/judge_p4orb"
+v = {
+ "lane": "p4orb", "judge": "judge_p4orb", "date": "2026-11-21 01:20 WIB", "pass": False,
+ "scores": [
+  {"lens": "orb_shards_light", "main": 7.5, "lane": 7.4},
+  {"lens": "color_grade_post", "main": 8.3, "lane": 8.2},
+  {"lens": "awwwards_jury", "main": 7.6, "lane": 7.5},
+  {"lens": "composition_motion", "main": 8.6, "lane": 8.5}],
+ "verified": {
+  "ident": "?p4orb=0 vs :5197 IDENTICAL (final, all targets, all linked programs, 20 moving frames) at T1, T2, T1 HOLD (pose expand 2.97, new), ?envlake=plate; lane ON at T0 phone IDENTICAL; lane ON T1 hold differs only main/refraction/bloom0-4/final + rx-orb, rx-shards, rx-bloom-down, rx-bloom-up, rx-grade (ident/summary.txt)",
+  "perf": "real loop rtx 6 interleaved pairs/mode, SLOT_BG=0, load max 7.5: paired mean-interval medians move 1.019, rest 0.942, hold 1.001 (0.973-1.042); sync ftime 8 pairs, load <= 5.2: rest 1.001, hold ~1.00 (mean 0.996). No regression > 5 % (perf/)",
+  "patch": "applies cleanly to aa7, reproduces the lane's 5 files byte for byte; tsc hero 0 / project 0 (--noEmit --incremental false)"},
+ "findings_file": "see StructuredOutput findings (same content)",
+ "evidence_dir": B}
+json.dump(v, open(sys.argv[1], "w"), indent=1)

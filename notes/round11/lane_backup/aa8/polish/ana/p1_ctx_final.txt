@@ -1,0 +1,11 @@
+== FINAL build (knee 0.6) extra restore damage of the TAA (def vs lktaa=0)
+{"frame":0,"extraGt4":4567,"gt4Darker":2623,"extraGt16":345,"ofWhichDarker":237,"extraGt32":35,"rows32":[[544,87],[512,74],[480,70],[704,26],[672,24],[576,22]]}
+{"frame":1,"extraGt4":4227,"gt4Darker":2566,"extraGt16":262,"ofWhichDarker":213,"extraGt32":17,"rows32":[[480,73],[544,64],[512,48],[736,18],[704,17],[576,15]]}
+{"frame":2,"extraGt4":3593,"gt4Darker":2237,"extraGt16":186,"ofWhichDarker":145,"extraGt32":11,"rows32":[[544,55],[480,33],[512,31],[704,20],[736,15],[576,12]]}
+{"frame":3,"extraGt4":3016,"gt4Darker":1892,"extraGt16":133,"ofWhichDarker":89,"extraGt32":9,"rows32":[[544,54],[512,27],[704,16],[736,12],[672,6],[640,6]]}
+fd_def_L0 [{'weight': 0.5, 'runs': 23, 'still': 0, 'valid': True}, {'weight': 0.5, 'runs': 24, 'still': 0, 'valid': True}, {'weight': 0.5, 'runs': 25, 'still': 0, 'valid': True}, {'weight': 0.5, 'runs': 26, 'still': 0, 'valid': True}] []
+fd_def_L1 [{'weight': 0, 'runs': 23, 'still': 1, 'valid': True}, {'weight': 0.5, 'runs': 24, 'still': 0, 'valid': True}, {'weight': 0.5, 'runs': 25, 'still': 0, 'valid': True}, {'weight': 0.5, 'runs': 26, 'still': 0, 'valid': True}] ['console.warning [hero] WebGL context lost']
+f0 FINAL restore vs plain resolve: {"a":"fd_def_L1_f0.rgba","b":"p8_lktaa0_L1_f0.rgba","W":1440,"H":766,"differ":25233,"gt4":0,"gt16":0,"max":4}
+f1 FINAL restore vs plain resolve: {"a":"fd_def_L1_f1.rgba","b":"p8_lktaa0_L1_f1.rgba","W":1440,"H":766,"differ":30778,"gt4":9,"gt16":0,"max":6}
+f2 FINAL restore vs plain resolve: {"a":"fd_def_L1_f2.rgba","b":"p8_lktaa0_L1_f2.rgba","W":1440,"H":766,"differ":35027,"gt4":89,"gt16":1,"max":23}
+f3 FINAL restore vs plain resolve: {"a":"fd_def_L1_f3.rgba","b":"p8_lktaa0_L1_f3.rgba","W":1440,"H":766,"differ":37571,"gt4":256,"gt16":1,"max":24}

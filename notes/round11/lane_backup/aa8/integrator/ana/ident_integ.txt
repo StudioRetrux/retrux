@@ -1,0 +1,34 @@
+# 1. ?fftip=0 == the polish-only state (the tip patch is NOT integrated: its ok was false; nothing reads ?fftip)
+I8 fftip=0 vs I8 default                       IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+I8 default vs POLISH final default (23:02)     IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+I8 fftip=0 vs POLISH final default             IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+# 2. knee 0.6 (glide) switches: I8 vs AA7 :5197 with the knee set live to 0.6 before the settle (fresh runs)
+I8 def vs AA7 def + K0.6 live                  IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+I8 f0 vs AA7 f0 + K0.6 live                    IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+I8 mc0 vs AA7 mc0 + K0.6 live                  IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+I8 mr0 vs AA7 mr0 + K0.6 live                  IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+I8 sf0 vs AA7 sf0 + K0.6 live                  IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+I8 s07 vs AA7 s07 + K0.6 live                  IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+I8 nodbg vs AA7 nodbg + K0.6 live              IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+# 3. knee 0.5 / unused: I8 vs AA7 :5197 (fresh runs)
+I8 g0 vs AA7 g0                                IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+I8 all5 vs AA7 all5                            IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+I8 lktaa0 vs AA7 lktaa0                        IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+I8 ar0 vs AA7 ar0                              IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+# 4. P-4: the AA5b lab params (ffbd0=0&ffbd1=0.01&ffbl=1)
+?debug + params: I8 vs AA7 + K0.6 live         IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+?debug + params vs ?debug alone (I8; live)     DIFFER    final DIFF | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: walk,final | programs 16 differ: rx-water|ShaderMaterial,rx-water-walk|ShaderMaterial | logs 0/0
+no ?debug + params vs no ?debug (I8)           IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+no ?debug + params vs no ?debug (AA7)          IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+# 5. binding G8 / G9 (fresh :5196 / :5182 runs; BASE with its plain URL)
+I8 lkglide=0&mirrorcost=0 vs AA6 lkglide=0     IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+I8 all six off + fftip=0 vs BASE T1            IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 14 differ: - | logs 0/0
+I8 T2 all six off + fftip=0 vs BASE T2         IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 14 differ: - | logs 0/0
+I8 envlake=plate vs BASE plate                 IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+I8 T0 phone vs BASE T0                         IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+# 6. cross-checks against saved hashes (the AA7 recheck's runs; deterministic)
+I8 default vs AA7 default (recheck; expect final only) DIFFER    final DIFF | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: final | programs 16 differ: - | logs 0/0
+BASE T1 fresh vs BASE T1 (recheck)             IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 14 differ: - | logs 0/0
+AA6 lkglide=0 fresh vs AA6 (recheck)           IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+# console errors / warnings per session (identS logs)
+sessions: 37, with logs: 0

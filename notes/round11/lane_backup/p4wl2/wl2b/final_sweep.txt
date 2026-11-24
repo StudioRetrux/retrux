@@ -1,0 +1,11 @@
+[slot] wl2b:perf-sweep waiting (load 6.6 / max 40, slots 3, holders [{"label":"wl2g:ident","pid":80486,"at":1795349595904,"slot":0},{"label":"wl2g:st-d2_G4","pid":80232,"at":1795349580392,"slot":1},{"label":"wl2f:perf-sweep","pid":79912,"at":1795349562442,"slot":2}])
+[slot] wl2b:perf-sweep: taken (load 6.4)
+0 A {"held":null,"n":238,"med":21.700000000000728,"mean":25.205042016806726,"p95":49.80000000000109,"boot":4055,"waited":152,"load0":10.3,"load1":13.9,"others":["wl2g:fair-slow-G-gt","wl2f:fair-fast-L-cap"]} load 13.9
+0 B {"held":null,"n":223,"med":23.799999999999272,"mean":27.00582959641256,"p95":52,"boot":3620,"waited":152,"load0":5,"load1":7.1,"others":["wl2f:perf-sweep2","wl2f:fair-fast-L-gt"]} load 7.1
+# pair 0 invalid (load >= 10 or another perf job); valid so far 0/8
+1 B {"held":null,"n":253,"med":21.80000000000109,"mean":23.60790513833992,"p95":44.5,"boot":5355,"waited":151,"load0":9.3,"load1":8.4,"others":["wl2f:perf-sweep2","wl2g:fair-medium-G-gt"]} load 8.4
+1 A {"held":null,"n":266,"med":20.899999999999636,"mean":22.59924812030075,"p95":38.29999999999927,"boot":3836,"waited":150,"load0":5.7,"load1":5.6,"others":["wl2f:perf-sweep2","wl2f:fair-reverse-L-gt"]} load 5.6
+# pair 1 invalid (load >= 10 or another perf job); valid so far 0/8
+2 A {"held":null,"n":267,"med":21.100000000000364,"mean":22.529962546816478,"p95":38.100000000000364,"boot":3560,"waited":150,"load0":3.3,"load1":7.4,"others":["wl2f:perf-sweep2","wl2g:fair-fast-G-gt"]} load 7.4
+2 B {"held":null,"n":258,"med":21.100000000000364,"mean":23.307751937984495,"p95":53.899999999999636,"boot":4382,"waited":153,"load0":6.4,"load1":6.5,"others":["wl2g:fair-diag-G-gt","wl2f:fair-slow-L-gt"]} load 6.5
+# pair 2 invalid (load >= 10 or another perf job); valid so far 0/8

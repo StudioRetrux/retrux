@@ -1,0 +1,7 @@
+[slot] judge-perfcode g8b2 waiting (load 25.2 / max 30, slots 3, holders [{"label":"!g3-i1-ident","pid":12729,"at":1795183560431,"slot":0},{"label":"!g3-c1-gov","pid":11752,"at":1795183562848,"slot":1},{"label":"judge-perfcode g8a1","pid":13049,"at":1795183563211,"slot":2}])
+[slot] judge-perfcode g8b2: taken (load 24.5)
+{"qs":"envlake=plate","port":"5197","knee":0.5,"taa":null,"targets":{"reflection":{"w":720,"h":383,"hash":"b79c0123c7a4f688"},"final":{"w":1440,"h":766,"hash":"c22f492de11ab24a"}},"counts":null,"nprog":12,"logs":[]}
+{"qs":"envlake=plate","port":"5182","knee":0.5,"taa":null,"targets":{"reflection":{"w":720,"h":383,"hash":"b79c0123c7a4f688"},"final":{"w":1440,"h":766,"hash":"c22f492de11ab24a"}},"counts":null,"nprog":12,"logs":[]}
+{"qs":"","port":"5197","knee":null,"taa":null,"targets":{"reflection":{"w":98,"h":211,"hash":"7ca5702dfaab603a"},"final":{"w":390,"h":844,"hash":"a884cea66424a865"}},"counts":null,"nprog":12,"logs":[]}
+{"qs":"","port":"5182","knee":null,"taa":null,"targets":{"reflection":{"w":98,"h":211,"hash":"7ca5702dfaab603a"},"final":{"w":390,"h":844,"hash":"a884cea66424a865"}},"counts":null,"nprog":12,"logs":[]}
+[slot] judge-perfcode g8b2: freed (exit 0)

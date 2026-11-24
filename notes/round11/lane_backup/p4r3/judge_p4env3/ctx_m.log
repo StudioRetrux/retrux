@@ -1,0 +1,13 @@
+[slot] judge_p4env3:ctxloss4 waiting (load 6.2 / max 30, slots 2, holders [{"label":"p4atmos:fix-batchA","pid":44320,"at":1795220941961,"slot":0},{"label":"p4orb3fix:ftime","pid":45842,"at":1795221028836,"slot":1}])
+[slot] judge_p4env3:ctxloss4 waiting (load 5.2 / max 30, slots 2, holders [{"label":"p4atmos:fix-batchB","pid":46407,"at":1795221047914,"slot":0},{"label":"p4orb3fix:ftime","pid":45842,"at":1795221028836,"slot":1}])
+[slot] judge_p4env3:ctxloss4 waiting (load 4.8 / max 30, slots 2, holders [{"label":"p4atmos:fix-batchB","pid":46407,"at":1795221047914,"slot":0},{"label":"p4orb3fix:ftime","pid":45842,"at":1795221028836,"slot":1}])
+[slot] judge_p4env3:ctxloss4 waiting (load 4.2 / max 30, slots 2, holders [{"label":"p4atmos:fix-batchB","pid":46407,"at":1795221047914,"slot":0},{"label":"p4orb3fix:ftime","pid":45842,"at":1795221028836,"slot":1}])
+[slot] judge_p4env3:ctxloss4 waiting (load 4.4 / max 30, slots 2, holders [{"label":"p4atmos:fix-probe","pid":46768,"at":1795221267734,"slot":0},{"label":"p4orb3fix:rtx2","pid":48056,"at":1795221233423,"slot":1}])
+[slot] judge_p4env3:ctxloss4: taken (load 4.1)
+L console.warning [hero] WebGL context lost
+L restored, lost=false
+N_t1 t=9.533
+N_t2_ptrTR t=12.05
+L_t1 t=9.533
+L_t2_ptrTR t=12.05
+[slot] judge_p4env3:ctxloss4: freed (exit 0)

@@ -1,0 +1,4 @@
+REF        col hp-std med 2.55  [3.5 3.2 1.4 1.7 1.9 3.9]  period med 8.9 px | open-water hp-std 1.52
+T1_main    col hp-std med 4.23  [6.1 3.6 6.1 4.6 3.9 3.1]  period med 2.8 px | open-water hp-std 2.64
+T1_wl2     col hp-std med 4.51  [4.9 2.3 5.2 4.7 4.3 2.6]  period med 4.2 px | open-water hp-std 2.72
+T1_fin     col hp-std med 4.30  [4.9 2.1 5.0 4.5 4.1 2.5]  period med 4.1 px | open-water hp-std 3.74

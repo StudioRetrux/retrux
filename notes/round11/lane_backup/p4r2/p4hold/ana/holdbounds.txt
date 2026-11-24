@@ -1,0 +1,8 @@
+== MAIN p06
+WORST {"top":-21,"bottom":792,"left":301,"right":1137} (frame 0..1440 x 0..766; bounding boxes overestimate a little)
+== LANE p06
+WORST {"top":-22,"bottom":790,"left":301,"right":1137} (frame 0..1440 x 0..766; bounding boxes overestimate a little)
+== MAIN p04
+WORST {"top":81,"bottom":678,"left":406,"right":1060} (frame 0..1440 x 0..766; bounding boxes overestimate a little)
+== LANE p04
+WORST {"top":69,"bottom":686,"left":398,"right":1070} (frame 0..1440 x 0..766; bounding boxes overestimate a little)

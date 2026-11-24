@@ -1,0 +1,65 @@
+[slot] lead:qc: taken (load 4.4)
+q00_rest {"phase":"idle","tau":0,"scale":1,"tier":"T1","d":{"orbitAz":0,"orbitEl":0,"tilt":0,"camCollapse":0,"camExpand":0,"align":0,"open":0,"flatten":0,"splay":0,"splitB":0,"spreadA":0,"relaxA":0,"tiltA":0,"popPose":0,"alignA":0,"alignInner":0,"gapA":0,"expandPose":0,"faceInner":0,"portal":0,"bandInner":1,"fogHold":0,"spin":1,"energy":0,"hold":null,"cdSpin":0}}
+q01_loop15 {"phase":"idle","tau":0.5,"scale":1,"tier":"T1","d":{"orbitAz":0,"orbitEl":0,"tilt":0,"camCollapse":0,"camExpand":0,"align":0,"open":0,"flatten":0,"splay":0,"splitB":0,"spreadA":0,"relaxA":0,"tiltA":0,"popPose":0,"alignA":0,"alignInner":0,"gapA":0,"expandPose":0,"faceInner":0,"portal":0,"bandInner":1,"fogHold":0,"spin":1,"energy":0,"hold":null,"cdSpin":0}}
+q02_loop30 {"phase":"idle","tau":1,"scale":1,"tier":"T1","d":{"orbitAz":0,"orbitEl":0,"tilt":0,"camCollapse":0,"camExpand":0,"align":0,"open":0,"flatten":0,"splay":0,"splitB":0,"spreadA":0,"relaxA":0,"tiltA":0,"popPose":0,"alignA":0,"alignInner":0,"gapA":0,"expandPose":0,"faceInner":0,"portal":0,"bandInner":1,"fogHold":0,"spin":1,"energy":0,"hold":null,"cdSpin":0}}
+q03_eye {"phase":"idle","tau":1.5,"scale":1,"tier":"T1","d":{"orbitAz":0,"orbitEl":0,"tilt":0,"camCollapse":0,"camExpand":0,"align":0,"open":0,"flatten":0,"splay":0,"splitB":0,"spreadA":0,"relaxA":0,"tiltA":0,"popPose":0,"alignA":0,"alignInner":0,"gapA":0,"expandPose":0,"faceInner":0,"portal":0,"bandInner":1,"fogHold":0,"spin":1,"energy":0,"hold":null,"cdSpin":0}}
+p04_expand_pop {"phase":"expand","tau":3.171,"scale":1,"tier":"T1","d":{"orbitAz":0,"orbitEl":0,"tilt":0,"camCollapse":0,"camExpand":0.765,"align":0,"open":0,"flatten":0,"splay":0,"splitB":0.324,"spreadA":0.324,"relaxA":0,"tiltA":0,"popPose":0,"alignA":0,"alignInner":0,"gapA":0,"expandPose":0,"faceInner":0,"portal":0,"bandInner":1,"fogHold":0.765,"spin":0.981,"energy":1,"hold":null,"cdSpin":0.741}}
+p05_expand {"phase":"expand","tau":3.644,"scale":1,"tier":"T1","d":{"orbitAz":0,"orbitEl":0,"tilt":0,"camCollapse":0,"camExpand":1,"align":0,"open":0,"flatten":0,"splay":0,"splitB":0.872,"spreadA":0.872,"relaxA":0,"tiltA":0,"popPose":0,"alignA":0,"alignInner":0,"gapA":0,"expandPose":0,"faceInner":0,"portal":0,"bandInner":1,"fogHold":1,"spin":0.2,"energy":1,"hold":null,"cdSpin":1}}
+p06_sustain {"phase":"expand","tau":4.064,"scale":1,"tier":"T1","d":{"orbitAz":0,"orbitEl":0,"tilt":0,"camCollapse":0,"camExpand":1,"align":0,"open":0,"flatten":0,"splay":0,"splitB":0.988,"spreadA":0.988,"relaxA":0,"tiltA":0,"popPose":0,"alignA":0,"alignInner":0,"gapA":0,"expandPose":0,"faceInner":0,"portal":0,"bandInner":1,"fogHold":1,"spin":0.2,"energy":1,"hold":null,"cdSpin":1}}
+p07_release_snap {"phase":"release","tau":4.724,"scale":1,"tier":"T1","d":{"orbitAz":0,"orbitEl":0,"tilt":0,"camCollapse":0,"camExpand":0.243,"align":0,"open":0,"flatten":0,"splay":0,"splitB":0.175,"spreadA":0.175,"relaxA":0,"tiltA":0,"popPose":0,"alignA":0,"alignInner":0,"gapA":0,"expandPose":0,"faceInner":0,"portal":0,"bandInner":1,"fogHold":0.967,"spin":0.422,"energy":0.543,"hold":null,"cdSpin":0}}
+p08_release_home {"phase":"release","tau":5.99,"scale":1,"tier":"T1","d":{"orbitAz":0,"orbitEl":0,"tilt":0,"camCollapse":0,"camExpand":0.048,"align":0,"open":0,"flatten":0,"splay":0,"splitB":0,"spreadA":0,"relaxA":0,"tiltA":0,"popPose":0,"alignA":0,"alignInner":0,"gapA":0,"expandPose":0,"faceInner":0,"portal":0,"bandInner":1,"fogHold":0.967,"spin":0.807,"energy":0.091,"hold":null,"cdSpin":0}}
+ui_rest {"phase":"idle","tau":0,"scale":1,"tier":"T1","d":{"orbitAz":0,"orbitEl":0,"tilt":0,"camCollapse":0,"camExpand":0,"align":0,"open":0,"flatten":0,"splay":0,"splitB":0,"spreadA":0,"relaxA":0,"tiltA":0,"popPose":0,"alignA":0,"alignInner":0,"gapA":0,"expandPose":0,"faceInner":0,"portal":0,"bandInner":1,"fogHold":0,"spin":1,"energy":0,"hold":null,"cdSpin":0}}
+[slot] lead:qc: freed (exit 0)
+[slot] lead:ptr: taken (load 4.3)
+rest {"az":0,"el":0,"tilt":0,"cam":[0.23,2.9,11.79],"occ":0}
+left {"az":-4.9,"el":0,"tilt":0,"cam":[-1.55,2.9,11.73],"occ":0}
+right {"az":4.9,"el":0,"tilt":0,"cam":[2.02,2.9,11.69],"occ":0}
+top {"az":0,"el":1.18,"tilt":0,"cam":[0.23,2.9,11.79],"occ":0}
+bottom {"az":0,"el":-1.18,"tilt":0,"cam":[0.23,2.9,11.79],"occ":0}
+top_left {"az":-4.9,"el":1.18,"tilt":0,"cam":[-1.55,2.9,11.73],"occ":0}
+top_right {"az":4.9,"el":1.18,"tilt":0,"cam":[2.02,2.9,11.69],"occ":0}
+bottom_left {"az":-4.9,"el":-1.18,"tilt":0,"cam":[-1.55,2.9,11.73],"occ":0}
+bottom_right {"az":4.9,"el":-1.18,"tilt":0,"cam":[2.02,2.9,11.69],"occ":0}
+orb {"az":0,"el":0.04,"tilt":0.998,"cam":[0.21,2.59,9.56],"occ":0}
+[slot] lead:ptr: freed (exit 0)
+[slot] lead:sweep: taken (load 6.7)
+no page errors
+sheet 6 rows
+[slot] lead:sweep: freed (exit 0)
+done: /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/p4orb/qc_fix
+cmp_p04_expand_pop.jpg
+cmp_p05_expand.jpg
+cmp_p06_sustain.jpg
+cmp_p07_release_snap.jpg
+cmp_p08_release_home.jpg
+cmp_q00_rest.jpg
+cmp_q01_loop15.jpg
+cmp_q02_loop30.jpg
+cmp_q03_eye.jpg
+cmp_ui_rest.jpg
+crop_p06_sustain_hero.jpg
+crop_q00_rest_hero.jpg
+crop_q00_rest_mountains.jpg
+crop_q00_rest_right.jpg
+crop_q00_rest_water.jpg
+crop_q01_loop15_hero.jpg
+crop_q02_loop30_hero.jpg
+crop_q03_eye_hero.jpg
+crop_ui_rest_copy.jpg
+crop_ui_rest_nav.jpg
+crop_ui_rest_scroll.jpg
+crop_ui_rest_sound.jpg
+log.txt
+p04_expand_pop.png
+p05_expand.png
+p06_sustain.png
+p07_release_snap.png
+p08_release_home.png
+ptr
+q00_rest.png
+q01_loop15.png
+q02_loop30.png
+q03_eye.png
+region_stats_q00.txt
+sweep
+ui_rest.png

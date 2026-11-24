@@ -1,0 +1,19 @@
+{
+ "note": "script args for wf_2979bccf-b9a (p4-water-wl.js)",
+ "args": {
+  "argsFile": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/args/p4wl-water.args.json",
+  "brief": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/briefs/p4r4_common.md",
+  "brief2": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/briefs/p4pri2_common.md",
+  "round": "p4wl",
+  "basePort": 5162,
+  "lane": {
+   "key": "wl",
+   "lane": "p4wl",
+   "port": 5163
+  },
+  "buildMin": 120,
+  "judgeMin": 45,
+  "fixMin": 60,
+  "rejudgeMin": 40
+ }
+}

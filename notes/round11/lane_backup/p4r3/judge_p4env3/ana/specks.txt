@@ -1,0 +1,40 @@
+shot                     | changed px where lane is a 'crushed' speck: R<60 & B-R>70 (MAIN / lane counts over changed px >8) | worst
+late150_bottom_left.png  crushed&changed M    0 L    0 | frame luma<50 M  7801 L  7801 
+late150_left.png         crushed&changed M    0 L    0 | frame luma<50 M  3735 L  3735 
+late150_rest.png         crushed&changed M    0 L    0 | frame luma<50 M  4434 L  4434 
+late150_right.png        crushed&changed M    0 L    0 | frame luma<50 M  5425 L  5425 
+late150_top_right.png    crushed&changed M    0 L    0 | frame luma<50 M  1219 L  1219 
+late90_bottom_left.png   crushed&changed M    0 L    0 | frame luma<50 M  7938 L  7938 
+late90_left.png          crushed&changed M    0 L    0 | frame luma<50 M  3023 L  3023 
+late90_rest.png          crushed&changed M    0 L    4 | frame luma<50 M  3489 L  3489 at 106,309 M [ 71  90 120] L [ 54  88 136]
+late90_right.png         crushed&changed M    0 L    5 | frame luma<50 M  4422 L  4422 at 233,311 M [ 73  93 124] L [ 57  91 138]
+late90_top_right.png     crushed&changed M    0 L    3 | frame luma<50 M  1084 L  1084 at 233,337 M [ 73  93 124] L [ 56  90 137]
+ptr_bottom.png           crushed&changed M    0 L   10 | frame luma<50 M  8703 L  8703 at 310,489 M [ 89 106 131] L [ 41  88 136]
+ptr_bottom_left.png      crushed&changed M    0 L    3 | frame luma<50 M  7830 L  7830 at 12,300 M [ 66  82 108] L [ 47  76 119]
+ptr_bottom_right.png     crushed&changed M    0 L    5 | frame luma<50 M  8364 L  8349 at 268,304 M [ 70  86 115] L [ 53  81 126]
+ptr_left.png             crushed&changed M    0 L    0 | frame luma<50 M  2887 L  2887 
+ptr_orb.png              crushed&changed M    0 L    2 | frame luma<50 M    10 L    10 at 128,366 M [ 68  83 111] L [ 50  78 121]
+ptr_rest.png             crushed&changed M    0 L    1 | frame luma<50 M  3496 L  3496 at 111,310 M [ 66  87 124] L [ 55  84 127]
+ptr_right.png            crushed&changed M    0 L    1 | frame luma<50 M  4495 L  4481 at 0,263 M [46 63 97] L [ 31  56 102]
+ptr_top.png              crushed&changed M    0 L    4 | frame luma<50 M  1039 L  1039 at 114,335 M [ 69  90 125] L [ 55  89 136]
+ptr_top_left.png         crushed&changed M    0 L    1 | frame luma<50 M  1092 L  1092 at 15,353 M [ 67  82 110] L [ 48  77 120]
+ptr_top_right.png        crushed&changed M    0 L    7 | frame luma<50 M  1094 L  1079 at 270,356 M [ 71  87 115] L [ 53  82 124]
+sw_hold_B.png            crushed&changed M    0 L    0 | frame luma<50 M    31 L    31 
+sw_hold_BL.png           crushed&changed M    0 L    0 | frame luma<50 M    72 L    72 
+sw_hold_L.png            crushed&changed M    0 L    0 | frame luma<50 M    55 L    55 
+sw_hold_R.png            crushed&changed M    0 L    0 | frame luma<50 M    58 L    58 
+sw_hold_T.png            crushed&changed M    0 L    0 | frame luma<50 M    37 L    37 
+sw_hold_TR.png           crushed&changed M    0 L    0 | frame luma<50 M    50 L    50 
+sw_pop_B.png             crushed&changed M    0 L    0 | frame luma<50 M     8 L     8 
+sw_pop_BL.png            crushed&changed M    0 L    0 | frame luma<50 M     6 L     6 
+sw_pop_L.png             crushed&changed M    0 L    0 | frame luma<50 M    11 L    11 
+sw_pop_R.png             crushed&changed M    0 L    0 | frame luma<50 M     8 L     8 
+sw_pop_T.png             crushed&changed M    0 L    0 | frame luma<50 M    12 L    12 
+sw_pop_TR.png            crushed&changed M    0 L    0 | frame luma<50 M    10 L    10 
+sw_rel_B.png             crushed&changed M    0 L    0 | frame luma<50 M     2 L     2 
+sw_rel_BL.png            crushed&changed M    0 L    0 | frame luma<50 M     1 L     1 
+sw_rel_L.png             crushed&changed M    0 L    1 | frame luma<50 M     0 L     0 at 58,567 M [ 60  85 123] L [ 48  81 124]
+sw_rel_R.png             crushed&changed M    0 L    0 | frame luma<50 M     0 L     0 
+sw_rel_T.png             crushed&changed M    0 L    0 | frame luma<50 M     1 L     1 
+sw_rel_TR.png            crushed&changed M    0 L    0 | frame luma<50 M     0 L     0 
+total [np.int64(0), np.int64(47)]

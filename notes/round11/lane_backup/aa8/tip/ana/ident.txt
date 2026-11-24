@@ -1,0 +1,13 @@
+fftip=0 vs AA7 default                         IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+TIP default vs AA7 default                     DIFFER    final DIFF | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: walk,final | programs 16 differ: rx-water|ShaderMaterial,rx-water-walk|ShaderMaterial | logs 0/0
+fftip=0&ffblock=0 vs AA7 ffblock=0             IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+ffblock=0 vs AA7 ffblock=0                     IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+fftip=0&lkglide=0 vs AA7 lkglide=0             IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+fftip=0&all5 vs AA7 all5                       IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+fftip=0&mc0 vs AA7 mc0                         IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+fftip=0 s0.7 vs AA7 s0.7                       IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+T0 phone vs AA7 T0                             IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+fftip=0&g0&mc0 vs AA6 g0                       IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+all six off vs BASE                            IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 14 differ: - | logs 0/0
+TIP default (final) vs AA7 default             DIFFER    final DIFF | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: walk,final | programs 16 differ: rx-water|ShaderMaterial,rx-water-walk|ShaderMaterial | logs 0/0
+fftip=0 (final build) vs AA7 default           IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0

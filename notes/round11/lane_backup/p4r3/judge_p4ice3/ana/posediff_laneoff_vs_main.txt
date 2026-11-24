@@ -1,0 +1,9 @@
+q00_rest           px>2      0 >8      0 >32     0 max     0 bbox None | rows>=560 px>2 0 >8 0
+q01_loop15         px>2      0 >8      0 >32     0 max     0 bbox None | rows>=560 px>2 0 >8 0
+q02_loop30         px>2      0 >8      0 >32     0 max     0 bbox None | rows>=560 px>2 0 >8 0
+q03_eye            px>2      0 >8      0 >32     0 max     0 bbox None | rows>=560 px>2 0 >8 0
+p04_expand_pop     px>2      0 >8      0 >32     0 max     0 bbox None | rows>=560 px>2 0 >8 0
+p05_expand         px>2      0 >8      0 >32     0 max     0 bbox None | rows>=560 px>2 0 >8 0
+p06_sustain        px>2      0 >8      0 >32     0 max     0 bbox None | rows>=560 px>2 0 >8 0
+p07_release_snap   px>2      0 >8      0 >32     0 max     0 bbox None | rows>=560 px>2 0 >8 0
+p08_release_home   px>2      0 >8      0 >32     0 max     0 bbox None | rows>=560 px>2 0 >8 0

@@ -1,0 +1,20 @@
+### hold (press 0.5 s, 5 s hold, release, 3 s): lane vs ?p4water=0 (= AA8), mask from the AA8 capture, GT = AA8 itself (flags lane px changing > 40 lv more than AA8 between frames)
+new pops (X flagged, ref not, X != ref): 4220 px, 739 clusters, >= 6 px: 142
+  k67-93 x1317-1381 y712-753 n685 emax87
+  k75-98 x1388-1419 y731-747 n335 emax109
+  k318-320 x397-456 y742-755 n95 emax92
+  k79-96 x1318-1335 y753-765 n87 emax92
+  k319-321 x414-459 y737-743 n65 emax99
+  k320-322 x433-461 y729-737 n60 emax93
+  k313-313 x1028-1046 y678-685 n51 emax77
+  k68-72 x1312-1326 y718-731 n45 emax68
+  k63-63 x1343-1361 y742-745 n32 emax83
+  k65-65 x1333-1351 y694-695 n30 emax85
+  k319-322 x1181-1199 y696-704 n37 emax64
+  k318-318 x434-462 y747-750 n25 emax93
+### bottom strip y686-766 frame-to-frame |dL| by phase
+A8     press mean 5.45 p99 30.1 >12 12.83% | sustain mean 1.64 p99 18.3 >12 2.24% | release mean 8.42 p99 48.7 >12 21.83% | after mean 4.43 p99 27.5 >12 9.81%
+LANE   press mean 6.13 p99 32.7 >12 16.06% | sustain mean 2.19 p99 21.0 >12 3.26% | release mean 9.04 p99 49.6 >12 24.93% | after mean 4.43 p99 27.1 >12 9.78%
+### lake band y480-686
+A8     press mean 4.75 p99 40.8 >12 10.18% | sustain mean 1.99 p99 33.7 >12 3.67% | release mean 7.48 p99 55.0 >12 17.69% | after mean 4.06 p99 34.1 >12 8.04%
+LANE   press mean 4.38 p99 40.4 >12 9.36% | sustain mean 1.96 p99 33.6 >12 3.63% | release mean 6.92 p99 54.3 >12 16.10% | after mean 3.61 p99 33.1 >12 7.18%

@@ -1,0 +1,2 @@
+d1 own(:5167) vs wl2g d?_G4 frames byte-identical: 120 / 120
+d2 own(:5167) vs wl2g d?_G4 frames byte-identical: 120 / 120

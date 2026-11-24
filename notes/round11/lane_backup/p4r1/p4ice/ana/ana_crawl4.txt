@@ -1,0 +1,15 @@
+m t0.4: mc-residual 1.609 (p99 26.9) raw |d| 3.835 changed-px 137804
+m t1.5: mc-residual 1.478 (p99 25.6) raw |d| 3.883 changed-px 148670
+m t2.9: mc-residual 1.648 (p99 27.5) raw |d| 2.760 changed-px 67808
+d t0.4: mc-residual 1.498 (p99 25.4) raw |d| 3.393 changed-px 136818
+d t1.5: mc-residual 1.292 (p99 24.8) raw |d| 3.280 changed-px 136277
+d t2.9: mc-residual 1.655 (p99 27.9) raw |d| 2.492 changed-px 129614
+s0 t0.4: mc-residual 1.453 (p99 24.4) raw |d| 3.412 changed-px 98290
+s0 t1.5: mc-residual 1.401 (p99 24.6) raw |d| 3.366 changed-px 140502
+s0 t2.9: mc-residual 1.553 (p99 27.6) raw |d| 2.493 changed-px 123197
+s16 t0.4: mc-residual 1.492 (p99 25.7) raw |d| 3.354 changed-px 131467
+s16 t1.5: mc-residual 1.329 (p99 25.0) raw |d| 3.407 changed-px 78460
+s16 t2.9: mc-residual 1.293 (p99 26.5) raw |d| 2.618 changed-px 138881
+nc t0.4: mc-residual 1.480 (p99 27.3) raw |d| 3.510 changed-px 130207
+nc t1.5: mc-residual 1.416 (p99 25.6) raw |d| 3.342 changed-px 77702
+nc t2.9: mc-residual 1.579 (p99 30.4) raw |d| 2.576 changed-px 73505

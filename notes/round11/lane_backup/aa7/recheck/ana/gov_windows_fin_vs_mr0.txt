@@ -1,0 +1,6 @@
+# fin vs mr0 (pre-fix sizing) by > 20 lv, rows 450-766, per scale window
+s0.9 k26-49 fin-vs-mr0: total A>B 4471  A<B 5968
+s0.8 k51-74 fin-vs-mr0: total A>B 4913  A<B 5167
+s0.7 k76-99 fin-vs-mr0: total A>B 2241  A<B 27731
+s1.0 k101-119 fin-vs-mr0: total A>B 0  A<B 0
+s1.0a k0-24 fin-vs-mr0: total A>B 0  A<B 0

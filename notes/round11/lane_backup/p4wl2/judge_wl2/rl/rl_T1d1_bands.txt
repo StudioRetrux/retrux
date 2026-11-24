@@ -1,0 +1,6 @@
+POOLED, dt-controlled (both steps of the blip inside the band); n = frames:
+dt   0-999 | MAIN n 296 left   79 shelf   53 right  320 || WL2 n 296 left  109 shelf   35 right  303
+dt  22-26  | MAIN n 180 left   92 shelf   60 right  329 || WL2 n 174 left  136 shelf   41 right  310
+dt  23-27  | MAIN n 112 left   79 shelf   52 right  364 || WL2 n 180 left  121 shelf   38 right  321
+dt  24-28  | MAIN n  52 left   77 shelf   61 right  443 || WL2 n 149 left   96 shelf   34 right  311
+dt  22-28  | MAIN n 202 left   90 shelf   61 right  345 || WL2 n 242 left  117 shelf   37 right  305

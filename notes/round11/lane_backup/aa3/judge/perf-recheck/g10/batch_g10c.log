@@ -1,0 +1,4 @@
+[slot] !judge-perf-recheck:g10c waiting (load 10.6 / max 24, slots 2, holders [{"label":"motion-recheck:C g8 ident","pid":63883,"at":1795165829334,"slot":0},{"label":"judge-artifacts-recheck:R5","pid":54421,"at":1795165786730,"slot":1}])
+[slot] !judge-perf-recheck:g10c: taken (load 8.8)
+[slot] !judge-perf-recheck:g10c: freed (exit 0)
+g10c exit 0

@@ -1,0 +1,4 @@
+tip2 vs fin1 T8 k0-119: box darker 13925 brighter 0 | outside darker 73632 brighter 1617 max 101
+tip2 vs fin1 (ref r2) T8 k0-119
+  box: 13925 px-frames, |new-ref| 9.2 vs |old-ref| 23.0, new closer on 91 %
+  outside: 75249 px-frames, |new-ref| 7.0 vs |old-ref| 14.3, new closer on 76 %

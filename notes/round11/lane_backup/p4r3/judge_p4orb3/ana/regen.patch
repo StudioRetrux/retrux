@@ -1,0 +1,229 @@
+--- a/retrux-web/app/hero/engine/hero/Orb.ts
++++ b/retrux-web/app/hero/engine/hero/Orb.ts
+@@ -34,6 +34,13 @@
+ export const P4ORB = P4Q?.get("p4orb") !== "0";
+ const P4_GLASS = P4ORB && P4Q?.get("orbglass") !== "r11";
+ export const P4_CHARGE = P4ORB && P4Q?.get("orbcharge") !== "r11";
++/**
++ * P4 round 3, lane orb (21 Nov, rejudge p4orb F2 / R2 / F4): `?p4orb3=0` drops round 3 only (MAIN = int1 byte for byte); `?p4orb=0`
++ * drops rounds 1 and 3. Sub-switches: `?orbhit=0` (F2, the plasma's Cycles sample clamp), `?orbrim3=0` (R2, the hold rim).
++ */
++export const P4ORB3 = P4ORB && P4Q?.get("p4orb3") !== "0";
++const P4_HIT = P4ORB3 && P4Q?.get("orbhit") !== "0";
++const P4_RIM3 = P4ORB3 && P4Q?.get("orbrim3") !== "0";
+ 
+ /** Production timing: one Blender frame per 30 fps video frame (frame = 30 t + 1). */
+ const BLENDER_FPS = 30;
+@@ -329,6 +336,24 @@
+ uniform vec4 uP4Orb;
+ // Q2 (fix round): the hold's cool tint of the grazing-exit annulus (a multiply, reached at 0.97 of the radius; mixed by uRim).
+ uniform vec3 uP4Rim;
++#endif
++#ifdef ORB_P4HIT
++// P4 round 3 (F2): Cycles clamps each SAMPLE's volume emission (indirect clamp, r + g + b <= 10) and point-samples the volume once
++// per step (procedural volumes: step = 1/10 of the bounds). A sample that lands in a sheet saturates the clamp; one that misses
++// adds nothing, so a pixel is E[clamp] = P(hit) x clamp, not clamp(E). x / y: weight at rest / in the hold (mixed by uRim),
++// z: 2 / (Cycles step in radii) (the share of a step inside a sheet ~ 2 x its mean coverage), w: the hits' gain over the clamp
++// (they sit above AgX's white anyway; it keeps the disc's mean radiance, which the ice reads from the copy, near MAIN's).
++uniform vec4 uP4Hit;
++// x / y: the hit share's levels (smoothstep lo / hi): the reference's core is bimodal, clipped tongues and lens-image gaps;
++// z / w: the model fades out towards the glass edge (impact parameter / radius), where the faint outer shell's sheets would leave
++// a dark annulus (F402 glows to ~0.9 of its edge): MAIN's clamp there.
++uniform vec4 uP4HitB;
++#endif
++#ifdef ORB_P4RIM
++// P4 round 3 (R2): the hold rim. x the band lift (0.86-0.96 R), y where the hairline peaks (impact parameter / radius), z its width,
++// w its strength; uP4RimC the hairline's lavender colour (added).
++uniform vec4 uP4RimB;
++uniform vec3 uP4RimC;
+ #endif
+ varying vec3 vWorldPos;
+ 
+@@ -505,6 +530,9 @@
+   float rimSm = uR11OrbB.x * smoothstep(uR11OrbB.y > 0.0 ? uR11OrbB.y : 0.7, 0.95, bImp);
+   vec4 smRim = sheetMean(-0.75, 0.75, h / S);
+ #endif
++#ifdef ORB_P4HIT
++  float lam = 0.0;   // sum of mean sheet coverage x path length (metres) along the chord
++#endif
+   if (w > 0.0) {
+     vec3 pPrev = o + d * s0;
+     float nPrev = magickNoise(orbMapping(pPrev));
+@@ -518,6 +546,9 @@
+ #ifdef ORB_R11
+       sm = mix(sm, smRim, rimSm);
+ #endif
++#ifdef ORB_P4HIT
++      lam += sm.a * ds;
++#endif
+       float sigma = c * sm.a;                      // Density = D, per metre
+       vec3 eps = (1000.0 * c * uGain) * sm.rgb;    // Emission Strength 1000 D, colour ramp(D)
+       float tr = exp(-sigma * ds);
+@@ -537,6 +568,15 @@
+   // end of the ramp is violet, and the neutral bounced fill flattened the plasma tongues (QC round 1).
+   float chain = min(q < 0.9999 ? (1.0 - q * q * q * q * q) / (1.0 - q) : 5.0, 2.0);
+   vec3 col = clampSample(emit, limit);
++#ifdef ORB_P4HIT
++  // Expected clamped sample: Poisson hits with mean lam * z / R; every hit in the plasma saturates the clamp, so the pixel is
++  // P(hit) x limit (or the unclamped mean when that is smaller). Rays that cross no sheet show the lens image of the scene: the
++  // dark refracted structure inside F402 / F453's clipped core (clamp(E) filled the whole hold disc at the cap, HDR p50 ~10).
++  float hitW = mix(uP4Hit.x, uP4Hit.y, uRim) * (1.0 - smoothstep(uP4HitB.z, uP4HitB.w, bImp));
++  float pHit = smoothstep(uP4HitB.x, uP4HitB.y, 1.0 - exp(-lam * uP4Hit.z / R)) * uP4Hit.w;
++  float eSum = emit.r + emit.g + emit.b;
++  col = mix(col, emit * min(1.0, limit * pHit / max(eSum, 1e-6)), hitW);
++#endif
+   if (chain > 1.001 && w > 0.0) {
+     float rEff = sqrt(h * h + w * w / 3.0) / S;
+     float c = 0.2 + 0.8 / (5.07 * max(rEff, 0.008));
+@@ -545,6 +585,11 @@
+     float len = 2.0 * w;
+     vec3 eps = (1000.0 * c * uGain) * sm.rgb;
+     vec3 inner = clampSample(eps * (sigma > 1e-4 ? (1.0 - exp(-sigma * len)) / sigma : len), limit);
++#ifdef ORB_P4HIT
++    vec3 innerRaw = eps * (sigma > 1e-4 ? (1.0 - exp(-sigma * len)) / sigma : len);
++    float pIn = smoothstep(uP4HitB.x, uP4HitB.y, 1.0 - exp(-sm.a * len * uP4Hit.z / R)) * uP4Hit.w;
++    inner = mix(inner, innerRaw * min(1.0, limit * pIn / max(innerRaw.r + innerRaw.g + innerRaw.b, 1e-6)), hitW);
++#endif
+     // Bounced light mixes the whole ball's colours: mostly neutral, a little of the ramp.
+     inner = mix(vec3(dot(inner, vec3(0.2126, 0.7152, 0.0722))), inner, 0.4);
+     col += inner * (chain - 1.0);
+@@ -661,6 +706,15 @@
+ #else
+   col *= mix(1.0, mix(uShadeFloor, 1.0, bgShade), uHoldFill.z * (1.0 - fOut));
+ #endif
++#ifdef ORB_P4RIM
++  // (R2, hold only: F402 glows mint-white nearly to its glass edge, (235-244, 253-255, 252-255) at 0.9-0.95 of its bright radius,
++  // then a thin pale lavender line, R ~ G < B, (223-229, 225-232, 250-252) at the lower left; the lane's band read 10-15 L dimmer
++  // and its hairline grey-blue (197, 211, 230).)
++  float bandK = smoothstep(0.78, 0.88, bImp) * (1.0 - smoothstep(0.95, 0.985, bImp));
++  col += vec3(0.86, 1.0, 0.98) * uP4RimB.x * uGain * bandK * (1.0 - fIn) * uRim;
++  float hairK = exp(-pow((bImp - uP4RimB.y) / uP4RimB.z, 2.0)) * uRim;
++  col += uP4RimC * uP4RimB.w * uGain * hairK;
++#endif
+ 
+   // Soft shoulder above 3, then the cap: the plasma's bright tongues keep their structure instead of clipping into
+   // a flat bulb (QC round 4: 57 % of the hold orb clipped, uniform white, vs 46 % with grey-teal smoke inside).
+@@ -740,12 +794,17 @@
+     const p4 = orbR11 && !!opts.p4 && P4_GLASS;
+     if (p4) defines.ORB_P4 = "";
+     this.p4Glass = p4;
++    // P4 round 3 (T1 / T2 with the round-11 orb, like round 1): F2 the expected clamped sample, R2 the hold rim.
++    const p4Hit = orbR11 && !!opts.p4 && P4_HIT;
++    const p4Rim = orbR11 && !!opts.p4 && P4_RIM3;
++    if (p4Hit) defines.ORB_P4HIT = "";
++    if (p4Rim) defines.ORB_P4RIM = "";
+ 
+     this.material = new THREE.ShaderMaterial({
+       name: "rx-orb",
+       vertexShader: ORB_VERT,
+-      // (P4: off, the ORB_P4 blocks are resolved away, so the source is MAIN's byte for byte.)
+-      fragmentShader: laneSource(ORB_FRAG, "ORB_P4", p4),
++      // (P4: off, the ORB_P4 blocks are resolved away, so the source is MAIN's byte for byte; round 3 likewise.)
++      fragmentShader: laneSource(laneSource(laneSource(ORB_FRAG, "ORB_P4HIT", p4Hit), "ORB_P4RIM", p4Rim), "ORB_P4", p4),
+       defines,
+       uniforms: {
+         uEnvMap: shared.uEnvMap,
+@@ -798,6 +857,20 @@
+               uP4Rim: { value: new THREE.Vector3(0.8, 0.93, 1.15) },
+             }
+           : {}),
++        // P4 round 3 (F2): uP4Hit (weight at rest, weight in the hold, 2 / Cycles step in radii, the hits' gain over the clamp),
++        // uP4HitB (levels lo / hi, fade towards the edge from / to). Rest unchanged (weight 0).
++        // (Paired deterministic captures, ring clock 3.3 = the open hold orb, interior r < 0.75 R, crystals masked; MAIN -> lane,
++        // F402: p05 share < 215 L 13.9 -> 19.1 % (21.7), < 235 26.9 -> 36.8 % (37.1), sd 21.2 -> 22.9 (24.4), box241 >= 248 18.9 ->
++        // 13.3 % (16.2); HDR p50 inside 0.75 R ~10 (the cap) -> bimodal. Gain 1: the ice ring around the orb -0.7 L and the band in
++        // front of the hidden orb -9 L (the orb's copy dimmer); gain 3 keeps them at -0.4 / -4 (the hits sit above AgX's white,
++        // compressed by the shoulder). Levels 0.1 / 0.45 -> 0.15 / 0.5 and the hold core glow 0.4 -> 0.25 (uR11OrbC.x): the gaps
++        // read as gaps. Without the edge fade the faint outer shell left a dark annulus inside the rim.)
++        ...(p4Hit ? { uP4Hit: { value: new THREE.Vector4(0, 1, 10, 3) }, uP4HitB: { value: new THREE.Vector4(0.15, 0.5, 0.7, 0.95) } } : {}),
++        // P4 round 3 (R2): (band lift, hairline centre, width, strength) and the hairline's lavender colour. (Batches e6-e8: a band
++        // lift of 1.6-2.2 drew a uniform white ring around the structured core; 0.6 with the hit model faded out towards the edge
++        // keeps the glow continuous: p05 band 0.86-0.96 R L 228 -> 238 (F402 245), hairline 0.97-1.0 R (197, 211, 230) -> (228, 231,
++        // 243), R ~ G < B as F402's lower-left line.)
++        ...(p4Rim ? { uP4RimB: { value: new THREE.Vector4(0.6, 0.975, 0.02, 1.4) }, uP4RimC: { value: new THREE.Vector3(0.62, 0.55, 1.0) } } : {}),
+         // Round 11 (ORB_R11): scales of the core glow, hot core, limb and hold glow over the Cycles plasma. All 0: the Cycles
+         // twin's orb (the artist's magick_ball_01.002) is clear glass with plasma tongues, no added glow; with them the orb
+         // read as a white disc (twin / engine L sd: q00 224 / 31 vs 236 / 19, p06 231 / 30 vs 246 / 10; batch s15).
+@@ -818,7 +891,8 @@
+               // Fix round (judge 1, finding f): x hold core glow, y glass-shell band start, z / w cyan limb start / inner end.
+               // ?ice=r11a (the judged build): all 0.
+               // (P4 Q2: y 0.95 -> 0.975, the iridescent line thinner.)
+-              uR11OrbC: { value: ICE_R11A ? new THREE.Vector4(0, 0, 0, 0) : new THREE.Vector4(0.4, p4 ? 0.975 : 0.95, 0.7, 0.9) },
++              // (P4 round 3, F2: the hold core glow x 0.4 -> 0.25 with the hit model, so its gaps are not filled in.)
++              uR11OrbC: { value: ICE_R11A ? new THREE.Vector4(0, 0, 0, 0) : new THREE.Vector4(p4Hit ? 0.25 : 0.4, p4 ? 0.975 : 0.95, 0.7, 0.9) },
+             }
+           : {}),
+       },
+--- a/retrux-web/app/hero/engine/hero/Shards.ts
++++ b/retrux-web/app/hero/engine/hero/Shards.ts
+@@ -30,6 +30,11 @@
+   const q = new URLSearchParams(location.search);
+   return q.get("p4orb") !== "0" && q.get("shard2") !== "r11";
+ })();
++/** P4 round 3, lane orb (F4, the brightest facets): with Q7 only; `?p4orb3=0` (all of round 3) or `?shardtop=0` off. */
++const P4_SHARD3 = typeof location === "undefined" || (() => {
++  const q = new URLSearchParams(location.search);
++  return q.get("p4orb3") !== "0" && q.get("shardtop") !== "0";
++})();
+ 
+ /**
+  * Belt speed: one turn per 4.03 s reference loop (the ring speeds are commensurate with it). The dense
+@@ -230,6 +235,11 @@
+ // P4 Q7: x the internal facets' value spread (0 = none), y their internal reflection (the pale sub-facets), z the absorption
+ // density scale (1 = uDensity as before), w the share of internal facets that reflect.
+ uniform vec4 uP4ShB;
++#endif
++#ifdef SHARD_P4R3
++// P4 round 3 (F4): the brightest facets (the top of the facet value range, fh.z from x) lifted by y with their chroma pushed by z
++// (AgX desaturates a brighter blue: a plain lift left the B-R >= 85 mask's p95 where it was).
++uniform vec4 uP4ShC;
+ #endif
+ uniform float uDensity;
+ uniform float uIor;
+@@ -354,6 +364,13 @@
+   body *= mix(0.45, 1.12, fh.z);
+ #endif
+   body *= mix(0.75, 1.1, NdotV);
++#ifdef SHARD_P4R3
++  // (F4, rejudge p4orb: the brightest crystal facets sat 15-20 L under the reference's, p95 of the blue-dominant px 147-156 vs
++  // 168-178 at q03 / p04 / p06, at matching saturation.)
++  float topK = smoothstep(uP4ShC.x, 1.0, fh.z);
++  vec3 lifted = body * (1.0 + uP4ShC.y * topK);
++  body = max(vec3(luma(lifted)) + (lifted - vec3(luma(lifted))) * (1.0 + uP4ShC.z * topK), 0.0);
++#endif
+ #ifdef SHARD_P4
+   // Q7: each internal facet its own value around 1 (the mosaic's light and dark patches inside a face).
+   body *= 1.0 + uP4ShB.x * (hi.x - 0.5);
+@@ -1052,6 +1069,7 @@
+     opts: { r11?: boolean; p4?: boolean } = {},
+   ) {
+     const p4 = !!opts.r11 && !!opts.p4 && P4_SHARD;
++    const p4r3 = p4 && P4_SHARD3;
+     const center = new THREE.Vector3().fromArray(HERO_CENTER);
+     gltfScene.updateMatrixWorld(true);
+     const rand = mulberry32(0x9e3779b9);
+@@ -1126,9 +1144,9 @@
+     this.material = new THREE.ShaderMaterial({
+       name: "rx-shards",
+       vertexShader: SHARD_VERT,
+-      // (P4: off, the SHARD_P4 blocks are resolved away, so the source is MAIN's byte for byte.)
+-      fragmentShader: laneSource(SHARD_FRAG, "SHARD_P4", p4),
+-      defines: { ...envDefines, ...(opts.r11 ? { SHARD_R11: "" } : {}), ...(p4 ? { SHARD_P4: "" } : {}) },
++      // (P4: off, the SHARD_P4 blocks are resolved away, so the source is MAIN's byte for byte; round 3 likewise.)
++      fragmentShader: laneSource(laneSource(SHARD_FRAG, "SHARD_P4R3", p4r3), "SHARD_P4", p4),
++      defines: { ...envDefines, ...(opts.r11 ? { SHARD_R11: "" } : {}), ...(p4 ? { SHARD_P4: "" } : {}), ...(p4r3 ? { SHARD_P4R3: "" } : {}) },
+       uniforms: {
+         // Round 11 (fix round 2, judge 1: the crystals 9-13 B-R bluer and flatter than the twin / F000, B-R 104-108 vs 95-97,
+         // sd 15 vs 21-23): x chroma kept, y / z the facets' value range (round 10 0.85, 0.45, 1.12). Batch g15, twin-index
+@@ -1144,6 +1162,11 @@
+         // 0.45); hue 223 deg unchanged. Reflection 0.7 / density 0.55 / haze 0.6 / see-through 0.25 (v6-v11) turned the far and
+         // intro crystals paper-white (qc sweep intro frames, the QC round 9 complaint); v12 s1 keeps them periwinkle.)
+         ...(p4 ? { uP4ShB: { value: new THREE.Vector4(0.8, 0.35, 0.7, 0.4) } } : {}),
++        // P4 round 3 (F4): top facets from fh.z x, lift y, chroma push z. (Batch e11, paired, B-R >= 85 px p95 off -> on / REF:
++        // q00 150.9 -> 163.1 / F000 163.5, q03 153.5 -> 162.9 / F045 168.4, p04 164.1 -> 172.7 / F358 177.7, p06 160.8 -> 174.1 /
++        // F420 170.2; median saturation within 0.017 of off (0.477 vs 0.483 at p04). (0.6, 0.35, 0.25): +6..+8 L; (0.55, 0.65,
++        // 0.5): p06 177.6, over the reference.)
++        ...(p4r3 ? { uP4ShC: { value: new THREE.Vector4(0.5, 0.5, 0.35, 0) } } : {}),
+         uBeltAxis: { value: axes },
+         uBeltOrigin: { value: origins },
+         uBeltSpread: { value: new THREE.Vector3(ORBITS[0].spread, ORBITS[1].spread, ORBITS[2].spread) },

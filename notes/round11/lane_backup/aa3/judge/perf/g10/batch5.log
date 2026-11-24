@@ -1,0 +1,5 @@
+[slot] judge-perf:g10x waiting (load 13.3 / max 24, slots 2, holders [{"label":"!judge-perf:sep1440","pid":24557,"at":1795159992426,"slot":0},{"label":"aa4y-cap-sanity","pid":20441,"at":1795160184027,"slot":1}])
+[slot] judge-perf:g10x waiting (load 8.0 / max 24, slots 2, holders [{"label":"judge-artifacts:leavere","pid":23947,"at":1795160198643,"slot":0},{"label":"aa4x batch1","pid":24189,"at":1795160244736,"slot":1}])
+[slot] judge-perf:g10x waiting (load 7.0 / max 24, slots 2, holders [{"label":"!judge-perf:batch2perf","pid":27141,"at":1795160286436,"slot":0},{"label":"aa4x batch1","pid":24189,"at":1795160244736,"slot":1}])
+[slot] judge-perf:g10x: taken (load 6.1)
+[slot] judge-perf:g10x: freed (exit 0)

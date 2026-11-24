@@ -1,0 +1,12 @@
+[slot] fixer-r gov+holdre: taken (load 6.0)
+[jcap gov] pre: 1 seg, 0 errors/warnings
+  fin: 1 seg, 0 errors/warnings
+  f0: 1 seg, 0 errors/warnings
+  base: 1 seg, 0 errors/warnings
+gov 112s
+[jcap holdre] pre: 1 seg, 0 errors/warnings
+  fin: 1 seg, 0 errors/warnings
+  f0: 1 seg, 0 errors/warnings
+  base: 1 seg, 0 errors/warnings
+holdre 228s
+[slot] fixer-r gov+holdre: freed (exit 0)

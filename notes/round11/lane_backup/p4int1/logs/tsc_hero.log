@@ -1,0 +1,1 @@
+npx tsc -p tsconfig.hero.json --noEmit  7.60s user 0.88s system 135% cpu 6.241 total

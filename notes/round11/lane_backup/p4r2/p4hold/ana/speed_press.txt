@@ -1,0 +1,30 @@
+== MAIN 5199
+charge tp<0.65       A p99 17.34 max 17.47 | B p99 13.18 max 13.40 | all p50 10.46 p99 17.25 max 17.47
+pop tp0.65-1.2       A p99 24.47 max 27.57 | B p99 19.56 max 21.27 | all p50 10.40 p99 23.25 max 27.57
+sustain tp1.2-4.25   A p99 8.44 max 14.61 | B p99 5.35 max 8.12 | all p50 2.70 p99 7.42 max 14.61
+release 0-1.5        A p99 15.44 max 16.44 | B p99 11.40 max 11.46 | all p50 7.61 p99 15.05 max 16.44
+press 0: pop max 23.56 p99 22.01
+press 1: pop max 22.38 p99 20.97
+press 2: pop max 24.85 p99 22.74
+press 3: pop max 27.57 p99 25.49
+logs []
+== LANE 5178
+charge tp<0.65       A p99 17.32 max 17.44 | B p99 13.17 max 13.39 | all p50 10.46 p99 17.27 max 17.44
+pop tp0.65-1.2       A p99 27.13 max 30.50 | B p99 20.00 max 22.05 | all p50 10.36 p99 25.96 max 30.50
+sustain tp1.2-4.25   A p99 8.47 max 14.67 | B p99 5.35 max 8.18 | all p50 2.71 p99 7.41 max 14.67
+release 0-1.5        A p99 15.45 max 16.24 | B p99 11.40 max 11.46 | all p50 7.59 p99 15.05 max 16.24
+press 0: pop max 26.27 p99 23.35
+press 1: pop max 25.13 p99 22.19
+press 2: pop max 28.40 p99 25.96
+press 3: pop max 30.50 p99 28.40
+logs []
+== LANE ?holdpop=r11 (Q12 only)
+charge tp<0.65       A p99 17.32 max 17.44 | B p99 13.17 max 13.39 | all p50 10.46 p99 17.27 max 17.44
+pop tp0.65-1.2       A p99 24.54 max 28.48 | B p99 20.01 max 21.94 | all p50 10.44 p99 23.45 max 28.48
+sustain tp1.2-4.25   A p99 8.47 max 14.66 | B p99 5.35 max 8.18 | all p50 2.71 p99 7.40 max 14.66
+release 0-1.5        A p99 15.45 max 16.24 | B p99 11.40 max 11.46 | all p50 7.59 p99 15.05 max 16.24
+press 0: pop max 23.45 p99 21.80
+press 1: pop max 22.20 p99 20.84
+press 2: pop max 26.04 p99 23.23
+press 3: pop max 28.48 p99 25.82
+logs []

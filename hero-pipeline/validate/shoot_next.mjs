@@ -9,15 +9,15 @@ import path from "node:path";
 const SP = fileURLToPath(new URL("..", import.meta.url)).replace(/[\\/]$/, ""); // hero-pipeline/
 const require = createRequire(SP + "/tools/package.json");
 const { chromium } = require("playwright-core");
-const FFMPEG = SP + "/tools/node_modules/ffmpeg-static/ffmpeg.exe";
+const FFMPEG = (process.env.FFMPEG || "/opt/homebrew/bin/ffmpeg");
 const out = process.argv[2];
 const url = process.argv[3] || "http://localhost:3000/";
 fs.mkdirSync(out, { recursive: true });
 const logs = [];
 const browser = await chromium.launch({
-  executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+  executablePath: (process.env.CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"),
   headless: true,
-  args: ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"],
+  args: [(process.platform === "win32" ? "--use-angle=d3d11" : "--use-angle=metal"), "--enable-gpu", "--ignore-gpu-blocklist"],
 });
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 766 } });

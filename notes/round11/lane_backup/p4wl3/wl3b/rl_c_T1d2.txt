@@ -1,0 +1,14 @@
+OFF    cO_a         N 150 dt p10/50/90 50.0/50.0/50.0 | leftwater 1646 region 4938 | errs 0
+OFF    cO_b         N 150 dt p10/50/90 50.0/50.0/50.0 | leftwater 1567 region 4758 | errs 0
+B      cB_a         N 150 dt p10/50/90 50.0/50.0/50.0 | leftwater 1584 region 4793 | errs 0
+B      cB_b         N 150 dt p10/50/90 50.0/50.0/50.0 | leftwater 1583 region 4806 | errs 0
+L      cL_a         N 150 dt p10/50/90 50.0/50.0/50.0 | leftwater 1999 region 5004 | errs 0
+L      cL_b         N 150 dt p10/50/90 50.0/50.0/50.0 | leftwater 1980 region 5068 | errs 0
+POOLED dt-controlled (both steps inside the band), blips / frame:
+dt   0-999 | OFF n 296 leftwater  1607 region  4848 || B n 296 leftwater  1584 region  4800 || L n 296 leftwater  1989 region  5036
+dt  14-20  | OFF n   0 leftwater    -1 region    -1 || B n   0 leftwater    -1 region    -1 || L n   0 leftwater    -1 region    -1
+dt  20-26  | OFF n   0 leftwater    -1 region    -1 || B n   0 leftwater    -1 region    -1 || L n   0 leftwater    -1 region    -1
+dt  26-30  | OFF n   0 leftwater    -1 region    -1 || B n   0 leftwater    -1 region    -1 || L n   0 leftwater    -1 region    -1
+dt  28-34  | OFF n   0 leftwater    -1 region    -1 || B n   0 leftwater    -1 region    -1 || L n   0 leftwater    -1 region    -1
+dt  30-36  | OFF n   0 leftwater    -1 region    -1 || B n   0 leftwater    -1 region    -1 || L n   0 leftwater    -1 region    -1
+dt  26-40  | OFF n   0 leftwater    -1 region    -1 || B n   0 leftwater    -1 region    -1 || L n   0 leftwater    -1 region    -1

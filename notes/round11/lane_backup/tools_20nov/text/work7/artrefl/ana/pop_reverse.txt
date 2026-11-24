@@ -1,0 +1,38 @@
+### reverse  mask=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work5/aa5b/caps/reverse_bmask gt=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work5/aa5b/caps/reverse_gt fix=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work6/refl/caps/reverse_FIX1
+A7: flagged px 4503, events >= 6 px: 143, px in them 1955
+A6: flagged px 4065, events >= 6 px: 123, px in them 1699
+FIX1: flagged px 14566, events >= 6 px: 397, px in them 11274
+-- A7 top 12
+-- A6 top 12
+-- FIX1 top 12
+-- popnew A7 vs FIX1
+new pops (X flagged, ref not, X != ref): 680 px, 320 clusters, >= 6 px: 22
+  k135-147 x961-996 y490-494 n28 emax75
+  k18-26 x563-583 y745-755 n20 emax57
+  k143-152 x549-570 y746-756 n18 emax52
+  k10-12 x525-531 y490-493 n12 emax63
+  k217-222 x1218-1228 y659-661 n12 emax63
+  k19-27 x972-995 y491-493 n13 emax56
+  k9-13 x1218-1227 y658-662 n11 emax57
+  k15-20 x519-530 y723-730 n11 emax51
+-- popnew A7 vs A6
+new pops (X flagged, ref not, X != ref): 4 px, 4 clusters, >= 6 px: 0
+  k18-18 x584-584 y753-753 n1 emax41
+  k70-70 x580-580 y749-749 n1 emax41
+  k134-134 x532-532 y726-726 n1 emax41
+  k233-233 x1237-1237 y701-701 n1 emax41
+-- popnew A6 vs FIX1
+new pops (X flagged, ref not, X != ref): 427 px, 198 clusters, >= 6 px: 14
+  k135-147 x961-996 y490-494 n26 emax74
+  k217-222 x1218-1228 y659-661 n12 emax63
+  k10-12 x525-531 y490-493 n12 emax62
+-- v3err A7 vs A6 (thr 8, toward/away GT)
+frames 240 thr 8: lake+band px-frames 58924944; |X-R|>thr 18432; toward GT 3527, AWAY from GT 12182
+-- dark (away from GT): px 1, events >= 6 px: 0
+-- bright (away from GT): px 12181, events >= 6 px: 264
+  k20-239 (220f) x406-602 y543-563 n3923 nmax32 dmean9 dmax12
+  k154-187 (34f) x328-383 y696-719 n406 nmax15 dmean10 dmax13
+  k102-135 (34f) x1211-1247 y674-713 n262 nmax6 dmean9 dmax12
+  k0-30 (31f) x434-487 y550-560 n256 nmax23 dmean9 dmax11
+  k40-52 (13f) x612-670 y541-544 n252 nmax42 dmean10 dmax14
+  k184-199 (16f) x582-644 y542-549 n206 nmax39 dmean9 dmax12

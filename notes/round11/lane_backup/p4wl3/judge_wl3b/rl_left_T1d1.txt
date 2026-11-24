@@ -1,0 +1,6 @@
+M      dM_a         N 150 dt p10/50/90 19.1/20.4/21.5 | leftwater 122 region 795 | errs 0
+L      dL_a         N 150 dt p10/50/90 20.1/21.6/23.3 | leftwater 224 region 868 | errs 0
+POOLED dt-controlled (both steps inside the band), blips / frame:
+dt   0-999 | M n 148 leftwater   122 region   795 || L n 148 leftwater   224 region   868
+dt  14-20  | M n  37 leftwater    70 region   722 || L n   2 leftwater     0 region   221
+dt  20-26  | M n  70 leftwater   166 region   871 || L n 131 leftwater   245 region   923

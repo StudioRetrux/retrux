@@ -1,0 +1,17 @@
+[slot] judge-perf:ident waiting (load 7.8 / max 24, slots 2, holders [{"label":"judge-motion:capD","pid":21515,"at":1795159356842,"slot":0},{"label":"judge-artifacts:resize","pid":21457,"at":1795159354101,"slot":1}])
+[slot] judge-perf:ident waiting (load 6.3 / max 24, slots 2, holders [{"label":"judge-motion:capD","pid":21515,"at":1795159356842,"slot":0},{"label":"judge-artifacts:gov","pid":22044,"at":1795159465906,"slot":1}])
+[slot] judge-perf:ident waiting (load 7.9 / max 24, slots 2, holders [{"label":"!judge-perf:batch1","pid":22577,"at":1795159564174,"slot":0},{"label":"judge-artifacts:gov","pid":22044,"at":1795159465906,"slot":1}])
+[slot] judge-perf:ident waiting (load 17.6 / max 24, slots 2, holders [{"label":"!judge-perf:batch1","pid":22577,"at":1795159564174,"slot":0},{"label":"judge-artifacts:tab","pid":22898,"at":1795159639952,"slot":1}])
+[slot] judge-perf:ident waiting (load 28.0 / max 24, slots 2, holders [{"label":"!judge-perf:batch1","pid":22577,"at":1795159564174,"slot":0},{"label":"judge-artifacts:tab","pid":22898,"at":1795159639952,"slot":1}])
+[slot] judge-perf:ident waiting (load 23.5 / max 24, slots 2, holders [{"label":"judge-artifacts:live","pid":21944,"at":1795159737111,"slot":0},{"label":"judge-artifacts:tab","pid":22898,"at":1795159639952,"slot":1}], a priority waiter goes first)
+[slot] judge-perf:ident waiting (load 22.8 / max 24, slots 2, holders [{"label":"judge-artifacts:live","pid":21944,"at":1795159737111,"slot":0},{"label":"judge-artifacts:tab","pid":22898,"at":1795159639952,"slot":1}], a priority waiter goes first)
+[slot] judge-perf:ident waiting (load 16.3 / max 24, slots 2, holders [{"label":"judge-artifacts:live","pid":21944,"at":1795159737111,"slot":0},{"label":"!judge-perf:hitch","pid":23460,"at":1795159844809,"slot":1}])
+[slot] judge-perf:ident waiting (load 32.4 / max 24, slots 2, holders [{"label":"!judge-perf:hitch","pid":23460,"at":1795159844809,"slot":1}], a priority waiter goes first)
+[slot] judge-perf:ident: taken (load 21.2)
+{"port":"5182","qs":"","tier":"T1","mobile":false,"W":1440,"H":766,"tierGot":"T1","main":[1440,766],"envEdge":true,"taaOn":false,"mirrorEvery":3,"counts":{"frames":341,"mirror":127,"walk":341,"cache":0,"cacheOn":0},"nprog":14,"logs":[]}
+{"port":"5181","qs":"aaresolve=0&slabflash=0&lktaa=0","tier":"T1","mobile":false,"W":1440,"H":766,"tierGot":"T1","main":[1440,766],"envEdge":true,"taaOn":false,"mirrorEvery":3,"counts":{"frames":341,"mirror":127,"walk":341,"cache":0,"cacheOn":0},"nprog":14,"logs":[]}
+{"port":"5181","qs":"","tier":"T1","mobile":false,"W":1440,"H":766,"tierGot":"T1","main":[1440,766],"envEdge":true,"taaOn":true,"mirrorEvery":1,"counts":{"frames":341,"mirror":341,"walk":341,"cache":0,"cacheOn":0},"nprog":15,"logs":[]}
+{"port":"5182","qs":"","tier":"T1","mobile":false,"W":1440,"H":766,"tierGot":"T1","main":[1440,766],"envEdge":true,"taaOn":false,"mirrorEvery":3,"counts":{"frames":341,"mirror":127,"walk":341,"cache":0,"cacheOn":0},"nprog":14,"logs":[]}
+{"port":"5182","qs":"","tier":"T2","mobile":false,"W":1440,"H":766,"tierGot":"T2","main":[1440,766],"envEdge":true,"taaOn":false,"mirrorEvery":3,"counts":{"frames":341,"mirror":127,"walk":341,"cache":0,"cacheOn":0},"nprog":14,"logs":[]}
+{"port":"5181","qs":"aaresolve=0&slabflash=0&lktaa=0","tier":"T2","mobile":false,"W":1440,"H":766,"tierGot":"T2","main":[1440,766],"envEdge":true,"taaOn":false,"mirrorEvery":3,"counts":{"frames":341,"mirror":127,"walk":341,"cache":0,"cacheOn":0},"nprog":14,"logs":[]}
+[slot] judge-perf:ident: freed (exit 0)

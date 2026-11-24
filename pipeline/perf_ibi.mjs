@@ -1,17 +1,17 @@
 // Frame-rate A/B of the ice-behind-ice split (T1 at a locked scale), alternating off / on, plus the ring
 // vertex count. Relative numbers only (this laptop is a T0 machine and throttles).
 import { createRequire } from "node:module";
-const require = createRequire("E:/Retrux Hero R&D/hero-pipeline/tools/package.json");
+const require = createRequire("/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/hero-pipeline/tools/package.json");
 const { chromium } = require("playwright-core");
 const query = process.argv[2] || "tier=T1&scale=0.6";
 const browser = await chromium.launch({
-  executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+  executablePath: (process.env.CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"),
   headless: true,
-  args: ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"],
+  args: [(process.platform === "win32" ? "--use-angle=d3d11" : "--use-angle=metal"), "--enable-gpu", "--ignore-gpu-blocklist"],
 });
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 766 } });
-  await page.goto(`http://localhost:5173/?${query}`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${(process.env.LAB || "http://localhost:5173")}/?${query}`, { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => document.documentElement.dataset.heroReady === "1", null, { timeout: 180000 });
   await page.waitForTimeout(4000);
   const verts = await page.evaluate(() => {

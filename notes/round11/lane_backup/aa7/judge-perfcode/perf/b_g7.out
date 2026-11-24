@@ -1,0 +1,13 @@
+[slot] !judge-perfcode G7 exclusive waiting (load 9.8 / max 30, slots 3, holders [{"label":"!judge-motion A3","pid":16920,"at":1795184468419,"slot":0},{"label":"!g3-p1-cost","pid":21450,"at":1795184473543,"slot":1},{"label":"!g3-e1-B","pid":21200,"at":1795184474035,"slot":2}])
+[slot] !judge-perfcode G7 exclusive waiting (load 9.8 / max 30, slots 3, holders [{"label":"!judge-motion A3","pid":16920,"at":1795184468419,"slot":0},{"label":"!g3-p1-cost","pid":21450,"at":1795184473543,"slot":1},{"label":"!g3-e1-B","pid":21200,"at":1795184474035,"slot":2}])
+[slot] !judge-perfcode G7 exclusive: taken (load 9.1)
+Fri Nov 20 21:22:43 WIB 2026
+21:22  up 35 mins, 1 user, load averages: 9.07 14.47 49.67
+{"label":"!judge-motion A3","pid":16920,"at":1795184468419,"slot":0}{"label":"!judge-perfcode G7 exclusive","pid":22796,"at":1795184563138,"slot":1}{"label":"!g3-e1-B","pid":21200,"at":1795184474035,"slot":2}
+[waitquiet] quiet after 102 s: load 6.04
+21:24  up 37 mins, 1 user, load averages: 6.04 11.62 44.45
+Fri Nov 20 21:29:11 WIB 2026
+21:29  up 42 mins, 1 user, load averages: 3.73 7.00 32.98
+{"label":"!judge-perfcode G7 exclusive","pid":22796,"at":1795184563138,"slot":1}
+{"n":3,"loadMax":30,"bg":false}
+[slot] !judge-perfcode G7 exclusive: freed (exit 0)

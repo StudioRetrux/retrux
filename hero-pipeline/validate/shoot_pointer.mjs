@@ -13,7 +13,7 @@ import path from "node:path";
 const SP = fileURLToPath(new URL("..", import.meta.url)).replace(/[\\/]$/, "");
 const require = createRequire(SP + "/tools/package.json");
 const { chromium } = require("playwright-core");
-const FFMPEG = SP + "/tools/node_modules/ffmpeg-static/ffmpeg.exe";
+const FFMPEG = (process.env.FFMPEG || "/opt/homebrew/bin/ffmpeg");
 
 const out = process.argv[2];
 const tier = process.argv[3] || "T1";
@@ -37,9 +37,9 @@ const SPOTS = [
 
 const logs = [];
 const browser = await chromium.launch({
-  executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+  executablePath: (process.env.CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"),
   headless: true,
-  args: ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"],
+  args: [(process.platform === "win32" ? "--use-angle=d3d11" : "--use-angle=metal"), "--enable-gpu", "--ignore-gpu-blocklist"],
 });
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 766 } });
@@ -47,7 +47,7 @@ try {
   page.on("console", (m) => {
     if (m.type() === "error") logs.push(`console.error ${m.text().slice(0, 300)}`);
   });
-  await page.goto(`http://localhost:5173/?tier=${tier}&scale=${scale}&debug=1`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${(process.env.LAB || "http://localhost:5173")}/?tier=${tier}&scale=${scale}&debug=1${process.env.QS ? "&" + process.env.QS : ""}`, { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => document.documentElement.dataset.heroReady === "1", null, { timeout: 180000 });
   await page.addStyleTag({ content: ".nav,.hero-copy,.scroll,.sound,.overlay,[data-hud]{visibility:hidden !important}" });
   await page.evaluate(() => window.__hero.debug.settle(6));
@@ -76,7 +76,8 @@ try {
     await page.waitForTimeout(300);
     const off = path.join(out, `ptr_${name}_off.png`);
     await page.screenshot({ path: off });
-    await page.evaluate(() => (window.__hero.env.occlusion.uPlateDepthOn.value = 1));
+    // Restore the value the engine had (1 with the plates; 0 is legitimate with the round-11 mirror lake, ?envlake=mirror).
+    await page.evaluate((v) => (window.__hero.env.occlusion.uPlateDepthOn.value = v), st.occ ?? 1);
     execFileSync(FFMPEG, ["-y", "-loglevel", "error", "-i", on, "-i", off, "-filter_complex", "[0]scale=960:511[a];[1]scale=960:511[b];[a][b]vstack", "-q:v", "3", path.join(out, `cmp_${name}.jpg`)]);
   }
   await page.evaluate(() => {

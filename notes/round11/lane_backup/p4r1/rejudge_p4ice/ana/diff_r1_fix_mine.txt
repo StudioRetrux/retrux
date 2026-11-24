@@ -1,0 +1,140 @@
+--- /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work_p4/p4ice/fix/IceMaterial.r1.ts	2026-11-21 01:55:53
++++ /Users/muhamadrifaldi/RetruxR11Work/lanes/p4ice/retrux-web/app/hero/engine/hero/IceMaterial.ts	2026-11-21 02:19:32
+@@ -405,12 +405,16 @@
+ uniform vec4 uP4E;  // Q10, reached at full hold (uHold 1): x face-on lobe growth (MAIN uR11K.w), y TIR smoothing scale of the
+                     // one-bounce paths (MAIN 1), z transmitted gain (MAIN uR11D.y), w chroma gain (MAIN uR11B.w)
+ uniform vec4 uP4F;  // Q10: x orb share of the grazing reflection tinted by IceColor (MAIN 0), y steel-blue inner rim line,
+-                    // z crack sheets, w ice-only blue cast (all MAIN 0)
++                    // z spare (the crack sheets were dropped in the fix round: invisible in every judged pose, F4), w ice-only
++                    // blue cast (all MAIN 0)
+ uniform vec4 uP4G;  // Q4 / Q10: x orb-through gain at full hold (MAIN 1), y facet glint gain at full hold (MAIN 0), z the mean's share
+                     // of the orb seen along a direct path (MAIN uR11F.x 0.3), w spare
+-uniform vec4 uP4H;  // Q3: x / y the trace's own roughness ramp lo / hi (MAIN = the material roughness, 0.233 / 1), z / w spare
++uniform vec4 uP4H;  // Q3: x / y the trace's own roughness ramp lo / hi (MAIN = the material roughness, 0.233 / 1); G5 fix round:
++                    // z the critical-angle ramp's width at full hold, every wall (MAIN 1), w spare
+ uniform vec4 uP4I;  // Q10 scrape streaks: x the fine bump's Noise B stretched along the ring this many times (0 = MAIN's isotropic
+                     // noise), y / z / w spare
++uniform vec4 uP4J;  // Q6 fix round, joints: x 1 = V profile (0 = the round-1 / MAIN collar formula with uP4D.y metres), y its depth
++                    // share, z spare, w bright far-wall line gain
+ uniform float uHold;
+ float gP4Direct = 0.0;  // 1 while the trace looks up a first exit after <= 1 internal wall (Q4)
+ float gP4OrbMod = 1.0;  // orb-through modulation after the clamp (Q4: variation, hold charge)
+@@ -1091,6 +1095,9 @@
+       float dc = (uR11J.y > 0.0 ? uR11J.y * rb * rb * 0.667 : -uR11J.y * rough * rough * 0.667) + uR11N.x * pxSpread;
+ #ifdef ICE_P4
+       if (b == 1) dc *= mix(1.0, uP4E.y, uHold);
++      // (G5 fix round: in the hold the close-up arcs drew soft outlines along the internal-reflection zones' edges (p05);
++      // their ramp widens to uP4H.z x at full hold only, so the idle crawl is untouched.)
++      dc *= mix(1.0, uP4H.z, uHold);
+ #endif
+       if (uR11L.y > 0.5) {
+         // one-sided (uR11L.y 1): total reflection stays total; below the critical angle the reflected share falls from 1 to
+@@ -1252,33 +1259,6 @@
+     float ndvG = dot(Ng, V);
+     float lk = smoothstep(0.08, 0.16, ndvG) * (1.0 - smoothstep(0.22, 0.34, ndvG)) * (1.0 - capK);
+     col *= mix(vec3(1.0), vec3(0.74, 0.83, 1.0), lk * uP4F.y);
+-  }
+-  if (uP4F.z > 0.0 && uReflectionPass < 0.5) {
+-    // (Q10: sparse crack sheets, two per ring, at hash-chosen places on the centre line, each a finite disc through the section
+-    // at a hash-chosen tilt. Where the first internal segment crosses one, the side the view enters from darkens and the other
+-    // brightens: a fissure line where the sheet meets the surface (filtered over the pixel), fading along the segment.)
+-    float crk = 0.0;
+-    for (int k = 0; k < 2; k++) {
+-      vec3 hk = hash33(vec3(uSeed * 7.13 + float(k) * 3.71, 1.37, 9.11));
+-      float ang = hk.x * 6.2831853;
+-      vec3 rr = vec3(cos(ang), sin(ang), 0.0);
+-      vec3 tt = vec3(-sin(ang), cos(ang), 0.0);
+-      vec3 nR = normalize(tt + (hk.y - 0.5) * 1.6 * rr + (hk.z - 0.5) * 1.6 * vec3(0.0, 0.0, 1.0));
+-      vec3 cpW = vRingC + toW * (rr * uSectionRadius);
+-      vec3 nK = normalize(toW * nR);
+-      float s0 = dot(vWorldPos - cpW, nK);
+-      float s1 = dot(P1 - cpW, nK);
+-      float rad = length((vWorldPos - cpW) - nK * s0);
+-      float disc = 1.0 - smoothstep(0.55 * w * 2.0, 0.9 * w * 2.0, rad);
+-      if (disc <= 0.0) continue;
+-      float fw = max(fwidth(s0), 1e-4);
+-      float side = smoothstep(-fw, fw, s0) * 2.0 - 1.0;
+-      // crossing: the segment's two ends on opposite sides (soft over 1 cm at the far end)
+-      float crossK = smoothstep(-0.01, 0.01, -sign(s0) * s1) * (1.0 - smoothstep(0.0, 0.25, abs(s0)));
+-      crk += disc * crossK * side;
+-    }
+-    crk = clamp(crk, -1.0, 1.0) * uP4F.z;
+-    col *= crk > 0.0 ? mix(1.0, 0.7, crk) : mix(1.0, 1.15, -crk);
+   }
+ #endif
+ 
+@@ -1296,6 +1276,11 @@
+     vec3 e1 = P1 - vRingC;
+     float jk = 0.0;
+     float wob = (nA - 0.5) * 0.03;  // a slightly irregular seam (Noise A), metres
++#ifdef ICE_P4
++    // (F2 fix round: the seam lines' pixel widths from derivatives taken here, in uniform control flow.)
++    vec3 dE0x = dFdx(e0), dE0y = dFdy(e0), dE1x = dFdx(e1), dE1y = dFdy(e1);
++    float jLine = 0.0;
++#endif
+     for (int c = 0; c < 2; c++) {
+       float ang = c == 0 ? uPieceCuts.x : uPieceCuts.y;
+       vec3 nc = normalize(toW * vec3(-sin(ang), cos(ang), 0.0));
+@@ -1303,14 +1288,32 @@
+       if (dot(e0, rc) <= 0.0) continue;
+       float se = dot(e0, nc) + wob, sx = dot(e1, nc) + wob;
+ #ifdef ICE_P4
+-      float crossK = se * sx < 0.0 ? 1.0 : 1.0 - smoothstep(0.0, uP4D.y, min(abs(se), abs(sx)));
++      float crossK;
++      if (uP4J.x > 0.5) {
++        // (F2 fix round: F015 / F030 show a 2-3 px dark seam and a bright edge line, not a flat painted collar. Across the
++        // band of rays whose first segment crosses the plane the shade is a V, deepest where the crossing is midway along the
++        // segment and 0 at both ends (se -> 0 at the entry face, sx -> 0 at the far wall), so it has no hard edge and reads
++        // as a line at any width; a bright line uP4D.y px either side of where the plane meets the far wall (sx -> 0).)
++        float fS = abs(dot(dE0x, nc)) + abs(dot(dE0y, nc)) + 1e-5;
++        float fX = clamp(abs(dot(dE1x, nc)) + abs(dot(dE1y, nc)), 0.5 * fS, 4.0 * fS);
++        float tC = abs(se) / max(abs(se) + abs(sx), 1e-6);
++        float vK = se * sx < 0.0 ? 1.0 - abs(2.0 * tC - 1.0) : 0.0;
++        jLine = max(jLine, (1.0 - smoothstep(0.0, uP4D.y * fX, abs(sx))) * smoothstep(fS, 3.0 * fS, abs(se)));
++        crossK = uP4J.y * vK;
++      } else {
++        crossK = se * sx < 0.0 ? 1.0 : 1.0 - smoothstep(0.0, uP4D.y, min(abs(se), abs(sx)));
++      }
+ #else
+       float crossK = se * sx < 0.0 ? 1.0 : 1.0 - smoothstep(0.0, 0.012, min(abs(se), abs(sx)));
+ #endif
+       float tirK = 1.0 - smoothstep(0.62, 0.8, abs(dot(d1, nc)));  // cos 41.8 deg = 0.745
+       jk = max(jk, crossK * mix(0.12, 1.0, tirK));
+     }
++#ifdef ICE_P4
++    col *= (1.0 - uR11B.z * jk) * (1.0 + uP4J.w * jLine);
++#else
+     col *= 1.0 - uR11B.z * jk;
++#endif
+   }
+ 
+ #ifdef ICE_P4
+@@ -1839,20 +1842,25 @@
+   // batch b2; 1.6: q00 229.3 vs F000 231.8, q03 ring D sd 14.3 vs MAIN 8.7 / F045 17.3, batch b3.)
+   u.uP4C = { value: P4_ORB ? new THREE.Vector4(1.6, 0.008, 1, 2) : new THREE.Vector4(1, 0.012, 0, 0) };
+   // Q6: caps from their own plane, joint seams 5 mm wide and 0.6 deep, a 4 % chamfer, cap glint.
+-  u.uP4D = { value: P4_CAP ? new THREE.Vector4(1, 0.005, 0.04, 1) : new THREE.Vector4(0, 0.012, 0, 0) };
++  // (Fix round, F2: with the V profile (uP4J.x 1) uP4D.y is the far-wall line's half width in pixels: uP4J below.)
++  u.uP4D = { value: P4_CAP ? new THREE.Vector4(1, 1.25, 0.04, 1) : new THREE.Vector4(0, 0.012, 0, 0) };
++  u.uP4J = { value: P4_CAP ? new THREE.Vector4(1, 0.8, 0, 0.45) : new THREE.Vector4(0, 0, 0, 0) };
+   if (P4_CAP) u.uR11B.value.z = 0.6;
+   // Q10: at full hold face-on lobe growth 1.2, one-bounce TIR smoothing x0.7, transmitted gain 0.98, chroma 0.92 (the plan's
+   // 1.02 / 0.85 overshot with the brighter orb paths: p06 band L 212.8 / sat 0.138 vs F420 206.9 / 0.162, batch b2).
+   u.uP4E = { value: P4_HOLD ? new THREE.Vector4(1.2, 0.7, 0.98, 0.92) : new THREE.Vector4(u.uR11K.value.w, 1, u.uR11D.value.y, u.uR11B.value.w) };
+   // Q10: rim tint, steel-blue inner line, crack sheets, blue cast x3 (x1: q02 B-G +22.8 vs F030 +29.3, q01 inner band +18 vs
+   // F015 +22; x3: q02 +28.5, q03 ring D +16 vs F045 +14, outer ring +32 vs +33, batch b5).
+-  u.uP4F = { value: P4_HOLD ? new THREE.Vector4(1, 1.3, 1, 3) : new THREE.Vector4(0, 0, 0, 0) };
++  // (z: the crack sheets were dropped in the fix round, F4: hash-placed, invisible in every judged pose, paid on every fragment.)
++  u.uP4F = { value: P4_HOLD ? new THREE.Vector4(1, 1.3, 0, 3) : new THREE.Vector4(0, 0, 0, 0) };
+   // Q4 / Q10: orb-through x1.4 and a facet glint at full hold.
+   u.uP4G = { value: new THREE.Vector4(P4_ORB ? 1.4 : 1, P4_HOLD ? 0.5 : 0, P4_ORB ? 0.15 : u.uR11F.value.x, 0) };
+   // Q3: the trace's own roughness ramp: MAIN's 0.233 .. 1 (0.6 / 0.85 washed out the oblique bands' TIR zones or raised the
+   // tumble crawl, batches b2 / b3: q03 outer ring L 186 / sd 30 / lf 21 at 1 vs F045 174 / 31 / 23.5; crawl 1.47 / 1.32 / 1.53
+   // vs MAIN-equivalent 1.55 / 1.48 / 1.48). Only the frost terms take the compressed ramp above.
+-  u.uP4H = { value: new THREE.Vector4(0.233, 1, 0, 0) };
++  // z (fix round, F1): the critical-angle ramp x2.5 at full hold (1 = MAIN): p05's TIR-zone outlines soften (right arc
++  // Laplacian 8.7 -> 6.2 at x2, 5.6 at x3; F402 2.9), p06 band 208.6 -> 205.6 (x2) / 202.3 (x3) vs F420 206.9 (batch b2).
++  u.uP4H = { value: new THREE.Vector4(0.233, 1, P4_AA ? 2.5 : 1, 0) };
+   // Q10: scrape streaks, Noise B stretched 8x along the ring.
+   u.uP4I = { value: new THREE.Vector4(P4_HOLD ? 8 : 0, 0, 0, 0) };
+ }

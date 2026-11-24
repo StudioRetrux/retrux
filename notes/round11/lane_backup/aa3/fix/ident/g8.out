@@ -1,0 +1,11 @@
+[slot] aa3fix g8: taken (load 4.4)
+lane_t1_off vs base_t1                   final SAME | targets differ: - | programs 14 differ: - | logs 0 0
+lane_t1_aa0 vs base_t1                   final DIFF | targets differ: mirror,walk,final | programs 14 differ: - | logs 0 0
+lane_t1_sf0 vs base_t1                   final DIFF | targets differ: final | programs 15 differ: rx-plate-baked|ShaderMaterial,rx-cloud|ShaderMaterial,rx-water|ShaderMaterial,rx-env-edge|ShaderMaterial,rx-lake-edge-taa|ShaderMaterial,rx-blit|ShaderMaterial | logs 0 0
+lane_t1_taa0 vs base_t1                  final DIFF | targets differ: mirror,walk,final | programs 14 differ: rx-plate-baked|ShaderMaterial,rx-cloud|ShaderMaterial,rx-water|ShaderMaterial,rx-env-edge|ShaderMaterial,rx-blit|ShaderMaterial | logs 0 0
+lane_t1 vs base_t1                       final DIFF | targets differ: mirror,walk,final | programs 15 differ: rx-plate-baked|ShaderMaterial,rx-cloud|ShaderMaterial,rx-water|ShaderMaterial,rx-env-edge|ShaderMaterial,rx-lake-edge-taa|ShaderMaterial,rx-blit|ShaderMaterial | logs 0 0
+lane_plate vs base_plate                 final SAME | targets differ: - | programs 12 differ: - | logs 0 0
+lane_t0_off vs base_t0                   final SAME | targets differ: - | programs 12 differ: - | logs 0 0
+lane_t0 vs base_t0                       final SAME | targets differ: - | programs 12 differ: - | logs 0 0
+lane_t2_off vs base_t2                   final SAME | targets differ: - | programs 14 differ: - | logs 0 0
+[slot] aa3fix g8: freed (exit 0)

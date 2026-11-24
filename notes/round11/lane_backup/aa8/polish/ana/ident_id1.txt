@@ -1,0 +1,15 @@
+AA8 def vs AA7 def (recheck hashes)            IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+AA8 f0 vs AA7 f0 (recheck hashes)              IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+AA8 g0 vs AA7 g0 (recheck hashes)              IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+AA8 all5 vs AA7 all5 (recheck hashes)          IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+AA8 mc0 vs AA7 mc0 (recheck hashes)            IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+AA8 mr0 vs AA7 mr0 (recheck hashes)            IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+AA8 t0 vs AA7 t0 (recheck hashes)              IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+AA8 s07 vs AA7 s07 (recheck hashes)            IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+AA8 s07f0 vs AA7 s07f0 (recheck hashes)        IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+AA8 s07mr0 vs AA7 s07mr0 (recheck hashes)      IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+AA8 s09f0 vs AA7 s09f0 (recheck hashes)        IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+AA8 g0mc0 vs AA7 g0mc0 (recheck hashes)        IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+AA8 all6 vs AA7 all6 (recheck hashes)          IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 14 differ: - | logs 0/0
+AA8 t2all6 vs AA7 t2all6 (recheck hashes)      IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 14 differ: - | logs 0/0
+AA8 plate vs AA7 plate (recheck hashes)        IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0

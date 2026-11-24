@@ -1,0 +1,416 @@
+--- a/retrux-web/app/hero/engine/HeroEngine.ts
++++ b/retrux-web/app/hero/engine/HeroEngine.ts
+@@ -226,8 +226,12 @@
+       this.lakeMirrorSize.set(this.lakeMirror.target.width, this.lakeMirror.target.height);
+     }
+     const mirror = this.lakeMirror;
++    // Hotfix 2 (smooth waterline, 18 Nov): the plate lake's choices beside floes and rocks are soft blends on bilinear projector
++    // depth instead of per-pixel switches on nearest depth (Water SHORE_AA). `?shoreaa=0` keeps the switches exactly.
++    const shoreAA = typeof location === "undefined" || new URLSearchParams(location.search).get("shoreaa") !== "0";
+     this.water = new Water(assets.plate, this.env.plateViewProj, this.env.plateGain, this.shared, envDefines, this.env.occlusion, {
+       glitter: this.profile.tier !== "T0",
++      shore: shoreAA,
+       projectors: this.env.projectorBinding,
+       mirror: mirror ? { texture: mirror.target.texture, size: this.lakeMirrorSize, uniforms: mirror.lookup, corr: assets.lakeCorr } : undefined,
+     });
+@@ -238,7 +242,11 @@
+     this.scene.add(this.water.group);
+     // Projector depth (once): no doubled mountains or rocks when the camera moves off the plate camera. Only where something
+     // projects: with the mirror lake (baked environment) nothing does.
+-    if (!mirror) this.env.bakeDepth(this.renderer, [this.water.group]);
++    if (!mirror) {
++      // (Bilinear only with the baked environment: the projected plates' own shader keeps its nearest depth tests.)
++      this.env.depthLinear = shoreAA && !!assets.envProxy.scene.userData?.baked;
++      this.env.bakeDepth(this.renderer, [this.water.group]);
++    }
+     // Round 11 fix round (judge1 minor): with the baked environment the skylines are geometric edges, crisper than the plates'
+     // DOF-blurred ones; EnvEdge blurs the environment at its depth discontinuities, before any hero object (MSAA tiers only:
+     // T0 is protected). The afterEnv hook only arms it: its full-screen triangle (in the scene) is drawn first inside the next
+--- a/retrux-web/app/hero/engine/world/PlateEnvironment.ts
++++ b/retrux-web/app/hero/engine/world/PlateEnvironment.ts
+@@ -123,8 +123,16 @@
+ uniform float u${P}DepthOn;
+ uniform vec3 u${P}CamPos;
+ uniform vec4 u${P}Frustum;
++#ifndef DEPTH_TAP
++#ifdef DEPTH_EXACT
++// (hotfix 2: the maps are bilinear for the lake (depthLinear); every other reader takes its texel exactly, as before)
++#define DEPTH_TAP(t, uv) texelFetch(t, clamp(ivec2((uv) * vec2(textureSize(t, 0))), ivec2(0), textureSize(t, 0) - 1), 0)
++#else
++#define DEPTH_TAP(t, uv) textureLod(t, uv, 0.0)
++#endif
++#endif
+ float ${p}DepthAt(vec2 uv) {
+-  return textureLod(u${P}Depth, uv, 0.0).r;
++  return DEPTH_TAP(u${P}Depth, uv).r;
+ }
+ // How much of a fragment at projector depth fz around uv the projector sees, 0..1: five depth taps 1.5 texels apart
+ // (percentage-closer filtering). A single binary test drew dot-grid hatching and dashed seams along rock edges
+@@ -155,7 +163,7 @@
+ // so its own small shift does not show).
+ vec2 ${p}Rim(vec2 uv, inout vec3 worldPos, inout float fz) {
+   if (fz < 330.0) return uv;
+-  float g = textureLod(u${P}Depth, uv, 0.0).g;
++  float g = DEPTH_TAP(u${P}Depth, uv).g;
+   if (g >= 300.0) return uv;
+   // The point on the camera ray at projector depth g (exact off the projector too: the hold dolly is 8 m from it).
+   float ez = -(u${P}View * vec4(cameraPosition, 1.0)).z;
+@@ -264,7 +272,7 @@
+     // at its own depth, the rim was painted on the sky at the sky's parallax: a ghost contour 15-40 px beside the iceberg
+     // and the left shoulder in pop / hold, right where this projector's view of the sky began (QC round 6).
+     if (kz >= 330.0) {
+-      float kg = textureLod(u${e.P}Depth, clamp(k0, vec2(0.0), vec2(1.0)), 0.0).g;
++      float kg = DEPTH_TAP(u${e.P}Depth, clamp(k0, vec2(0.0), vec2(1.0))).g;
+       if (kg < 300.0) {
+         float kez = -(u${e.P}View * vec4(cameraPosition, 1.0)).z;
+         vec3 kw = cameraPosition + (vWorldPos - cameraPosition) * clamp((kg - kez) / max(kz - kez, 1e-3), 0.0, 1.0);
+@@ -632,7 +640,7 @@
+   // (QC round 4, T06). At the projector itself every hidden fragment is such a crack. Far field only (> 40 m).
+ #ifndef BAKED_ENV
+   if (uPlateDepthOn > 0.5) {
+-    float oz0 = textureLod(uPlateDepth, clamp(uv0, vec2(0.0), vec2(1.0)), 0.0).r;
++    float oz0 = DEPTH_TAP(uPlateDepth, clamp(uv0, vec2(0.0), vec2(1.0))).r;
+     float fz0 = -(uPlateView * vec4(vWorldPos, 1.0)).z;
+     if (oz0 > 40.0 && oz0 < 300.0 && fz0 > oz0 * 1.02 + 0.5) {
+       float ez = -(uPlateView * vec4(cameraPosition, 1.0)).z;
+@@ -661,7 +669,7 @@
+   float pz = fz;
+   vec3 fp = vWorldPos;
+ #else
+-  float pz = textureLod(uPlateDepth, uv, 0.0).r;
++  float pz = DEPTH_TAP(uPlateDepth, uv).r;
+   vec3 fp = vWorldPos;
+   if (uPlateDepthOn > 0.5 && pz < 300.0 && fz > pz * 1.02 + 0.5) fp = cameraPosition + (vWorldPos - cameraPosition) * (pz / fz);
+ #endif
+@@ -674,7 +682,7 @@
+ #ifdef BAKED_ENV
+   float occZ = fz;
+ #else
+-  float occZ = textureLod(uPlateDepth, clamp(uv0, vec2(0.0), vec2(1.0)), 0.0).r;
++  float occZ = DEPTH_TAP(uPlateDepth, clamp(uv0, vec2(0.0), vec2(1.0))).r;
+ #endif
+ #ifdef EXTRA_PROJECTORS
+   // Extra projectors (hold pose, orbit extremes): each fragment takes the plates that actually see it, weighted
+@@ -979,6 +987,15 @@
+     uPlateGrade: { value: new THREE.Vector3(1.3, 1.45, 0.3) },
+   };
+   private depthTarget: THREE.WebGLRenderTarget | null = null;
++  /**
++   * Hotfix 2 (smooth waterline, Water.ts SHORE_AA): bake the projector depth maps bilinear-filtered (set before bakeDepth).
++   * The lake's depth tests are then continuous across a texel instead of stepping at every one; nearest-filtered, their
++   * edges along every floe and rock were texel staircases that crawled when the camera moved. The baked environment's
++   * materials do not read these maps (the projected path does: it keeps them nearest); the clouds' and the plate
++   * material's reads stay exact (DEPTH_EXACT: texelFetch, the same texel the nearest filter took). `?shoreaa=0` keeps
++   * them nearest.
++   */
++  depthLinear = false;
+   private envProxy: THREE.Object3D;
+   private cloudGroup = new THREE.Group();
+   /** Extra projectors (hold pose, orbit extremes) whose plates are available. */
+@@ -1364,6 +1381,16 @@
+     // reflected there (a floe, a rock, a mountain; 60000 for sky), traced once against this depth map. The
+     // lake uses it to re-aim its plate lookup when the camera leaves the plate camera (Water.ts).
+     const refl = makeTarget();
++    if (this.depthLinear) {
++      refl.texture.minFilter = THREE.LinearFilter;
++      refl.texture.magFilter = THREE.LinearFilter;
++      for (const m of [this.plateMaterial, ...this.cloudMaterials]) {
++        if (m.defines.DEPTH_EXACT === undefined) {
++          m.defines.DEPTH_EXACT = "";
++          m.needsUpdate = true;
++        }
++      }
++    }
+     refl.texture.colorSpace = THREE.NoColorSpace;
+     quad.material = new THREE.ShaderMaterial({
+       uniforms: {
+--- a/retrux-web/app/hero/engine/world/Water.ts
++++ b/retrux-web/app/hero/engine/world/Water.ts
+@@ -24,9 +24,17 @@
+   vec2 st = uv / t - 0.5;
+   vec2 i0 = floor(st);
+   vec2 f = st - i0;
++#ifdef SHORE_AA
++  // (the map is bilinear-filtered under SHORE_AA: the same four texels, fetched exactly)
++  ivec2 n = textureSize(u${P}Depth, 0) - 1;
++  ivec2 j = ivec2(i0);
++  vec4 L = vec4(texelFetch(u${P}Depth, clamp(j, ivec2(0), n), 0).b, texelFetch(u${P}Depth, clamp(j + ivec2(1, 0), ivec2(0), n), 0).b,
++                texelFetch(u${P}Depth, clamp(j + ivec2(0, 1), ivec2(0), n), 0).b, texelFetch(u${P}Depth, clamp(j + ivec2(1), ivec2(0), n), 0).b);
++#else
+   vec2 b = (i0 + 0.5) * t;
+   vec4 L = vec4(textureLod(u${P}Depth, b, 0.0).b, textureLod(u${P}Depth, b + vec2(t.x, 0.0), 0.0).b,
+                 textureLod(u${P}Depth, b + vec2(0.0, t.y), 0.0).b, textureLod(u${P}Depth, b + t, 0.0).b);
++#endif
+   vec4 ok = step(1e-4, L);
+   vec4 w = vec4((1.0 - f.x) * (1.0 - f.y), f.x * (1.0 - f.y), (1.0 - f.x) * f.y, f.x * f.y) * ok;
+   float ws = w.x + w.y + w.z + w.w;
+@@ -115,6 +123,68 @@
+ ).join("");
+ 
+ /**
++ * Hotfix 2 (smooth waterline, SHORE_AA): one extra projector's lake sample at the lookup point kpw (projected at kclip, seen
++ * with visibility visK), added to (acc, wsum, extraCover) with weight wt. The same terms as GLSL_WATER_PROJECTOR_BLEND, with
++ * the raised test reaching the far floes (uShoreFar) and a soft ripple guard (a uv blend instead of a per-pixel switch).
++ */
++const GLSL_EXTRA_SHORE = EXTRA_PROJECTORS.map(
++  (e) => /* glsl */ `
++#ifdef ${e.define}
++void ${e.p}ShoreK(vec3 kpw, vec4 kclip, float visK, float awayK, vec2 offs, float lodX, float wt, inout vec3 acc, inout float wsum, inout float extraCover) {
++  vec2 k = kclip.xy / kclip.w * 0.5 + 0.5;
++  vec2 ke = min(k, 1.0 - k);
++  float inK = smoothstep(-0.005, 0.035, min(ke.x, ke.y)) * step(0.0, kclip.w);
++  if (awayK > 0.02) {
++    float kdz = ${e.p}DepthAt(clamp(k, vec2(0.0), vec2(1.0)));
++    float kfz = -(u${e.P}View * vec4(kpw, 1.0)).z;
++    vec3 kseen = u${e.P}CamPos + (kpw - u${e.P}CamPos) * (kdz / max(kfz, 1e-3));
++    visK *= 1.0 - smoothstep(0.05, 0.12, kseen.y - kpw.y) * (1.0 - smoothstep(uShoreFar.x, uShoreFar.y, kfz));
++  }
++  float wK = u${e.P}Mix * visK * inK;
++  extraCover += u${e.P}Mix * inK * visK * wt;
++  if (wK > 0.0005) {
++    vec2 kc = clamp(k, vec2(0.0005), vec2(0.9995));
++    vec2 kq = clamp(k + offs, vec2(0.0005), vec2(0.9995));
++    kq = mix(kq, kc, max(smoothstep(0.03, 0.07, ${e.p}SeenY(kq) - vWorldPos.y),
++      shoreRatio(shoreNearest(u${e.P}Depth, kq).r, shoreNearest(u${e.P}Depth, kc).r, ${e.p}DepthAt(kq), ${e.p}DepthAt(kc))));
++    acc += textureLod(u${e.P}Plate, kq, lodX).rgb * (u${e.P}Gain / uPlateGain) * (wK * wt);
++    wsum += wK * wt;
++  }
++}
++#endif`,
++).join("");
++
++/**
++ * SHORE_AA version of GLSL_WATER_PROJECTOR_BLEND: the straight / re-aimed choice is a weight (sK, anti-aliased over the pixel)
++ * and both lookups are blended where it is fractional, instead of a per-pixel switch on the depth map.
++ */
++const GLSL_WATER_PROJECTOR_BLEND_AA = EXTRA_PROJECTORS.map(
++  (e) => /* glsl */ `
++#ifdef ${e.define}
++    if (u${e.P}DepthOn > 0.5 && u${e.P}Mix > 0.001) {
++      vec4 kclip0 = u${e.P}ViewProjF * vec4(vWorldPos, 1.0);
++      float awayK = distance(cameraPosition, u${e.P}CamPos);
++      float sK = 1.0;
++      float visR = 1.0;
++      vec3 mpK = vWorldPos;
++      vec4 mcK = kclip0;
++      if (awayK > 0.02) {
++        mpK = ${e.p}MirrorPoint(vWorldPos);
++        mcK = u${e.P}ViewProjF * vec4(mpK, 1.0);
++        vec2 muv = mcK.xy / mcK.w * 0.5 + 0.5;
++        float behindK = -(u${e.P}View * vec4(mpK, 1.0)).z - (${e.p}DepthAt(clamp(muv, vec2(0.0), vec2(1.0))) * 1.06 + 0.8);
++        visR = 1.0 - smoothstep(0.0, 2.5, behindK);
++        vec2 suv = kclip0.xy / kclip0.w * 0.5 + 0.5;
++        float sBehindK = -(u${e.P}View * vec4(vWorldPos, 1.0)).z - (${e.p}DepthAt(clamp(suv, vec2(0.0), vec2(1.0))) * 1.06 + 0.8);
++        sK = shoreAA(behindK) * shoreAA(-sBehindK);
++      }
++      if (sK < 1.0) ${e.p}ShoreK(mpK, mcK, visR, awayK, offs, lodX, 1.0 - sK, acc, wsum, extraCover);
++      if (sK > 0.0) ${e.p}ShoreK(vWorldPos, kclip0, 1.0, awayK, offs, lodX, sK, acc, wsum, extraCover);
++    }
++#endif`,
++).join("");
++
++/**
+  * Live lake surface. The Cycles plate already contains the calm water (mirror
+  * reflections of sky and mountains, rendered without the Blender Wave modifier);
+  * this shader animates it: concentric ripples under the hero, travelling impulse
+@@ -314,6 +384,90 @@
+   return Pp;
+ }
+ ${GLSL_EXTRA_MIRROR}
++#if defined(SHORE_AA) && !defined(BAKED_MIRROR)
++// Hotfix 2 (smooth waterline; ?shoreaa=0 restores the per-pixel switches below exactly). Every choice the lake makes beside
++// a floe or a rock (re-aimed or straight lookup, the projector's own texel or the occlusion fill, which projector, the
++// ripple-bent or the plain lookup) was a per-pixel switch on a nearest-filtered depth map: texel staircases and 1-px
++// flips along every waterline, crawling whenever the camera moved ("low-quality anti-aliasing", 18 Nov). The depth maps
++// are now bilinear (PlateEnvironment.depthLinear), so each test is continuous and its edge the true sub-texel curve; each
++// switch is a weight anti-aliased over the pixel, and the two candidates are blended where it is fractional (a 1-2 px band).
++// uShoreFar: the raised test (a lookup that lands on ice) fades out between x and y metres from the projector (40-60 m
++// before: the far floes' own texels were painted on the water beside them when the camera moved).
++uniform vec2 uShoreFar;
++// Coverage of the region x > 0 over this pixel (uniform control flow only).
++float shoreAA(float x) {
++  return clamp(0.5 + x / max(fwidth(x), 1e-4), 0.0, 1.0);
++}
++// A depth map read exactly as the nearest filter did (for the rules kept as they were: the open lake stays identical).
++vec4 shoreNearest(sampler2D t, vec2 uv) {
++  ivec2 n = textureSize(t, 0);
++  return texelFetch(t, clamp(ivec2(uv * vec2(n)), ivec2(0), n - 1), 0);
++}
++// The ripple guard's depth-ratio rule (the bent lookup q nearer than the plain one c by > 8 % + 0.3 m: it hit a rock or a
++// floe). On the open lake it also bends the ripple rings: there it stays the nearest-depth step it was (n*); across a depth
++// edge (nearest and bilinear depth disagree) it ramps over the texel on the bilinear depth (b*) instead of dotting the
++// outline of every near rock pixel by pixel.
++float shoreRatio(float nq, float nc, float bq, float bc) {
++  float hard = step(nq, nc * 0.92 - 0.3);
++  float soft = smoothstep(-0.5, 0.5, (bc * 0.92 - 0.3 - bq) / max(0.25 * bc, 1e-3));
++  return mix(hard, soft, smoothstep(0.02, 0.06, abs(nq - bq) / max(bq, 1e-3)));
++}
++// One rest-plate lookup at puv: ripple-bent, pulled back softly where the bent lookup would land on ice, destreaked.
++vec3 shoreTap(vec2 puv, vec2 offs, float lod, float dist) {
++  vec2 quv = clamp(puv + offs, vec2(0.0005), vec2(0.9995));
++  if (uPlateDepthOn > 0.5) {
++    vec2 cuv = clamp(puv, vec2(0.0005), vec2(0.9995));
++    quv = mix(quv, cuv, max(smoothstep(0.03, 0.07, plateSeenY(quv) - vWorldPos.y),
++      shoreRatio(shoreNearest(uPlateDepth, quv).r, shoreNearest(uPlateDepth, cuv).r, plateDepthAt(quv), plateDepthAt(cuv))));
++  }
++  vec3 c = textureLod(uPlate, quv, lod).rgb;
++#ifdef WATER_GLITTER
++  float destreak = smoothstep(12.0, 35.0, dist);
++  if (destreak > 0.0) {
++    float ty = 1.5 / float(textureSize(uPlate, 0).y);
++    vec3 blur = c * 0.4026
++      + (textureLod(uPlate, quv + vec2(0.0, ty), lod).rgb + textureLod(uPlate, quv - vec2(0.0, ty), lod).rgb) * 0.2442
++      + (textureLod(uPlate, quv + vec2(0.0, 2.0 * ty), lod).rgb + textureLod(uPlate, quv - vec2(0.0, 2.0 * ty), lod).rgb) * 0.0545;
++    c = mix(c, blur, destreak);
++  }
++#endif
++  return c;
++}
++// The rest plate's lake for the lookup point pw (projected at pclip): the raised test, then the projector's own texel and
++// the occlusion fill blended by it (step(0.5, raised) before). raised, nofill (0..1) and the main lookup uv come back.
++vec3 restLake(vec3 pw, vec4 pclip, vec2 offs, float lodX, float camAway, float dist, out float raised, out float nofill, out vec2 puv) {
++  raised = 0.0;
++  if (uPlateDepthOn > 0.5 && camAway > 0.02) {
++    vec2 ruv = clamp(pclip.xy / pclip.w * 0.5 + 0.5, vec2(0.0), vec2(1.0));
++    float dz = plateDepthAt(ruv);
++    float fzw = -(uPlateView * vec4(pw, 1.0)).z;
++    vec3 seen = uPlateCamPos + (pw - uPlateCamPos) * (dz / max(fzw, 1e-3));
++    raised = smoothstep(0.05, 0.12, seen.y - pw.y) * (1.0 - smoothstep(uShoreFar.x, uShoreFar.y, fzw));
++  }
++  vec2 puv0 = pclip.xy / pclip.w * 0.5 + 0.5;
++  vec2 pa = plateUnoccluded(puv0, pw, 0.0);
++  float nfa = step(pa.x, -0.5);
++  if (nfa > 0.5) pa = puv0;
++  float wF = smoothstep(0.3, 0.7, raised);
++  vec2 pb = pa;
++  float nfb = nfa;
++  bool two = false;
++  if (wF > 0.0 && nfa < 0.5 && distance(pa, puv0) < 1e-7) {
++    // pa is the projector's own texel: the forced fill is a lookup of its own
++    pb = plateUnoccluded(puv0, pw, 1.0);
++    nfb = step(pb.x, -0.5);
++    if (nfb > 0.5) pb = puv0;
++    two = true;
++  }
++  nofill = mix(nfa, nfb, wF);
++  puv = wF < 0.5 ? pa : pb;
++  float lod = lodX + 3.0 * raised;
++  vec3 c = wF < 1.0 || !two ? shoreTap(pa, offs, lod, dist) : vec3(0.0);
++  if (two) c = mix(c, shoreTap(pb, offs, lod, dist), wF);
++  return c;
++}
++${GLSL_EXTRA_SHORE}
++#endif
+ 
+ void main() {
+   vec3 V = normalize(cameraPosition - vWorldPos);
+@@ -353,7 +507,49 @@
+     gl_FragColor = vec4(base, 1.0);
+     return;
+   }
++  float occl = 0.0;
++#else
++#ifdef SHORE_AA
++  // Hotfix 2: as below, with every switch a blend (see restLake). sW: the straight lookup's weight (the re-aimed lookup's
++  // mirror point hidden from the projector, the lake point itself seen), anti-aliased over the pixel.
++  vec4 pclip = vPlateClip;
++  vec3 pw = vWorldPos;
+   float occl = 0.0;
++  float vis0 = 1.0;
++  float camAway = distance(cameraPosition, uPlateCamPos);
++  float sW = 0.0;
++  if (uPlateDepthOn > 0.5 && camAway > 0.02) {
++    pw = plateMirrorPoint(vWorldPos);
++    pclip = uPlateViewProjF * vec4(pw, 1.0);
++    vec2 ruv = pclip.xy / pclip.w * 0.5 + 0.5;
++    float behind = -(uPlateView * vec4(pw, 1.0)).z - (plateDepthAt(clamp(ruv, vec2(0.0), vec2(1.0))) * 1.06 + 0.8);
++    vis0 = 1.0 - smoothstep(0.0, 2.5, behind);
++    occl = smoothstep(0.0, 2.5, behind) * smoothstep(1.0, 4.0, camAway);
++    vec2 suv = vPlateClip.xy / vPlateClip.w * 0.5 + 0.5;
++    float sBehind = -(uPlateView * vec4(vWorldPos, 1.0)).z - (plateDepthAt(clamp(suv, vec2(0.0), vec2(1.0))) * 1.06 + 0.8);
++    sW = shoreAA(behind) * shoreAA(-sBehind);
++  }
++  float lodX = uDofBlur * smoothstep(0.0, mix(30.0, 10.0, uHold), abs(dist - uFocusDist)) + 1.6 * (1.0 - smoothstep(8.0 + 10.0 * uHold, 16.0 + 12.0 * uHold, dist));
++  float raised = 0.0;
++  float nofill = 0.0;
++  vec2 puv = vec2(0.5);
++  vec3 base = vec3(0.0);
++  if (sW < 1.0) base = restLake(pw, pclip, offs, lodX, camAway, dist, raised, nofill, puv);
++  if (sW > 0.0) {
++    float rS;
++    float nS;
++    vec2 uS;
++    vec3 bS = restLake(vWorldPos, vPlateClip, offs, lodX, camAway, dist, rS, nS, uS);
++    base = mix(base, bS, sW);
++    raised = mix(raised, rS, sW);
++    nofill = mix(nofill, nS, sW);
++    if (sW >= 0.5) {
++      puv = uS;
++      pclip = vPlateClip;
++    }
++    vis0 = mix(vis0, 1.0, sW);
++  }
++  vis0 *= 1.0 - raised;
+ #else
+   // Plate reflections re-aimed for this camera (see plateMirrorPoint); lake hidden from the projector
+   // (behind a rock or a floe) takes the open water beside it.
+@@ -441,6 +637,7 @@
+       + (textureLod(uPlate, quv + vec2(0.0, 2.0 * ty), lod).rgb + textureLod(uPlate, quv - vec2(0.0, 2.0 * ty), lod).rgb) * 0.0545;
+     base = mix(base, blur, destreak);
+   }
++#endif
+ #ifdef EXTRA_PROJECTORS
+   // Extra projectors (hold pose, orbit extremes): their lakes show the near water, the floes and their reflections
+   // as Cycles rendered them from (nearly) this camera, where the rest plate tore into stair-stepped bands or had to
+@@ -451,7 +648,11 @@
+     float w0 = max(uRestMix, 0.001) * (vis0 + 0.02) * smoothstep(-0.005, 0.035, min(e0.x, e0.y)) * step(0.0, pclip.w);
+     vec3 acc = base * w0;
+     float wsum = w0;
++#ifdef SHORE_AA
++${GLSL_WATER_PROJECTOR_BLEND_AA}
++#else
+ ${GLSL_WATER_PROJECTOR_BLEND}
++#endif
+     if (wsum > 1e-4) base = acc / wsum;
+   }
+ #endif
+@@ -571,9 +772,13 @@
+     // The mirror path beyond the lake point to what the mirror shows there (the target's alpha is the whole path from the
+     // mirrored camera; 60000 = sky).
+     float Lb = textureLod(uEnvMirror, clamp(muv, vec2(0.0), vec2(1.0)), 0.0).a - dist;
++#else
++#ifdef SHORE_AA
++    float Lb = shoreNearest(uPlateDepth, clamp(puv, vec2(0.0), vec2(1.0))).b;
+ #else
+     float Lb = textureLod(uPlateDepth, clamp(puv, vec2(0.0), vec2(1.0)), 0.0).b;
+ #endif
++#endif
+     float Lh = distance(vWorldPos, uOrbCenter);
+     w *= Lb <= 0.0 ? 1.0 : smoothstep(0.55, 0.8, Lb / max(Lh, 1e-3));
+     col = col * (1.0 - refl.a * w) + refl.rgb * w;
+@@ -629,6 +834,8 @@
+     occlusion: PlateOcclusionUniforms,
+     opts: {
+       glitter?: boolean;
++      /** Hotfix 2 (smooth waterline): the plate lake's soft shore switches (SHORE_AA; with PlateEnvironment.depthLinear). */
++      shore?: boolean;
+       projectors?: ExtraProjectorBinding;
+       /**
+        * Round 11 (baked environment): the planar mirror replaces the plate: LakeMirror's target, its size in texels and its
+@@ -645,6 +852,7 @@
+   ) {
+     const defines: Record<string, string> = { ...envDefines, ...(opts.projectors?.defines ?? {}) };
+     if (opts.glitter !== false) defines.WATER_GLITTER = "";
++    if (opts.shore && !opts.mirror) defines.SHORE_AA = "";
+     const mirrorUniforms: Record<string, { value: unknown }> = {};
+     if (opts.mirror) {
+       defines.BAKED_MIRROR = "";
+@@ -710,6 +918,8 @@
+         uOrbGlow: shared.uOrbGlow,
+         ...occlusion,
+         ...mirrorUniforms,
++        // Hotfix 2: the raised test's far fade (m from the projector; Water SHORE_AA only).
++        uShoreFar: { value: new THREE.Vector2(120, 180) },
+       },
+     });
+     const near = new THREE.Mesh(quad(WATER.near.min, WATER.near.max, WATER.level, 1), this.material);

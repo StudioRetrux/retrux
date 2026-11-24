@@ -1,0 +1,20 @@
+MAIN   d2_main_a  N 150 dt p10/50/90 27.9/30.0/31.6 | blips/frame left 328 shelf 226 right 594 | scales [1] errs 0
+MAIN   d2_main_b  N 150 dt p10/50/90 28.5/30.1/32.2 | blips/frame left 328 shelf 222 right 601 | scales [1] errs 0
+MAIN   d2_main_c  N 150 dt p10/50/90 29.2/30.4/32.5 | blips/frame left 341 shelf 228 right 606 | scales [1] errs 0
+K1     d2_k1_a    N 150 dt p10/50/90 29.2/30.7/33.5 | blips/frame left 522 shelf 150 right 659 | scales [1] errs 0
+K1     d2_k1_b    N 150 dt p10/50/90 29.3/31.3/33.7 | blips/frame left 537 shelf 151 right 618 | scales [1] errs 0
+K1     d2_k1_c    N 150 dt p10/50/90 29.7/31.2/33.1 | blips/frame left 537 shelf 156 right 620 | scales [1] errs 0
+K2     d2_k2_a    N 150 dt p10/50/90 29.3/31.0/32.9 | blips/frame left 528 shelf 173 right 655 | scales [1] errs 0
+K2     d2_k2_b    N 150 dt p10/50/90 30.1/31.4/33.4 | blips/frame left 531 shelf 180 right 627 | scales [1] errs 0
+
+POOLED, dt-controlled (both steps of the blip inside the band); n = frames:
+dt   0-999 | MAIN n 444 left  332 shelf  226 right  600 || K1 n 444 left  532 shelf  153 right  632 || K2 n 296 left  530 shelf  176 right  641
+dt  26-30  | MAIN n 124 left  327 shelf  212 right  534 || K1 n  33 left  480 shelf  116 right  481 || K2 n  10 left  486 shelf  130 right  715
+dt  28-31  | MAIN n 238 left  380 shelf  252 right  592 || K1 n 142 left  521 shelf  137 right  569 || K2 n  68 left  757 shelf  213 right  735
+dt  30-33  | MAIN n 177 left  328 shelf  228 right  673 || K1 n 232 left  538 shelf  153 right  659 || K2 n 187 left  521 shelf  169 right  622
+dt  33-36  | MAIN n   0 left   -1 shelf   -1 right   -1 || K1 n  36 left  832 shelf  249 right  694 || K2 n  16 left  901 shelf  302 right  708
+dt  28-34  | MAIN n 393 left  358 shelf  243 right  622 || K1 n 389 left  541 shelf  153 right  635 || K2 n 268 left  538 shelf  176 right  665
+dt  30-36  | MAIN n 191 left  328 shelf  229 right  668 || K1 n 306 left  579 shelf  168 right  677 || K2 n 228 left  556 shelf  189 right  639
+sheet MAIN frames 64 - 67 dt [np.float64(28.1), np.float64(29.5), np.float64(29.9), np.float64(30.5)]
+sheet K1 frames 77 - 80 dt [np.float64(29.5), np.float64(30.5), np.float64(29.7), np.float64(29.0)]
+sheet K2 frames 79 - 82 dt [np.float64(31.0), np.float64(31.7), np.float64(33.7), np.float64(33.0)]

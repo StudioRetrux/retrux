@@ -1,0 +1,14 @@
+== source differences lane vs BASE outside the six files (excluding node_modules, dist, .next, tsbuildinfo, logs):
+   none
+patching file 'retrux-web/app/hero/engine/HeroEngine.ts'
+patching file 'retrux-web/app/hero/engine/shaders/chunks.ts'
+patching file 'retrux-web/app/hero/engine/world/EnvEdge.ts'
+patching file 'retrux-web/app/hero/engine/world/LakeMirror.ts'
+patching file 'retrux-web/app/hero/engine/world/PlateEnvironment.ts'
+patching file 'retrux-web/app/hero/engine/world/Water.ts'
+== .orig / .rej in the apply clone: 0
+== applied app folder vs lane app folder:
+   IDENTICAL (app/)
+== apply-clone tsc hero 0 project 0
+    1078 /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work7/fixer/aa7.patch
+c91c97fd0afb6f5d73246cb65eefd4624ffd5ef7c29ae0f034abc7dca95c840a  /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work7/fixer/aa7.patch

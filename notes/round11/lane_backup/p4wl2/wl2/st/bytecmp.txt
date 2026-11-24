@@ -1,0 +1,3 @@
+d1_W vs wl2g d1_G4: 120 frames, 0 differ (meta.json differs)
+d2_W vs wl2g d2_G4: 120 frames, 0 differ (meta.json differs)
+POSTST_DONE

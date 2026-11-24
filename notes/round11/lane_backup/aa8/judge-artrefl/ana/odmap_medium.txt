@@ -1,0 +1,22 @@
+frames 240: X 6808 px-frames, R 3940; blocks 106; rows 380-766
+top blocks by X - R:
+  x224-256 y476-508 X 832 R 338 d 494 Xmax 11
+  x192-224 y476-508 X 599 R 240 d 359 Xmax 13
+  x1344-1376 y476-508 X 1385 R 1088 d 297 Xmax 38
+  x1280-1312 y476-508 X 496 R 285 d 211 Xmax 38
+  x160-192 y476-508 X 267 R 128 d 139 Xmax 14
+  x1312-1344 y476-508 X 562 R 436 d 126 Xmax 38
+  x1248-1280 y476-508 X 158 R 42 d 116 Xmax 22
+  x1216-1248 y476-508 X 87 R 34 d 53 Xmax 12
+  x1184-1216 y604-636 X 170 R 117 d 53 Xmax 33
+  x928-960 y732-764 X 60 R 11 d 49 Xmax 11
+  x576-608 y444-476 X 74 R 26 d 48 Xmax 20
+  x128-160 y508-540 X 86 R 39 d 47 Xmax 12
+top blocks by X:
+  x1344-1376 y476-508 X 1385 R 1088 Xmax 38
+  x224-256 y476-508 X 832 R 338 Xmax 11
+  x192-224 y476-508 X 599 R 240 Xmax 13
+  x1312-1344 y476-508 X 562 R 436 Xmax 38
+  x1280-1312 y476-508 X 496 R 285 Xmax 38
+  x160-192 y476-508 X 267 R 128 Xmax 14
+wrote /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/artrefl/img/odmap_medium_A8red_A7green.png

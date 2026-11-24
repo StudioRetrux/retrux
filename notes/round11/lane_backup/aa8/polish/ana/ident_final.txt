@@ -1,0 +1,26 @@
+# final build (knee 0.6) vs AA7 + live knee 0.6 (glide variants)
+FINAL def vs AA7 def + K0.6 live               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+FINAL f0 vs AA7 f0 + K0.6 live                 IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+FINAL mc0 vs AA7 mc0 + K0.6 live               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+FINAL mr0 vs AA7 mr0 + K0.6 live               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+FINAL sf0 vs AA7 sf0 + K0.6 live               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+FINAL s07 vs AA7 s07 + K0.6 live               IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+FINAL s07mr0 vs AA7 s07mr0 + K0.6 live         IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+FINAL nodbg vs AA7 nodbg + K0.6 live           IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+# final build: knee 0.5 / unused variants vs AA7 (recheck hashes / my AA7 runs) and the binding G8 refs
+FINAL g0 vs AA7 g0                             IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 16 differ: - | logs 0/0
+FINAL g0mc0 vs AA7 g0mc0                       IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+FINAL all5 vs AA7 all5                         IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+FINAL all6 vs AA7 all6                         IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 14 differ: - | logs 0/0
+FINAL t2all6 vs AA7 t2all6                     IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 14 differ: - | logs 0/0
+FINAL plate vs AA7 plate                       IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+FINAL t0 vs AA7 t0                             IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+FINAL lktaa0 vs AA7 lktaa0                     IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+FINAL ar0 vs AA7 ar0                           IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+FINAL g0mc0 vs AA6 g0 (G8)                     IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 15 differ: - | logs 0/0
+FINAL all6 vs BASE T1 (G8)                     IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 14 differ: - | logs 0/0
+FINAL T2 all6 vs BASE T2 (G8)                  IDENTICAL final SAME | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: - | programs 14 differ: - | logs 0/0
+FINAL plate vs BASE plate (G8)                 IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+FINAL T0 vs BASE T0 (G9)                       IDENTICAL final SAME | targets 2 (reflection,final) differ: - | programs 12 differ: - | logs 0/0
+# default vs AA7 default (expected: final image only)
+FINAL def vs AA7 def                           DIFFER    final DIFF | targets 6 (mirror,walk,cache,cacheN,reflection,final) differ: final | programs 16 differ: - | logs 0/0

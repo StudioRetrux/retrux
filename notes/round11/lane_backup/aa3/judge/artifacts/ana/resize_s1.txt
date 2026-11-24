@@ -1,0 +1,30 @@
+{
+ "frames": 30,
+ "tex": {
+  "lake": 1.0041,
+  "bright": 1.011,
+  "dark": 0.9862
+ },
+ "g5": {
+  "skyMean": 0.0013,
+  "skyMax": 14,
+  "heroMean": 0.4094,
+  "heroMax": 188,
+  "regionBoundaryBandMean": 0.467,
+  "regionBoundaryBandPx": 184,
+  "regionBoundaryOtherMean": 0.083,
+  "regionBoundaryOtherPx": 53366
+ },
+ "g4off": {
+  "px": 9,
+  "band": 9,
+  "max": 9,
+  "perMpxFrame": 0.39
+ },
+ "g4base": {
+  "px": 41144,
+  "band": 9693,
+  "max": 85
+ },
+ "offOutsideBandPx": 4822
+}

@@ -1,0 +1,112 @@
+{
+ "qs": "",
+ "port": "5199",
+ "logs": [
+  "console.info [hero] GPU \"Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)\" -> T0 (forced by ?tier=)"
+ ],
+ "counts": null,
+ "targets": {
+  "reflection": {
+   "w": 98,
+   "h": 211,
+   "hash": "8b50dda497d9cb93"
+  },
+  "main": {
+   "w": 390,
+   "h": 844,
+   "hash": "1a01a95f695ff9c4"
+  },
+  "refraction": {
+   "w": 195,
+   "h": 422,
+   "hash": "c248ada53303a206"
+  },
+  "bloom0": {
+   "w": 195,
+   "h": 422,
+   "hash": "b0b22bb9815d4d8a"
+  },
+  "bloom1": {
+   "w": 98,
+   "h": 211,
+   "hash": "1b70049cebef569b"
+  },
+  "bloom2": {
+   "w": 49,
+   "h": 106,
+   "hash": "2c1ec895f9b0d98a"
+  },
+  "bloom3": {
+   "w": 25,
+   "h": 53,
+   "hash": "2e2b1c134d8b48ac"
+  },
+  "ldr": {
+   "w": 390,
+   "h": 844,
+   "hash": "c186d22f2a72a69c"
+  },
+  "final": {
+   "w": 390,
+   "h": 844,
+   "hash": "af232efc083e9407"
+  }
+ },
+ "programs": {
+  "rx-plate-baked|ShaderMaterial": [
+   "2228447be0ac4ad8",
+   "726afd24b946bc04"
+  ],
+  "rx-cloud|ShaderMaterial": [
+   "0c01fc6b3e2ff1fc",
+   "4dc81ec0ed908c7c"
+  ],
+  "rx-water|ShaderMaterial": [
+   "318afe41349f28f1",
+   "ecc90d70b70fdfc7"
+  ],
+  "rx-ice|ShaderMaterial": [
+   "22e7548f991dbcb4",
+   "e81d2b98da500d04"
+  ],
+  "rx-orb|ShaderMaterial": [
+   "4cc696080f35f487",
+   "c60a374b249b5d1b"
+  ],
+  "rx-shards|ShaderMaterial": [
+   "2cf6c8dd842e78df",
+   "5a508e585f3497d5"
+  ],
+  "rx-ice-back|ShaderMaterial": [
+   "c0500856298d5e5c"
+  ],
+  "rx-blit|ShaderMaterial": [
+   "a7f94f57bd0aeb00"
+  ],
+  "rx-bloom-down|ShaderMaterial": [
+   "c1d61d13e0332746"
+  ],
+  "rx-bloom-up|ShaderMaterial": [
+   "2bc7e6301f5c75e6"
+  ],
+  "rx-grade|ShaderMaterial": [
+   "b526055568b2954e"
+  ],
+  "rx-fxaa|ShaderMaterial": [
+   "cd5c4f2cb85098aa"
+  ]
+ },
+ "mid": [
+  "563affff",
+  "9559d2e3",
+  "5315d948",
+  "af232efc"
+ ],
+ "present": {
+  "mirror": false,
+  "walk": false,
+  "cache": false,
+  "post": true,
+  "mips": 4
+ }
+}

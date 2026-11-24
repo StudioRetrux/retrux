@@ -1,0 +1,4 @@
+[slot] fixer-r2 holdre rows: taken (load 4.1)
+[jcap holdre] fin: 1 seg, 0 errors/warnings
+  r2: 1 seg, 0 errors/warnings
+[slot] fixer-r2 holdre rows: freed (exit 0)

@@ -1,0 +1,203 @@
+diff -ruN a/retrux-web/app/hero/engine/HeroEngine.ts b/retrux-web/app/hero/engine/HeroEngine.ts
+--- a/retrux-web/app/hero/engine/HeroEngine.ts	2026-11-20 15:18:18
++++ b/retrux-web/app/hero/engine/HeroEngine.ts	2026-11-20 17:33:32
+@@ -83,6 +83,11 @@
+   private slabFlashFix = false;
+   /** AA3 lake-edge TAA: no history inside the hold's crest train (lab `?debug&lktaacrest=0`: history there too). */
+   private taaCrest = true;
++  /** AA5c (also the lab's runtime switch, see the constructor): the late sky pass and the slim mirror materials. */
++  setMirrorCost(sky: boolean, slim: boolean) {
++    this.lakeMirror?.setSkyLate(sky);
++    if (this.env) this.env.mirrorSlim = slim;
++  }
+   private lakeMirrorPass = (on: boolean) => {
+     this.env?.setLakeMirrorPass(on);
+     if (this.water) this.water.group.visible = !on;
+@@ -247,6 +252,14 @@
+       this.scene.add(this.lakeMirror.skyMesh);
+       this.lakeMirror.setSize(this.pipeline.size.width, this.pipeline.size.height);
+       this.lakeMirrorSize.set(this.lakeMirror.target.width, this.lakeMirror.target.height);
++      // AA5c (20 Nov, the cost of AA3 step B's every-frame mirror): the same mirror target for less work, bit-identical (tools/ident:
++      // mirror, walk and final hashes): the sky pass after the surfaces at the far plane (LakeMirror.setSkyLate), the baked
++      // surfaces through a fragment shader of their mirror branch alone (PlateEnvironment.mirrorSlim). `?mirrorcost=0` off (AA3
++      // exactly); lab (with ?debug) `?mcsky=0` / `?mcslim=0` one of them off.
++      if (lq?.get("mirrorcost") !== "0") {
++        const lab = !!this.opts.debug;
++        this.setMirrorCost(!(lab && lq?.get("mcsky") === "0"), !(lab && lq?.get("mcslim") === "0"));
++      }
+     }
+     const mirror = this.lakeMirror;
+     // Hotfix 2 (smooth waterline, 18 Nov): the plate lake's choices beside floes and rocks are soft blends on bilinear projector
+diff -ruN a/retrux-web/app/hero/engine/world/LakeMirror.ts b/retrux-web/app/hero/engine/world/LakeMirror.ts
+--- a/retrux-web/app/hero/engine/world/LakeMirror.ts	2026-11-20 13:39:46
++++ b/retrux-web/app/hero/engine/world/LakeMirror.ts	2026-11-20 17:33:32
+@@ -46,6 +46,20 @@
+ }
+ `;
+ 
++/**
++ * AA5c (20 Nov, the cost of the every-frame mirror): the sky pass drawn AFTER the opaque geometry, at the far plane with the
++ * depth test, so only the texels no surface covers run SKY_FRAG (it ran under every surface and was overdrawn). Same colour and
++ * alpha in every texel (no surface reaches the far plane; the transparent cloud cards still blend over it): the target is
++ * bit-identical (tools/ident). `?mirrorcost=0` off.
++ */
++const SKY_VERT_LATE = /* glsl */ `
++varying vec2 vNdc;
++void main() {
++  vNdc = position.xy;
++  gl_Position = vec4(position.xy, 1.0, 1.0);
++}
++`;
++
+ const SKY_FRAG = /* glsl */ `
+ uniform sampler2D uSky;
+ uniform mat4 uInvViewProj;
+@@ -84,6 +98,8 @@
+     uMirrorP: { value: THREE.Vector2 };
+   };
+   private skyMaterial: THREE.ShaderMaterial;
++  /** AA5c: the late sky pass (SKY_VERT_LATE), created by setSkyLate(true). */
++  private skyLateMaterial: THREE.ShaderMaterial | null = null;
+   private plainViewProj = new THREE.Matrix4();
+   private tmpFwd = new THREE.Vector3();
+   private plane = new THREE.Plane();
+@@ -165,6 +181,25 @@
+     this.skyMesh.visible = false;
+   }
+ 
++  /** AA5c: the sky pass last among the opaque draws, depth-tested at the far plane (SKY_VERT_LATE); false = first, as before. */
++  setSkyLate(on: boolean) {
++    if (on && !this.skyLateMaterial) {
++      this.skyLateMaterial = new THREE.ShaderMaterial({
++        name: "rx-lake-sky-late",
++        vertexShader: SKY_VERT_LATE,
++        fragmentShader: SKY_FRAG,
++        uniforms: this.skyMaterial.uniforms,
++        depthTest: true,
++        depthFunc: THREE.LessEqualDepth,
++        depthWrite: false,
++      });
++    }
++    this.skyMesh.material = on && this.skyLateMaterial ? this.skyLateMaterial : this.skyMaterial;
++    // (three draws the opaque list by renderOrder first: before every surface, or after all of them; the clouds, transparent,
++    // come after the opaque list either way)
++    this.skyMesh.renderOrder = on ? 1e9 : -1000;
++  }
++
+   /**
+    * Fix round (judge1 blocker): THREE.WebGLRenderTarget.setSize disposes the target when the size changes, and the reuse
+    * above then let the water sample the empty target for 1-2 frames (a black lake after every adaptive-scale step, window or
+@@ -285,6 +320,7 @@
+   dispose() {
+     this.target.dispose();
+     this.skyMaterial.dispose();
++    this.skyLateMaterial?.dispose();
+     this.skyMesh.geometry.dispose();
+   }
+ }
+diff -ruN a/retrux-web/app/hero/engine/world/PlateEnvironment.ts b/retrux-web/app/hero/engine/world/PlateEnvironment.ts
+--- a/retrux-web/app/hero/engine/world/PlateEnvironment.ts	2026-11-19 01:50:59
++++ b/retrux-web/app/hero/engine/world/PlateEnvironment.ts	2026-11-20 17:02:53
+@@ -529,6 +529,31 @@
+ }
+ `;
+ 
++/**
++ * AA5c (20 Nov, the cost of the every-frame lake mirror, AA3 step B): the baked materials' lake-mirror branch alone. PLATE_FRAG
++ * returns from its mirror branch (uMirrorPass) right after this same expression, but the GPU still runs the whole uber-shader's
++ * prologue and register budget for it; this program draws the same value (same vertex shader, defines and uniforms), so the
++ * mirror target is bit-identical (tools/ident: mirror / walk / final hashes) at a smaller fragment cost. `?mirrorcost=0` off.
++ */
++const PLATE_MIRROR_FRAG = /* glsl */ `
++#ifdef ATMOS_CARDLIGHT
++${GLSL_CARD_LIGHT_FRAG}
++#endif
++uniform float uPlateGain;
++uniform float uHold;
++uniform sampler2D uBaked;
++uniform vec3 uBakedGain;
++varying vec3 vWorldPos;
++varying vec2 vBakeUv;
++void main() {
++#ifdef ATMOS_CARDLIGHT
++  gl_FragColor = vec4(cardLit(texture2D(uBaked, vBakeUv).rgb * uPlateGain * uBakedGain, CARD_K), distance(cameraPosition, vWorldPos));
++#else
++  gl_FragColor = vec4(texture2D(uBaked, vBakeUv).rgb * uPlateGain * uBakedGain, distance(cameraPosition, vWorldPos));
++#endif
++}
++`;
++
+ export const DEFAULT_PLATE_META: PlateMeta = {
+   overscanX: PLATE.overscanX,
+   overscanTop: PLATE.overscanY,
+@@ -1252,6 +1277,13 @@
+   private readonly bakedMirrorPass = { value: 0 };
+   /** Meshes the lake does not mirror (BG.001: glossy-invisible in the Cycles scene, forensics 1.5). */
+   private readonly mirrorHidden: THREE.Object3D[] = [];
++  /** AA5c: the baked meshes (their uber material) and, once `mirrorSlim` is on, each material's mirror-pass twin (PLATE_MIRROR_FRAG). */
++  private readonly bakedMeshes: THREE.Mesh[] = [];
++  private readonly mirrorTwins = new Map<THREE.Material, THREE.ShaderMaterial>();
++  /** AA5c: draw the lake mirror pass with PLATE_MIRROR_FRAG (bit-identical target, cheaper); off = the uber-shader's branch. */
++  mirrorSlim = false;
++  /** The materials swapped for the current mirror pass (restored when it ends). */
++  private mirrorSwapped = false;
+   readonly cloudMaterials: THREE.ShaderMaterial[] = [];
+   readonly plateViewProj = new THREE.Matrix4();
+   readonly occlusion: PlateOcclusionUniforms = {
+@@ -1478,6 +1510,7 @@
+       const sky = mesh.name === "BG001" || mesh.parent?.name === "BG001";
+       if (baked && sky) this.mirrorHidden.push(mesh);
+       mesh.material = t ? bakedMaterial(t, sky) : this.plateMaterial;
++      if (t) this.bakedMeshes.push(mesh);
+       mesh.frustumCulled = true;
+     });
+     if (baked && unbaked) console.warn(`[hero] baked environment: ${unbaked} mesh(es) without a texture keep the projection`);
+@@ -1688,6 +1721,13 @@
+    */
+   setLakeMirrorPass(on: boolean) {
+     this.bakedMirrorPass.value = on ? 1 : 0;
++    if (on && this.mirrorSlim && !this.mirrorSwapped) {
++      for (const m of this.bakedMeshes) m.material = this.mirrorTwin(m.material as THREE.ShaderMaterial);
++      this.mirrorSwapped = true;
++    } else if (!on && this.mirrorSwapped) {
++      for (const m of this.bakedMeshes) m.material = (m.material as THREE.ShaderMaterial).userData.uber as THREE.ShaderMaterial;
++      this.mirrorSwapped = false;
++    }
+     for (const o of this.mirrorHidden) o.visible = !on;
+     const keep = on || this.edgeAlpha;
+     for (const m of this.cloudMaterials) {
+@@ -1696,6 +1736,27 @@
+     }
+   }
+ 
++  /**
++   * AA5c: the mirror-pass twin of a baked material: the same vertex shader, a copy of its defines (as they are at the first mirror
++   * pass, after setEdgeAlpha / setAAResolve), its uniforms by reference and its face culling; only the fragment shader differs.
++   */
++  private mirrorTwin(m: THREE.ShaderMaterial) {
++    let t = this.mirrorTwins.get(m);
++    if (!t) {
++      t = new THREE.ShaderMaterial({
++        name: "rx-plate-baked-mirror",
++        vertexShader: m.vertexShader,
++        fragmentShader: PLATE_MIRROR_FRAG,
++        defines: { ...m.defines },
++        uniforms: m.uniforms,
++        side: m.side,
++      });
++      t.userData.uber = m;
++      this.mirrorTwins.set(m, t);
++    }
++    return t;
++  }
++
+   /** Round 11 fix round: the baked materials write the view distance into alpha for EnvEdge. */
+   private edgeAlpha = false;
+ 
+@@ -1955,5 +2016,6 @@
+   dispose() {
+     this.depthTarget?.dispose();
+     for (const p of this.projectors) p.target?.dispose();
++    for (const t of this.mirrorTwins.values()) t.dispose();
+   }
+ }

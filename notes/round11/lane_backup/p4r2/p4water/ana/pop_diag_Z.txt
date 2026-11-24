@@ -1,0 +1,31 @@
+### diag mask=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work5/aa5a/caps/diag_mask gt=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work6/refl/caps/diag_gt
+A8: flagged px 1719, events >= 6 px: 48, px in them 620
+LANE: flagged px 1672, events >= 6 px: 46, px in them 616
+-- A8 top 4
+  k89-116 x87-146 y544-551 n116 emax135 frames 89/3/85/119 90/2/61/101 91/3/83/91 92/5/130/94 ...
+  k1-12 x115-140 y559-566 n28 emax132 frames 1/1/52/-135 2/2/76/-107 3/2/101/-115 4/2/53/-99 ...
+  k82-91 x922-935 y758-763 n41 emax71 frames 82/1/41/34 83/3/49/35 84/3/42/-66 85/3/52/38 ...
+  k114-119 x1178-1187 y666-669 n27 emax97 frames 114/3/57/44 115/1/50/46 116/6/81/47 117/2/46/37 ...
+-- LANE top 4
+  k89-116 x87-146 y544-551 n108 emax135 frames 89/3/85/118 90/2/61/101 91/3/88/90 92/5/134/93 ...
+  k2-20 x112-152 y551-562 n39 emax132 frames 2/1/58/-105 3/1/59/-83 4/1/68/-76 5/1/84/-95 ...
+  k82-91 x922-935 y758-763 n38 emax71 frames 82/1/41/32 83/2/47/36 84/2/42/-78 85/2/52/39 ...
+  k114-119 x1178-1187 y666-669 n27 emax96 frames 114/3/56/44 115/1/49/46 116/6/81/47 117/2/45/36 ...
+-- popnew LANE vs A8 (new pops)
+new pops (X flagged, ref not, X != ref): 15 px, 15 clusters, >= 6 px: 0
+  k92-92 x132-132 y537-537 n1 emax51
+  k73-73 x1266-1266 y513-513 n1 emax50
+  k40-40 x1217-1217 y534-534 n1 emax49
+  k4-4 x1127-1127 y514-514 n1 emax46
+  k35-35 x1216-1216 y535-535 n1 emax46
+  k3-3 x1418-1418 y529-529 n1 emax45
+  k23-23 x438-438 y720-720 n1 emax45
+  k32-32 x1215-1215 y535-535 n1 emax45
+  k44-44 x1217-1217 y535-535 n1 emax44
+  k101-101 x1095-1095 y513-513 n1 emax44
+-- popnew A8 vs LANE (pops the lane removes)
+new pops (X flagged, ref not, X != ref): 25 px, 16 clusters, >= 6 px: 1
+  k97-101 x1089-1097 y492-493 n7 emax52
+  k34-34 x1216-1216 y534-535 n2 emax49
+  k110-111 x523-525 y497-497 n2 emax43
+  k11-11 x527-529 y756-757 n2 emax42

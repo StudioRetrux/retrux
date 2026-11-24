@@ -1,0 +1,2 @@
+== median of per-frame median length: {'slow_wl2': 47.5, 'slow_lane': 45.75}
+== slow_lane vs slow_wl2: matched 160, shorter by >=10 px 3, longer by >=10 px 2, mean dlen -0.2, mean dexc20 -0.01

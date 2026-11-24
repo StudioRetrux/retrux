@@ -1,0 +1,20 @@
+{
+ "note": "script args for wf_096c009a-23d (p4-rxo-opt.js)",
+ "args": {
+  "argsFile": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/args/p4pri4-rxo.args.json",
+  "brief": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/briefs/p4r4_common.md",
+  "brief2": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/briefs/p4pri2_common.md",
+  "round": "p4pri4",
+  "basePort": 5173,
+  "mainPort": 5175,
+  "lane": {
+   "key": "rxo",
+   "lane": "p4rxo",
+   "port": 5178
+  },
+  "buildMin": 90,
+  "judgeMin": 45,
+  "fixMin": 60,
+  "rejudgeMin": 40
+ }
+}

@@ -1,0 +1,12 @@
+ghost box x1180-1440 y290-430 right: maxdiff 17 luma MAIN 165.6 int1 165.8
+ghost box x1180-1440 y290-430 top_right: maxdiff 25 luma MAIN 183.4 int1 183.6
+ghost box x1180-1440 y290-430 bottom_right: maxdiff 35 luma MAIN 159.1 int1 159.3
+left-orbit box x1000-1440 y280-470 left: maxdiff 26 luma MAIN 182.6 int1 182.5
+left-orbit box x1000-1440 y280-470 top_left: maxdiff 59 luma MAIN 191.2 int1 191.3
+left-orbit box x1000-1440 y280-470 bottom_left: maxdiff 33 luma MAIN 174.4 int1 174.4
+hairline box (1120, 370, 1250, 460) left: maxdiff 26
+hairline box (1120, 390, 1250, 480) top_left: maxdiff 27
+hairline box (1120, 340, 1250, 430) bottom_left: maxdiff 27
+lake/shelf box (480, 440, 640, 520) right: maxdiff 92 luma MAIN 187.0 int1 188.2
+lake/shelf box (260, 450, 440, 500) rest: maxdiff 77 luma MAIN 166.6 int1 166.9
+lake/shelf box (160, 450, 340, 500) left: maxdiff 2 luma MAIN 167.3 int1 167.3

@@ -1,0 +1,72 @@
+{
+ "port": "5181",
+ "path": "fast",
+ "vw": 1440,
+ "vh": 766,
+ "dsf": 1,
+ "tier": "T1",
+ "block": 60,
+ "cycles": 6,
+ "main": [
+  1440,
+  766
+ ],
+ "scale": 1,
+ "load1minBefore": 10.12,
+ "load1minAfter": 12.41,
+ "summ": {
+  "full": {
+   "n": 360,
+   "med": 25.4,
+   "p90": 30.7,
+   "p99": 52.8,
+   "max": 62,
+   "top5": [
+    62,
+    59.9,
+    59.6,
+    52.8,
+    51.9
+   ],
+   "ratioMedVsRef": 1.0855,
+   "pairedBlockRatioMed": 1.1041,
+   "pairedBlockRatios": [
+    1.104,
+    1.115,
+    1.112,
+    1.076,
+    1.071,
+    1.071
+   ],
+   "taaRuns": 360,
+   "mirrorDraws": 360
+  },
+  "none": {
+   "n": 360,
+   "med": 23.4,
+   "p90": 26.7,
+   "p99": 40.2,
+   "max": 47.7,
+   "top5": [
+    47.7,
+    42.3,
+    41,
+    40.2,
+    39.8
+   ],
+   "ratioMedVsRef": 1,
+   "pairedBlockRatioMed": 1,
+   "pairedBlockRatios": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "taaRuns": 0,
+   "mirrorDraws": 120
+  }
+ },
+ "logs": []
+}

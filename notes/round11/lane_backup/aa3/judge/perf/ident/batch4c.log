@@ -1,0 +1,6 @@
+[slot] judge-perf:t0d waiting (load 19.8 / max 24, slots 2, holders [{"label":"judge-motion:realloop","pid":29967,"at":1795160482175,"slot":0},{"label":"!judge-perf:g10x2","pid":30145,"at":1795160560517,"slot":1}])
+[slot] judge-perf:t0d: taken (load 23.4)
+{"port":"5182","qs":"","tier":"T0","mobile":true,"W":390,"H":844,"tierGot":"T0","main":[332,717],"envEdge":false,"taaOn":false,"mirrorEvery":null,"counts":null,"nprog":12,"logs":[]}
+{"port":"5181","qs":"","tier":"T0","mobile":true,"W":390,"H":844,"tierGot":"T0","main":[332,717],"envEdge":false,"taaOn":false,"mirrorEvery":null,"counts":null,"nprog":12,"logs":[]}
+{"port":"5182","qs":"","tier":"T0","mobile":true,"W":390,"H":844,"tierGot":"T0","main":[332,717],"envEdge":false,"taaOn":false,"mirrorEvery":null,"counts":null,"nprog":12,"logs":[]}
+[slot] judge-perf:t0d: freed (exit 0)

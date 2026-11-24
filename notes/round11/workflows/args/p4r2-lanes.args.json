@@ -1,0 +1,28 @@
+{
+ "note": "P4 round 2 lanes wf_8bb474d1-5a9 (21 Nov 01:20)",
+ "args": {
+  "brief": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/briefs/p4r2_common.md",
+  "refPort": 5199,
+  "round": "p4r2",
+  "buildMin": 120,
+  "judgeMin": 50,
+  "fixMin": 60,
+  "rejudgeMin": 40,
+  "lanes": [
+   {
+    "key": "water",
+    "lane": "p4water",
+    "port": 5177,
+    "build": "LANE TASKS (from MAIN/notes/round11/p3/r11_1_plan.json; read each in full, with the panel issues they came from): G2 (priority 2 - a glitch the client would notice: during the hold / pop the bottom strip of the frame shows a smooth pale 'glass plate' crest arc with stair-stepped band edges and a dashed aliased line instead of choppy dark near water), Q8 (rest ripple rings as physical waves: narrow deep troughs, bright crest faces, irregular, plus the reference's cyan near-water glint band), Q9 (glassy mid / far lake: no point-sampled sub-pixel 'corduroy' wavelets, longer floe reflection pillars), G6 (rest-view floe / slab reflection remnants that stay behind on the water when the pointer orbits the camera - the panel's 'LAKE_CORR ghost'; check whether it still exists on the default mirror lake and fix it), and AJ-1 from AA8 (the faint pale spot at the near far floe's thin tip, about x 90-300 y 490-520; AA8's tip attempt failed the no-new-pops gate: read MAIN/notes/round11/lane_backup/aa8/tip/LOG.md and aa8/fixer/LOG.md section 4 - options 2b (a front / back-face bit in the mirror alpha sign, or refining X) or 3 (more mirror rows behind a switch with guard / walk retuning); accept it only through the full pop gate). Files: world/Water.ts, world/LakeMirror.ts, world/LakeSchedule.ts (and HeroEngine.ts only for switches). The water was matched to Cycles renders of the artist's water (MAIN/notes/round11/handoff_water_userfix.md): where those renders and the reference video disagree, the video wins; never break the waterline AA (AA7 / AA8).",
+    "judge": "LENSES to score: environment, glitch_hold_sweep, glitch_cursor_orbit, color_grade_post, awwwards_jury. Check the bottom strip in every hold / pop / release sweep frame and p04-p08 at x1 and x4, the ripple rings at q00 vs ref_F000 (crop_q00_rest_water), the mid / far lake texture, the orbit views for reflection remnants, the thin-tip spot (x4 strips at scale 1), and the waterline AA gates (no new pops vs AA8, crawl not worse)."
+   },
+   {
+    "key": "hold",
+    "lane": "p4hold",
+    "port": 5178,
+    "build": "LANE TASKS (from MAIN/notes/round11/p3/r11_1_plan.json; read each in full): Q12 (hold framing: restore the full hold pitch under the steady-hold dolly share and lower the camera so the background sits where the reference has it while the orb stays at (720, 392) - the planner's call on the panel's disagreement 1), Q13 (pop timing: ring A's and B's opening bursts with the camera lunge, F357-F359, as the reference's split does - keep the client's continuous slow-motion rotation in the rest direction and the opening offsets; no non-coplanar offsets, no tumble steering), plus two robustness items from AA8: N-1 (after a WebGL context restore the render loop never restarts, so the hero stays blank until a tab switch or scroll: end the restore handler with this.updateRunning() or equivalent; prove with the live ctxloss test without a visibilitychange) and R8-2 (AA8 keeps the 4 MiB env panorama in JS memory for the page's lifetime on every tier to rebuild the PMREM after a restore: measure and choose the leanest correct option, e.g. re-decode from the cached asset on restore, or keep it only where context loss is likely; document the choice with numbers). Files: CameraRig.ts, hero/HoldR11.ts, Choreography.ts, HeroEngine.ts (small hunks; the orb lane also edits HeroEngine.ts). Compare the hold frames with REF ref_F358 / F402 / F420 and MAIN/refs/hold_frames, and run probe_holdbounds / probe_interact style checks (copy them into WORK/tools and patch their createRequire).",
+    "judge": "LENSES to score: composition_motion, glitch_hold_sweep, environment. Check p04-p08 framing vs REF (horizon y, orb at (720, 392)), the pop beat (frames around the press at 30 fps), continuity (no per-frame step > 15 deg in press / release, re-press), ring extents inside the frame at 1440x766 / 1280x800 / 1920x1080, the context-restore live test, and the memory numbers for R8-2."
+   }
+  ]
+ }
+}

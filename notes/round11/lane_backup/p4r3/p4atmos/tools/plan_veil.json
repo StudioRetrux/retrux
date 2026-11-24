@@ -1,0 +1,74 @@
+[
+{
+"name": "L030_V0",
+"t": 7.4,
+"tau": 0,
+"js": "const u=__hero.env.p4atmosUniforms.uP4Veil.value; u.set(1.8,0,0,0); const s=__hero.env.atmosUniforms.uAtmosVeilSh2.value; s.z=9.0; s.w=11.5;"
+},
+{
+"name": "L030_V1",
+"t": 7.4,
+"tau": 0,
+"js": "const u=__hero.env.p4atmosUniforms.uP4Veil.value; u.set(3.5,1.0,1.4,0); const s=__hero.env.atmosUniforms.uAtmosVeilSh2.value; s.z=8.0; s.w=10.5;"
+},
+{
+"name": "L030_V2",
+"t": 7.4,
+"tau": 0,
+"js": "const u=__hero.env.p4atmosUniforms.uP4Veil.value; u.set(3.0,0.5,1.6,0); const s=__hero.env.atmosUniforms.uAtmosVeilSh2.value; s.z=8.5; s.w=11.0;"
+},
+{
+"name": "L030_V3",
+"t": 7.4,
+"tau": 0,
+"js": "const u=__hero.env.p4atmosUniforms.uP4Veil.value; u.set(4.0,0.0,1.6,0); const s=__hero.env.atmosUniforms.uAtmosVeilSh2.value; s.z=9.0; s.w=11.5;"
+},
+{
+"name": "L045_V0",
+"t": 9.4,
+"tau": 0,
+"js": "const u=__hero.env.p4atmosUniforms.uP4Veil.value; u.set(1.8,0,0,0); const s=__hero.env.atmosUniforms.uAtmosVeilSh2.value; s.z=9.0; s.w=11.5;"
+},
+{
+"name": "L045_V1",
+"t": 9.4,
+"tau": 0,
+"js": "const u=__hero.env.p4atmosUniforms.uP4Veil.value; u.set(3.5,1.0,1.4,0); const s=__hero.env.atmosUniforms.uAtmosVeilSh2.value; s.z=8.0; s.w=10.5;"
+},
+{
+"name": "L045_V2",
+"t": 9.4,
+"tau": 0,
+"js": "const u=__hero.env.p4atmosUniforms.uP4Veil.value; u.set(3.0,0.5,1.6,0); const s=__hero.env.atmosUniforms.uAtmosVeilSh2.value; s.z=8.5; s.w=11.0;"
+},
+{
+"name": "L045_V3",
+"t": 9.4,
+"tau": 0,
+"js": "const u=__hero.env.p4atmosUniforms.uP4Veil.value; u.set(4.0,0.0,1.6,0); const s=__hero.env.atmosUniforms.uAtmosVeilSh2.value; s.z=9.0; s.w=11.5;"
+},
+{
+"name": "F297_V0",
+"t": 13.3,
+"tau": 0,
+"js": "const u=__hero.env.p4atmosUniforms.uP4Veil.value; u.set(1.8,0,0,0); const s=__hero.env.atmosUniforms.uAtmosVeilSh2.value; s.z=9.0; s.w=11.5;"
+},
+{
+"name": "F297_V1",
+"t": 13.3,
+"tau": 0,
+"js": "const u=__hero.env.p4atmosUniforms.uP4Veil.value; u.set(3.5,1.0,1.4,0); const s=__hero.env.atmosUniforms.uAtmosVeilSh2.value; s.z=8.0; s.w=10.5;"
+},
+{
+"name": "F297_V2",
+"t": 13.3,
+"tau": 0,
+"js": "const u=__hero.env.p4atmosUniforms.uP4Veil.value; u.set(3.0,0.5,1.6,0); const s=__hero.env.atmosUniforms.uAtmosVeilSh2.value; s.z=8.5; s.w=11.0;"
+},
+{
+"name": "F297_V3",
+"t": 13.3,
+"tau": 0,
+"js": "const u=__hero.env.p4atmosUniforms.uP4Veil.value; u.set(4.0,0.0,1.6,0); const s=__hero.env.atmosUniforms.uAtmosVeilSh2.value; s.z=9.0; s.w=11.5;"
+}
+]

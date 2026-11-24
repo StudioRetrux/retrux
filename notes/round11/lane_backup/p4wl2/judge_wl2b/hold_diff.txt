@@ -1,0 +1,10 @@
+expand_2.97 lane vs p4wl mean|d| 0.082 max 21 px>2 13568 px>8 1131 bbox>2 (np.int64(0), np.int64(609), np.int64(1436), np.int64(765))
+   top 0-430  mean 0.000 px>8 0 max 1
+   left       mean 0.413 px>8 952 max 21
+   mid        mean 0.063 px>8 157 max 19
+   far        mean 0.083 px>8 22 max 11
+release_0.33 lane vs p4wl mean|d| 0.146 max 39 px>2 23581 px>8 3751 bbox>2 (np.int64(0), np.int64(521), np.int64(1408), np.int64(765))
+   top 0-430  mean 0.001 px>8 0 max 1
+   left       mean 0.777 px>8 3097 max 25
+   mid        mean 0.096 px>8 471 max 22
+   far        mean 0.121 px>8 183 max 39

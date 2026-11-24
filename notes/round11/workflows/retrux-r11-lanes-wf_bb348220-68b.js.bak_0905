@@ -1,0 +1,251 @@
+export const meta = {
+  name: 'retrux-r11-lanes',
+  description: 'Round 11: build the ENV (Blender bake v9), HOLD (A2 rebuild) and ICE (Cycles twin) lanes in parallel worktrees, judge each adversarially, one fix + re-judge',
+  whenToUse: 'Retrux hero round 11 lane build; args {SP, MAIN}',
+  phases: [
+    { title: 'Build', detail: 'lane builders in their own worktrees; heavy work only through the shared slot' },
+    { title: 'Judge', detail: 'independent adversarial judge per lane with its own captures and gate verdicts' },
+    { title: 'Fix', detail: 'one fixer per failing lane, then a re-judge' },
+  ],
+}
+
+const SP = args.SP
+const MAIN = args.MAIN
+const SPEC = MAIN + '/notes/round11/SPEC.md'
+const SLOT = 'node ' + SP + '/slot/slot.mjs run'
+
+// ---- resume notes and lead decisions (added 21:30 after the first run hit the account usage limit at 19:07) ----
+const STOP_NOTE = `An abrupt stop (the account usage limit or a network outage) can happen at any moment and kills the agent without warning. Append your state to WORK/LOG.md after every sub-step (what changed, numbers, what is next) and keep LANE/HANDOFF.md current, so the next agent can continue exactly where you stopped.`
+
+const PERF_NOTE = `Frame-time measurements: run perf_probe through the slot with the env SLOT_BG=0 in front of the slot command (e.g. SLOT_BG=0 ${SLOT} '<lane>:perf' -- node ...): it runs that one command at normal QoS (background QoS throttles every build to 5-8 fps and makes the numbers meaningless). Timing runs only, never Blender or long captures. Use at least 6 interleaved A/B pairs (baseline :5173 vs your lab, same tier, scale and window), only while the 1-min load is below 6, and report medians and the worst frame.`
+
+const ENV2_NOTE = `
+
+RESUME NOTE (lead, 15 Nov 03:50): this step was cut off twice: at 19:08 by the usage limit (before any edit) and at about 22:38 by a network outage, after substantial work (LakeMirror.ts planar mirror, Water.ts BAKED_MIRROR bump model, encode_sky_m9.py + public/hero/sky_world.exr, HeroEngine.ts / assets.ts changes). WORK/LOG.md ends with: NEXT: check gain 1.15 at rest, then p06 / pointer extremes / q03 for plausibility; then perf; then wisp. Read LOG.md and git -C LANE status / git diff, and continue from that exact state; do not redo finished work.
+
+LEAD DECISIONS for this step:
+(a) Step 1 replaced the mip-bias DOF with a textureGrad emulation (?envlod=bias is the old one); keep whichever measures closer to the projected plates and to the reference.
+(b) Before the wisp card is drawn, re-bake BG.001 and V2_Massif from no-wisp plate crops as step 1's open issue says (render_plates_m9.py nowisp, comp_env_m9.py only=BG.001,V2_Massif), otherwise the wisp doubles. Verify at rest that the wisp is single and lands where the plates had it (diff map vs the baseline).
+(c) Tone or clamp the equirect's saturated sun disc before the lake mirror uses it.
+(d) The two remaining ridge specks: try removing the self-overlapping fold faces in prep or a polygon offset; re-check at rest and from every pointer spot.
+(e) The planar mirror must not break the frame budget: if the extra pass costs more than E-G3 allows at a tier, keep today's re-aimed reflection at that tier and document it (T0 is protected).
+(f) ${PERF_NOTE}
+${STOP_NOTE}`
+
+const ICE2_NOTE = `
+
+RESUME NOTE (lead, 15 Nov 03:50): this step was cut off twice, at 19:07 by the usage limit and at about 22:38 by a network outage; the second attempt continued through sub-step s16 (orb converged on the twin: defaults uR11Orb (0,0,0,0), uR11OrbB.x 1, Orb.ts under ORB_R11) and its log says: Next: T8 joints and T6 outlines (silhouette captures), then p06 hue, T9 shards, I-G3 / I-G4. Continue from there. Background of the first attempt: It left substantial uncommitted work in the lane (IceMaterial.ts +493 lines, Rings.ts +27, RenderPipeline.ts +4) and logged sub-steps s01-s08 in WORK/LOG.md (smooth tilt field instead of the Voronoi chisel; IceColor tint once per pass; the orb in the reflection lookup and its mirror image in the lake; lookup roughness growing per internal bounce, made the default). Do NOT start over: read WORK/LOG.md from the step-2 entries on and git -C LANE diff, re-measure the current state at q00 / q03 / p06 against the twin, then continue down the target list (T8 quarter joints, T6 outlines, the remaining Table-3 misses, then I-G3 and I-G4). First make sure ?ice=r10 restores the old look bit-identically (add the switch now if the first attempt has not).
+
+LEAD DECISIONS for this step:
+(a) Ring A's in-plane phase at rest is being fixed in the hold lane (its quarter joints will move to F000's x 584 / 878). Do not change any pose here; render the joints in the quarters' own frame so they follow whatever pose the rings get.
+(b) ${PERF_NOTE} Measure T1 and T0. T0 may keep a cheaper ice path if the new one breaks its budget (say so).
+${STOP_NOTE}`
+
+const HOLD2_TASK = `YOUR STEP (2 of 2): finish SPEC 4.2. Read LANE/HANDOFF.md and WORK/LOG.md first (your previous step: 56 of 65 H-G1 checks pass; its result is below).
+
+RESUME NOTE (lead, 15 Nov 03:50): a first attempt at this step was cut off at about 22:38 by a network outage after most of the work: ring A's in-plane phase -22.5 deg (A_PHASE_DEG, aPhaseFromUrl, Rings.tune.aLoopPhaseDeg; joints verified at the reference bars; press / release swing checked), the H-G1 run caps/final5 at 64 of 65 (the miss: F358 orb 11 % visible, limit 10), H-G2 exact silhouettes inside at all three sizes. Read WORK/LOG.md to the end and git -C LANE diff, finish what is left (the F358 orb miss if it can be fixed without regressions, the final H-G1..H-G5 re-run with fresh captures, HANDOFF.md), and do not redo finished work.
+
+(1) LEAD DECISION: ring A's in-plane phase at rest. The ice lane's Cycles twin, posed exactly like the engine at q00, shows ring A's quarter joints (dark vertical bars in band A) at x 666 / 799, while the reference F000 shows them at x 584 / 878. The idle tumble comes from silhouette mocap (ringMocap.ts, captured from Default Loop.mp4), which cannot see a symmetric ring's spin, so A's in-plane phase is arbitrary and about 45 deg off. Measure the joint bars in the reference loop (MAIN/hero-pipeline/reference/ref_F000.png, loop_F000 / F015 / F030 / F045.png, and the Default Loop video under MAIN/refs/videos for more frames), confirm they behave like ring A's quarter joints under an in-plane rotation of A, and fit A's in-plane phase (a constant offset, plus a rate correction if the bars drift differently over the loop) so the engine's joints land on the reference's at rest and through the loop. Evidence: ${SP}/work/ice/ICE_TARGETS.md (section 1.3 difference 2 and target T8) and ${SP}/work/ice/cmp/q00_twin_ref_eng.png (twin | F000 | engine). In the engine the joints are where the quarter meshes Circle028-031 meet; a debug capture with the quarters in flat colours gives their screen x. This changes the rest pose only in A's in-plane phase. Put it behind its own switch ?aphase=r10 (the old phase, bit-identical); ?hold=r10 must still restore the complete round-10 behaviour (old phase included). With the new phase the press, the A2 arrangement and the release must still meet H-G1..H-G3: no extra quarter swing at the pop, the release still lands on today's whirl, no flips.
+
+(2) The remaining H-G1 misses (A-T too long at its right end on F402 / F404 / F420, A-R's left edge at F402 / F404, F402 open sky, F384 A-T bottom edge, F358 right block, F358 orb 12 % visible): try the hinge-about-the-left-cap idea and whatever the side-by-sides suggest. Keep a change only when the side-by-side and the table both improve and nothing else regresses. Look at the live hold as a whole as well (sheets of the sequence F332-F472, engine over reference): it must read as the reference's legible exploded opening, continuous, nothing tangled.
+
+(3) LEAD DECISION: H-G2 counts the exact silhouette (what the visitor sees); report the stock probe_holdbounds bounding-box numbers next to it for information.
+
+(4) Re-run H-G1..H-G5 with fresh captures at the end. H-G5 now reads: rest identical to MAIN except ring A's in-plane phase; with ?aphase=r10 rest is identical within grain. Typecheck. Stop your lab.
+
+${PERF_NOTE}
+${STOP_NOTE}`
+
+const JUDGE_RESUME = {
+  env: `RESUME NOTE (lead, 15 Nov 09:00): a previous attempt at this judgement started 06:59 and was cut off at 07:03 by the usage limit after only reading the documents (WORK/judge1/verdict_draft.md). Start the verification fresh; keep writing the draft as you go.`,
+  ice: `RESUME NOTE (lead, 15 Nov 09:00): a previous attempt at this judgement was cut off at about 07:05 by the usage limit. Its partial work is in WORK/judge1/ (verdict_draft.md with region numbers and findings (a)-(f): aliased camouflage islands on oblique bands, a closed contour capsule in band A at q00, black dots on the p06 vertical arc, no frost texture, q03 too pale / neutral and p06 ring B too light, the hold orb's busy lavender rim; crops in judge1/cmp/, tools in judge1/tools/). Read it, re-check each finding yourself (look at the crops), then continue with what it lists as next: the sweep (both labs), a temporal crawl sequence, the pointer spots, T0 / T2, the press-start joint fade and perf.`,
+}
+const FIX_RESUME = {
+  hold: `RESUME NOTE (lead, 15 Nov 09:00): a previous attempt at this fix was cut off at about 07:03 by the usage limit. Read the "Fix round 1" section of WORK/LOG.md to its end and WORK/fix/: it reproduced finding 3 (the dolly speed steps) and changed the camera, and its log says next: the release's inner whirl (finding 1), the F452 gaps (finding 8), F460, the tumble resume (finding 11). Check that the lane still typechecks, then continue from that state; do not redo finished work.`,
+}
+
+const LEAD_DECISIONS = `Lead decisions that apply in this round (they override the SPEC where they differ):
+(1) HOLD, H-G2 counts the exact silhouette (what the visitor sees). The stock probe_holdbounds bounding-box corners overshoot tilted arcs by 20-50 px and are reported for information only.
+(2) HOLD may change the rest pose in exactly one way: ring A's in-plane phase, so its quarter joints match F000 (behind ?aphase=r10; ?hold=r10 restores the complete round-10 behaviour). Any other rest change is a regression.
+(3) ICE renders ring A's joints in the quarters' own frame; it does not change poses.
+(4) ${PERF_NOTE}
+(5) ${STOP_NOTE} (A judge writes its findings into its WORK/judgeN/verdict_draft.md as it goes.)`
+
+const BUILD = {
+  type: 'object',
+  properties: {
+    lane: { type: 'string' },
+    step: { type: 'string' },
+    status: { type: 'string', enum: ['done', 'partial', 'blocked'] },
+    summary: { type: 'string' },
+    files_changed: { type: 'array', items: { type: 'string' } },
+    switches: { type: 'array', items: { type: 'string' } },
+    assets: { type: 'array', items: { type: 'string' } },
+    gates: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: { gate: { type: 'string' }, status: { type: 'string', enum: ['pass', 'fail', 'unknown'] }, numbers: { type: 'string' } },
+        required: ['gate', 'status', 'numbers'],
+      },
+    },
+    evidence: { type: 'array', items: { type: 'string' } },
+    open_issues: { type: 'array', items: { type: 'string' } },
+  },
+  required: ['lane', 'step', 'status', 'summary', 'files_changed', 'gates', 'open_issues'],
+}
+
+const VERDICT = {
+  type: 'object',
+  properties: {
+    lane: { type: 'string' },
+    pass: { type: 'boolean' },
+    lens_score: { type: 'number' },
+    gates: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: { gate: { type: 'string' }, verdict: { type: 'string', enum: ['PASS', 'FAIL'] }, evidence: { type: 'string' } },
+        required: ['gate', 'verdict', 'evidence'],
+      },
+    },
+    findings: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          severity: { type: 'string', enum: ['blocker', 'major', 'minor', 'nit'] },
+          title: { type: 'string' },
+          evidence: { type: 'string' },
+          fix_hint: { type: 'string' },
+        },
+        required: ['severity', 'title', 'evidence', 'fix_hint'],
+      },
+    },
+    summary: { type: 'string' },
+  },
+  required: ['lane', 'pass', 'lens_score', 'gates', 'findings', 'summary'],
+}
+
+function paths(lane) {
+  return 'Your paths: LANE = ' + SP + '/lanes/' + lane.key + ' (git worktree, detached at 7ddac0d, retrux-web/node_modules is a symlink to MAIN\'s), WORK = ' + SP + '/work/' + lane.key +
+    ', your lab port = ' + lane.port + ' (start it yourself in the background: cd LANE/retrux-web && PORT=' + lane.port + ' node hero-lab/serve.mjs; stop it before you return). MAIN = ' + MAIN +
+    ' (read-only for you; its lab on :5173 is the BASELINE, never stop it). SP = ' + SP + '. The shared heavy-process gate: ' + SLOT + " '<lane>:<what>' -- <cmd> [args...] (max 2 heavy processes machine-wide; release it between batches, never hold it while you think or edit)."
+}
+
+function preamble(lane, role) {
+  return 'You are a senior real-time graphics engineer and technical artist on the Retrux hero R&D: a real-time three.js (WebGL2) hero, an ice sculpture of four thick ice rings around a glowing plasma orb with cobalt crystal shards, over an arctic lake with snowy mountains, that must match a Blender Cycles reference video frame for frame in look and motion. The user wants 10/10, Awwwards-worthy, matched with the reference, "no mistake", built with their Blender.\n\n' +
+    'You work in round 11, lane "' + lane.key + '", as the ' + role + '. FIRST read the binding round document ' + SPEC + ' (sections 0-3 in full, and your lane section ' + lane.section + '). Everything in its section 2 (hard rules) applies to you; the most important: every headless Chrome / Playwright / Blender / build goes through the slot; never save over a .blend in the repo; heavy outputs only in WORK; no git commits, deploys or uploads; every change behind a URL switch that restores the old behaviour exactly; typecheck; keep WORK/LOG.md and LANE/HANDOFF.md; stop the servers you start.\n\n' +
+    paths(lane) + '\n\n' +
+    'Working style: look at every image you reason about with the Read tool (it displays images); never claim a visual result you did not look at. Measure before and after each change (boxes, diff maps, side-by-sides vs the reference and vs the baseline) and keep a change only if the side-by-side and the numbers both improve and nothing else regresses. Write LOG.md and HANDOFF.md in plain, complete English sentences for other engineers. If you run low on context or time, write your exact state and next steps into WORK/LOG.md and return status "partial".'
+}
+
+const LANES = [
+  {
+    key: 'env',
+    port: 5174,
+    section: '4.1',
+    lens: 'environment (sky, mountains, ridge, massif, icebergs, floes, rocks, lake) at rest and from every camera the visitor can cause',
+    steps: [
+      {
+        name: 'env-bake',
+        task: 'YOUR STEP (1 of 2): SPEC 4.1 work items 1, 2, 3 and 5. Port the bake pipeline to macOS with Cycles on the Metal GPU, find the root cause of every v8 defect the SPEC lists (with evidence), produce bake v9 at higher quality and publish it into LANE/retrux-web/public/hero so your lane lab shows it by default; verify gate E-G1 at rest as you go (your lab vs the baseline :5173 and vs the reference F000 / loop F045). Also render, in Blender, the world-only Nishita sky equirect for the lake mirror (pipeline/render_sky_equirect.py, A1 R8) and the summit wisp RGBA card (A1 #2), saved in WORK (the next step wires them into the engine). Work item 4 (engine baked path: planar lake, sky dome, wisp, perf) belongs to the next step, but a shader fix that a bake defect needs is yours.\n' +
+          'Start by reading: notes/rebuild_analysis/A1_env_audit.md (all of it), pipeline/bake_env_m8.py, env_repair.py, export_env_v4.py, render_plates_v3.py, render_sky_equirect.py, run_bake_m8.ps1, finalize_bake_m8.ps1 (all under LANE), blender/bake_v8/bake_log.txt and env_baked.json, and the BAKED_ENV code in retrux-web/app/hero/engine/world/PlateEnvironment.ts and assets.ts. The plates were rendered from blender/plate_scene_v7.blend with the cameras in blender/plates_v7/plate_*.json; project from the EXR plates, never the WebPs. If you add plate cameras, build them like render_plates_v3.py and use the same render settings so new plates match the old ones (check their overlap numerically before you use them). Time-box Blender runs, keep RAM in mind (the user is working on this Mac), and prove each pipeline change on a small subset before a full bake.',
+      },
+      {
+        name: 'env-engine',
+        task: 'YOUR STEP (2 of 2): SPEC 4.1 work item 4 and all four gates E-G1..E-G4. Read LANE/HANDOFF.md and WORK/LOG.md first (the previous step: bake v9, the sky equirect and the wisp card). Bring the engine\'s baked path to production quality: the lake as a true planar mirror in baked mode (the baked environment, cloud cards and a sky dome from the world-only equirect rendered into a mirror target; keep the ripple bump, the hero\'s reflection, the glint and the orb terms; the projected path keeps today\'s Water code bit-identical), the wisp card, region masks via the rest camera (A1 3.7), DOF as a mip bias, and no projection-only GPU work in baked mode (depth bakes, occlusion fill, extra projectors). If bake defects remain, fix them (re-bake if needed). Then run every gate yourself: shoot_qc (q00,q01,q03,p04,p05,p06,p07,p08), shoot_pointer (all 10 spots), shoot_sweep, perf_probe, each vs the baseline :5173 (and ?env=projected on your lab for E-G4); fix what you find.' + ENV2_NOTE,
+      },
+    ],
+  },
+  {
+    key: 'hold',
+    port: 5175,
+    section: '4.2',
+    lens: 'press-and-hold choreography (pop, sustain, release) vs State 2 to 5.mp4 F331-F462, motion continuity and framing',
+    steps: [
+      {
+        name: 'hold-build',
+        task: 'YOUR STEP: SPEC 4.2, all gates H-G1..H-G5. Read notes/rebuild_analysis/A2_hold_reference.md and A3_hold_code.md in full first, then retrux-web/app/hero/engine/hero/Rings.ts, Choreography.ts, HeroEngine.ts, CameraRig.ts and config.ts. Look at the reference hold frames (MAIN/refs/hold_frames/F328-F472.jpg, every 4 frames; MAIN/hero-pipeline/reference/ref_F358, F402, F420, F453, F460) and at today\'s engine hold (your lab: MAIN/hero-pipeline/validate/shoot_qc.mjs p04-p08, MAIN/pipeline/probe_holdvar.mjs, probe_holdbounds.mjs, MAIN/hero-pipeline/validate/shoot_holdseq.mjs). Video frame F maps to the engine as: expand phase t = (F - 331) / 30 s (F358 = 0.90, F402 = 2.37, F420 = 2.97); release phase t = (F - 443) / 30 s (F453 = 0.33, F460 = 0.57). Implement the reference arrangement deterministically behind the switch ?hold=r10 (the old behaviour, bit-identical), and iterate with side-by-sides at the A2 section 10 key frames (engine | reference at the same t, measured boxes) until each row passes; then H-G2..H-G5. Keep everything A3 section 6 protects. Think about why the reference reads as a legible exploded opening (A2 section 7) and make sure ours does too in a live, continuous hold, not only at the sampled frames.',
+      },
+      {
+        name: 'hold-build-2',
+        task: HOLD2_TASK,
+      },
+    ],
+  },
+  {
+    key: 'ice',
+    port: 5176,
+    section: '4.3',
+    lens: 'ring ice material, orb and shards (clarity, refraction, internal dark bands, frost, silhouettes, orb core and glow) vs the Cycles reference',
+    steps: [
+      {
+        name: 'ice-twin',
+        task: 'YOUR STEP (1 of 2): SPEC 4.3 method steps 1-3 (gate I-G1). Build the Cycles twin in Blender on this Mac (Metal GPU): a COPY of LANE/blender/plate_scene_v7.blend with the hero unhidden and its own artist materials, rings / orb / shards posed exactly as the engine poses them (export world matrices from your lab through window.__hero at q00 = idle tau 0, q03 = tau 1.5, and the hold p06 = expand t 2.97 if you can), the engine\'s rest camera (and the hold camera for p06), 1440x766, AgX as in the file. Validate the twin against MAIN/hero-pipeline/reference/ref_F000.png and loop_F045.png (and ref_F420.png). Render useful diagnostic passes (e.g. ice only with the environment and the orb emission off, the orb alone, no displacement, separated transmission / glossy). Then write WORK/ICE_TARGETS.md: measured targets for the engine in named boxes (mean, sd, edge-band darkness, refraction sharpness, silhouette wobble amplitude; twin, reference and today\'s engine at T1 from your lab at the same pose), ranked by visual impact, with your diagnosis of which engine terms cause each gap (read IceMaterial.ts, Orb.ts, Shards.ts, RenderPipeline.ts, PostChain.ts and the round-10 plan T01, T08, T09, T10, T14, T17, T18, T19 plus its disagreements). Do not change the engine\'s look in this step (debug helpers to dump poses are fine). Read hero-pipeline/research/blender_forensics.md sections 0-3 before you touch Blender.',
+      },
+      {
+        name: 'ice-match',
+        task: 'YOUR STEP (2 of 2): SPEC 4.3 method step 4 and gates I-G2..I-G4. Read LANE/HANDOFF.md, WORK/LOG.md and WORK/ICE_TARGETS.md first (the Cycles twin renders and the measured targets from the previous step). Make the engine\'s ice, and the orb and shards as seen through and around it, converge on the twin and the reference: change IceMaterial.ts (and Orb.ts, Shards.ts, RenderPipeline.ts, PostChain.ts only where the look demands), behind the switch ?ice=r10 (the old look, bit-identical). Work from the highest-impact target down; after each change re-measure the boxes at q00, q03 and p06 and look at the crops side by side (engine | twin | reference). Optionally bake per-ring data in Blender (e.g. the chiselled displaced geometry for the silhouettes, normal / roughness maps from Blender\'s exact noise) if it beats the procedural approximation; keep the download small. Then check I-G3 (tumble sweep artefacts, perf_probe T1 and T0) and I-G4.' + ICE2_NOTE,
+      },
+    ],
+  },
+]
+
+function buildPrompt(lane, step, prev) {
+  const prevTxt = prev.length ? '\n\nThe previous step of your lane returned (JSON):\n' + JSON.stringify(prev[prev.length - 1]).slice(0, 6000) : ''
+  return preamble(lane, 'builder (' + step.name + ')') + '\n\n' + step.task + prevTxt +
+    '\n\nReturn the structured result: status done / partial / blocked, a summary, files changed, switches, assets (with sizes), gate statuses with numbers, evidence paths and open issues.'
+}
+
+function judgePrompt(lane, round) {
+  return 'You are an independent, adversarial JUDGE for round 11, lane "' + lane.key + '" of the Retrux hero (a real-time three.js ice-sculpture hero that must match a Blender Cycles reference video; the user demands 10/10 and "no mistake"). Your lens: ' + lane.lens + '.\n\n' +
+    'Read ' + SPEC + ' (sections 0-3 and your lane section ' + lane.section + ', whose gates you check). ' + paths(lane) + '\n\n' +
+    'The builder\'s claims are in LANE/HANDOFF.md and WORK/LOG.md: read them only to learn what changed and which switches exist; do NOT trust any result in them. Verify every gate yourself from FRESH captures of the lane lab (start it yourself if it is not running and stop it afterwards if you started it) against the baseline lab http://localhost:5173 and the reference frames, using the validators and probes the SPEC lists, always through the slot. Put everything you produce in WORK/judge' + round + '/ and edit nothing else. Look at every image you cite with the Read tool, at full resolution where it matters (cut crops with ffmpeg). Hunt specifically for regressions outside the lane\'s scope and for anything the user would call a glitch.\n\n' +
+    LEAD_DECISIONS + '\n\n' +
+    'Return: per gate PASS / FAIL with evidence (file paths, pixel boxes, numbers); findings by severity (blocker > major > minor > nit) with exact evidence and a concrete fix hint; lens_score 0-10 for your lens vs the reference (10 = indistinguishable at a glance, nothing an art director would flag; 9 = only an expert notices side by side; 8 = noticeable differences but premium; 7 = clearly different or CG tells; 6 or lower = significant problems; one decimal, strict and honest); pass = true only if every gate is PASS and no blocker, major or minor finding remains. When in doubt, FAIL.' +
+    (round === 1 && JUDGE_RESUME[lane.key] ? '\n\n' + JUDGE_RESUME[lane.key] : '')
+}
+
+function fixPrompt(lane, v) {
+  return preamble(lane, 'fixer') + '\n\nYOUR STEP: the independent judge failed this lane. Read LANE/HANDOFF.md, WORK/LOG.md and the judge\'s files in WORK/judge1/. For every blocker, major and minor finding: reproduce it first with the judge\'s own evidence or probe, fix the root cause, re-verify with fresh captures, and only then move on. Re-run every gate that the judge marked FAIL. Append a "Fix round" section to LOG.md and HANDOFF.md.\n\n' + LEAD_DECISIONS + '\n\nThe judge\'s verdict (JSON):\n' + JSON.stringify(v).slice(0, 12000) +
+    '\n\nReturn the structured result (status, summary, files changed, gates with numbers, evidence, open issues).' +
+    (FIX_RESUME[lane.key] ? '\n\n' + FIX_RESUME[lane.key] : '')
+}
+
+const results = await pipeline(
+  LANES,
+  async (lane) => {
+    const outs = []
+    for (const step of lane.steps) {
+      const r = await agent(buildPrompt(lane, step, outs), { label: 'build:' + step.name, phase: 'Build', schema: BUILD })
+      if (!r) {
+        log(step.name + ': no result (agent died or was skipped)')
+        break
+      }
+      outs.push(r)
+      log(step.name + ': ' + r.status + ' | ' + String(r.summary).slice(0, 220))
+      if (r.status === 'blocked') break
+    }
+    return outs
+  },
+  async (outs, lane) => {
+    if (!outs.length) return { outs, v: null, skipped: true }
+    let v = await agent(judgePrompt(lane, 1), { label: 'judge:' + lane.key, phase: 'Judge', schema: VERDICT })
+    if (!v) v = await agent(judgePrompt(lane, 1), { label: 'judge2:' + lane.key, phase: 'Judge', schema: VERDICT })
+    if (v) log('judge ' + lane.key + ': pass=' + v.pass + ' score=' + v.lens_score + ' | ' + String(v.summary).slice(0, 200))
+    return { outs, v }
+  },
+  async (prev, lane) => {
+    if (prev.skipped) return { lane: lane.key, outs: prev.outs, verdicts: [], note: 'build produced nothing' }
+    const v = prev.v
+    if (v && v.pass) return { lane: lane.key, outs: prev.outs, verdicts: [v] }
+    const fx = await agent(fixPrompt(lane, v || { note: 'the judge returned nothing; re-verify every gate yourself' }), { label: 'fix:' + lane.key, phase: 'Fix', schema: BUILD })
+    if (fx) log('fix ' + lane.key + ': ' + fx.status + ' | ' + String(fx.summary).slice(0, 200))
+    const v2 = await agent(judgePrompt(lane, 2), { label: 'rejudge:' + lane.key, phase: 'Fix', schema: VERDICT })
+    if (v2) log('rejudge ' + lane.key + ': pass=' + v2.pass + ' score=' + v2.lens_score)
+    return { lane: lane.key, outs: prev.outs.concat(fx ? [fx] : []), verdicts: [v, v2].filter(Boolean) }
+  },
+)
+
+return results

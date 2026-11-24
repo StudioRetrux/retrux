@@ -1,0 +1,4 @@
+medium_F
+  ALL: redraw 5.04 other 0.00 | cnt>32 by k%3 197019/197383/197344 k%2 295917/295829 | f=1/3: 0.7x, f=1/2: 0.8x median
+  FF: redraw 4.85 other 0.00 | cnt>32 by k%3 39839/40204/39889 k%2 60071/59861 | f=1/3: 0.7x, f=1/2: 0.9x median
+  RF: redraw 4.91 other 0.00 | cnt>32 by k%3 13809/13916/13994 k%2 20950/20769 | f=1/3: 0.7x, f=1/2: 1.0x median

@@ -1,0 +1,7 @@
+FF     changed px 2070963  |A-GT| 7.32 -> |B-GT| 5.73  toward GT 60%  darker 69% (darker: 6.86 -> 5.95)
+other  changed px 6303144  |A-GT| 4.45 -> |B-GT| 4.65  toward GT 46%  darker 54% (darker: 4.62 -> 5.16)
+FR     changed px 399741  |A-GT| 5.44 -> |B-GT| 3.94  toward GT 57%  darker 38% (darker: 4.86 -> 4.67)
+RS     changed px 439423  |A-GT| 4.73 -> |B-GT| 5.25  toward GT 44%  darker 69% (darker: 4.53 -> 5.55)
+FS     changed px 819000  |A-GT| 4.58 -> |B-GT| 5.47  toward GT 41%  darker 93% (darker: 4.40 -> 5.43)
+WR     changed px 319668  |A-GT| 6.37 -> |B-GT| 5.99  toward GT 51%  darker 42% (darker: 6.56 -> 6.59)
+DR     changed px 564327  |A-GT| 4.10 -> |B-GT| 5.00  toward GT 41%  darker 92% (darker: 3.98 -> 5.01)

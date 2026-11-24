@@ -1,0 +1,5 @@
+[slot] !judge-perf-recheck:block waiting (load 6.5 / max 24, slots 2, holders [{"label":"judge-artifacts-recheck:R1","pid":54413,"at":1795165405485,"slot":0},{"label":"motion-recheck:A fix caps","pid":61054,"at":1795165481670,"slot":1}])
+[slot] !judge-perf-recheck:block waiting (load 5.6 / max 24, slots 2, holders [{"label":"judge-artifacts-recheck:R1","pid":54413,"at":1795165405485,"slot":0},{"label":"motion-recheck:A fix caps","pid":61054,"at":1795165481670,"slot":1}])
+[slot] !judge-perf-recheck:block: taken (load 6.6)
+[slot] !judge-perf-recheck:block: freed (exit 0)
+block exit 0

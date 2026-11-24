@@ -1,0 +1,42 @@
+{
+ "note": "P4 round 3 lanes wf_4a3d8965-e9d (21 Nov 05:00)",
+ "args": {
+  "brief": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/briefs/p4r3_common.md",
+  "refPort": 5173,
+  "round": "p4r3",
+  "buildMin": 120,
+  "judgeMin": 50,
+  "fixMin": 60,
+  "rejudgeMin": 40,
+  "lanes": [
+   {
+    "key": "ice",
+    "lane": "p4ice3",
+    "port": 5175,
+    "build": "LANE TASKS (round 3 of the ice; the round-1 ice lane's final verdict and its open items are in MAIN/notes/round11/lane_backup/p4r1/rejudge_p4ice/ and its HANDOFF / LOG in MAIN/notes/round11/lane_backup/p4r1/p4ice/; the plan tasks Q3 / Q6 / Q10 / G5 / Q4 in MAIN/notes/round11/p3/r11_1_plan.json). Fix, in this order: (1) R1, a regression of round 1: at face-on rest views (q00 band ends, q03 straps) the joint seams are now fainter than MAIN-before-P4 and far fainter than F000 / F045's crisp dark slits; targets from the rejudge: q00 row 385 left min <= 150 and right min <= 120, q03 bottom strap min ~140-150, q01 x805 stays a 2-3 px V with the bright line (its suggested trapezoid / view-dependent depth). (2) F5 + the panel's composition issue 1: once the camera dollies in, the rings and their cut segments read as soft rounded tubes / frosted plastic with domed caps, while the reference shows crisp near-rectangular slabs with flat planar cut faces, sharp bright edges, chipped edges, scrape grain and crisp TIR lines - find out whether this is shading (smoothed normals, the cross-section's normals, frost terms) or geometry (the ring meshes' cross-section in the GLB vs the artist's own rings in blender/Home - EXPORT.zip; Blender allowed on COPIES through the slot, one Blender machine-wide) and fix it at the root, keeping the rest-frame match. (3) F3: the q03 outer-ring steel band is lighter than F045 and shows white ovals (the rejudge's diagnostic path: uR11Dbg 1 on q03, view-gated critical-angle widening). (4) F4s: the refracted orb strip in the hold (F420's drama). (5) nits N1 (p06 band blotchy / saturated) and F6 (isolated bright pixels at p04). Files: hero/IceMaterial.ts, hero/Rings.ts (uPieceCuts) and the ring geometry / its loading (assets.ts, a new baked asset only if the geometry must change - list its size). Compare with REF at matched poses (ref_F000, loop_F015 / F045, ref_F358 / F402 / F420, MAIN/refs/hold_frames). Watch the tumble for crawl.",
+    "judge": "LENSES to score: ice_material, composition_motion, awwwards_jury, glitch_hold_sweep. Compare crops at q00, q01, q02, q03, p04, p05, p06 with REF and with MAIN ($SP/p3/r11_2 is MAIN's current set); the joint seams at rest (R1 targets), the slab crispness when dollied in, the q03 band, crawl on consecutive tumble frames."
+   },
+   {
+    "key": "orb",
+    "lane": "p4orb3",
+    "port": 5176,
+    "build": "LANE TASKS (round 3 of the orb; the round-1 orb lane's final verdict and open items: MAIN/notes/round11/lane_backup/p4r1/rejudge_p4orb/, its HANDOFF / LOG in lane_backup/p4r1/p4orb/; plan tasks Q2 / Q7 / Q4 in MAIN/notes/round11/p3/r11_1_plan.json): (1) F2 (major): the open hold orb is mostly a clipped flat white disc without F402's dark branching plasma / internal wisp structure - build the internal structure the reference shows (study ref_F402 / F420 and MAIN/refs/hold_frames at full resolution; also loop_F045 at rest), so the orb reads as a refracting crystal sphere with a glowing core, without losing the luminous core. (2) F4: the brightest crystal facets sit 15-20 L below the reference (saturation already matches). (3) R2: the hold rim's pale glass band is 10-15 L dimmer than F402's glowing edge and its 2-px hairline is grey instead of lavender-violet. Files: hero/Orb.ts, hero/Shards.ts, pipeline/PostChain.ts, HeroEngine.ts (small hunks), quality.ts. Do NOT edit hero/IceMaterial.ts (the ice lane owns it). Measure clipping (% of the core >= 248 / 250) vs REF at q00, q03, p04, p05, p06.",
+    "judge": "LENSES to score: orb_shards_light, color_grade_post, awwwards_jury. Compare orb / shard crops at q00, q03, p04, p05, p06 with REF and MAIN ($SP/p3/r11_2); the orb's internal structure vs F402 / F420; facet brightness; bloom / clipping numbers; shard flicker in the sweep."
+   },
+   {
+    "key": "env",
+    "lane": "p4env3",
+    "port": 5174,
+    "build": "LANE TASKS (round 3 of the environment; the round-1 env lane's verdict and open items are in MAIN/notes/round11/lane_backup/p4r1/judge_p4env/ (findings J1-J7) and its HANDOFF / LOG in lane_backup/p4r1/p4env/; plan tasks G3 / G4 in MAIN/notes/round11/p3/r11_1_plan.json): (1) J1 / G3(a): the flat untextured slate wedge in the bottom-left corner of every pop frame (rock_big_4.005 texels x432-577 y213-366; a pop-camera plate in the bake, or fill from the rock's own detail). (2) J3 / G3(c): the far peak's 3-5 px warm top-edge rim in every hold / pop pose (erode the near-side rim of Object_2.009's silhouette texels, x440-471 y393-486). (3) J4 / G4: the hard-edged pale box on the far-left shelf at rest (x330-400 y467-480; it survives the plate lake, so it is not only the mirror lake: check ?shoreaa and the floe Retopo_Plane.006 texels). (4) J5: the white zig-zag hairline near the main summit during long idle (x266-283 y239-247 at t~90; attribute with ?envside=front and ?atmoscardlight=0). (5) J6: apply the round-1 cardLit floor to luma (scale c uniformly) instead of per channel if that keeps the black slits / specks fixed and restores the drifting cloud-shadow amplitude; (6) J7: if a lossy WebP at q >= 95 keeps the repaired texels and the rest region stats, ship it instead of the +89 KB lossless file. (7) J2 / G3(b), the grey smudge at the hold's bottom-right edge, ONLY after checking with the running water lane's notes (MAIN/notes/round11/lane_backup/p4r2/p4water/) whether it is the lake over the near floe's back face (then leave it to the water lane and say so). You may run Blender (copies only, through the slot, one Blender machine-wide; the ice lane may also need it). Verify every spot at x1 and contrast-stretched zooms, the 10 pointer spots, the sweep, and the rest frame's region stats vs MAIN.",
+    "judge": "LENSES to score: environment, glitch_cursor_orbit, glitch_hold_sweep, awwwards_jury. Check each J1-J7 spot in the lane's captures (x1 and contrast-stretched zooms) vs MAIN ($SP/p3/r11_2) and REF, all pointer spots and the sweep for anything new, the rest frame's region stats, T0."
+   },
+   {
+    "key": "atmos",
+    "lane": "p4atmos",
+    "port": 5178,
+    "build": "LANE TASKS (atmosphere; plan tasks Q5 and Q14 in MAIN/notes/round11/p3/r11_1_plan.json, read in full, plus the panel issues they came from - environment lens items 1, 3, 6 and color_grade item 1 in MAIN/notes/round11/p3/r11_1_panel.json): (1) Q5: atmospheric depth - the reference's milky low mist bank at the waterline along the iceberg and the right shoreline (MAIN shows the iceberg base far too dark and crisp), aerial perspective beyond it, and the left mist bluer and billowy instead of flat grey; (2) the main mountain's hard horizontal haze stripe - the reference's mist thickens gradually with dark rock gullies showing through (only the haze / atmos part; no plate re-render in this lane); (3) Q14: the hold fog bank over the mountain bases with volume (two-scale billows like F420's dense billowing bank) and a release that clears the mountain faces with the camera. The atmos layers were fitted box by box to the State / Loop series in round 11 (MAIN/notes/round11/handoff_atmos.md): keep every box you do not intend to change, and prove the rest frame's region stats move only where the reference wants it (region_stats vs ref_F000, the panel's numbers). Files: world/Atmos.ts, world/PlateEnvironment.ts (small hunks; the env lane may also touch these: keep hunks small and separate), Choreography.ts only for the hold fog timing. No Blender in this lane.",
+    "judge": "LENSES to score: environment, color_grade_post, awwwards_jury, glitch_hold_sweep. Compare q00 / q03 / p04-p08 with REF (mist at the iceberg base and right shore, the left mist, the main mountain's haze, the hold fog bank vs F420) and MAIN ($SP/p3/r11_2); region stats; look for hard fog edges, banding or pulsing (consecutive frames) and for anything the fog hides that should stay visible."
+   }
+  ]
+ }
+}

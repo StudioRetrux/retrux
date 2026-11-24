@@ -1,0 +1,1041 @@
+{
+ "captures": "$SP/p3/r11_3 (backup ~/RetruxR11Work/p3caps/r11_3)",
+ "judges": [
+  {
+   "lens": "awwwards_jury",
+   "score": 7.6,
+   "verdict": "This is a premium, cohesive real-time scene. The environment layout, colour grade, framing, UI overlay and cursor-orbit behaviour are close to the reference: region colours sit within about 10 levels, the orbit frames have no doubled mountains, and nothing is wrong at the bottom at rest. The p05 vortex is a real wow moment. The gap to 10 sits in the hero object and a few surfaces. (1) The rings look like milky acrylic or gel, not carved, frosted ice, and this is glaring once the camera dollies in during the hold. (2) The orb is a blown-out white bulb, with no glass shell and no plasma inside. (3) At the sustain pose the opened halves of ring A are seen end-on and read as two plastic lumps with flat cut caps. (4) The mountains look like smooth clay, not rocky alpine peaks, and the dark mountains show low-poly facets when the cursor orbits the camera. (5) The mid- and near-ground water has an under-filtered corduroy ripple pattern that will shimmer in motion and leaves a ragged band at the bottom of the hold frame. A demanding art director would flag all five at a glance side by side. Every one can be fixed with shader work or Blender re-bakes; none needs a render blend.",
+   "strengths": [
+    "Environment layout and composition match ref_F000 almost one-to-one: main peak within about 7 px, iceberg, floes, foreground rocks and ripple centre all in place. Keep the camera, FOV and plate layout exactly as they are.",
+    "Colour grade and exposure are near-reference (region_stats: sky top +2/+2/-2, peak snow +2/+5/+1, corners BR 0/+1/-1). Do not re-grade globally.",
+    "Rest and eye ring poses match the loop frames closely (cmp_q00_rest, cmp_q03_eye): the band, the outer rings and the dark ring-joint bands are in the same places as the reference.",
+    "Bottom of frame at rest (y 506-766) matches the reference closely: rocks, snow caps and right-hand floes are all present, with no seams or odd shapes.",
+    "Cursor-orbit frames are clean. In ptr_left the parallax is coherent (far peak shifts about 135 px, the nearer iceberg about 115 px). In ptr_bottom_right the left and right horizons have no doubled mountains, the mist layers stay consistent, the floe reflections are correct and the bottom is clean.",
+    "The UI overlay is essentially identical to the Figma frame: logo, nav, headline size and leading, subline, 'Scroll to Explore' and Sound position (crop_ui_rest_copy).",
+    "p05_expand gives a striking spiral 'portal' around the orb: graphic, readable and award-worthy as a composition. The camera dolly and hold fog read well.",
+    "The iceberg waterline is clean with a soft mist band (ptr_bottom_right right horizon), and floe reflections in the planar mirror are believable.",
+    "The shards' cobalt hue and scale match the reference, and the clouds and sky are soft and believable."
+   ],
+   "issues": [
+    {
+     "title": "Ice ring material reads as milky acrylic or gel, not carved frosted ice",
+     "severity": "critical",
+     "poses": [
+      "q00_rest",
+      "q01_loop15",
+      "q02_loop30",
+      "q03_eye",
+      "p04_expand_pop",
+      "p05_expand",
+      "p06_sustain",
+      "p07_release_snap",
+      "p08_release_home",
+      "sweep hold_*/pop_*",
+      "ptr_*"
+     ],
+     "evidence": "crop_q00_rest_hero.jpg: the engine band (left, x~90-475, y~205-295) is a rounded, tube-like slab covered in big soft blue-white blotches (camouflage-like, low-frequency). The reference band (right, x~650-1035) is a flat slab with crisp darker bevel lines at both ends (x~705 and x~990), fine frost grain and milky internal scatter. Zoom of q03_eye.png (560-880 x 170-570) against loop_F045: the engine rings look like clear blown glass with white lumpy smears; the reference shows chiseled, frosted ice with darker blue absorption in thick sections and fine crackle. sweep/sw_hold_BL.png (470-1070 x 140-640) at dolly-in: the rings are opaque-ish milky acrylic or soap. There is almost no background refraction through the bands, no internal fractures, no clear-versus-frosted zones, flat lighting and foam-like cut ends. The reference close-up (crop_p06_sustain_hero.jpg, right) shows carved ice with sharp light-catching edges and cracks. In p05_expand.png the top arc (475-855 x 40-190) is a smooth, nearly opaque tube.",
+     "suggested_fix": "Rebuild the ice surface in layers. (a) Bake the artist's Cycles ice-shader detail into per-ring normal, frost/roughness mask and thickness maps (2K) in Blender. (b) Add a tri-planar high-frequency micro-frost normal masked so about 40% of the surface is frosted (roughness 0.35-0.5) and about 60% is clear (roughness 0.05-0.1). (c) Add Beer-Lambert absorption by thickness: cyan-blue in thick sections, near-white at thin rims. (d) Add an inner fracture/crack layer (parallax or refraction-offset baked crack texture). (e) Use split, harder normals at face-to-bevel transitions so the band reads as a chamfered slab, not a smooth tube. (f) Desaturate the baby-blue tint about 15% toward neutral grey-cyan. Replace the current low-frequency blotch normal entirely.",
+     "score_gain": 0.8,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Orb is a blown-out white bulb, with no glass shell and no plasma inside",
+     "severity": "major",
+     "poses": [
+      "q00_rest",
+      "q03_eye",
+      "p04_expand_pop",
+      "p05_expand",
+      "p06_sustain"
+     ],
+     "evidence": "q03_eye.png orb core 60x60 at (695,340): engine luma mean 243, sd 10.5; loop_F045 mean 223, sd 25.3, so the engine is brighter with less than half the internal structure. Mean RGB of 60x40 at (690,350): engine 238/245/248, reference 200/216/231. The 2x zoom shows a crisp glass-shell rim, cyan-mint tint, white cloud/plasma forms inside and a faint iridescent fringe in the reference; the engine shows a featureless pearl. In p05_expand.png and p06_sustain.png (620-820 x 290-490) the orb is a clipped white disc with a halo that reads as a sun or light bulb.",
+     "suggested_fix": "Render the orb as a glass shell (Fresnel rim, slight refraction, faint thin-film iridescence) around an inner animated plasma volume: 2-3 layers of curl-noise or fbm density, raymarched or as stacked billboards, white with cyan/mint edges. Tone-map the core to about 0.9 so the inner structure survives, and raise the bloom threshold or cap its intensity during the hold so the disc never clips to flat white.",
+     "score_gain": 0.35,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Sustain hold loses its shape: opened halves seen end-on read as plastic lumps",
+     "severity": "major",
+     "poses": [
+      "p06_sustain",
+      "p04_expand_pop",
+      "sweep hold_*"
+     ],
+     "evidence": "p06_sustain.png: the two halves of ring A sit at (355-485, 315-485) and (945-1090, 320-490). They are seen nearly end-on and read as shapeless white 'marshmallows' beside rings B, C and D, which sit close to their rest pose, so the 'opened' state does not read. Their flat, smooth elliptical end caps look like cut foam or plastic. p04_expand_pop.png shows the same: a flat cylinder-end cap at about (557-615, 445-540) beside the diagonal band. The reference crop_p06_sustain_hero.jpg (right) shows large, clear C-arcs with crisp fractured ends. p05 reads very well (vortex), so the problem depends on the phase.",
+     "suggested_fix": "Keep continuous slow rotation but bias the opened halves so their arc planes stay within about 30 degrees of the view plane during sustain (roll about the view axis or add a face-on counter-rotation). Push the opening offset so the arcs clear the core silhouette, as at p05. Replace the flat cut caps with fractured, faceted break ends (jagged geometry or a break normal map, plus bevel and bright edge transmission).",
+     "score_gain": 0.3,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Mountains look like smooth clay snow, not rocky alpine peaks; low-poly facets show on orbit",
+     "severity": "major",
+     "poses": [
+      "q00_rest",
+      "q03_eye",
+      "ui_rest",
+      "ptr_left",
+      "ptr_bottom_right",
+      "all"
+     ],
+     "evidence": "3x zoom of q00_rest.png against ref_F000 (260x200 at 150,190): the engine peak is a smooth, creamy, clay-like snow mass with rounded ridges. The reference shows dark striated rock gullies, crisp ridgelines and alpine texture. Region 120x80 at (230,240): low-frequency tonal sd after a 6 px blur is 14.9 in the engine against 21.4 in the reference, about 30% less tonal structure. In ptr/ptr_bottom_right.png (0-320 x 200-420) the dark left mountains show flat triangulated facets with smooth gradients, a low-poly read, once the cursor orbits the camera.",
+     "suggested_fix": "Re-bake the mountain textures in Blender with a slope- and curvature-driven rock/snow material: exposed dark rock on faces steeper than about 45 degrees, snow on ridges and gentle slopes, AO in the gullies. Bake a high-res normal from a subdivided, displaced high-poly onto the runtime mesh. Alternatively, camera-project ref_F000's mountain detail into the bake and blend it with the current bake for faces the reference camera cannot see. Smooth or add normals on the dark mountains to hide the facets.",
+     "score_gain": 0.3,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Water normals under-filtered: corduroy streaks mid-ground, ragged band at the bottom during the hold",
+     "severity": "major",
+     "poses": [
+      "q00_rest",
+      "p05_expand",
+      "p06_sustain",
+      "ptr_*"
+     ],
+     "evidence": "q00_rest.png 200x90 at (880,470): high-frequency energy (mean |x - blur1.5|) is 3.01 in the engine against 0.93 in ref_F000, 3.2x. In other regions the ratio is only about 1.2x, which codec softening explains. At 4x this shows as a regular, high-contrast horizontal corduroy ripple pattern with pixel sparkle, where the reference is calm, milky glass with fine low-contrast grain. p06_sustain.png 240x70 at (880,690), at 6x: the outer ripple band breaks into stair-stepped 1-2 px horizontal streaks. At 1x the bottom strip (y 720-766) reads as a soft milky smear with a ragged right edge, where ref_F420 shows crisp, dark-blue small wavelets. The bottom of the frame is the client's sensitive zone, and this will shimmer in motion.",
+     "suggested_fix": "Enable anisotropic filtering (EXT_texture_filter_anisotropic, 8-16x) on the ripple and normal maps. Fade normal amplitude and raise roughness with distance or normal variance (Toksvig-style). Use a finer, more isotropic noise in the far field, and clamp glint sparkle before the resolve. In the near field (bottom about 80 px) add crisp, small dark-blue wavelets like F420 in place of the soft swell.",
+     "score_gain": 0.2,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Weak aerial perspective: distant ice too crisp, thin mist at the iceberg base",
+     "severity": "minor",
+     "poses": [
+      "q00_rest",
+      "q03_eye",
+      "ptr_*"
+     ],
+     "evidence": "q00_rest.png iceberg 300x90 at (960,330): low-frequency contrast sd 42.8 in the engine against 36.1 in ref_F000 (+19%), and the region_stats iceberg is +10/+12/+8 brighter. The distant ice cliffs (x 1110-1440, y 300-400) are bright, crisp white in the engine but hazy and soft in the reference. The iceberg-base mist band is about 15 px tall in the engine (y ~435-450) against about 40 px of soft haze in the reference (y ~420-460).",
+     "suggested_fix": "Raise distance fog on far geometry by about 10-15%, lifting shadows toward the sky colour with depth. Add a gentle depth-based softening for anything farther than the iceberg, approximating the reference's lens and air. Make the waterline mist card at the iceberg base about 2x taller with a softer top falloff.",
+     "score_gain": 0.15,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Specular and refraction aliasing on ring silhouettes",
+     "severity": "minor",
+     "poses": [
+      "q03_eye",
+      "p04_expand_pop",
+      "q00_rest"
+     ],
+     "evidence": "4x nearest-neighbour zoom of q03_eye.png (575-735 x 175-375): the outer ring shows 1-px white specular slivers, broken streaks and a stair-stepped silhouette; loop_F045 is smooth and soft there. p04_expand_pop.png inner ring silhouette (about 565-600 x 310-400) is speckled. These will crawl and shimmer as the rings tumble, which matters under the 'no mistake' brief.",
+     "suggested_fix": "Add specular anti-aliasing (normal-variance or Toksvig roughness widening) to the ice shader and clamp refraction and specular highlight intensity before the tone-compressed resolve. Include the sculpture in the temporal AA (reproject with ring motion vectors), or supersample the sculpture pass 1.5x on T1.",
+     "score_gain": 0.15,
+     "needs_render_blend": false
+    },
+    {
+     "title": "UI details: Sound glyph and headline during the hold",
+     "severity": "minor",
+     "poses": [
+      "ui_rest",
+      "sweep hold_*"
+     ],
+     "evidence": "crop_ui_rest_sound.jpg: the engine shows a flat line before 'Sound'; Figma shows a sine-wave glyph. In sweep/sw_hold_BL.png the headline is still fully opaque during the hold and overlaps the opened rings at (470-590, 540-590), although the brief says it dissolves with the ink effect. The capture may bypass the effect, so this needs checking.",
+     "suggested_fix": "Use the Figma sine-wave glyph by default (animate its amplitude with audio and flatten it only while muted). Confirm that the ink dissolve fires on the hold path and in deterministic captures.",
+     "score_gain": 0.05,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Shards look slightly opaque and low-poly",
+     "severity": "minor",
+     "poses": [
+      "q00_rest",
+      "p05_expand",
+      "p06_sustain"
+     ],
+     "evidence": "crop_q00_rest_hero.jpg (left): engine shards are opaque cobalt with flat facets and hard white facet highlights. Reference shards (right, e.g. x~990-1060, y~120-180) are translucent with a soft inner glow and lighter, refracted facets.",
+     "suggested_fix": "Add thickness-based transmission and a subtle inner emissive gradient, soften facet specular, and add slight refraction of the background through the shards.",
+     "score_gain": 0.05,
+     "needs_render_blend": false
+    }
+   ]
+  },
+  {
+   "lens": "ice_material",
+   "score": 6.4,
+   "verdict": "From a distance the ice is in the right place. Its overall brightness, pale cyan-blue hue, ring proportions and segment joints match the reference, and the orb and environment are refracted through the rings. Up close, though, it reads as polished glass, gel or acrylic, not carved frosted ice. The surfaces are smooth and carry broad 30-80 px blurred cloud blotches and long brush-like streaks. There is almost no frost, inclusion or crack detail. Silhouettes are smooth tori where the reference is lumpy and chiselled, and facet glints are missing. The gap is worst in the hold and expand poses, which are the client's signature interaction with the camera dollied in. There the ring pieces look like soap or marshmallow blobs with flat, untextured end caps and liquid-chrome contour reflections. Thin ring edges and inner rims also alias (stair-steps, dotted 1-px speckles, dotted streaks), which will crawl in motion. The front band is too milky to show ring D behind it in q02, the deepest dark refracted bands are missing, and the thin rings are about 20-33% more saturated than the reference, which runs greyer than its sky. All of this is fixable with shader work plus geometry and texture bakes in Blender. None of it needs a render blend.",
+   "strengths": [
+    "Global value range of the ice matches the reference closely; do not brighten or darken it globally. q00 front band (250x55 at 600,350) luma mean 192.1 vs 193.2, 10th/90th percentile 172/217 vs 173/215. q03 whole sculpture (300x385 at 578,178) mean 182.3 vs 183.0.",
+    "Hue family is right: pale cyan-blue ice, median hue 305-307 vs 303-309 in the reference, with the same overall pale, airy look.",
+    "Ring proportions and thickness at rest are correct. The front band reads as a chunky slab with a hairline Fresnel highlight on its top edge and a darker inner-wall strip at its left end (crop_q00_rest_hero.jpg x~135-147).",
+    "Segment joints (the dark cross-bands where ring segments meet) are present and land where the reference has them: in q03 at the top-right and bottom-right of the outer ring (crop_q03_eye_hero.jpg engine x~220-260 y~60-70 and y~330-345 vs reference x~720-760).",
+    "Background and orb refraction inside the rings works. In q01 the inner horizontal rings show the refracted bright orb and white icebergs/mountains much like the reference (crop_q01_loop15_hero.jpg engine x~200-350 y~200-245 vs reference x~780-910).",
+    "No 8-bit banding: contrast-stretched smooth gradients on p06 (band and segment cap) show clean dithered ramps. No black or NaN pixels in any ice region (lowest luma 67-149).",
+    "At contact-sheet scale (sweep.jpg, about 40 frames covering intro, hold, pop, release and the idle tumble) the rings read consistently as ice, with no flicker, black holes or broken materials."
+   ],
+   "issues": [
+    {
+     "title": "Ice surface reads as smooth glass/gel with smeared cloud blotches; missing frost, inclusions and cracks",
+     "severity": "critical",
+     "poses": [
+      "q00_rest",
+      "q01_loop15",
+      "q02_loop30",
+      "q03_eye",
+      "p05_expand",
+      "p06_sustain"
+     ],
+     "evidence": "crop_q00_rest_hero.jpg, front band: the engine (x150-420, y215-280) shows broad soft 30-80 px blotches (blurred refraction of sky and clouds) and long smooth streaks. The reference (x710-980, same y) is an evenly frosted face with 3-15 px mottling, fine horizontal streaks and cloudy inclusions. zoom_ice_material/q00_band_2x.png. crop_q02_loop30_hero.jpg, band: the engine (x200-460, y195-295) has only horizontal smears; a luma stretch (zoom_ice_material/q02_band_behind_stretch.png) shows no micro-texture at all. The reference (x760-1020) has dense frost mottling and a dark internal crack at x830-853, y227-253. p06_sustain.png, band x520-940 y400-510: smeared cloud blotches, like brushed acrylic. ref_F420.png, central ring x450-930 y300-450: frost inclusions, chipped edges and crisp refracted orb streaks at x600-820 y410-440. p05_expand.png, top arc x515-815 y45-130: wavy white contour lines that read as liquid chrome or molten glass, not ice. Average luma matches (q00 band 192 vs 193), so the gap is texture and character, not exposure.",
+     "suggested_fix": "Add mid- and high-frequency ice structure, and stop the large-scale refraction from forming readable cloud shapes. (1) Bake per-ring maps in Blender from the reconstruction: a frost/inclusion density map (cloudy white patches plus fine streaks along the ring, with features about 3-20 px at 1440 width) and a thin crack-line mask. Alternatively compute them in object space in the shader (3D Voronoi edge distance for cracks, fBm for frost) so they rotate with the ring. (2) In IceMaterial, use frost density to raise the transmission blur (sample a lower mip or a larger kernel of the transmission target), to add a whitish forward-scatter mix toward about #dfe9f3 at 15-35% in frosty patches, and to drive a mid-frequency normal perturbation. (3) Cut the amplitude of the low-frequency normal and refraction offset that makes the 30-80 px blotches by about 50-60%, and blur the refracted sky more so clouds never read as shapes inside the band. (4) Draw the cracks and inclusions with 2-3 parallax layers so they sit inside the ice, with a thin dark core and slight bright edges.",
+     "score_gain": 0.9,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Hold/expand pieces look like soft soap or marshmallow blobs with flat, untextured end caps",
+     "severity": "critical",
+     "poses": [
+      "p04_expand_pop",
+      "p05_expand",
+      "p06_sustain",
+      "p07_release_snap"
+     ],
+     "evidence": "p06_sustain.png, left outer-ring piece x355-485 y315-490: smooth waxy shading with rounded, melted-looking ends. Its end cap (x430-462, y380-485) is a flat plane with a smooth luma gradient of 165-197 and no frost, normal or refraction detail even under a 6x luma stretch (zoom_ice_material/p06_eng_leftseg_stretch.png). The right piece (x1000-1090, y320-490) is the same. Polygon facets show on the left piece's top silhouette. p05_expand.png: the top arc's end cap (x805-855, y95-145) is a clean, flat light-blue face, and its left tip (x475-545, y145-190) is a rounded nub. Reference ref_F420.png: the top block (x380-765, y50-235) and right segment (x855-1140, y150-560) are thick chiselled ice with flat-cut fracture faces, frost, crisp bevels with white glints (x735-765, y90-130) and visible internal depth (zoom_ice_material/p06_leftseg_pair.png, p05_pair_2x.png). The dolly-in at the hold puts these caps large on screen, so they are the most obvious CG tell in the hero.",
+     "suggested_fix": "Rebuild the segment break faces in Blender as irregular fracture planes (Cell Fracture, or a boolean with a Voronoi-displaced plane), with a small 1-2 mm bevel and proper UVs, then bake the same frost, crack and normal maps onto them. In the engine, check that the cap faces actually receive the full ice shading (transmission, frost, normal map). Their constant gradient suggests collapsed UVs or a separate material group without the maps. Add inner-wall absorption darkening on the caps and a crisp bright bevel highlight along cap edges. Remove the rounded, melted tips.",
+     "score_gain": 0.6,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Ring silhouettes and surfaces too smooth and regular; reference is lumpy and chiselled",
+     "severity": "major",
+     "poses": [
+      "q00_rest",
+      "q01_loop15",
+      "q02_loop30",
+      "q03_eye",
+      "p06_sustain"
+     ],
+     "evidence": "q00_rest.png vs ref_F000.png, ring A bottom arc x570-870 y470-535 (zoom_ice_material/q00_bottomarcs_3x.png): the engine outline is a smooth, regular torus. The reference outline is scalloped, with lumps every 25-35 px and flat chiselled facets. crop_q01_loop15_hero.jpg, ring A left side: the engine (x120-200, y60-400) is a smooth tube with a soft gradient. The reference (x680-760) has a notched, faceted outline with planar facets (zoom_ice_material/q01_ringleft_2x.png). The inner ring B's top outline in q00 (zoom_ice_material/q00_topleft_4x.png) is smooth in the engine and bumpy in the reference. Ring D's edge-on end in q02 is rounded in the engine and squared-off and chipped in the reference.",
+     "suggested_fix": "Apply a cellular (Voronoi F1 / flat-cell) displacement to the ring meshes in Blender and re-export them. If polycount must stay low, bake a high-to-low normal map. Target amplitude is about 3-6% of the tube radius, producing flat facets with crisp ridges and an irregular outline with lumps every 25-35 px at the rest framing. Keep normals nearly flat within each facet so speculars break up along crests. Use the artist's original EXPORT.blend displacement or sculpt detail if it exists.",
+     "score_gain": 0.45,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Aliased ring edges, hairline rims and high-frequency streaks (will crawl in motion)",
+     "severity": "major",
+     "poses": [
+      "q03_eye",
+      "q01_loop15",
+      "q00_rest",
+      "p06_sustain"
+     ],
+     "evidence": "q03_eye.png, outer ring top-left silhouette x565-640 y185-310: stair-stepped edge with isolated bright and dark single pixels along it, plus white dotted contour lines inside the ring at x600-680 y200-270 (zoom_ice_material/q03_topleft_4x.png, q03_crest_pair_4x.png). q01_loop15.png, ring A inner edge x612-622 y290-400: a 1-px jagged bright-plus-dark double rim (zoom_ice_material/q01_innerrim_pair_6x.png). p06_sustain.png, ring A lower-left arc x510-690 y500-640: aliased dotted white streaks running along the ring (zoom_ice_material/p06_eng_ringA_lowerleft_3x.png). q00_rest.png, ring A lower edge x650-800 y515-528: a dotted, zipper-like edge. Reference edges are continuous and clean. Sharper-than-H.264 detail is fine, but the speckle and stair-step pattern will shimmer as the rings tumble.",
+     "suggested_fix": "Render the ice into the MSAA target, or cover it with the existing temporal AA using neighbourhood clamping. Widen and filter the Fresnel rim (a broader smoothstep on N dot V, faded with fwidth). Band-limit the micro-normal streaks by screen-space derivative (a Toksvig/LEAN-style roughness increase and reduced normal amplitude where fwidth(uv) is large, with mip-mapped normal maps). Clamp or fade the refraction offset near silhouettes so the transmission lookup never samples across the depth discontinuity, which is what makes the 1-px bright and dark speckles.",
+     "score_gain": 0.3,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Front band too milky: ring D behind it is not visible through the ice",
+     "severity": "major",
+     "poses": [
+      "q02_loop30",
+      "q01_loop15"
+     ],
+     "evidence": "crop_q02_loop30_hero.jpg: ring D passes behind the front band. The reference (x810-980, y195-290) clearly shows ring D's diagonal edges and a dark crack through the band. The engine (x250-420, y195-290) shows nothing of ring D, only horizontal smears (luma stretch in zoom_ice_material/q02_band_behind_stretch.png). The engine band is also brighter and milkier: region 300x60 at (590,335), luma mean 187.6 vs 180.3, saturation 18.0 vs 21.3 against loop_F030.png. In q01 (crop_q01_loop15_hero.jpg, engine x110-260 y150-350), ring A likewise shows almost no structure of the rings behind it, while the reference shows mottled structure through ring A.",
+     "suggested_fix": "Check that the behind-rings transmission pass actually includes ring D when it sits behind the band in this pose. It appears to drop out completely. Lower the band's scatter and milky veil in its clear regions, keeping frost only in patches from the frost map, so refracted rings read through it with a modest offset. Let the band's luma drop about 5-7 levels in q02 as a result.",
+     "score_gain": 0.25,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Deepest dark refracted bands are missing, and ring C reads as a thin ribbon",
+     "severity": "minor",
+     "poses": [
+      "q03_eye",
+      "q00_rest"
+     ],
+     "evidence": "q03_eye.png, outer ring right side (50x200 at 818,260): engine luma min/10th percentile 123/130 vs loop_F045.png 70/119. The reference's long dark steel-blue refracted band along the ring is weak in the engine. crop_q00_rest_hero.jpg, band end walls: the reference has crisp dark vertical lines at x~705 and x~997 (y205-290). The engine has only a soft dark strip at x~135-147 and nothing at the right end (x~410). crop_q03_eye_hero.jpg, ring C across the orb: the reference (x~660-835, y~180-245) shows a darker top face and inner wall, so it reads as a thick slab. The engine (x~160-350, y~180-245) reads as a thin pale ribbon.",
+     "suggested_fix": "Add a total-internal-reflection and absorption-path term. Where the exit ray (refract() on the back face) would totally internally reflect or graze, sample the darker lower hemisphere (water and mountain base) or blend toward a steel blue around #6f86a6. Raise the absorption coefficient so long internal paths (ring walls seen lengthwise, band ends) reach luma about 70-100. Make the band-end inner walls crisp dark lines, and give ring C a visibly darker top face or inner wall.",
+     "score_gain": 0.2,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Thin rings too saturated and slightly violet; missing the cyan-green orb tint",
+     "severity": "minor",
+     "poses": [
+      "q00_rest",
+      "q01_loop15",
+      "q03_eye"
+     ],
+     "evidence": "Matched regions, measured with ffmpeg signalstats (limited range): q00 ring A top (160x22 at 640,218) saturation 20.1 vs 15.9 and ring A bottom (160x22 at 640,500) 19.7 vs 14.8. q01 ring A left (50x250 at 570,220) 13.2 vs 9.9 and right (40x200 at 830,240) 17.5 vs 14.4. q03 left ring (40x200 at 590,260) 21.2 vs 17.5. Meanwhile the engine sky is less saturated (12.7 vs 14.2), so the sculpture-to-sky saturation ratio is 1.35 in the engine vs 1.01 in the reference (q00). Median hue is 306-307 vs 303-306, slightly more violet. The reference has a cyan-green orb-light tint on the bottom inner surface of ring B (ref_F000.png x~705-760 y~472-488) and through ring C (loop_F045.png x~640-820 y~365-395). The engine is plain blue there, with saturated painterly blue streaks on ring A and B (zoom_ice_material/q00_bottomarcs_3x.png).",
+     "suggested_fix": "Lower the absorption-tint saturation by about 20% on the thin rings (A and B) and shift the hue 3-4 degrees toward cyan-grey, keeping luma unchanged. Add a subtle cyan-green tint around #c4f1e8 where orb light passes through the inner rings (weight it by an orb-facing or orb-proximity term). Soften the saturated blue streaks on rings A and B.",
+     "score_gain": 0.2,
+     "needs_render_blend": false
+    },
+    {
+     "title": "No specular facet glints; only uniform hairline rims",
+     "severity": "minor",
+     "poses": [
+      "q03_eye",
+      "p05_expand",
+      "p06_sustain"
+     ],
+     "evidence": "loop_F045.png x610-680 y225-265: a chain of bright facet glints along the chiselled crest of the outer ring. ref_F420.png x735-765 y90-130: a bright bevel glint on a cut face (zoom_ice_material/ref_glints.png). In the same crest region of q03_eye.png (x580-700, y200-290) the engine shows only thin, aliased hairline streaks and no glints. The p06 and p05 caps and edges have none either.",
+     "suggested_fix": "Once faceted normals exist (see the silhouette issue), add a low-roughness GGX lobe (roughness 0.03-0.06) lit by a key light from the upper left to match the reference, plus a sparse crest or bevel glint mask, so small crisp highlights break up along the ridges and cap bevels. Keep them filtered so they don't alias.",
+     "score_gain": 0.15,
+     "needs_render_blend": false
+    }
+   ]
+  },
+  {
+   "lens": "color_grade_post",
+   "score": 8.2,
+   "verdict": "The global grade is essentially locked. Full-frame mean sRGB is within 1-2 levels of the reference and saturation is identical in every compared pose. The midtone curve matches (rest luma p25/p50/p75 165/194/210 vs 164/193/209), there is no banding even under a 5x contrast stretch, the vignette matches, and the idle orb exposure and bloom match almost pixel for pixel. What still separates the engine from the reference is post and atmosphere, not white balance. (1) The dolly-in hold has no depth of field and its fog bank does not build. The reference pulls focus to the sculpture (mountains and iceberg go soft) and grows a thick, billowing mist up the left mountain while the iceberg stays deep slate-blue. The engine keeps the background tack-sharp, shows only a thin flat band, and greys the iceberg out by 20-26 levels. (2) In the hold the orb clips to a flat neutral-white 'sun' disc (sd 9.6, B-R 4.8) where F402 shows a bright plasma with internal filaments and a cyan limb (sd 25, B-R 15). (3) At rest the mid-ground floes are the crispest, darkest-edged thing in frame (3.2x the reference's high-frequency energy, blacks 30 levels deeper). The left-foot mist is a flat opaque band while the iceberg's waterline mist is too thin, and the near ripple field is milkier and less blue. Rest and eye alone would score about 8.7; the hold is about 7.3; weighted, 8.2. All of it is fixable with a DOF pass, Atmos card work, orb emission and tone-curve tuning, and small bake or shader grades. Zoom crops and scripts are in /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/p3/r11_3/zoom_color_grade_post/",
+   "strengths": [
+    "White balance and exposure are locked. Full-frame mean sRGB is within 1-2 levels in all four compared poses: rest 165.6/181.6/202.7 vs 166.0/180.5/202.6, eye 165.9/182.0/203.1 vs 165.4/179.8/202.5, pop 179.2/193.6/212.8 vs 178.5/191.8/212.7, hold 179.2/193.7/213.3 vs 177.3/191.4/213.0. Mean saturation is identical at rest (0.204 vs 0.204). Do not touch the global grade.",
+    "The midtone curve matches: rest luma p25/p50/p75 = 165/194/210 vs 164/193/209, eye 167/194/210 vs 164/193/209.",
+    "Orb exposure and bloom at idle are right. The near-white core area is 1727 vs 1705 px at rest and 5104 vs 5052 px at the eye. The radial falloff and the white-to-cyan transition (B-R rising from about 5 to about 32 by r=48 px) are nearly identical. Keep the idle bloom threshold and radius.",
+    "No banding: both skies stay smooth under a 5x contrast stretch (zoom_color_grade_post/z_sky_stretch_q00.png, z_sky_stretch_p06.png). The sub-level dither (about 0.37 level RMS in flat sky) is invisible and prevents banding, so keep it.",
+    "Vignette and corner falloff match: TL +2/+4/-2, BR 0/+1/-1 at rest.",
+    "Many regions are within 1-4 levels at rest: the upper sky band (-1,+1,-1), the mid-lake water (300-1100 x 560-640: -2,-1,-2, same saturation), the front ring band (-4,-3,-1), the left snowy peak (-4,-2,-1), the dark foreground rocks (+4,+2,+2) and the bottom-left snow rocks (-1,-2,-3).",
+    "In the hold, the sky and water still match (p04/p06 sky within 0-3 levels, water within 0-2).",
+    "The highlight shoulder on snow and ice is natural at rest: there is no clipping in the environment (0.00% vs 0.10% in the reference)."
+   ],
+   "issues": [
+    {
+     "title": "Hold dolly-in has no depth of field: the background stays tack-sharp while the reference defocuses it",
+     "severity": "major",
+     "poses": [
+      "p04_expand_pop",
+      "p05_expand",
+      "p06_sustain",
+      "q00_rest",
+      "q03_eye"
+     ],
+     "evidence": "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/p3/r11_3/zoom_color_grade_post/z_p06_left.png (x0-520, y300-630, engine left, ref F420 right): the reference's left mountain ridges are clearly out of focus, while the engine's are razor-crisp. z_p04_left.png (x0-520, y280-580, ref F358) shows the same. In z_p06_right.png (x920-1440, y300-630) the reference iceberg and far peaks are soft and the engine's are crisp. ref_F402.png and cmp_p05_expand.jpg show the same background blur. The reference ice blocks and shards stay sharp, so this is focus pulled to the sculpture, not motion blur. At rest the reference also softens the nearest rocks: in z_bottom_q00.png the engine's bottom rocks are crisp and the reference's soft (mean |Laplacian| over (370,720)-(640,764) is 10.4 vs 5.1).",
+     "suggested_fix": "Add a depth-of-field post pass before bloom: half-res circle of confusion from the depth buffer and a gather/separable bokeh blur, with focus locked to the orb distance. Ramp the far-field blur with camExpand, from about 0.5-1 px at rest to about 6-8 px (at 1440 px width) on the mountains, iceberg and clouds at full hold. Keep the sculpture and shards sharp. Optionally add about 1.5 px of near-field blur on the bottom-edge rocks at rest. An 8-12 tap half-res gather is affordable on T1.",
+     "score_gain": 0.4,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Hold fog does not build like the reference: thin flat band on the left while the iceberg washes out",
+     "severity": "major",
+     "poses": [
+      "p04_expand_pop",
+      "p05_expand",
+      "p06_sustain",
+      "p07_release_snap",
+      "p08_release_home"
+     ],
+     "evidence": "In z_p06_left.png (same folder), ref F420 has a thick, billowing white mist bank over the lower half of the left mountain; the engine shows a thin flat band at the base. Box (60,340)-(480,480) at p06: engine 155,171,195 vs ref 166,181,205 (-11,-9,-10, engine darker = less mist). At p04, box (60,300)-(470,450): 162,177,197 vs 174,187,207 (-12,-10,-10). The right side goes the other way. Iceberg box (1110,460)-(1290,580) at p06: engine 127,148,174 vs ref 102,127,160 (+26,+20,+14; saturation 0.29 vs 0.39). At p04, (930,430)-(1270,550): +10,+9,+4 (saturation 0.25 vs 0.31). In z_p06_right.png the reference iceberg stays a deep, saturated slate-blue under a bright low mist at its base, while the engine's is lifted and greyed, as if by a uniform distance veil. fogHold stays at 0.967 into p07/p08 per log.txt, so the release poses carry the same look.",
+     "suggested_fix": "Drive fogHold through Atmos mist cards rather than a global distance-fog lift. Add 2-3 large, soft, slowly drifting billow cards in front of the left mountain base, rising to about 50% of its height (opacity about 0.6-0.7, colour about 215,222,232). Add a bright, low, height-limited band at the iceberg waterline. Cut the global fog contribution on the iceberg during the hold so it holds about 105,127,160 at saturation about 0.38.",
+     "score_gain": 0.3,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Orb clips to a flat neutral-white disc in the hold: no plasma detail, no cyan, and the bloom milks the front band",
+     "severity": "major",
+     "poses": [
+      "p04_expand_pop",
+      "p05_expand",
+      "p06_sustain",
+      "q03_eye",
+      "q00_rest"
+     ],
+     "evidence": "In p06_sustain.png, 0.74% of the frame is at >=250 in all channels vs 0.13% in ref F420. Inside the sculpture box (360,150)-(1080,640), 4.6% of pixels have luma >=245 vs 0.8% (p04: 3.6% vs 0.7%). In a 70 px disc at (722,362), the engine has mean luma 249, sd 9.6, p10 236 and B-R 4.8: a flat neutral 'sun'. The orb visible in ref_F402.png (70 px disc at (718,425)) has mean 236, sd 25.4, p10 195 and B-R 14.9: bright, but with darker internal plasma filaments and a cyan/lavender limb. The same tendency shows more subtly at the eye pose: engine sd 10.1, B-R 11.7 vs reference sd 24.4, B-R 18.3 (z_q03_orb.png). In z_p06_core.png and z_p04_core.png the engine's band in front of the orb is washed to milky white-blue, while the reference keeps crisp glass facets.",
+     "suggested_fix": "Cap the hold's 'energy' emission boost, or apply exposure compensation as camExpand goes to 1, so only the centre ~30% of the disc clips. Restore an internal plasma texture (darker turbulent wisps at about 190-210 luma). Keep a cyan tint in the upper midtones (B-R about 15-18) with a hue-preserving highlight shoulder instead of desaturating to neutral white. Raise the bloom threshold slightly during the hold so the band in front of the orb keeps its glass detail.",
+     "score_gain": 0.3,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Mid-ground floe band is CG-crisp and dark-edged, with no aerial haze or softening",
+     "severity": "minor",
+     "poses": [
+      "q00_rest",
+      "q01_loop15",
+      "q02_loop30",
+      "q03_eye"
+     ],
+     "evidence": "In z_horizon.png (full-width strip y430-560, engine top / ref bottom, same folder), the engine's floe slabs on the left have hard, dark grey edges; the reference's are lifted and soft. Box (60,470)-(640,560): engine 157,173,195 vs ref 166,180,200 (-9,-6,-5), sd 28.6 vs 21.7, p2 79 vs 109. At the eye: -11,-9,-7, sd 28.3 vs 18.7. High-frequency energy (mean |Laplacian|) there is 13.5 vs 4.2, 3.2x the reference, against only 1.27x on the mountains. So the engine's sharpness by depth is inverted relative to the reference camera: the mid floes are the crispest thing in frame.",
+     "suggested_fix": "Add about 0.15-0.2 depth haze toward the horizon colour (about 200,210,225) on the floe band, so the slab edges lift by about 25-30 levels, plus the 1-1.5 px blur from the DOF pass. Alternatively, soften and lighten the edge AO in the floe bake.",
+     "score_gain": 0.2,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Idle haze is distributed unlike the reference: the left-foot mist is opaque and flat, the iceberg waterline mist too thin, the far right peaks over-hazed",
+     "severity": "minor",
+     "poses": [
+      "q00_rest",
+      "q01_loop15",
+      "q02_loop30",
+      "q03_eye"
+     ],
+     "evidence": "In z_leftmtn.png and z_q03_leftfoot.png, the engine shows a uniform grey-white band that hides the foot of the dark left mountain; the reference's mist is brighter and wispier, with the slope still visible through it. Box (10,400)-(520,460): engine 144,161,185 vs ref 131,150,177 (+13,+11,+8), sd 26.0 vs 29.4 at rest and 14.8 vs 33.7 at the eye (a flat veil). At the iceberg base, box (900,420)-(1180,465): engine 122,143,172 vs ref 133,154,182 (-11,-11,-10), sd 33.9 vs 22.0. In z_iceberg.png the reference veils the iceberg foot with a brighter, more even mist. The far right peaks, box (1230,370)-(1300,410): engine 166,181,201 vs ref 143,158,184 (+23,+22,+17), sd 13.5 vs 20.7. In z_farR.png and z_hzn_R.png the reference peaks keep grey ridge structure while the engine's are washed out.",
+     "suggested_fix": "Lower the left-foot mist card opacity by about 30-40% and break its top edge with noise and varying height. Brighten and thicken the iceberg waterline mist by about +10 levels over a band about 40 px tall. Reduce the distance haze on the far right range so its ridges keep about 20 luma sd.",
+     "score_gain": 0.15,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Near-water ripple field is milkier and less blue than the reference (contrast and saturation, not phase)",
+     "severity": "minor",
+     "poses": [
+      "q00_rest",
+      "q01_loop15",
+      "q02_loop30",
+      "q03_eye"
+     ],
+     "evidence": "In z_water.png (x260-1160, y516-766, same folder), the reference ripple troughs are deeper blue with fine sparkle; the engine's are grey-lavender and smoother. Box (420,660)-(1000,740): sd 37.4 vs 45.4, saturation 0.22 vs 0.25, B-G 21.9 vs 25.1. At the eye: sd 38.0 vs 48.6, saturation 0.22 vs 0.27. In the glint box (600,690)-(840,740), p2..p98 is 152..238 vs 75..227: the reference has much darker troughs with similar highlights. The mid-lake (300,560)-(1100,640) matches within 2 levels, so only the near field is off.",
+     "suggested_fix": "Increase the near-field ripple normal amplitude, or the reflection of the deeper zenith-sky blue on tilted normals, so the troughs reach about 75-90 luma at saturation about 0.26. Keep the glint highlights as they are.",
+     "score_gain": 0.15,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Shadow depth: the far-left dark mountain's crevices are lifted, and the right foreground snow rock is too light and desaturated",
+     "severity": "minor",
+     "poses": [
+      "q00_rest",
+      "q03_eye"
+     ],
+     "evidence": "Box (10,290)-(150,400): p2 56 vs 24, sd 37.5 vs 46.0, mean -6,-9,-9. In z_leftmtn.png the engine's dark mountain reads as a flatter navy block, without the reference's near-black crevices and bright ridge snow. Box (1180,560)-(1430,640): engine 103,132,163 vs ref 86,117,153 (+17,+16,+10), saturation 0.45 vs 0.50, B-R 30.9 vs 36.1. In z_BR.png the reference's shadow faces are a richer cobalt. This rock drives the +14 and +19 luma excess in the bottom-right tiles of the 8x4 grid.",
+     "suggested_fix": "Re-grade the bakes, or add a per-mesh grade in the shader. Increase local contrast on the left dark mountain (crevices down to about 25-35 luma, ridges up). Darken and saturate the shadow side of the right foreground snow rocks by about 15 levels toward 86,117,153.",
+     "score_gain": 0.1,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Sky gradient slightly steeper: the low sky and horizon haze are a touch whiter, the zenith a touch bluer",
+     "severity": "minor",
+     "poses": [
+      "q00_rest",
+      "q03_eye",
+      "ui_rest"
+     ],
+     "evidence": "In region_stats_q00.txt, 'sky horizon' is engine 214,218,223 vs ref 205,212,224 (+9,+6,-1). The clear band above the right far peaks, (1240,338)-(1430,358), is +4,+5,+1 with B-R 28.7 vs 32.1. The upper sky at (560,120)-(640,170) is slightly bluer in the engine (B-R 38 vs 34), and the clear patch at (200,10)-(330,100) has B-G 14.3 vs 19.6. Cloud-position differences (corner TR -14) are excluded.",
+     "suggested_fix": "Shift the lowest ~120 px of sky and horizon haze about 5-8 levels toward blue (pull R and G down slightly), and flatten the zenith-to-horizon saturation ramp a little.",
+     "score_gain": 0.05,
+     "needs_render_blend": false
+    }
+   ]
+  },
+  {
+   "lens": "orb_shards_light",
+   "score": 7.3,
+   "verdict": "At idle the orb and shards are in the right range. The orb's exposure, size and white-cyan tint match the reference within a few percent, and the shards' hue and saturation at q00 match almost exactly. But the orb reads as a smooth frosted bulb, not the reference's plasma-in-glass. Its core is a flat plateau that never reaches pure white, it has no internal smoke or swirl, and its rim is a soft neutral outline. In the hold, which is the signature interaction, it gets worse. At p05 and p06 the orb blows out to a flat clipped white disc with one grey smudge. The orb's energy never turns into the teal-mint glow inside the surrounding ice that dominates F358, F402 and F420. The near shards wash out to pale, flat-shaded low-poly facets, where the reference has deep sapphire glass with crisp ridge glints. Nothing is broken or glitchy, but a demanding art director would flag the hold orb at once, and the missing swirl side by side. All of it can be fixed with shader work, or with a Blender bake for the orb's interior.",
+   "strengths": [
+    "Idle orb exposure and size match the reference. In a 220x200 box around the orb, pixels at luminance 245 or above: q00 2076 vs F000 1850, q02 885 vs F030 875, q03 5672 vs F045 5520. Core tint of pixels at 235 or above (G-R, B-R): about (8-11, 10-15) in the engine vs (8-11, 10-13) in the reference. Do not change the base idle emission or tint.",
+    "No bloom overreach at idle. The glow falls to the background within about 6-12 px of the orb silhouette (q03 row y=320), so there is no glare veil over the rings or sky.",
+    "Shard hue and saturation at rest match. Median hue is 222 deg vs 219-224 deg. At q00, pixels with saturation above 0.5 number 409 vs 402 in F000, and the saturation median is 0.38 vs 0.39. Size range and density read right, edges are cleanly anti-aliased, and the light/dark facet bipyramid silhouette is right.",
+    "Correct depth ordering. Shards pass in front of and behind the rings and the orb with no sorting errors. The orb sits correctly behind the inner rings and band. The pointer push-in (ptr_orb.png) shows no orb artefacts.",
+    "At rest the front band already transmits the orb: the band centre brightens to about 220-228 vs 211-222 in the reference (rows 365-390, x=690-765).",
+    "Energy ramps stay controlled in p04_expand_pop and p07_release_snap: only 4-5% of the orb box is clipped there, so only the full sustain overshoots."
+   ],
+   "issues": [
+    {
+     "title": "Hold/expand orb blows out to a flat clipped white disc with no sphere read (one grey smudge)",
+     "severity": "major",
+     "poses": [
+      "p05_expand",
+      "p06_sustain"
+     ],
+     "evidence": "p05_expand.png row y=400 is a continuous 254-255 plateau from x=680 to x=790. A 120x120 box at (660,320) is 52.4% pure 255, mean (245,248,250). The same box in ref_F402 is 21.1% pure 255, mean (221,234,241). On the same row F402 keeps 255 peaks at x=650-670 and 760-810, separated by an internal smoke band at x=690-750 (L about 195-220), plus a violet-lavender rim fringe at the lower left. p06_sustain.png row y=360 is 254-255 from x=670 to 770, and a 140x140 box at (650,300) is 36.7% pure 255. The only interior detail is a neutral grey patch (228,233,235) at x=720-744, y=337-357, which reads as a dirt smudge. A faint pink ring surrounds the disc. See zoom_orb_shards_light/hold_orbs_3x.png and p05_orb_pair.png. In F420 the orb is hidden behind the ring and its energy shows as light inside the ice.",
+     "suggested_fix": "Do not drive the core emission past the tone-map shoulder in the hold. Cap the energy boost at about +0.3 EV over idle for the core. Put the rest of the energy into the halo/bloom radius and into ice transmission (next issue). Scale the contrast of the internal swirl with energy so the wisps stay visible at L about 190-220 inside the 255 core. Keep the Fresnel rim and the faint dispersion fringe in place during the hold. Aim for at most about 20-25% clipped pixels in the orb box at p05.",
+     "score_gain": 0.4,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Orb has no internal plasma/smoke structure or radial volume: flat frosted-bulb core, never pure white",
+     "severity": "major",
+     "poses": [
+      "q00_rest",
+      "q01_loop15",
+      "q02_loop30",
+      "q03_eye",
+      "p08_release_home"
+     ],
+     "evidence": "q03_eye.png column x=722, y=316-376 is a flat plateau at (249-250, 251-253, 251-254), about 1 level of variation. In loop_F045 the same column has a dark refracted edge (171,188,219) at y=304, a mint rim (227,251,240) at y=312, a pure white hot spot at y=328-336, then grey-lavender smoke (177-186, 200-207, 227-230) at y=364-372. Pure-255 pixels in the orb box: engine 0 in all four idle poses, reference 504 (F000), 187 (F015) and 1546 (F045). On the luminance map (zoom_orb_shards_light/highlights_q03_vs_F045.png, highlights_q00_vs_F000.png) the engine's orb region above L 246 is a perfectly smooth dome. The reference's is irregular and notched by internal smoke. The swirl is plainly visible in F453 and F460 even at 960 px, but not in p07/p08. When the camera is close (sweep/sw_hold_L.png, sw_hold_R.png; zoom_orb_shards_light/sw_hold_LR_orb.png) the interior shows hard-edged planar folded ribbons that look like crumpled paper, not soft smoke.",
+     "suggested_fix": "Give the orb shader a radial gradient: a pure-white hot centre that clips over about 30-40% of the visible core, falling to mint-cyan (about 227,251,240) at the rim. Add 2-3 parallax layers of soft animated fbm/curl-noise smoke with grey-lavender absorption (down to L about 180-215), weighted to the lower hemisphere. If the wisps are meshes, soften their edges with alpha falloff, depth-fade and blur so no planar facet edges show. Add a refraction of the surroundings: a glass-sphere lookup with IOR about 1.45 into the environment and rings gives the grey-green internal shapes seen in F402. A Blender Cycles bake of the orb interior (volume plus glass) into a looping flipbook or texture array is a solid alternative.",
+     "score_gain": 0.4,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Orb light does not tint the surrounding ice teal/mint during expand/hold",
+     "severity": "major",
+     "poses": [
+      "p04_expand_pop",
+      "p05_expand",
+      "p06_sustain"
+     ],
+     "evidence": "I counted teal/mint pixels (hue 160-200 deg, saturation 0.08 or more, value above 0.55, typically (213,234,242)) in a 700x440 hero box at (370,100). Reference: F358 7,101 (2.3%), F402 8,071 (2.6%), F420 11,121 (3.6%). Engine: p04 280, p05 2, p06 49. At idle the engine is close (q00 594 vs 1,020; q03 1,359 vs 1,612), so the gap appears only with energy. The reference teal sits in the ice directly in front of and around the orb: F420's band glows teal from inside where the hidden orb sits, and F358's front band glows teal over the orb. See zoom_orb_shards_light/tealmask_p06_vs_F420.png and tealmask_F358_F402.png. In the engine the ice next to and in front of the orb stays neutral pale blue, and all the energy goes into the white disc.",
+     "suggested_fix": "In IceMaterial, add an orb-proximity translucency term scaled by the hold energy. Use a back-scatter lobe pow(saturate(dot(V, -L_orb)), p) times thickness, plus wrap-diffuse from the orb position, with falloff exp(-d^2/r^2) from the orb centre. Give it a mint/teal bias (G and B above R, e.g. a tint of about (0.82,0.93,0.95)). The ice overlapping the orb in screen space should glow teal at about L 230-245 and not clip. This is also the right place to spend the energy removed from the orb core.",
+     "score_gain": 0.3,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Shards read as flat-shaded low-poly facets and wash out near camera; they lack deep sapphire cores and ridge glints",
+     "severity": "major",
+     "poses": [
+      "p06_sustain",
+      "p05_expand",
+      "q03_eye",
+      "q01_loop15",
+      "p08_release_home"
+     ],
+     "evidence": "Close-ups (zoom_orb_shards_light/shard_closeups_rest.png, shards_expand_closeups.png, shards_hold.png, orb_release_home_3x.png) show the engine shards as flat triangle facets in mid cobalt plus pale lavender-white facets (about 190,200,240), with whitish tips and no specular highlight. The reference shards are smooth cobalt lozenges with an internal gradient, a deep core and a thin clipped white highlight along the ridge or tip (F460 shard at about (750,450), F000 shard tip at about (865,295)). In shard-like pixels the engine's 99th-percentile saturation never exceeds 0.63 in any pose, while the reference reaches 0.68-0.79 (F015 0.68, F045 0.69, F420 0.79). Near shards in F420 have saturation median 0.50-0.60, 90th percentile 0.69-0.76, max 0.81-0.92 (e.g. (12,64,149) at (1140-1230,380-460)). The engine's p06 near shards have median 0.32-0.39, 90th percentile 0.40-0.51, max 0.46-0.58 (big shard at (770-880,200-340)). Pixels with saturation above 0.7 are 0 in every engine pose vs 943 in F420.",
+     "suggested_fix": "Use smoothed vertex normals and keep hard edges only on the main ridge. Add Beer-Lambert absorption by view thickness so the core goes to about (30-60, 80-100, 170-200). Lower the light-facet albedo to about (150,170,235) or below. Add a tight GGX specular (roughness about 0.05-0.1) so ridges and tips throw small clipped glints. Exempt the shards from the fogHold veil and from bloom wash, or reduce both for near objects, so the hold keeps saturated sapphire shards.",
+     "score_gain": 0.25,
+     "needs_render_blend": false
+    },
+    {
+     "title": "No depth cues on shards: every shard is tack sharp and equally saturated",
+     "severity": "minor",
+     "poses": [
+      "q00_rest",
+      "q03_eye",
+      "p06_sustain"
+     ],
+     "evidence": "Reference shards show defocus or motion softness: the lower shard at about (860-900,270-310) in F000 (panel 3 of zoom_orb_shards_light/shard_closeups_rest.png), the upper shard in panel 3 of shards_hold.png, and the left cluster at about (200-400,260-520) in F420. Reference shards also show aerial haze with distance: the far shard at (950,235) in F000 has saturation median 0.36, the near one at (895,400) 0.56. Every engine shard is crisp edge to edge, with saturation median 0.40-0.44 regardless of size or depth, so the swarm reads as one CG layer.",
+     "suggested_fix": "Add a cheap circle-of-confusion blur for shards only. Either render them to their own layer with a depth-based blur (focal plane at the orb, stronger for the nearest and farthest), or widen alpha edges and lower mip/roughness by CoC. Optionally add velocity-stretched motion softness. Add distance haze and desaturation to far shards so they drift toward about 0.33-0.36 saturation.",
+     "score_gain": 0.15,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Ice near the orb lacks small crisp specular glints / sparkle",
+     "severity": "minor",
+     "poses": [
+      "q00_rest",
+      "q03_eye"
+     ],
+     "evidence": "Pixels at luminance 248 or above on the ice outside the orb: q00 3 vs F000 20, q03 14 vs F045 75 (440x360 or 440x440 boxes around the sculpture, orb disc excluded). On zoom_orb_shards_light/highlights_q03_vs_F045.png the reference has clipped speckles on ring A's upper-left edge at about (610-660, 238-255) and scattered glints on the inner rings around the orb. On highlights_q00_vs_F000.png the reference has them at about (590,320), (750,310) and (770,335) in frame coordinates. The engine's rings show none, so the light reads soft and diffuse.",
+     "suggested_fix": "Add a tight sun/sky specular lobe on the ice (low roughness on up-facing micro-normals, with normal-map micro-facets) so a few texels clip into small glints. Add orb-facing glints on the inner ring edges, driven by the orb position as a point light. Keep them sparse: about 20-80 clipped px per frame around the sculpture.",
+     "score_gain": 0.1,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Orb rim is a soft, neutral, constant-width outline instead of a thin glass edge with mint and violet fringes",
+     "severity": "minor",
+     "poses": [
+      "q00_rest",
+      "q03_eye",
+      "p06_sustain"
+     ],
+     "evidence": "At rest the engine's luminance map shows a uniform glow ring (L 238-246) of constant width hugging a perfect disc (zoom_orb_shards_light/highlights_q00_vs_F000.png). In the eye pose the silhouette is a broad pale grey-blue frosted shell (zoom_orb_shards_light/orb_eye_3x.png); its inner rim is neutral cyan (235,248,248) at y=316. The reference has a thin dark refracted line (171,188,219) at y=304, then a mint rim (227,251,240) at y=312 with G above B, and a faint lavender/violet fringe on the opposite edge (F402 lower left, F460 left edge). The reference also lifts the ring interior just above the orb by about +15 with a mint tint (rows 300-320, x=696-720: up to (222,234,243) vs background (205,217,237)). The engine lifts it only about +8 and neutral (203,219,235 vs 195,214,236). In the hold the engine rim becomes a faint pink ring around the clipped disc.",
+     "suggested_fix": "Narrow the Fresnel rim. Add a 1-2 px darker refraction line at the silhouette, a mint inner rim (G above B by about 10), and a very faint violet dispersion fringe on the shadow side. Add a slight mint-tinted near-edge glow (about +12-15 levels within about 20 px) instead of the uniform outline.",
+     "score_gain": 0.1,
+     "needs_render_blend": false
+    }
+   ]
+  },
+  {
+   "lens": "composition_motion",
+   "score": 8.6,
+   "verdict": "The idle tumble is close to the reference. In 50/50 blends and edge strips against loop F000/F015/F030/F045, the orientation, size, centre and depth order of rings A-D register within about 2-5 px (zoom_composition_motion/avg_q01.png, avg_q02.png and avg_q03.png show almost no ghosting on ring A). Rings C/D are face-on and concentric at q00 and also match at q01 (the tilted flattened pair), q02 (the ellipse behind the band and bar) and q03 (the equatorial ring D around the orb). Two camera paths match the reference backgrounds: the rest framing (sculpture centre ~(720,371), ring A ~577-877 x 217-525) and the hold dolly (mountain peak y≈345 against 351 at F402/F420, with p07/p08 also within a few px). The pop is within ~7-12 px. Points are lost on the press-and-hold and release composition, not on the idle. (1) At full hold the opened pieces fill about 95% of the frame height: the bottom arc comes within ~5 px of the frame edge and sits right under 'Scroll to Explore'. (2) Some tumble phases fall into a knot of crossing slabs that no longer reads as an opened sculpture. (3) The split ends are flat, evenly lit CG caps. (4) The release has no snap-to-concentric beat like F453/F460. (5) Ring B is pitched about 4° off at the rest key (tau=0). Motion continuity cannot be judged from stills; a 60 fps capture of press, hold and release is recommended for the next QC. Zoom evidence is in /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/p3/r11_3/zoom_composition_motion/; the other file names below are relative to r11_3/.",
+   "strengths": [
+    "Idle mocap tumble: q00/q01/q02/q03 ring orientations (which rings are face-on, edge-on or tilted), sizes, centres and overlap/depth order match loop F000/F015/F030/F045 within ~2-5 px. Keep these mocap curves unchanged apart from the ring-B tau=0 key.",
+    "Inner rings C/D: face-on and concentric at q00 (zoom inner_q00_2x.png), the tilted flattened pair with the orb opening at q01 (q01_inner_2x.png), the ellipse behind band and bar at q02, and the eye with equatorial ring D at q03 (q03_sbs.png) all match the reference.",
+    "Rest framing: sculpture centre and ring-A extents within ~2 px of F000. Mountains, iceberg and horizon line up, and the placement against the headline matches the Figma frame (cmp_ui_rest.jpg).",
+    "Hold camera: dolly plus FOV change reproduces the reference camera. Backgrounds register within ~4-6 px at F402/F420/F453/F460 and ~7-12 px at F358 (p04_bg_grid.png).",
+    "Orb placement and size: centred and ~130 px diameter at q03 in both. It stays visible through every idle phase.",
+    "Shard belt: tilted belt with similar radius and density to the reference at rest and during the hold. No shard-ring interpenetration seen.",
+    "No ring-ring interpenetration in the idle sweep (tau 0.25-3.75, e.g. tau_225_325.png) or in the hold crossings inspected (p05_left_2x.png, holdBL_zoom.png).",
+    "Best hold phases (p05_expand, sw_hold_L/T/TR) read as a striking vortex/portal: pinwheel arcs around a concentric C/D tunnel with a glowing orb. Keep this look.",
+    "Pointer push-in toward the orb (ptr/cmp_orb.jpg) keeps the composition intact."
+   ],
+   "issues": [
+    {
+     "title": "Full-hold silhouette overfills the frame: bottom arc touches the frame edge and sits under the UI",
+     "severity": "major",
+     "poses": [
+      "p05_expand",
+      "sweep hold_L",
+      "sweep hold_TR",
+      "sweep hold_T"
+     ],
+     "evidence": "sweep/sw_hold_L.png: opened pieces span y≈35→761 of 766. Top arc x≈565-900, y≈35-185. Bottom arc x≈565-910, y≈635-761, which comes within ~5 px of the frame bottom. sweep/sw_hold_TR.png bottom arc ends at y≈758. In both, the 'Scroll to Explore' label (x≈657-783, y≈695-710) is drawn directly on the pale ice arc (zoom_composition_motion/hold_bottom_edge.png): white text on white-blue ice, which looks like a scene/UI collision. p05_expand.png top arc reaches y≈40. The left arc also runs behind 'studio' (x≈395-590, y≈535-585), and in all six sweep hold frames the headline is still fully drawn. Reference: F420 spans y≈51-681 (82% of height, 85 px clear at the bottom) and F402 spans y≈134-614.",
+     "suggested_fix": "Cap the screen-space extent of the opened pieces at about 85% of frame height. Options: reduce the full-hold radial offset of the split B/A pieces (splitB/spreadA amplitude) by ~15-20%; make it anisotropic (full horizontal, ~0.75 vertical in screen space, since the frame is wide); or ease the hold dolly back from z≈4.74 to ~5.2. Target: bottom arc stays above y≈680 so 'Scroll to Explore' sits over water, with ≥50 px top margin. Alternatively fade 'Scroll to Explore' with the headline during the hold. Also confirm the headline ink-dissolve actually fires in a real hold; the sweep hold frames show it intact.",
+     "score_gain": 0.35,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Hold readability depends on tumble phase: some phases collapse into a knot of slabs",
+     "severity": "major",
+     "poses": [
+      "sweep hold_BL",
+      "sweep hold_B",
+      "p06_sustain",
+      "sweep pop_L"
+     ],
+     "evidence": "Good phases (p05_expand.png, sw_hold_L/T/TR) read as a radial opening around a visible orb. sweep/sw_hold_BL.png (zoom holdBL_zoom.png) shows ring-B slabs crossing ring A's tube diagonally across x≈600-1050, y≈150-630, with the orb only partly visible (~x 640-790, y 330-470); it reads as a tangled knot of bent bars. sweep/sw_hold_B.png shows one huge C-shaped band (x≈430-800, y≈170-660) plus a detached chunk (x≈815-1005, y≈95-270), which no longer reads as a ring sculpture. p06/hold_R ('Saturn' phase) shows B's pieces edge-on as two blobby side blocks. Reference F402/F420 keep a consistent radial 'exploded around the orb' read.",
+     "suggested_fix": "Keep the continuous slow rotation (client spec), but during the hold damp the out-of-plane tumble channels of rings A and B (pitch/roll at ~40-60% of idle amplitude, spin unchanged). Alternatively add a soft camera-facing bias through the existing faceInner/alignA channels (~0.3-0.5 while held) so the opened pieces stay spread radially in roughly the screen plane. Apply each piece's offset along its radial direction projected onto the screen plane, so pieces never stack in depth over the orb.",
+     "score_gain": 0.3,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Split ring pieces end in flat, uniformly lit cut caps that read as sliced pipes",
+     "severity": "minor",
+     "poses": [
+      "p05_expand",
+      "p06_sustain",
+      "sweep hold_*",
+      "p04_expand_pop"
+     ],
+     "evidence": "p06_sustain.png side chunks (x≈355-485, y≈315-485 and x≈950-1090, y≈320-490) each show a perfectly planar oval end face with flat even shading (zoom_composition_motion/p06_leftchunk_3x.png, cap ≈x 428-465, y 380-487). Same on the p05 left arc's lower end (x≈555-595, y≈540-580, p05_left_2x.png), the bottom-arc ends in hold_bottom_edge.png, and the cut face of the p04 chunk (≈x 560-615, y 445-530). The opened shape reads as sausage slices, not broken ice. Reference F402/F420 broken pieces have irregular faceted fracture ends with internal refraction.",
+     "suggested_fix": "Replace the planar caps with a fractured surface: noise-displaced cap geometry with a few conchoidal facets, a small bevel on the cap rim, and the ice shader's thickness/refraction tint on the caps. Or cell-fracture the ring segments in Blender and bake the fracture caps.",
+     "score_gain": 0.15,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Rest key (q00): ring B pitched ~4° toward camera, so the band sits ~15 px low at centre",
+     "severity": "minor",
+     "poses": [
+      "q00_rest",
+      "ui_rest",
+      "ptr_rest"
+     ],
+     "evidence": "zoom_composition_motion/band_q00.png and strip_q00_x760.png. At x≈720 the engine band's top edge is at y≈347-350 against the reference's 332, and the bottom edge at ≈417 against 402. At the band ends (x≈535 and ≈910) the top edges match (≈339-340 and ≈335). The engine band therefore curves into a smile (seen from above) where F000 is almost exactly edge-on. As a result ~42 px of orb shows above the band against ~25 px in F000, and less shows below. Ring A, rings C/D and the orb register within ~2 px, and the q02 band matches, so this is a per-key error at tau=0, likely from the loop-closure blend.",
+     "suggested_fix": "Correct ring B's pitch at tau=0 by about -3.5 to -4.5° (raise its front edge) in the mocap curve. Check that the loop-seam blend (tau≈3.9→0.1) does not alter the F000 key. Re-verify q02, where the band currently registers.",
+     "score_gain": 0.15,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Release has no snap-to-concentric beat (F453/F460 'target' moment)",
+     "severity": "minor",
+     "poses": [
+      "p07_release_snap",
+      "p08_release_home"
+     ],
+     "evidence": "ref_F453 and F460 swing all four rings face-on and concentric, a target/portal shape, with ring A's four arcs closing in last. The engine's p07 (cmp_p07_release_snap.jpg; tilted ellipse pair, full-res ≈x 540-893, y 188-555) and p08 (band plus one circle, ≈x 525-915, y 263-488; p08_sbs.png) go straight back into the tumble. log.txt shows align/alignA/alignInner/faceInner/portal = 0 throughout the release, so existing channels go unused. This is a design divergence rather than a bug.",
+     "suggested_fix": "Keep the client's hold spec, but on release drive faceInner/alignA/alignInner to ~0.8 over ~0.35 s (ease-out), hold ~0.1-0.15 s, close ring A's arcs last, then blend back into the idle tumble. That gives the reference's snap-together moment.",
+     "score_gain": 0.15,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Segment joints show hard steps or light bars as pieces rejoin",
+     "severity": "minor",
+     "poses": [
+      "p07_release_snap",
+      "sweep rel_T"
+     ],
+     "evidence": "sweep/sw_rel_T.png x≈785-820, y≈500-540: a rectangular, flat-faced step where two ring-A segments meet slightly offset (zoom relT_tab_4x.png). In p07_release_snap.png, ring-A joints at ≈x 720-787, y 227-273 and x 680-720, y 453-493 show light bands across the tube (p07_zoom.png). At rest the same joints are thin dark seam lines, matching the reference.",
+     "suggested_fix": "In the last ~10-15% of the close, rotate each piece so its cap normals align before contact. Fade the cap faces into the rest-state dark seam material, or hide the caps once the gap is below ~1 px.",
+     "score_gain": 0.1,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Stray stub of ring B's back piece pokes out beside ring A in the Saturn phase",
+     "severity": "minor",
+     "poses": [
+      "p06_sustain",
+      "sweep hold_R"
+     ],
+     "evidence": "p06_sustain.png ≈x 480-545, y 365-400: a short horizontal tube fragment floats between the left chunk and ring A's left side (zoom p06_leftchunk_3x.png). It is ring B's back piece showing past ring A and reads as a stray fragment. A similar fragment appears on the right at ≈x 900-960, y 365-395.",
+     "suggested_fix": "Push B's back piece further back or up, or shorten its lateral span in this phase, so it stays hidden behind ring A and the orb. Alternatively spread it radially enough that it reads clearly as its own piece.",
+     "score_gain": 0.05,
+     "needs_render_blend": false
+    }
+   ]
+  },
+  {
+   "lens": "environment",
+   "score": 8.1,
+   "verdict": "The layout, sky, clouds, iceberg silhouette, right-hand range and foreground rocks match F000 closely, and the real baked geometry holds up under the hold dolly and the cursor orbit: no stretching, tearing or doubled mountains. Side by side, though, the environment still looks CG. The mountains look like smooth clay, the dark left ridge is faceted and the wrong shape, and there is no lens defocus where the reference has one. The middle of the lake has a fine 'corduroy' ripple where the reference is a calm, glossy mirror with long vertical reflection smears. The mist at the iceberg's waterline is too thin at rest. In the hold, a fog veil washes out the iceberg (+27 levels), while the fog at the mountain base stays flat instead of F420's dense, billowing bank.",
+   "strengths": [
+    "Composition and placement match F000 almost exactly: main peak at about (290,207) in both, iceberg crest at about (1195,328) in both, and the right-hand silhouettes (tall berg, iceberg, far range) within 2-5 px in every 10-px column from x=885 to x=1435. The foreground rocks, snow boulders and right-hand ice chunks are in place.",
+    "Region colours mostly sit within about ±10 levels: sky top 198,208,221 vs 196,206,223; peak snow 194,211,231 vs 192,206,230; corners TL/BR, mid-left and mid-right match; bottom-left boulder 67,95,132 vs 67,98,137; right snow mound 180,188,202 vs 178,184,200; upper iceberg face 64-73 vs 73-79.",
+    "The sky gradient and cumulus cards look right: same shapes, softness and brightness (cloud core 218,223,231 vs 213,220,234), with no halos or card edges.",
+    "Real geometry with baked textures survives the p06 dolly-in and the pointer orbit (ptr_left, ptr_bottom_right): no plate stretching, no floe or rock tearing, no doubled mountains, believable parallax. The bottom of the frame at rest is clean.",
+    "Planar reflections of floes and icebergs are present and correctly placed (vertical streaks under the slabs), and the concentric ripple ring is centred under the sculpture with the correct ellipse proportions and number of rings.",
+    "Snow on the foreground rocks and the granular texture of the right snow mound match the reference well, and the main peak's mean tones along a vertical column stay within about 10 levels of the reference."
+   ],
+   "issues": [
+    {
+     "title": "Mountains look like smooth clay; the dark left ridge is faceted and the wrong shape; the foothill is white instead of dark rock",
+     "severity": "major",
+     "poses": [
+      "q00_rest",
+      "q01_loop15",
+      "q02_loop30",
+      "q03_eye",
+      "ui_rest",
+      "p04_expand_pop",
+      "p05_expand",
+      "p06_sustain",
+      "p07_release_snap",
+      "p08_release_home"
+     ],
+     "evidence": "/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/p3/r11_3/zoom_environment/peak_q00_vs_F000.png and .../zoom_environment/ridge_shape_q00_vs_F000.png. In q00_rest.png the main mountain (150-560, 200-450) has soft, rounded ridges and evenly lit snow. ref_F000 has crisp ribs and couloirs with dark navy rock exposed in the gullies. Dark left ridge (0-190, 275-440): the engine shows flat, low-poly facets with thin crease lines, body colour 45,63,96 vs reference 35,56,90, and after a sigma-2.5 blur its contrast is SD 29.0 vs 43.6. Silhouette (first luma below 110): the reference crest is broad and flat at y 280-291 from x=0 to 75, then drops steeply (x105→y331, x125→365, x145→395). The engine has a pointed peak at (22,279) and a long shoulder at y 306-310 for x 95-135, which is 25-60 px too high and hides part of the white secondary peak (reference at x 100-145, y 295-315). Foothill at (350-530, 400-450): in the reference it is a dark blue rocky ridge; in the engine it is smooth white snow. Region (300-500, 400-440) is 164,179,202 in the engine vs 143,161,187 in the reference, so the base is over-whitened and the rock outcrops seen through the reference mist are missing.",
+     "suggested_fix": "In the Blender reconstruction, reshape the left ridge: broaden and flatten its crest to y≈280-290 over x 0-75 in the F000 camera, and remove the right shoulder so the flank falls to about (145,395) and (175,405). Add subdivision and displacement so no facets show. Re-bake the mountains in Cycles with a material driven by slope and curvature: dark blue-grey rock (about sRGB 35,55,90) on faces steeper than about 40° and in couloirs, snow on ledges and crests, and a slight highlight on ridge lines. Bake at 4K for the main peak and the ridge. Turn the foothill at (350-530, 400-450) into dark rock with a snow cap. Let the mist at the base show rock streaks through it rather than a uniform wash.",
+     "score_gain": 0.4,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Hold fog is wrong: a veil bleaches the iceberg while the fog at the mountain base stays flat (p06 vs F420)",
+     "severity": "major",
+     "poses": [
+      "p05_expand",
+      "p06_sustain",
+      "p07_release_snap",
+      "p08_release_home"
+     ],
+     "evidence": "p06_sustain.png vs ref_F420.png, with .../zoom_environment/p06_iceberg_vs_F420.png and p06_leftmtn_vs_F420.png. Iceberg face (1170-1270, 500-570) is 105,129,158 in the engine vs 78,108,144 in F420. Along column x1180-1240, y 500-575, the engine reads 93-117 R vs 74-86 in the reference. At rest the engine iceberg face (64-73) matches the reference (73-79), and the reference iceberg does not change between F000 and F420, so the hold fog (fogHold=1) adds about +30-40 levels that the reference does not have. The far right range is also +10 too bright. Meanwhile, F420's fog at the left mountain base is a dense, billowing bank, and wisps climb to mid-height over the mountain's lower half. Blurred SD in (0-330, 480-580) is 30.2 in the reference vs 21.8 in the engine. On the mountain mid-face (200-330, 360-440) the reference shows a bright blue mist wash (144,161,194) where the engine is clearer and darker (126,143,169). The engine's fog is a smooth, horizontally layered gradient with no structure.",
+     "suggested_fix": "Change fogHold from a distance veil into a local height fog: put its ceiling at about 1/3-1/2 of the left mountain's height and modulate its density with slowly scrolling fbm noise (2-3 octaves), or use 3-5 soft billow sprites that hug the left mountain base and the space between the ranges. Leave the iceberg and the right range out of it, or cap the hold's added haze there, so the iceberg face stays near (78,108,144). Add one faint wisp on the main mountain's mid-flank. Ramp it with the dolly so it builds rather than pops.",
+     "score_gain": 0.3,
+     "needs_render_blend": false
+    },
+    {
+     "title": "No lens depth of field: background and near rocks are pin-sharp, which exposes the CG",
+     "severity": "major",
+     "poses": [
+      "q00_rest",
+      "q01_loop15",
+      "q02_loop30",
+      "q03_eye",
+      "ui_rest",
+      "p04_expand_pop",
+      "p05_expand",
+      "p06_sustain",
+      "p07_release_snap",
+      "p08_release_home"
+     ],
+     "evidence": ".../zoom_environment/sharpness_ring_vs_far.png. In ref_F000 the ring at (530-650, 330-410) is crisp, while the far floe slab at (930-1050, 440-520) has 3-4 px soft edges. Because the blur depends on depth within one frame, it is DOF, not H.264 softness. The engine is 1-px sharp on both. The reference mountains, iceberg, clouds and even the near rocks (fgrocks_q00_vs_F000.png) are defocused, and F420 has stronger background blur still, while p06 is pin-sharp. This sharpness exposes the dark floe contact lines, the corduroy wavelets and the faceted ridge.",
+     "suggested_fix": "Add a cheap depth-based defocus. Render the environment, then apply a half-res separable gaussian or bokeh blur with circle of confusion from linear depth: focus at the sculpture's distance, about 2.5-3 px maximum at 1440 px for the far field (mountains, iceberg, floes), and about 1-1.5 px for the near-foreground rocks. Increase it slightly as the hold dolly moves in, to match F420. Composite the sculpture and shards sharp on top, or exclude them via depth or stencil, and blur the water's reflection target consistently.",
+     "score_gain": 0.3,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Middle and far lake read as rippled 'corduroy' instead of a calm glossy mirror with long vertical reflections",
+     "severity": "major",
+     "poses": [
+      "q00_rest",
+      "q01_loop15",
+      "q02_loop30",
+      "q03_eye",
+      "ui_rest",
+      "p06_sustain",
+      "p05_expand"
+     ],
+     "evidence": ".../zoom_environment/leftshore_q00_vs_F000.png (water at 0-110, 490-550), reflection_q00_vs_F000.png (530-585), and p06_rightwater_vs_F420.png. The engine draws a uniform, high-frequency horizontal wavelet pattern across the middle and far lake, and it breaks floe reflections into short, broken streaks of about 20-30 px. In the reference the middle and far water is calm and milky-glossy, and the floe reflections are long, soft vertical smears (in F420 about 55-80 px under the slabs at 1080-1150, 655-710). Fine wavelets appear only in the reference's near water. At 4x, the engine hold water shows horizontal pixel-run streaks (p06_floerefl_4x.png).",
+     "suggested_fix": "Fade the amplitude of the small-scale normal map with distance (for example ×0.15 beyond about 25 m, keeping full chop only in the nearest third of the lake). Sample the planar reflection with a vertical anisotropic blur (5-9 taps along screen-Y, length growing with distance) so reflections stretch into long, soft streaks. Use mip-biased or filtered normals at grazing angles to stop the horizontal streaking. Lift the far water slightly toward the milky haze colour (far floes region is 162,182,208 vs 172,189,208).",
+     "score_gain": 0.25,
+     "needs_render_blend": false
+    },
+    {
+     "title": "At rest, the iceberg's waterline mist is too thin and too low; the lower iceberg stays dark and its base edge is crisp",
+     "severity": "major",
+     "poses": [
+      "q00_rest",
+      "q01_loop15",
+      "q02_loop30",
+      "q03_eye",
+      "ui_rest"
+     ],
+     "evidence": ".../zoom_environment/iceberg_q00_vs_F000.png and waterline_right_q00_vs_F000.png. Along column x1080-1120 in ref_F000, the lower iceberg from y 405 to 445 is washed by mist (101-124, 128-146, 161-172). In the engine it stays dark (64-69, 96-99, 135-137) down to y≈425, and its mist only ramps from y 430 to 460, leaving a crisp dark bottom edge at about y 435. The far white berg behind it (930-1080, 330-390) is also too bright and plain: 171,186,205 vs 158,171,194.",
+     "suggested_fix": "Make the iceberg's waterline mist about twice as tall, with its top near screen y≈395 at rest instead of about 430. Raise its opacity at the waterline to about 0.5-0.55 of a haze colour around (170,185,205), fade it smoothly upward, and break it up horizontally with soft noise, so the bottom 40% of the iceberg seems to emerge from fog as it does in F000. Keep the faint darker base line at y≈450 visible through it.",
+     "score_gain": 0.2,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Ripple ring under the sculpture is soft and low-contrast; the orb glint is neutral and sits too low",
+     "severity": "minor",
+     "poses": [
+      "q00_rest",
+      "q01_loop15",
+      "q02_loop30",
+      "q03_eye",
+      "ui_rest",
+      "p06_sustain"
+     ],
+     "evidence": ".../zoom_environment/ripple_q00_vs_F000.png and glint_q00_vs_F000.png. The engine's rings are soft grey shadow bands: the outer trough at (560-860, 575-589) is 175,189,211 vs 145,162,192 in the reference, and blurred SD in (440-1000, 560-700) is 14.4 vs 20.2. The reference rings have bright, crisp crests, cobalt troughs and a choppy inner zone. The reference glint is cyan (176-182, 194-199, 216-220) and sits on the ripple crests at y 669-706. The engine glint is neutral (179-187, 191-198, 206-213), made of separate sparkle dots, and about 25 px lower (y 693-736). Near water is about 11 levels darker (167,181,201 vs 177,189,209). In p06 the bottom 45 px show a flat, smooth dark band with streaky edges at x 900-1440 (p06_bandedge_4x.png) where F420 has real wave crests (SD 10.8 vs 16.1).",
+     "suggested_fix": "Sharpen the ring's wave profile (a pow or trochoid shape, so crests are narrow and bright and troughs broad), raise the ring normal amplitude about 1.5×, and bias trough reflections toward the zenith blue. Add a small chop in the inner rings. Tint the orb's glint with its cyan emission and render it as caustic-like streaks on the crests at the reference height (about 25 px higher). In the hold, filter the ring's normal at grazing angles so the outer ring reads as a wave crest rather than a smeared band.",
+     "score_gain": 0.2,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Mist plume at the summit is missing",
+     "severity": "minor",
+     "poses": [
+      "q00_rest",
+      "q01_loop15",
+      "q02_loop30",
+      "q03_eye",
+      "ui_rest"
+     ],
+     "evidence": ".../zoom_environment/peakplume_refs.png vs peakplume_engine.png. ref_F000 and loop_F030 both show a soft white mist puff on the summit's left shoulder (about x 200-265, y 195-250). The engine summit is clean in all four idle poses.",
+     "suggested_fix": "Add 1-2 small soft-alpha mist sprites anchored to the summit's left shoulder, depth-tested against the mountain, with a core opacity of about 0.6. Let them evolve slowly through UV scroll and noise, and keep them out of the cloud drift so they stay with the peak.",
+     "score_gain": 0.1,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Left mid-distance floes are shifted right by about 40 px, and their edges and the far shore ledge are too dark and crisp",
+     "severity": "minor",
+     "poses": [
+      "q00_rest",
+      "q01_loop15",
+      "q02_loop30",
+      "q03_eye",
+      "ui_rest"
+     ],
+     "evidence": ".../zoom_environment/farfloes_q00_vs_F000.png, leftshore_q00_vs_F000.png and leftshoreline_4x.png. The engine floe cluster spans x≈110-350 (y 475-540) vs x≈67-322 in the reference. The long flat floe is at (375-665, 535-549) vs (350-650, 545-560). The engine draws a dark shore ledge band at (0-120, 481-488) with luma about 86-96, where the reference reads about 155-170, and its floe-to-water contact edges are near-black 1-px lines. Far floes have less haze: 162,182,208 vs 172,189,208.",
+     "suggested_fix": "In the reconstruction, move the left floe group so it lands about 40 px further left (and about 5-10 px lower for the long floe) in the F000 camera. Reduce the baked AO and darkness on the floe-to-water contact edges and the far-left ledge face, and add about +10 levels of aerial haze at that depth. DOF will soften the rest.",
+     "score_gain": 0.1,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Far range and tall berg are slightly too bright and plain; the horizon sky is slightly greyer",
+     "severity": "minor",
+     "poses": [
+      "q00_rest",
+      "q01_loop15",
+      "q02_loop30",
+      "q03_eye",
+      "ui_rest"
+     ],
+     "evidence": "Right range (1230-1430, 370-410) is 164,178,198 vs 153,166,189, and the tall berg (930-1080, 330-390) is 171,186,205 vs 158,171,194. The reference shows darker vertical striations on both, while the engine renders them as even bright white. The region_stats 'sky horizon' reads 214,218,223 vs 205,212,224, which is R +9, so slightly warm and grey.",
+     "suggested_fix": "Darken the far range and the tall berg by about 10-13 levels and add faint vertical rock striations in the bake. Cool the band of sky just above the horizon by about -8 R and -5 G.",
+     "score_gain": 0.05,
+     "needs_render_blend": false
+    }
+   ]
+  },
+  {
+   "lens": "glitch_hold_sweep",
+   "score": 7.7,
+   "verdict": "Intro, idle tumble and release are close to glitch-free: no tears, holes, doubled mountains, hard fog bands, ring-through-ring intersections or sky/fog banding. The hold and pop (dolly-in) states carry two artefacts a demanding art director would flag. First, the bottom ~50 px of every dolly-in frame is a smeared light band whose dark patches have stair-stepped texel edges and pixel speckle. This is exactly the \"weird bottom of frame\" the client warned about; F420 shows crisp wind-wave crests there. Second, every opened arc ends in a flat, uniformly shaded, low-poly cap that reads as cut plastic pipe, where F420 shows bevelled, refracting ice faces. Smaller items: a bullseye-like sustain pose, a flat grey rock wedge in the pop corner, UV-seam dark ticks on floes, grey smudges on the hold orb, and the headline still visible in the hold sweep frames (to verify).",
+   "strengths": [
+    "Fog over the mountain bases in the hold is soft, as in F420. p06_sustain (0-560, 480-600) is a smooth gradient with no hard band; 1-px column scans at x=60 (y 340-640) and x=1300 (y 0-340) contain no flat run of 6 px or more, so there is no banding in fog or sky. The iceberg-base mist is soft in hold_L/TR and intro_3.",
+    "No doubled silhouettes when the cursor orbits the camera: the left mountain and the iceberg are single and parallax-consistent across sw_hold_L, sw_hold_R, sw_hold_TR and sw_hold_BL.",
+    "Waterline / far-shore edge is cleanly anti-aliased even dollied in (p06_sustain 480-840 x 600-612); ring silhouettes have 1-2 px AA transitions with no stair-stepping against the sky (sw_hold_TR 960-1080 x 200-320).",
+    "No ring-through-ring interpenetration in any hold, pop or release frame inspected, and shards never pierce rings (sw_hold_B 850-970 x 170-300).",
+    "The opened shape reads beautifully as an exploded vortex in sw_hold_T, sw_hold_TR and sw_pop_B, close in spirit to F420's arcs.",
+    "Idle tumble tau_0.25..3.75 and the intro frames are clean: near rocks, floes and the concentric ripple ring at rest show no tearing or stretching, and the bottom strip at rest is crisp.",
+    "Arc joint seams on the rings at rest match the reference's segment joints (loop_F015/F045 show the same transverse joint lines), and the dark end contours of edge-on bands match loop_F000. These are not glitches; keep them.",
+    "The peak wisp on the left mountain matches ref_F000."
+   ],
+   "issues": [
+    {
+     "title": "Smeared, stair-stepped near water / foreground band at the bottom of every dolly-in frame",
+     "severity": "major",
+     "poses": [
+      "p06_sustain",
+      "sw_hold_L",
+      "sw_hold_R",
+      "sw_hold_T",
+      "sw_hold_B",
+      "sw_hold_BL",
+      "sw_hold_TR",
+      "sw_pop_L",
+      "sw_pop_R",
+      "sw_pop_T",
+      "sw_pop_B",
+      "sw_pop_BL",
+      "sw_pop_TR"
+     ],
+     "evidence": "p06_sustain.png: across the whole bottom strip y=716-766 there is a light band with a hard-ish top edge near y=716-723 and dark-blue smeared patches. At 4x nearest (zoom p06_bot_br4x, x 1000-1360, y 676-766) the patch borders are horizontal stair-steps of 2-8 px runs x 1 px rows, plus speckle. Same in the centre (zoom p06_bot_bc4x, x 300-660, y 723-766). sw_hold_L: (1200-1440, 715-745) and (0-600, 706-766) show the same stepped streaks. sw_pop_B: (960-1440, 673-740) and (480-960, 660-720) show blocky stepped patches and salt-and-pepper speckle (zoom popB_steps4x, x 1060-1300). The stack of all six hold bottoms (zoom hold_bottoms.png) shows it in every hold frame. Reference ref_F420 has the same light foreground band at y=716-766, but as crisp, smoothly curved dark-blue wind-wave crests on light water (zoom bottom_p06_vs_ref.png). The animated ripple will make the steps crawl.",
+     "suggested_fix": "Find which layer draws this band (planar-mirror RT vs. baked near shelf vs. lake-bed through low Fresnel) and fix its resolution and filtering. (1) Render the mirror RT at 1.0x drawing-buffer resolution on T1, or at least 0.75x with LinearFilter plus a 1-2 px separable blur. Never sample it with nearest. Clamp or fade the ripple UV offset within ~40 px of the screen edge. (2) Add a near-field wind-wave normal (2 scrolling octaves, amplitude rising toward the camera) so the foreground breaks into F420's dark wave crests instead of a smeared cloud reflection. (3) If it is a baked shelf or lake-bed texture, re-bake it in Blender at 2-4x texel density for the hold camera distance and enable anisotropy 8-16 plus mipmaps.",
+     "score_gain": 0.5,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Opened arc ends are flat, uniformly shaded, low-poly caps (cut-plastic-pipe look); side chunks read as puffy blobs",
+     "severity": "major",
+     "poses": [
+      "p06_sustain",
+      "sw_hold_L",
+      "sw_hold_R",
+      "sw_hold_B",
+      "sw_hold_BL",
+      "sw_hold_TR",
+      "sw_pop_B"
+     ],
+     "evidence": "Each cap is a single flat light-blue plane with no refraction, frost or edge highlight, and its silhouette is 8-10 straight polygon segments: sw_hold_R left-chunk cap (400-437, 293-393) and right-chunk cap (970-1003, 283-393) (zoom holdR_bandends3x); p06_sustain left-chunk face (420-487, 330-487) and right cap (1004-1040, 375-490) (zooms p06_ringL, p06_xR4x); sw_hold_L bottom-arc end (837-910, 648-683) (zoom holdL_botarc); sw_hold_TR top-arc end (895-955, 100-168) (zoom holdTR_toparc4x); sw_hold_BL (487-545, 280-355), an octagonal flat face plus a thin fin (zoom holdBL_l4); sw_hold_B (665-720, 485-557) is a flat white disc and (815-890, 120-200) another cap; sw_pop_B (540-570, 470-540). The side chunks in p06 (355-490, 315-490; 945-1090, 318-490) look like smooth marshmallow blobs. ref_F420's cut ends (360-440, 235-350; 930-1020, 335-440) are bevelled, faceted ice with internal refraction and bright edge glints.",
+     "suggested_fix": "Give the cap faces the same ice shading as the tube: normal perturbation and frost, refraction or thickness term, and Fresnel rim. If the caps lack UVs, use triplanar projection. Add a small chamfer or bevel to the cap rim so it catches a specular line. Raise the tube cross-section segment count to 24 or more (or smooth the cap outline) so no polygon corners show at hold distance. Add internal crack or bubble detail to the caps. This can be done by re-exporting the arcs from the Blender reconstruction with a Bevel modifier and proper cap UVs, then applying the existing IceMaterial normal/thickness path to the cap material group.",
+     "score_gain": 0.4,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Sustain pose reads as a flat bullseye with stubby 'ear-muff' side chunks instead of an opened gyroscope",
+     "severity": "minor",
+     "poses": [
+      "p06_sustain",
+      "sw_hold_R"
+     ],
+     "evidence": "p06_sustain: two concentric face-on vertical rings (485-950, 150-640 and 540-910, 250-550) frame the orb dead-centre, with a horizontal band across (490-990, 395-530). The opened outer ring shows only as two end-on stubs (355-490, 315-490; 945-1090, 318-490), so the 'open' shape barely reads. sw_hold_R has the same arrangement (495-950, 140-640). In ref_F420 the central ring is at roughly a 3/4 tilt with arcs encircling it, and sw_hold_T / sw_hold_TR / sw_pop_B already read as a clear vortex.",
+     "suggested_fix": "Bias the hold so the inner rings are never within about 20 degrees of face-on at the end of the dolly. Either add a fixed 25-35 degree tilt offset to the expand frame, or phase the slow-motion idle rotation so the sustain lands at 30-50 degrees. Open the outer arcs within the view plane (tangentially or screen-radially) so they are not seen end-on as stubs.",
+     "score_gain": 0.2,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Flat, untextured grey-blue rock wedge at the bottom-left corner during the dolly (pop); flat slate faces on the near rock at release",
+     "severity": "minor",
+     "poses": [
+      "sw_pop_L",
+      "sw_pop_BL",
+      "sw_pop_B",
+      "sw_pop_T",
+      "sw_pop_R",
+      "sw_pop_TR",
+      "sw_rel_BL"
+     ],
+     "evidence": "sw_pop_B (0-37, 707-760), sw_pop_L and sw_pop_BL (0-40, 700-766): a uniform slate-grey silhouette with no texture or shading, cut by the frame edge (zooms popB_corner4x, corner_rock_cmp). It is the near rock passing close to the camera mid-dolly and reads as a cardboard cut-out in the corner of the frame. sw_rel_BL: the near-left rock's shaded side (0-367, 703-736) is one flat slate tone (zoom relBL_rock3x).",
+     "suggested_fix": "Dither-fade environment meshes within about 1-1.5 m of the camera during the dolly, or tweak the dolly path so it does not graze that rock. Re-bake the rock's side and under faces with bounce light and adequate texel density (Blender bake, larger UV share for the near rocks).",
+     "score_gain": 0.15,
+     "needs_render_blend": false
+    },
+    {
+     "title": "UV-seam dark ticks on floe side faces and edges",
+     "severity": "minor",
+     "poses": [
+      "p06_sustain",
+      "sw_hold_L",
+      "sw_intro_3"
+     ],
+     "evidence": "p06_sustain: 1-px near-black vertical lines about 5 px tall on the near-left floe side face at (34, 637-643), (80, 637-642), (152, 640-643) and (219, 634-640), plus a darker rectangular segment at (104-124, 641-644) (zoom p06_floeticks8x). sw_hold_L: a comb of 4-5 dark ticks at (1360-1379, 622-627) (zoom holdL_specks8x). sw_intro_3 at rest: 3 ticks at (1279-1288, 478-482) (zoom intro3_floeedge6x). They will twinkle as the camera moves.",
+     "suggested_fix": "Re-bake the floe textures with a 16-32 px bake margin of type Extend, or run a dilation pass on the existing bakes. Check that mip levels do not bleed the background colour across UV island borders (pad islands, or generate mips after dilation).",
+     "score_gain": 0.1,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Hold orb shows grey smoke-like smudges on a clipped white disc with a sticker-like rim",
+     "severity": "minor",
+     "poses": [
+      "p06_sustain",
+      "sw_hold_B",
+      "sw_hold_L",
+      "sw_hold_R"
+     ],
+     "evidence": "p06_sustain: a grey blob at (712-755, 335-355) on a mostly clipped white disc (zoom p06_orb4x). sw_hold_B: a grey Y-shaped smudge at (740-780, 392-440) (zoom holdB_orb4x). sw_hold_L/R: grey veins and fine dither grain inside the disc, and a crisp bright outline ring at the orb edge (zoom hold_orbs3x). The tendrils read as dirt rather than glowing plasma.",
+     "suggested_fix": "Make the filaments brighter than the base (additive cyan-white), keep the core below clipping so structure survives the tone curve, and replace the hard rim with a soft Fresnel falloff into the bloom.",
+     "score_gain": 0.1,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Headline still fully visible in every hold sweep frame (ink-dissolve not seen)",
+     "severity": "minor",
+     "poses": [
+      "sw_hold_L",
+      "sw_hold_R",
+      "sw_hold_T",
+      "sw_hold_B",
+      "sw_hold_BL",
+      "sw_hold_TR"
+     ],
+     "evidence": "In all sw_hold_* frames (camera fully dollied, z=4.74) the headline 'Ridiculously innovative studio for humankind' is at full opacity and collides with the ice arcs, e.g. sw_hold_B (430-590, 530-590) and sw_hold_L (490-590, 530-600). The spec says it ink-dissolves during the hold. This may be a capture-harness artefact if the sweep forces the expand phase without the real pointerdown path.",
+     "suggested_fix": "Verify on a real press-and-hold. If the dissolve is driven by the UI pointer handler, drive it from the engine's expand phase instead, so any path into the hold (including the capture hook) dissolves the copy.",
+     "score_gain": 0.1,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Per-pixel sparkle noise on the rest-pose ripple field (likely temporal shimmer)",
+     "severity": "minor",
+     "poses": [
+      "sw_tau_1.25",
+      "sw_intro_3",
+      "sw_tau_2.75"
+     ],
+     "evidence": "sw_tau_1.25 (520-880, 580-700): a dense field of 1-px bright and dark speckles over the concentric ripples from high-frequency normal detail (zoom tau125_ripples4x). The waterline TAA does not cover this area, so it will likely crawl or twinkle in motion.",
+     "suggested_fix": "Band-limit the micro-normal octave (fade it by screen-space derivative or mip level), or extend the temporal accumulation to the whole water surface.",
+     "score_gain": 0.05,
+     "needs_render_blend": false
+    }
+   ]
+  },
+  {
+   "lens": "glitch_cursor_orbit",
+   "score": 8.6,
+   "verdict": "Both of the client's red lines hold under cursor orbit. In all 10 ptr poses no mountain is doubled or ghosted, there are no plate edges, holes, seams or 1-px border lines, and the edges revealed at az ±4.9 deg are fully modelled and textured. Parallax is depth-correct: going from ptr_rest to ptr_right, distant peaks shift about +150 px, the iceberg +114 px, and the floes less. What keeps the score below 9 are small glitches that show up on close inspection or in motion. (1) The far water has hard-edged pale blotches and 1-px stair-stepped ripple dashes. (2) Near-black single pixels jump along the 1-px front edge of the flat ice sheet left of the sculpture (2-4 per pose, down to RGB 2,3,8), and also sit on stray sliver geometry. (3) When the pointer is near the bottom edge, a flat, near-black navy notch slides into the bottom-right corner. That is exactly the 'something weird at the bottom' the client warned about. (4) Smaller items: a comb of dark ticks on a far floe, faint sawtooth marks in the mist at the iceberg base, and dotted aliasing on the ring refraction lines. Shaders, bake padding or a re-bake, and retouching can fix all of these; none needs a render blend.",
+   "strengths": [
+    "No doubled or ghosted mountains in any of the 10 poses: levels-stretched skyline bands (y 150-480) and edge-detect maps show single, consistent silhouettes, and the parallax is depth-correct (real 3D, no projected plates). Keep this exactly as it is.",
+    "Frame edges are clean in every pose: the 60-px left/right strips and the top and bottom rows show no holes, plate ends or stretched texels, and the border row/column averages match their neighbours (no 1-px lines). The newly revealed far-left ridge (ptr_right, ptr_top_right, ptr_bottom_right) and far-right horizon/snow mound (ptr_left, ptr_top_left, ptr_bottom_left) are fully modelled.",
+    "The sky has no banding (dither grain only) and no cloud-card edges, even under a strong levels stretch. The horizon mist band is a smooth gradient with no card edges or intersections with mountains in any pose.",
+    "Silhouettes are well anti-aliased: at 4x the main left peak and the iceberg cliff have soft 1-2 px edges with no stair-stepping. There is no z-fighting and no NaN blocks, and a firefly scan found no bright outliers apart from one ridge texel.",
+    "The lake stays coherent in every pose: concentric ripples, glint and the sculpture reflection move correctly, nothing is doubled, and there is no sky gap at the horizon line.",
+    "The orb push-in (camera z 11.79 to 9.56) keeps mountains, floes and rocks crisp, with no texel stretching or magnification blur.",
+    "The bottom 120-px strip at rest and in every ±az/±el pose shows no bake seams, tone breaks or stretched texels on the foreground shelves and rocks (apart from the down-tilt notch in issue 3)."
+   ],
+   "issues": [
+    {
+     "title": "Far-water mottling: hard-edged pale blotches and 1-px stair-stepped ripple dashes that will crawl when the cursor orbits",
+     "severity": "major",
+     "poses": [
+      "ptr_rest",
+      "ptr_left",
+      "ptr_right",
+      "ptr_top",
+      "ptr_bottom",
+      "ptr_top_left",
+      "ptr_top_right",
+      "ptr_bottom_left",
+      "ptr_bottom_right",
+      "ptr_orb"
+     ],
+     "evidence": "ptr_rest.png box x420-560,y462-482 (strongest at x487-553,y463-476): pale irregular 'map-outline' patches on otherwise smooth water. Along y=470, luminance jumps between adjacent pixels on flat water (182->188, 191->181, 178->188, 181->193), which is hard 1-px edges, not soft reflection. Below them are horizontal 1-px stair-stepped ripple dashes. ptr_left.png x280-420,y465-485 and ptr_right.png x522-580,y462-487 show the same blotches with a different shape and position, so they change with the camera and will shimmer during the orbit. ref_F000 in the same box is smooth, soft water with soft vertical floe streaks. Zooms: zoom_glitch_cursor_orbit/FARWATER_eng_ref3x.png (engine top, reference bottom), W_refl4x_rest/left/right.png, W_shape4x_right.png.",
+     "suggested_fix": "Band-limit the water normal perturbation in the far field. Scale the ripple and micro-normal amplitude by distance, or by fwidth(uv), so it fades out before the band at screen y≈455-500. Sample the planar-reflection render target from a blurred mip with a roughness ramp over distance instead of one sharp tap. Extend the waterline temporal AA to the whole lake band (about y 450-600) so what remains does not crawl.",
+     "score_gain": 0.3,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Near-black single-pixel specks jumping along sub-pixel edges (ice-sheet rim, floe comb, rock slivers)",
+     "severity": "major",
+     "poses": [
+      "ptr_rest",
+      "ptr_left",
+      "ptr_right",
+      "ptr_top",
+      "ptr_bottom",
+      "ptr_top_left",
+      "ptr_top_right",
+      "ptr_bottom_left",
+      "ptr_bottom_right",
+      "ptr_orb"
+     ],
+     "evidence": "Speck scan (pixel darker than all 8 neighbours by >35 luma): 2-4 per pose, mostly on the 1-px navy front edge of the flat ice sheet left of the sculpture. ptr_right (703,537) RGB 6,14,27; ptr_bottom_left (577,510) RGB 3,6,14, (601,511) RGB 2,3,8 and (562,510); ptr_rest (616,536) and (485,542); ptr_left (560,537); ptr_top (610,562); ptr_top_left (597,564); ptr_top_right (664,561); ptr_bottom (491,515); ptr_bottom_right (662,508) and (699,510); ptr_orb (618,574). The edge line itself is about 80-107 luma; the specks are 3-68. The same specks appear on the far-right floe comb (ptr_bottom (1279,455), ptr_top_right (1377,510)) and on needle slivers of the foreground rock right of centre (ptr_right (934,750), ptr_bottom (1011,716)). Their position changes from pose to pose, so they will twinkle as 'crawling ants' along the edge while the cursor moves. Zooms: zoom_glitch_cursor_orbit/BLACKPX8x.png, SPECKS8x_grid.png.",
+     "suggested_fix": "Most likely cause: sub-pixel side faces fetching the empty (black) atlas background at coarse mips. Edge-pad every baked .webp atlas (Blender bake margin 16-32 px with Extend, or a push-pull fill of the empty background) and regenerate the mipmaps from the padded image. Guard the shader against degenerate normals or NaN (no normalize(0); clamp the minimum albedo). Weld or delete sliver triangles on the ice-sheet rim and the rock crest. Let the temporal AA cover the lake band.",
+     "score_gain": 0.3,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Flat near-black navy notch slides into the bottom-right corner when the pointer goes to the bottom edge",
+     "severity": "major",
+     "poses": [
+      "ptr_bottom",
+      "ptr_bottom_left",
+      "ptr_bottom_right"
+     ],
+     "evidence": "ptr_bottom.png x1237-1440,y743-766: a rounded dark crescent wall cut by the frame edge. ptr_bottom_left.png x1327-1440,y730-766, with a pale floor (#93a4b9) visible inside like a hole. ptr_bottom_right.png x1130-1218,y752-766, plus a sliver at x1310-1440,y759-766. The wall colour is #13365d-#1a3f6a (luma about 55): flat, untextured, and the darkest, most saturated patch in the frame, darker than any shelf notch visible at rest (#2c4969-#3f5370). It sits just below the frame in ptr_rest, so it only appears on the downward pitch (el -1.18 deg). It is plausible geometry (a melt pool or notch in the foreground shelf), but it reads as a dark blob or hole at the bottom edge, which is the client's explicit red line. Zoom: zoom_glitch_cursor_orbit/BRSTACK_bottoms.png (rest / bottom / bottom_left / bottom_right).",
+     "suggested_fix": "Re-bake that foreground notch with lighter walls (more indirect bounces and an AO lift so it reads as lit ice like the other notches), or fill or reshape it in the reconstruction, since the reference camera never showed it. Alternatively, cap the downward pointer pitch at about -0.6 deg, or add a faint bottom-edge haze so the notch never enters the frame.",
+     "score_gain": 0.2,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Stray engine-only micro geometry: dark 'comb' ticks on a far floe, a lone grey tick, needle spikes on a foreground rock",
+     "severity": "minor",
+     "poses": [
+      "ptr_rest",
+      "ptr_left",
+      "ptr_right",
+      "ptr_bottom",
+      "ptr_top_right",
+      "ptr_orb"
+     ],
+     "evidence": "zoom_glitch_cursor_orbit/COMB6x.png: in ptr_rest at x1281-1290,y478-483, four dark 1-px vertical ticks on a white patch at the back edge of the far floe right of the sculpture. ref_F000 in the same box shows a clean, soft white patch. The comb is in every pose with a stable pattern (ptr_left x1186-1194,y476-480; ptr_bottom about x1270-1290,y450-458; ptr_top_right about x1365-1390,y503-512), so it is geometry or bake content, not z-fighting. There is also a lone 1x4 px grey tick at ptr_right (951,425), just left of the iceberg, and 1-px needle spikes on the crest of the dark foreground rock right of centre (ptr_right about x900-940,y745-752; ptr_bottom about x985-1015,y712-718), which also carry the black specks from issue 2 (SPECKS8x_grid.png).",
+     "suggested_fix": "Delete or decimate the thin sliver geometry (the pegs on that floe, the needles on the rock crest), or paint them out of the bake. Lightly smooth the rock-crest silhouette.",
+     "score_gain": 0.1,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Faint sawtooth / peak-shaped grey marks inside the iceberg-base mist band",
+     "severity": "minor",
+     "poses": [
+      "ptr_rest",
+      "ptr_left",
+      "ptr_right",
+      "ptr_orb"
+     ],
+     "evidence": "zoom_glitch_cursor_orbit/ICEBASE_eng_ref_right.png (engine rest / reference F000 / engine right): ptr_rest x1015-1167,y450-460 shows faint darker triangular marks inside the waterline mist under the iceberg; the reference shows a uniform soft mist band there. In ptr_right they sit at x1110-1273,y451-460. They move +105 px with the iceberg (+114 px), not with the distant peaks (+150 px), so they are baked into the iceberg, shelf or mist-card texture, not a see-through gap.",
+     "suggested_fix": "Raise the waterline mist opacity slightly across y≈445-462 at the iceberg base, or retouch the iceberg-base bake to remove the dark sawtooth.",
+     "score_gain": 0.1,
+     "needs_render_blend": false
+    },
+    {
+     "title": "Dotted aliasing along thin refraction lines and the rim of the rings",
+     "severity": "minor",
+     "poses": [
+      "ptr_left",
+      "ptr_orb",
+      "ptr_bottom_right",
+      "ptr_top_left"
+     ],
+     "evidence": "zoom_glitch_cursor_orbit/RINGSPECK6x.png: in ptr_left x782-802,y297-313 (and the same area in ptr_orb), a chain of isolated darker-blue pixels (about 40 luma below their neighbours) runs along a thin internal highlight line in the upper-right ring. ptr_bottom_right (907,371) has a dark speck on the ring rim silhouette, and ptr_top_left has similar specks at (810,526). These are sub-pixel line aliasing and will crawl while the rings rotate.",
+     "suggested_fix": "Filter the ice normal and refraction detail by screen-space derivatives (fade high-frequency normal perturbation when fwidth is large), or include the sculpture in the temporal AA resolve.",
+     "score_gain": 0.05,
+     "needs_render_blend": false
+    }
+   ]
+  }
+ ]
+}

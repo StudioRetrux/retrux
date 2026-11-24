@@ -1,15 +1,15 @@
 // Samples the choreography phase / drivers around a synthetic click.
 import { createRequire } from "node:module";
-const require = createRequire("C:/Users/fvldi/AppData/Local/Temp/claude/dc2ac90effee4131/570a569a-5122-4ff1-b51f-d34d42e5fde3/scratchpad/tools/package.json");
+const require = createRequire("/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/hero-pipeline/tools/package.json");
 const { chromium } = require("playwright-core");
 const browser = await chromium.launch({
-  executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+  executablePath: (process.env.CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"),
   headless: true,
-  args: ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"],
+  args: [(process.platform === "win32" ? "--use-angle=d3d11" : "--use-angle=metal"), "--enable-gpu", "--ignore-gpu-blocklist"],
 });
 const page = await browser.newPage({ viewport: { width: 1440, height: 766 } });
 page.on("pageerror", (e) => console.log("pageerror", e.message));
-await page.goto("http://localhost:5173/", { waitUntil: "domcontentloaded" });
+await page.goto(((process.env.LAB || "http://localhost:5173") + "/"), { waitUntil: "domcontentloaded" });
 await page.waitForFunction(() => document.documentElement.dataset.heroReady === "1", null, { timeout: 120000 });
 await page.waitForTimeout(3600);
 const sample = () =>

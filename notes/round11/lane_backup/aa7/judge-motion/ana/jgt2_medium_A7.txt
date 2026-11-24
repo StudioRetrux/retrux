@@ -1,0 +1,1 @@
+{"frames":240,"outsideBase3x3":1763,"darker":1760,"laneCloserToGT":447,"meanErrLane":11.78,"meanErrBase":7.47,"thinDarkPx":4599782,"thinDark_meanSignedLaneMinusGT":0.14,"thinDark_meanSignedBaseMinusGT":0.27,"thinDark_meanAbsLane":1.35,"thinDark_meanAbsBase":1.38,"thinDarkOutside":1219,"thinDarkOutsideDarker":1219}

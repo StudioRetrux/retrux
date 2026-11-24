@@ -1,0 +1,85 @@
+--- a/retrux-web/app/hero/engine/world/Water.ts
++++ b/retrux-web/app/hero/engine/world/Water.ts
+@@ -1035,6 +1035,58 @@
+   return src.slice(0, i + LK_FFB_ANCHOR.length) + LK_FFB_GLSL + src.slice(i + LK_FFB_ANCHOR.length);
+ }
+ 
++/**
++ * AA8 tip (21 Nov, the faint pale spot at the near far floe's thin tip at render scale 1; `?fftip=0` = AA7 exactly: this text
++ * is not in the shader then). Where the floe thins out its face is less than one mirror row tall and runs at a slight slant
++ * across the rows, so the target holds it as a staircase of short steps: on the columns between two steps no row centre lies
++ * on the face (debug renders: the two bracketing rows are the floe's sunlit inside 0.6-1.2 m behind the face's entry and the
++ * far shore, or two inside rows), the guard above has no face row to copy and the lookup stays pale. There the face's own
++ * texels are a few columns to the side in the same two rows: when the front row lies LK_FFTIP_G..+0.15 m (0.35..0.5) or more
++ * behind X's lookup point (fading out over the guard's depth band), the two rows are read 1, 2 .. 6 columns to each side
++ * (LK_FFTIP_S x 1..LK_FFTIP_N; every column: a 2-column stride skipped the one-column steps of the farther floes' faces, which
++ * then flickered as dark dots), and a texel that is the face (path length within LK_FFTIP_W..+0.4 m (0.6..1.0) of X's lookup
++ * point, 0.15..0.3 m in front of the front row, darker than it by LK_FFTIP_L..+0.1 (0.25..0.35) luma) gives the lookup its
++ * colour, nearest columns first. Only the lookup's colour changes, and only toward a face texel. The same row starvation
++ * leaves smaller pale patches under the farther floes' feet; they go the same way (toward the image with twice the rows).
++ */
++const LK_FFTIP_ANCHOR = "            cF = mix(cF, mix(c0, c1, vR - j0), gFt);\n";
++const LK_FFTIP_END = "            // (AA8 tip end)\n";
++const LK_FFTIP_GLSL = /* glsl */ `            {
++              float dXt = distance(uMirrorCamPos, X + vec3(0.0, y0 + hM, 0.0));
++              float gI = smoothstep(LK_FFTIP_G, LK_FFTIP_G + 0.15, pm - dXt) * (1.0 - smoothstep(LK_FFBD0, LK_FFBD1, pm - dXt));
++#if LK_FFTIP_B == 1
++              // only a front row whose centre lies past X's foot line on the under-water side (the target's "up" is toward uvM):
++              // its line of sight enters the floe through the clip at the water line, so it shows the inside, never the face (a
++              // sunlit face standing behind X, above the line, keeps its colour: else dark dots in the far floes' light columns)
++              float fRw = uvFt.y * uEnvMirrorSize.y;
++              float sUp = sign(clamp(uvM.y, 0.0005, 0.9995) * uEnvMirrorSize.y - fRw);
++              gI *= smoothstep(0.0, 0.25, (fRw - (r0.a <= r1.a ? j0 + 0.5 : j0 + 1.5)) * sUp);
++#endif
++              if (gI > 0.0) {
++                vec3 cT = vec3(0.0);
++                float kT = 0.0;
++                for (int s = 1; s <= LK_FFTIP_N; s++) {
++                  for (int q = 0; q < 4; q++) {
++                    float o = float(s) * LK_FFTIP_S * (q < 2 ? -1.0 : 1.0) / uEnvMirrorSize.x;
++                    float jr = (q == 0 || q == 2) ? j0 + 0.5 : j0 + 1.5;
++                    vec4 rq = textureGrad(uEnvMirror, vec2(clamp(ux + o, 0.0005, 0.9995), jr / uEnvMirrorSize.y), dxF, vec2(0.0));
++                    float wq = (1.0 - smoothstep(LK_FFTIP_W, LK_FFTIP_W + 0.4, abs(rq.a - dXt))) * smoothstep(0.15, 0.3, pm - rq.a) * smoothstep(LK_FFTIP_L, LK_FFTIP_L + 0.1, lN - dot(rq.rgb, lW));
++                    float aq = wq * (1.0 - kT);
++                    cT += aq * rq.rgb;
++                    kT += aq;
++                  }
++                }
++                if (kT > 0.0) cF = mix(cF, cT / kT, gFt * gI * kT);
++              }
++            }
++` + LK_FFTIP_END;
++/** The guard's source with the AA8 tip search (throws if the anchor moved). */
++function waterFragTip(src: string) {
++  const i = src.indexOf(LK_FFTIP_ANCHOR);
++  if (i < 0 || src.indexOf(LK_FFTIP_ANCHOR, i + 1) >= 0) throw new Error("Water: AA8 tip anchor");
++  return src.slice(0, i + LK_FFTIP_ANCHOR.length) + LK_FFTIP_GLSL + src.slice(i + LK_FFTIP_ANCHOR.length);
++}
++
+ const WATER_VERT = /* glsl */ `
+ uniform mat4 uPlateViewProj;
+ uniform mat4 uMirrorViewProj;
+@@ -2237,6 +2289,23 @@
+           // AA5b (the far-floe pale block, LK_FFB_GLSL): `?ffblock=0` = AA3 exactly (same source); lab `?debug&ffb=<texels>`.
+           if (lq?.get("ffblock") !== "0") {
+             frag = waterFragFF(WATER_FRAG);
++            // AA8 tip (LK_FFTIP_GLSL): `?fftip=0` = AA7 exactly (same source); lab `?debug&fftipn=<steps>&fftips=<columns>&fftipw=<m>`.
++            if (lq?.get("fftip") !== "0") {
++              frag = waterFragTip(frag);
++              const tn = lq?.has("debug") && lq.get("fftipn") !== null ? Math.round(Number(lq.get("fftipn"))) : NaN;
++              defines.LK_FFTIP_N = String(tn >= 1 && tn <= 12 ? tn : 6);
++              const ts = lq?.has("debug") && lq.get("fftips") !== null ? Number(lq.get("fftips")) : NaN;
++              defines.LK_FFTIP_S = (ts >= 0.5 && ts <= 8 ? ts : 1).toFixed(3);
++              const tw = lq?.has("debug") && lq.get("fftipw") !== null ? Number(lq.get("fftipw")) : NaN;
++              defines.LK_FFTIP_W = (tw >= 0.1 && tw <= 2 ? tw : 0.6).toFixed(3);
++              const tg = lq?.has("debug") && lq.get("fftipg") !== null ? Number(lq.get("fftipg")) : NaN;
++              defines.LK_FFTIP_G = (tg >= 0 && tg <= 2 ? tg : 0.35).toFixed(3);
++              const tl = lq?.has("debug") && lq.get("fftipl") !== null ? Number(lq.get("fftipl")) : NaN;
++              defines.LK_FFTIP_L = (tl >= -0.1 && tl <= 2 ? tl : 0.25).toFixed(3);
++              // (lab `?debug&fftipb=1`: the front row must lie past X's foot line (seen through the clip); AA8 tip LOG section 5:
++              // no new pops, but the spot stays, so it is off)
++              defines.LK_FFTIP_B = lq?.has("debug") && lq.get("fftipb") === "1" ? "1" : "0";
++            }
+             const fb = lq?.has("debug") && lq.get("ffb") !== null ? Number(lq.get("ffb")) : NaN;
+             defines.LK_FFB = (fb >= 0 && fb <= 4 ? fb : 1).toFixed(3);
+             const ft = lq?.has("debug") && lq.get("ffbt") !== null ? Number(lq.get("ffbt")) : NaN;

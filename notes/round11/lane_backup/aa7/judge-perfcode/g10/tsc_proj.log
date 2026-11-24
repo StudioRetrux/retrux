@@ -1,0 +1,1 @@
+nice -n 10 npx tsc -p tsconfig.json --noEmit --incremental false  6.77s user 0.76s system 86% cpu 8.704 total

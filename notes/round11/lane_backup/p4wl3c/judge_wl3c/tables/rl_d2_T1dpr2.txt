@@ -1,0 +1,23 @@
+M   d2_M1    dt p50 30.2 gap p50 30.2 | left 334 | region 1181 | shelf28 5 | near 213
+M   d2_M2    dt p50 30.9 gap p50 30.9 | left 343 | region 1214 | shelf28 5 | near 217
+M   d2_M3    dt p50 31.0 gap p50 31.1 | left 347 | region 1229 | shelf28 5 | near 219
+M   d2_M4    dt p50 31.2 gap p50 31.3 | left 346 | region 1215 | shelf28 5 | near 221
+L   d2_L1    dt p50 32.2 gap p50 32.2 | left 331 | region 1214 | shelf28 6 | near 224
+L   d2_L2    dt p50 32.3 gap p50 32.2 | left 332 | region 1215 | shelf28 5 | near 223
+L   d2_L3    dt p50 32.4 gap p50 32.4 | left 335 | region 1211 | shelf28 5 | near 225
+L   d2_L4    dt p50 32.3 gap p50 32.4 | left 336 | region 1209 | shelf28 6 | near 225
+== dt-matched on engine dt (1-ms bins, both n>=10): M weights / L weights
+  left0-160              matched n 478 | 521 : M 373 vs L 300 (-19 %) | L-weighted 383 vs 335 (-13 %)
+  region                 matched n 478 | 521 : M 1297 vs L 1117 (-14 %) | L-weighted 1337 vs 1218 (-9 %)
+  shelf280-480x440-520   matched n 478 | 521 : M 6 vs L 4 (-27 %) | L-weighted 6 vs 6 (-4 %)
+  near0-100x575-620      matched n 478 | 521 : M 236 vs L 206 (-13 %) | L-weighted 236 vs 227 (-4 %)
+== dt-matched on real gap (1-ms bins, both n>=10): M weights / L weights
+  left0-160              matched n 478 | 521 : M 375 vs L 295 (-21 %) | L-weighted 390 vs 335 (-14 %)
+  region                 matched n 478 | 521 : M 1300 vs L 1112 (-14 %) | L-weighted 1350 vs 1218 (-10 %)
+  shelf280-480x440-520   matched n 478 | 521 : M 6 vs L 4 (-27 %) | L-weighted 6 vs 6 (-5 %)
+  near0-100x575-620      matched n 478 | 521 : M 237 vs L 202 (-15 %) | L-weighted 240 vs 227 (-6 %)
+== pooled engine-dt band 28-36 ms
+  left0-160              M n 567 mean 349 dtmean 31.6 | L n 529 mean 332 dtmean 32.8
+  region                 M n 567 mean 1234 dtmean 31.6 | L n 529 mean 1210 dtmean 32.8
+  shelf280-480x440-520   M n 567 mean 5 dtmean 31.6 | L n 529 mean 6 dtmean 32.8
+  near0-100x575-620      M n 567 mean 223 dtmean 31.6 | L n 529 mean 225 dtmean 32.8

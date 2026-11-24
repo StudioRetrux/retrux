@@ -1,0 +1,4 @@
+T2 stepped fast left x0-420 y470-620         MAIN 621 | LANE 498
+T2 stepped fast far x880-1440 y430-590       MAIN 1068 | LANE 977
+T2 stepped fast shelfwater x280-480 y440-520 MAIN 206 | LANE 200
+T2 stepped fast full                         MAIN 10705 | LANE 10555

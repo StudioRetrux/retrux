@@ -1,0 +1,9 @@
+M      tM_a         N 150 dt p10/50/90 25.4/26.9/29.8 | leftwater 496 region 2256 | errs 0
+L      tL_a         N 150 dt p10/50/90 27.4/29.4/32.2 | leftwater 1009 region 2836 | errs 0
+POOLED dt-controlled (both steps inside the band), blips / frame:
+dt   0-999 | M n 148 leftwater   496 region  2256 || L n 148 leftwater  1009 region  2836
+dt  20-26  | M n  12 leftwater   491 region  2149 || L n   2 leftwater     0 region   560
+dt  26-30  | M n  88 leftwater   504 region  2297 || L n  71 leftwater  1188 region  3132
+dt  28-34  | M n  28 leftwater   347 region  2013 || L n 114 leftwater  1029 region  2905
+dt  30-36  | M n   5 leftwater    68 region  1514 || L n  32 leftwater   889 region  2778
+dt  26-40  | M n 101 leftwater   463 region  2224 || L n 142 leftwater  1050 region  2938

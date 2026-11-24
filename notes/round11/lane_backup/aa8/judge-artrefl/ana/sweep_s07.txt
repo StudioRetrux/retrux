@@ -1,0 +1,55 @@
+med07_A8 vs med07_A7: frames 120 (120/120), frames differing 105, px > 8: 337, max 10, first 0, pose mismatches 0, W 1440/1440 rows 380-766/380-766
+A7: flagged px 1100, events >= 6 px: 16, px in them 655
+A8: flagged px 789, events >= 6 px: 15, px in them 468
+BASE: flagged px 18550, events >= 6 px: 277, px in them 16506
+-- A7 top 4
+  k25-55 x1173-1213 y701-733 n203 emax85 frames 25/1/41/48 26/1/49/41 27/1/42/38 27/1/49/60 ...
+  k10-23 x1227-1251 y725-750 n101 emax80 frames 10/2/49/50 11/1/44/52 11/2/49/63 12/2/47/51 ...
+  k18-28 x1211-1231 y714-739 n106 emax76 frames 18/1/45/46 19/2/42/43 19/5/61/51 20/1/45/42 ...
+  k44-56 x1166-1180 y695-714 n58 emax66 frames 44/1/41/45 45/1/41/40 45/1/42/70 45/2/53/41 ...
+-- A8 top 4
+  k26-56 x1167-1211 y696-732 n191 emax82 frames 26/1/45/38 27/1/44/56 28/1/44/50 28/1/42/37 ...
+  k10-25 x1221-1251 y726-746 n71 emax70 frames 10/2/46/47 11/2/45/60 12/2/43/47 12/1/41/52 ...
+  k20-29 x1209-1227 y715-737 n59 emax69 frames 20/1/41/39 21/1/46/44 22/6/57/50 22/1/48/50 ...
+  k1-17 x1241-1271 y745-758 n38 emax76 frames 1/2/48/41 2/2/56/46 3/1/49/41 4/3/52/43 ...
+-- BASE top 4
+  k12-80 x1154-1265 y660-725 n1979 emax130 frames 12/46/88/57 13/4/83/53 13/5/66/52 14/46/106/84 ...
+  k7-67 x1306-1439 y674-715 n1854 emax97 frames 7/34/74/55 8/3/46/40 8/18/74/57 9/1/48/41 ...
+  k18-82 x176-390 y496-539 n1517 emax110 frames 18/6/87/62 19/25/99/69 20/2/67/56 20/2/49/51 ...
+  k10-56 x209-354 y533-562 n695 emax96 frames 10/6/65/58 11/2/54/-54 12/2/77/76 12/1/45/-44 ...
+-- popnew A8 vs A7
+new pops (X flagged, ref not, X != ref): 0 px, 0 clusters, >= 6 px: 0
+-- popnew A7 vs A8
+new pops (X flagged, ref not, X != ref): 0 px, 0 clusters, >= 6 px: 0
+-- v3err A8 vs A7 thr 8 (gt none)
+frames 120 thr 8: lake+band px-frames 30274471; |X-R|>thr 166
+-- dark: px 166, events >= 6 px: 9
+  k85-109 (25f) x344-347 y699-699 n36 nmax2 dmean-8 dmax9
+  k113-118 (6f) x321-323 y709-713 n13 nmax3 dmean-8 dmax9
+  k64-67 (4f) x356-363 y699-699 n12 nmax3 dmean-8 dmax8
+  k24-27 (4f) x307-310 y740-747 n8 nmax4 dmean-8 dmax8
+-- bright: px 0, events >= 6 px: 0
+-- v3err A8 vs BASE thr 15 (gt none): dark = BASE's pale blocks the guard removes
+frames 120 thr 15: lake+band px-frames 30274471; |X-R|>thr 648306
+-- dark: px 588022, events >= 6 px: 428
+  k0-119 (120f) x0-410 y482-601 n258379 nmax1482 dmean-32 dmax116
+  k13-119 (107f) x417-703 y468-569 n65300 nmax1092 dmean-23 dmax95
+  k4-119 (116f) x1284-1439 y673-738 n31074 nmax472 dmean-32 dmax73
+  k1-119 (119f) x1129-1280 y660-742 n24454 nmax295 dmean-37 dmax109
+  k44-119 (76f) x797-1000 y468-491 n19248 nmax528 dmean-22 dmax54
+  k0-28 (29f) x56-367 y510-579 n19149 nmax996 dmean-33 dmax120
+  k0-119 (120f) x1344-1439 y494-536 n13809 nmax222 dmean-30 dmax77
+  k49-119 (71f) x1279-1327 y501-535 n11574 nmax341 dmean-24 dmax60
+  k13-35 (23f) x750-985 y483-508 n10709 nmax1279 dmean-24 dmax71
+  k17-119 (103f) x869-955 y723-765 n10622 nmax197 dmean-28 dmax76
+-- bright: px 60284, events >= 6 px: 448
+  k4-20 (17f) x428-564 y495-552 n9838 nmax1602 dmean19 dmax48
+  k62-119 (58f) x179-207 y498-507 n6754 nmax163 dmean22 dmax43
+  k76-119 (44f) x1093-1131 y660-664 n5114 nmax147 dmean27 dmax58
+  k0-19 (20f) x846-970 y489-526 n2539 nmax366 dmean22 dmax51
+  k0-32 (33f) x1137-1213 y675-706 n1934 nmax80 dmean23 dmax53
+  k3-13 (11f) x772-892 y495-511 n1679 nmax248 dmean19 dmax32
+  k45-58 (14f) x358-393 y499-512 n1308 nmax191 dmean22 dmax49
+  k57-119 (63f) x1413-1435 y677-683 n1160 nmax29 dmean22 dmax38
+  k67-119 (53f) x1070-1091 y755-758 n1147 nmax38 dmean23 dmax35
+  k32-35 (4f) x523-574 y481-503 n1085 nmax423 dmean18 dmax26

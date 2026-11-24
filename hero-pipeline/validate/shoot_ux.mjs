@@ -13,9 +13,9 @@ const query = process.argv[3] || "";
 fs.mkdirSync(out, { recursive: true });
 const logs = [];
 const browser = await chromium.launch({
-  executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+  executablePath: (process.env.CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"),
   headless: true,
-  args: ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"],
+  args: [(process.platform === "win32" ? "--use-angle=d3d11" : "--use-angle=metal"), "--enable-gpu", "--ignore-gpu-blocklist"],
 });
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 766 } });
@@ -28,7 +28,7 @@ try {
     await page.screenshot({ path: path.join(out, name + ".png") });
     logs.push(`${name} t=${((Date.now() - t0) / 1000).toFixed(2)}s`);
   };
-  await page.goto(`http://localhost:5173/?${query}`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${(process.env.LAB || "http://localhost:5173")}/?${query}`, { waitUntil: "domcontentloaded" });
   await page.waitForTimeout(400);
   await shot("u00_loading");
   await page.waitForFunction(() => !!window.__hero && window.__hero.state.ready, null, { timeout: 180000 });

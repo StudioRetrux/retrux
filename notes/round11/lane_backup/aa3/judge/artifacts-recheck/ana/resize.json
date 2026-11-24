@@ -1,0 +1,519 @@
+{
+ "frames": 30,
+ "W": 1440,
+ "H": 766,
+ "y0": 0,
+ "tex": {
+  "lake": 0.9937,
+  "bright": 1.0115,
+  "dark": 0.9884
+ },
+ "g5": {
+  "skyMean": 0.0078,
+  "skyMax": 21,
+  "heroMean": 0.1388,
+  "heroMax": 87,
+  "regionBoundaryBandMean": 0,
+  "regionBoundaryBandPx": 0,
+  "regionBoundaryOtherMean": 0.086,
+  "regionBoundaryOtherPx": 67932
+ },
+ "g4off": {
+  "px": 10,
+  "band": 3,
+  "max": 8,
+  "perMpxFrame": 0.302
+ },
+ "g4base": {
+  "px": 38284,
+  "band": 6511,
+  "max": 96
+ },
+ "offOutsideBandPx": 3709,
+ "rows": [
+  "0(i0) taa 0.5  | l-b>4 band 1339 lake 10 solid 193 sky 127 hero 52 | l-o>4 band 71 out 4 max 44 | g4off 1/0/8 g4base 46/28/34",
+  "1(i1) taa 0.5  | l-b>4 band 1406 lake 43 solid 186 sky 99 hero 123 | l-o>4 band 113 out 5 max 43 | g4off 1/0/7 g4base 52/27/35",
+  "2(i2) taa 0.5  | l-b>4 band 1413 lake 122 solid 188 sky 92 hero 113 | l-o>4 band 148 out 5 max 47 | g4off 1/0/8 g4base 52/27/40",
+  "3(i3) taa 0.5  | l-b>4 band 1461 lake 11 solid 183 sky 78 hero 79 | l-o>4 band 233 out 15 max 42 | g4off 1/0/7 g4base 40/24/34",
+  "4(i4) taa 0.5  | l-b>4 band 1792 lake 624 solid 193 sky 101 hero 122 | l-o>4 band 464 out 21 max 46 | g4off 0/0/0 g4base 176/67/42",
+  "5(i5) taa 0.5  | l-b>4 band 2285 lake 1033 solid 194 sky 140 hero 106 | l-o>4 band 744 out 32 max 31 | g4off 0/0/0 g4base 192/70/87",
+  "6(i6) taa 0.5  | l-b>4 band 2281 lake 22 solid 183 sky 147 hero 67 | l-o>4 band 1291 out 45 max 52 | g4off 0/0/0 g4base 46/29/34",
+  "7(i7) taa 0.5  | l-b>4 band 3129 lake 1735 solid 168 sky 147 hero 211 | l-o>4 band 1795 out 62 max 62 | g4off 0/0/0 g4base 357/93/41",
+  "8(i8) taa 0.5  | l-b>4 band 3966 lake 2541 solid 199 sky 138 hero 282 | l-o>4 band 2452 out 116 max 39 | g4off 1/1/5 g4base 429/139/52",
+  "9(i9) taa 0.5  | l-b>4 band 3964 lake 46 solid 214 sky 118 hero 136 | l-o>4 band 3071 out 149 max 36 | g4off 0/0/0 g4base 47/30/42",
+  "10(i10) taa 0.5  | l-b>4 band 4733 lake 3429 solid 163 sky 104 hero 312 | l-o>4 band 3411 out 210 max 54 | g4off 2/1/5 g4base 771/145/47",
+  "11(i11) taa 0.5  | l-b>4 band 5538 lake 10071 solid 165 sky 105 hero 747 | l-o>4 band 3730 out 284 max 43 | g4off 0/0/0 g4base 1905/280/67",
+  "12(i12) taa 0.5  | l-b>4 band 4695 lake 55 solid 179 sky 94 hero 174 | l-o>4 band 3826 out 190 max 51 | g4off 0/0/0 g4base 43/30/34",
+  "13(i13) taa 0.5  | l-b>4 band 5220 lake 5624 solid 208 sky 118 hero 806 | l-o>4 band 3572 out 241 max 50 | g4off 1/0/5 g4base 1357/147/63",
+  "14(i14) taa 0.5  | l-b>4 band 6003 lake 14993 solid 175 sky 92 hero 1378 | l-o>4 band 3847 out 427 max 78 | g4off 0/0/0 g4base 3535/398/63",
+  "15(i15) taa 0.5  | l-b>4 band 4236 lake 41 solid 199 sky 109 hero 317 | l-o>4 band 3350 out 296 max 41 | g4off 0/0/0 g4base 48/31/34",
+  "16(i16) taa 0.5  | l-b>4 band 5357 lake 7853 solid 274 sky 0 hero 582 | l-o>4 band 3551 out 214 max 53 | g4off 0/0/0 g4base 2453/240/50",
+  "17(i17) taa 0.5  | l-b>4 band 6403 lake 22420 solid 252 sky 0 hero 686 | l-o>4 band 3450 out 162 max 73 | g4off 1/0/5 g4base 5067/537/52",
+  "18(i18) taa 0.5  | l-b>4 band 4266 lake 29 solid 234 sky 0 hero 191 | l-o>4 band 3319 out 156 max 41 | g4off 1/1/5 g4base 46/34/35",
+  "19(i19) taa 0.5  | l-b>4 band 4979 lake 7694 solid 238 sky 0 hero 560 | l-o>4 band 3169 out 92 max 43 | g4off 0/0/0 g4base 1911/314/59",
+  "20(i20) taa 0.5  | l-b>4 band 6368 lake 22405 solid 232 sky 0 hero 788 | l-o>4 band 3018 out 98 max 39 | g4off 0/0/0 g4base 4977/702/68",
+  "21(i21) taa 0.5  | l-b>4 band 3874 lake 40 solid 244 sky 7 hero 73 | l-o>4 band 2911 out 83 max 51 | g4off 0/0/0 g4base 39/28/42",
+  "22(i22) taa 0.5  | l-b>4 band 4492 lake 4053 solid 202 sky 78 hero 441 | l-o>4 band 2861 out 89 max 72 | g4off 0/0/0 g4base 1059/193/65",
+  "23(i23) taa 0.5  | l-b>4 band 6259 lake 12609 solid 278 sky 0 hero 561 | l-o>4 band 3026 out 182 max 62 | g4off 0/0/0 g4base 3002/644/96",
+  "24(i24) taa 0.5  | l-b>4 band 4132 lake 42 solid 239 sky 0 hero 79 | l-o>4 band 3173 out 52 max 76 | g4off 0/0/0 g4base 46/30/34",
+  "25(i25) taa 0.5  | l-b>4 band 5311 lake 5709 solid 207 sky 0 hero 122 | l-o>4 band 3356 out 89 max 37 | g4off 0/0/0 g4base 1929/323/56",
+  "26(i26) taa 0.5  | l-b>4 band 7390 lake 11165 solid 213 sky 0 hero 158 | l-o>4 band 3505 out 69 max 45 | g4off 0/0/0 g4base 4571/857/61",
+  "27(i27) taa 0.5  | l-b>4 band 4587 lake 42 solid 219 sky 0 hero 48 | l-o>4 band 3719 out 64 max 40 | g4off 0/0/0 g4base 42/31/31",
+  "28(i28) taa 0.5  | l-b>4 band 5885 lake 3841 solid 269 sky 0 hero 116 | l-o>4 band 4009 out 120 max 49 | g4off 0/0/0 g4base 1223/273/32",
+  "29(i29) taa 0.5  | l-b>4 band 7720 lake 7747 solid 263 sky 0 hero 165 | l-o>4 band 4259 out 137 max 85 | g4off 0/0/0 g4base 2823/740/66"
+ ],
+ "worstOff": [
+  {
+   "k": 0,
+   "x": 623,
+   "y": 576,
+   "e": -8,
+   "band": 0,
+   "hero": 1,
+   "l": [
+    0,
+    38,
+    72
+   ],
+   "o": [
+    8,
+    16,
+    28
+   ]
+  },
+  {
+   "k": 2,
+   "x": 623,
+   "y": 576,
+   "e": -8,
+   "band": 0,
+   "hero": 1,
+   "l": [
+    1,
+    44,
+    78
+   ],
+   "o": [
+    9,
+    18,
+    31
+   ]
+  },
+  {
+   "k": 1,
+   "x": 623,
+   "y": 576,
+   "e": -7,
+   "band": 0,
+   "hero": 1,
+   "l": [
+    1,
+    39,
+    72
+   ],
+   "o": [
+    8,
+    17,
+    29
+   ]
+  },
+  {
+   "k": 3,
+   "x": 623,
+   "y": 576,
+   "e": -7,
+   "band": 0,
+   "hero": 1,
+   "l": [
+    6,
+    47,
+    80
+   ],
+   "o": [
+    13,
+    23,
+    38
+   ]
+  },
+  {
+   "k": 8,
+   "x": 1170,
+   "y": 718,
+   "e": -5,
+   "band": 1,
+   "hero": 0,
+   "l": [
+    123,
+    139,
+    164
+   ],
+   "o": [
+    128,
+    143,
+    166
+   ]
+  },
+  {
+   "k": 10,
+   "x": 613,
+   "y": 575,
+   "e": -5,
+   "band": 0,
+   "hero": 1,
+   "l": [
+    115,
+    132,
+    157
+   ],
+   "o": [
+    121,
+    137,
+    161
+   ]
+  },
+  {
+   "k": 10,
+   "x": 1161,
+   "y": 719,
+   "e": -5,
+   "band": 1,
+   "hero": 0,
+   "l": [
+    117,
+    134,
+    161
+   ],
+   "o": [
+    122,
+    138,
+    163
+   ]
+  },
+  {
+   "k": 13,
+   "x": 620,
+   "y": 574,
+   "e": -5,
+   "band": 0,
+   "hero": 1,
+   "l": [
+    152,
+    168,
+    191
+   ],
+   "o": [
+    164,
+    180,
+    201
+   ]
+  },
+  {
+   "k": 17,
+   "x": 501,
+   "y": 498,
+   "e": -5,
+   "band": 0,
+   "hero": 1,
+   "l": [
+    156,
+    171,
+    191
+   ],
+   "o": [
+    162,
+    177,
+    196
+   ]
+  },
+  {
+   "k": 18,
+   "x": 1124,
+   "y": 717,
+   "e": -5,
+   "band": 1,
+   "hero": 0,
+   "l": [
+    116,
+    133,
+    158
+   ],
+   "o": [
+    124,
+    139,
+    163
+   ]
+  }
+ ],
+ "worstBaseNonLake": [
+  {
+   "k": 4,
+   "x": 1317,
+   "y": 520,
+   "e": -42,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 9,
+   "x": 1323,
+   "y": 519,
+   "e": -42,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 21,
+   "x": 1360,
+   "y": 514,
+   "e": -42,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 2,
+   "x": 1317,
+   "y": 519,
+   "e": -40,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 13,
+   "x": 1334,
+   "y": 517,
+   "e": -40,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 7,
+   "x": 1320,
+   "y": 520,
+   "e": -38,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 1,
+   "x": 1317,
+   "y": 519,
+   "e": -35,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 8,
+   "x": 1321,
+   "y": 520,
+   "e": -35,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 10,
+   "x": 1272,
+   "y": 664,
+   "e": -35,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 18,
+   "x": 1265,
+   "y": 661,
+   "e": -35,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 19,
+   "x": 1355,
+   "y": 515,
+   "e": -35,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 20,
+   "x": 1358,
+   "y": 514,
+   "e": -35,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 23,
+   "x": 1364,
+   "y": 513,
+   "e": -35,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 0,
+   "x": 1317,
+   "y": 519,
+   "e": -34,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 3,
+   "x": 1317,
+   "y": 518,
+   "e": -34,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 5,
+   "x": 1318,
+   "y": 518,
+   "e": -34,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 6,
+   "x": 1319,
+   "y": 518,
+   "e": -34,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 6,
+   "x": 1319,
+   "y": 519,
+   "e": -34,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 11,
+   "x": 1328,
+   "y": 518,
+   "e": -34,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 12,
+   "x": 1331,
+   "y": 517,
+   "e": -34,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 15,
+   "x": 1341,
+   "y": 516,
+   "e": -34,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 17,
+   "x": 1348,
+   "y": 515,
+   "e": -34,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 19,
+   "x": 1355,
+   "y": 513,
+   "e": -34,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 19,
+   "x": 1355,
+   "y": 514,
+   "e": -34,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 20,
+   "x": 1358,
+   "y": 513,
+   "e": -34,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 22,
+   "x": 1259,
+   "y": 658,
+   "e": -34,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 24,
+   "x": 1366,
+   "y": 510,
+   "e": -34,
+   "band": 0,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 24,
+   "x": 1366,
+   "y": 511,
+   "e": -34,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 26,
+   "x": 1367,
+   "y": 510,
+   "e": -34,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  },
+  {
+   "k": 29,
+   "x": 1364,
+   "y": 507,
+   "e": -34,
+   "band": 1,
+   "hero": 0,
+   "lake": 0
+  }
+ ]
+}

@@ -1,0 +1,20 @@
+T1d2_main: N 150 525x150 | blip px total 113553, per frame mean 767.2 p90 1998 max 2187 | motion mean |dL| 3.53
+  dt ms p10 31.3 p50 32.7 p90 33.6 max 50.0; scales [1]
+  hot px (>2 blips): 15909, x 0-524 y 46-149
+T1d2_lane: N 150 525x150 | blip px total 179334, per frame mean 1211.7 p90 2987 max 3821 | motion mean |dL| 4.24
+  dt ms p10 31.7 p50 34.1 p90 50.0 max 50.0; scales [1]
+  hot px (>2 blips): 23418, x 0-524 y 8-149
+T1d1_main: N 150 420x120 | blip px total 58657, per frame mean 396.3 p90 917 max 1815 | motion mean |dL| 3.30
+  dt ms p10 23.8 p50 25.4 p90 50.0 max 50.0; scales [1]
+  hot px (>2 blips): 8549, x 0-419 y 32-119
+T1d1_lane: N 150 420x120 | blip px total 55119, per frame mean 372.4 p90 1076 max 2683 | motion mean |dL| 3.27
+  dt ms p10 23.4 p50 25.1 p90 34.6 max 50.0; scales [1]
+  hot px (>2 blips): 7847, x 0-419 y 38-119
+T1far_main: N 150 700x200 | blip px total 416261, per frame mean 2812.6 p90 5076 max 7411 | motion mean |dL| 5.58
+  dt ms p10 27.9 p50 30.1 p90 50.0 max 50.0; scales [1]
+  hot px (>2 blips): 47580, x 0-699 y 0-199
+T1far_lane: N 150 700x200 | blip px total 237747, per frame mean 1606.4 p90 2799 max 3362 | motion mean |dL| 4.40
+  dt ms p10 25.4 p50 26.8 p90 28.4 max 50.0; scales [1]
+  hot px (>2 blips): 23203, x 0-699 y 0-199
+T0wl_main: N 150 828x450 | blip px total 119321, per frame mean 806.2 p90 1857 max 2237 | motion mean |dL| 2.29
+T0wl_lane: N 150 828x450 | blip px total 117989, per frame mean 797.2 p90 1822 max 2260 | motion mean |dL| 2.29

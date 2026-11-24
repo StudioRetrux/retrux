@@ -1,0 +1,107 @@
+[slot] judge_p4ice3:perf: taken (load 11.9)
+{
+ "vw": 1440,
+ "vh": 766,
+ "cycles": 8,
+ "blockms": 2500,
+ "boot": {
+  "lane": 4476
+ },
+ "secs": 10,
+ "summ": {
+  "move": {
+   "lane": {
+    "blocks": 0,
+    "frames": 0,
+    "med": null,
+    "p95": null,
+    "max": null,
+    "blockMeds": [],
+    "blockP95": [],
+    "loads": [],
+    "fps": [],
+    "scale": []
+   },
+   "main": {
+    "blocks": 0,
+    "frames": 0,
+    "med": null,
+    "p95": null,
+    "max": null,
+    "blockMeds": [],
+    "blockP95": [],
+    "loads": [],
+    "fps": [],
+    "scale": []
+   },
+   "lane_vs_main": {
+    "paired": [],
+    "pairedMed": null,
+    "pairedP95ratios": [],
+    "pairedP95Med": null,
+    "loadMax": [],
+    "pairsUnder10": 0,
+    "pairedMedUnder10": null,
+    "ratioOfMedians": null,
+    "ratioOfP95": null
+   },
+   "msPerFrame": {
+    "meanDiffPerPair": [],
+    "meanDiffMedian": null,
+    "medDiffPerPair": [],
+    "medDiffMedian": null,
+    "meanA": 0,
+    "meanB": 0
+   }
+  },
+  "rest": {
+   "lane": {
+    "blocks": 0,
+    "frames": 0,
+    "med": null,
+    "p95": null,
+    "max": null,
+    "blockMeds": [],
+    "blockP95": [],
+    "loads": [],
+    "fps": [],
+    "scale": []
+   },
+   "main": {
+    "blocks": 0,
+    "frames": 0,
+    "med": null,
+    "p95": null,
+    "max": null,
+    "blockMeds": [],
+    "blockP95": [],
+    "loads": [],
+    "fps": [],
+    "scale": []
+   },
+   "lane_vs_main": {
+    "paired": [],
+    "pairedMed": null,
+    "pairedP95ratios": [],
+    "pairedP95Med": null,
+    "loadMax": [],
+    "pairsUnder10": 0,
+    "pairedMedUnder10": null,
+    "ratioOfMedians": null,
+    "ratioOfP95": null
+   },
+   "msPerFrame": {
+    "meanDiffPerPair": [],
+    "meanDiffMedian": null,
+    "medDiffPerPair": [],
+    "medDiffMedian": null,
+    "meanA": 0,
+    "meanB": 0
+   }
+  }
+ },
+ "logs": [
+  "ERROR page.waitForFunction: Target page, context or browser has been closed"
+ ]
+}
+[slot] judge_p4ice3:perf: freed (exit 0)

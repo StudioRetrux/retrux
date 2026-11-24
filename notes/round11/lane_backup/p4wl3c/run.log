@@ -1,0 +1,62 @@
+06:01:54 rest d25 done
+06:01:55 rest w0 done
+06:02:08 rest d15 done
+06:02:09 capdt d25 done
+06:02:21 rest d40 done
+06:02:23 capdt w0 done
+06:02:23 R1 DONE
+06:04:40 rest cap T1 done
+06:04:53 rest cap0 T1 done
+06:04:55 capdt cap done
+06:04:55 R2 DONE
+06:06:36 var g1e3 done
+06:06:36 var g5e4 done
+06:06:36 var g2e4 done
+06:07:29 var n8 done
+06:07:29 var n6 done
+06:07:30 var n5 done
+06:07:30 R3 DONE
+06:09:15 var cdn8 done
+06:09:17 var cdn3 done
+06:09:17 var cdn1 done
+06:10:05 var cdf8 done
+06:10:10 var cdf3 done
+06:10:11 var cdf15 done
+06:10:11 R4 DONE
+06:11:44 var cdf60 done
+06:11:44 var cdf25 done
+06:11:44 var cdf40 done
+06:12:30 var g4e4 done
+06:12:30 var g3e4 done
+06:12:30 R5 DONE
+06:14:24 fin caps done
+06:14:48 rl d2_M1 rl/d2_M1: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 30.5 p90 32.9 ms | mirror 149 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | 
+06:15:13 rl d2_L1 rl/d2_L1: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 31.7 p90 33.9 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | 
+06:15:37 rl d2_M2 rl/d2_M2: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 30.3 p90 33.2 ms | mirror 148 walk 148 cache 1 cacheOn 2 | errs 0 forced 0 | 
+06:16:03 rl d2_L2 rl/d2_L2: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 31.8 p90 33.8 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | 
+06:16:27 rl d2_M3 rl/d2_M3: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 30.5 p90 32.6 ms | mirror 149 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | 
+06:16:51 rl d2_L3 rl/d2_L3: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 31.8 p90 34.5 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | 
+06:17:16 rl d2_M4 rl/d2_M4: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 30.5 p90 33.1 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | 
+06:17:40 rl d2_L4 rl/d2_L4: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 31.9 p90 34.7 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | 
+06:17:40 RL D2 DONE
+06:17:40 CHAIN A DONE
+06:27:18 perf sweep done 10
+06:33:59 perf rest done 8
+06:33:59 CHAIN P DONE
+06:34:01 CHAIN G start
+06:35:03 capdt W done
+06:36:05 s60 done
+06:36:18 rest T2 done
+06:36:36 fair fast done
+06:39:11 s60v done
+06:40:11 ident done
+06:40:24 fair reverse done
+06:40:24 CHAIN G DONE
+06:42:03 rl d1_M1 rl/d1_M1: 200 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 22.6 p90 24.6 ms | mirror 198 walk 198 
+06:42:27 rl d1_L1 rl/d1_L1: 200 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 23.6 p90 25.4 ms | mirror 198 walk 198 
+06:42:51 rl d1_M2 rl/d1_M2: 200 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 23.1 p90 25.2 ms | mirror 198 walk 198 
+06:43:16 rl d1_L2 rl/d1_L2: 200 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 24.0 p90 26.4 ms | mirror 199 walk 198 
+06:43:40 rl d1_M3 rl/d1_M3: 200 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 22.8 p90 24.9 ms | mirror 198 walk 198 
+06:44:05 rl d1_L3 rl/d1_L3: 200 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 23.9 p90 26.2 ms | mirror 198 walk 198 
+06:44:05 RL D1 DONE
+06:45:41 CHAIN X DONE

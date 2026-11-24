@@ -1,0 +1,6 @@
+#!/bin/zsh
+R=/private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/judge/perf/region
+node /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/judge/perf/tools/regionmix.mjs --port 5181 --vw 1440 --vh 766 --path medium --frames 240 --every 6 --out $R/rm_1440_medium.json > $R/rm_1440_medium.out 2>&1
+node /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/judge/perf/tools/regionmix.mjs --port 5181 --vw 1440 --vh 766 --path updown --frames 240 --every 6 --out $R/rm_1440_updown.json > $R/rm_1440_updown.out 2>&1
+node /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/judge/perf/tools/regionmix.mjs --port 5181 --vw 1920 --vh 1080 --path diag --frames 180 --every 6 --out $R/rm_1920_diag.json > $R/rm_1920_diag.out 2>&1
+node /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/judge/perf/tools/regionmix.mjs --port 5181 --vw 1280 --vh 1024 --path updown --frames 180 --every 6 --out $R/rm_1280x1024_updown.json > $R/rm_1280x1024_updown.out 2>&1

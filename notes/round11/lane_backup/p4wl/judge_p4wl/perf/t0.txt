@@ -1,0 +1,8 @@
+[slot] judge_p4wl:perf-T0: taken (load 5.2)
+perf/t0_main_1: 300 frames 920x240 buf 828,1440 pipe 497,864 scale 0.6,0.8 dt p50 16.7 p90 16.8 ms | mirror 0 walk 0 cache 0 cacheOn 0 | errs 0 forced 0 | render ms p50 0.6/2.1/2.5 cap ms p50 0.0/0.0/0.1 gap p50/p90/max 16.7/16.9/17.5
+perf/t0_lane_1: 300 frames 920x240 buf 828,1440 pipe 497,864 scale 0.6,0.8 dt p50 16.7 p90 17.2 ms | mirror 0 walk 0 cache 0 cacheOn 0 | errs 0 forced 0 | render ms p50 0.6/2.0/2.7 cap ms p50 0.0/0.0/0.1 gap p50/p90/max 16.7/17.2/17.9
+perf/t0_main_2: 300 frames 920x240 buf 828,1440 pipe 497,864 scale 0.6,0.8 dt p50 16.7 p90 17.3 ms | mirror 0 walk 0 cache 0 cacheOn 0 | errs 0 forced 0 | render ms p50 0.7/1.9/2.3 cap ms p50 0.0/0.0/0.1 gap p50/p90/max 16.7/17.3/17.9
+perf/t0_lane_2: 300 frames 920x240 buf 828,1440 pipe 497,864 scale 0.6,0.8 dt p50 16.6 p90 17.4 ms | mirror 0 walk 0 cache 0 cacheOn 0 | errs 0 forced 0 | render ms p50 0.7/0.9/1.6 cap ms p50 0.0/0.0/0.1 gap p50/p90/max 16.6/17.4/17.9
+perf/t0_main_3: 300 frames 920x240 buf 828,1440 pipe 497,864 scale 0.6,0.8 dt p50 16.7 p90 17.3 ms | mirror 0 walk 0 cache 0 cacheOn 0 | errs 0 forced 0 | render ms p50 0.6/0.9/1.9 cap ms p50 0.0/0.0/0.1 gap p50/p90/max 16.6/17.4/17.8
+perf/t0_lane_3: 300 frames 920x240 buf 828,1440 pipe 497,864 scale 0.6,0.8 dt p50 16.7 p90 17.3 ms | mirror 0 walk 0 cache 0 cacheOn 0 | errs 0 forced 0 | render ms p50 0.7/2.2/3.0 cap ms p50 0.0/0.0/0.1 gap p50/p90/max 16.7/17.3/18.0
+[slot] judge_p4wl:perf-T0: freed (exit 0)

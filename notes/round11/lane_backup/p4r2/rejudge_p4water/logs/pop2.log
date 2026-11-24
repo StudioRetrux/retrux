@@ -1,0 +1,6 @@
+06:17:26 start pop2
+[slot] rejudge_p4water:pop: taken (load 5.8)
+cap diag rc 0 06:18:33
+cap leave rc 0 06:19:39
+[slot] rejudge_p4water:pop: freed (exit 0)
+06:20:40 POP2_DONE

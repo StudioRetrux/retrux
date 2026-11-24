@@ -1,0 +1,64 @@
+{
+ "msize": [
+  576,
+  383
+ ],
+ "vw": 1440,
+ "vh": 766,
+ "cycles": 4,
+ "blockms": 2500,
+ "load1minBefore": 10.59,
+ "load1minAfter": 9.82,
+ "summ": {
+  "ref": "A7",
+  "B": {
+   "frames": 430,
+   "med": 17.4,
+   "p90": 35.6,
+   "max": 65.1,
+   "blockMeds": [
+    35.1,
+    17.2,
+    16.7,
+    17.6
+   ],
+   "pairedRatios": [
+    0.994,
+    0.48,
+    0.988,
+    1.011
+   ],
+   "pairedRatioMed": 0.994,
+   "ratioOfMedians": 0.967
+  },
+  "A7": {
+   "frames": 380,
+   "med": 18,
+   "p90": 37,
+   "max": 47.2,
+   "blockMeds": [
+    35.3,
+    35.8,
+    16.9,
+    17.4
+   ],
+   "pairedRatios": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "pairedRatioMed": 1,
+   "ratioOfMedians": 1
+  }
+ },
+ "fps": 58.39984426706078,
+ "scale": 0.8,
+ "taa": {
+  "weight": 0.5,
+  "runs": 1062,
+  "still": 0,
+  "valid": true
+ },
+ "logs": []
+}

@@ -1,0 +1,3 @@
+fast_M    shelf-band x280-420 y465-500 (4900 px) blips/frame thr4 118 thr6 59 thr12 4
+fast_L    shelf-band x280-420 y465-500 (4900 px) blips/frame thr4 108 thr6 57 thr12 3
+fast_Lpx  shelf-band x280-420 y465-500 (4900 px) blips/frame thr4 122 thr6 65 thr12 6

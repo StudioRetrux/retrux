@@ -1,0 +1,2 @@
+caps/fast_A7 vs caps/fast_A7raw: frames 117, W 1440: G4 106 px = 1.64 per Mpx-frame; on band 50 (4.16 per M band px); dark 20 bright 86; max excess 18; excess hist 4-8,8-12,..,>24: 83,18,4,1,0,0
+  hot >= 12: k2(533,469)18 k2(523,470)12 k22(635,501)-12 k34(221,624)14b k43(227,624)14b

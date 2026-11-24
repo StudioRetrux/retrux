@@ -8,9 +8,9 @@
 }
 
 const R = args.dir
-const REFD = 'E:\\Retrux Hero R&D\\hero-pipeline\\reference'
-const FF = 'E:\\Retrux Hero R&D\\hero-pipeline\\tools\\node_modules\\ffmpeg-static\\ffmpeg.exe'
-const ENG = 'E:\\Retrux Hero R&D\\retrux-web\\app\\hero\\engine'
+const REFD = '/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/hero-pipeline/reference'
+const FF = (process.env.FFMPEG || "/opt/homebrew/bin/ffmpeg")
+const ENG = '/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/retrux-web/app/hero/engine'
 const f = (n) => `${R}\\${n}`
 
 const PREAMBLE = `You are one judge on an independent QC panel for the hero section of the Retrux studio website.

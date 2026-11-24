@@ -1,0 +1,11 @@
+[slot] judge-perf:ident2 waiting (load 13.3 / max 24, slots 2, holders [{"label":"!judge-perf:sep1440","pid":24557,"at":1795159992426,"slot":0},{"label":"aa4y-cap-sanity","pid":20441,"at":1795160184027,"slot":1}])
+[slot] judge-perf:ident2 waiting (load 8.0 / max 24, slots 2, holders [{"label":"judge-artifacts:leavere","pid":23947,"at":1795160198643,"slot":0},{"label":"aa4x batch1","pid":24189,"at":1795160244736,"slot":1}])
+[slot] judge-perf:ident2 waiting (load 7.0 / max 24, slots 2, holders [{"label":"!judge-perf:batch2perf","pid":27141,"at":1795160286436,"slot":0},{"label":"aa4x batch1","pid":24189,"at":1795160244736,"slot":1}])
+[slot] taking over a stale slot {"label":"?","pid":0,"at":1795160353296.7498,"slot":1}
+[slot] judge-perf:ident2: taken (load 6.1)
+{"port":"5182","qs":"envlake=plate","tier":"T1","mobile":false,"W":1440,"H":766,"tierGot":"T1","main":[1440,766],"envEdge":true,"taaOn":false,"mirrorEvery":null,"counts":null,"nprog":12,"logs":[]}
+{"port":"5181","qs":"envlake=plate","tier":"T1","mobile":false,"W":1440,"H":766,"tierGot":"T1","main":[1440,766],"envEdge":true,"taaOn":false,"mirrorEvery":null,"counts":null,"nprog":12,"logs":[]}
+{"port":"5182","qs":"","tier":"T0","mobile":true,"W":390,"H":844,"tierGot":"T0","main":[332,717],"envEdge":false,"taaOn":false,"mirrorEvery":null,"counts":null,"nprog":12,"logs":[]}
+{"port":"5181","qs":"","tier":"T0","mobile":true,"W":390,"H":844,"tierGot":"T0","main":[332,717],"envEdge":false,"taaOn":false,"mirrorEvery":null,"counts":null,"nprog":12,"logs":[]}
+{"port":"5182","qs":"","tier":"T0","mobile":true,"W":390,"H":844,"tierGot":"T0","main":[332,717],"envEdge":false,"taaOn":false,"mirrorEvery":null,"counts":null,"nprog":12,"logs":[]}
+[slot] judge-perf:ident2: freed (exit 0)

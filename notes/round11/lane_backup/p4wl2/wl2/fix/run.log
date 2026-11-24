@@ -1,0 +1,57 @@
+21:34:55 rl d2_main_a rl/d2_main_a: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 30.1 p90 31.6 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs
+21:35:20 rl d2_k1_a rl/d2_k1_a: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 30.7 p90 33.6 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0
+21:35:46 rl d2_k2_a rl/d2_k2_a: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 31.0 p90 33.0 ms | mirror 149 walk 148 cache 1 cacheOn 2 | errs 0
+21:36:10 rl d2_main_b rl/d2_main_b: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 30.1 p90 32.3 ms | mirror 149 walk 148 cache 1 cacheOn 2 | errs
+21:36:35 rl d2_k1_b rl/d2_k1_b: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 31.3 p90 33.7 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0
+21:36:59 rl d2_k2_b rl/d2_k2_b: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 31.5 p90 33.4 ms | mirror 149 walk 148 cache 1 cacheOn 2 | errs 0
+21:37:23 rl d2_main_c rl/d2_main_c: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 30.4 p90 32.5 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs
+21:37:48 rl d2_k1_c rl/d2_k1_c: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 31.2 p90 33.2 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0
+21:37:48 RLCHAIN d2 DONE
+21:40:01 rl b2_main_a rl/b2_main_a: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 29.6 p90 31.3 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs
+21:40:26 rl b2_q_a rl/b2_q_a: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 29.8 p90 31.7 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 
+21:40:51 rl b2_k8_a rl/b2_k8_a: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 31.5 p90 33.8 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0
+21:41:16 rl b2_a05_a rl/b2_a05_a: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 30.8 p90 33.5 ms | mirror 149 walk 148 cache 1 cacheOn 2 | errs 
+21:41:41 rl b2_main_b rl/b2_main_b: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 30.1 p90 32.1 ms | mirror 149 walk 148 cache 1 cacheOn 2 | errs
+21:42:06 rl b2_a0_a rl/b2_a0_a: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 31.2 p90 32.6 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0
+21:42:31 rl b2_px_a rl/b2_px_a: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 33.9 p90 36.3 ms | mirror 148 walk 148 cache 1 cacheOn 2 | errs 0
+21:42:55 rl b2_fj0_a rl/b2_fj0_a: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 31.3 p90 33.2 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 
+21:42:55 RLCHAIN b2 DONE
+21:47:12 rl c3_main_a rl/c3_main_a: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 30.8 p90 34.9 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs
+21:47:38 rl c3_q4_a rl/c3_q4_a: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 34.3 p90 39.2 ms | mirror 148 walk 148 cache 1 cacheOn 2 | errs 0
+21:48:09 rl c3_q2_a rl/c3_q2_a: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 50.0 p90 50.0 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0
+21:48:37 rl c3_main_b rl/c3_main_b: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 50.0 p90 50.0 ms | mirror 148 walk 148 cache 1 cacheOn 2 | errs
+21:49:02 rl c3_q4_b rl/c3_q4_b: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 31.7 p90 34.2 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0
+21:49:28 rl c3_q8_a rl/c3_q8_a: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 31.5 p90 33.2 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0
+21:49:28 RLCHAIN c3 DONE
+21:50:22 rl c4_main_a rl/c4_main_a: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 30.2 p90 32.4 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs
+21:50:48 rl c4_q4_a rl/c4_q4_a: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 33.0 p90 36.4 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0
+21:51:12 rl c4_main_b rl/c4_main_b: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 30.1 p90 31.8 ms | mirror 149 walk 148 cache 1 cacheOn 2 | errs
+21:51:36 rl c4_q4_b rl/c4_q4_b: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 31.4 p90 33.4 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0
+21:52:01 rl c4_main_c rl/c4_main_c: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 30.1 p90 32.1 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs
+21:52:25 rl c4_q4_c rl/c4_q4_c: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 31.2 p90 33.6 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0
+21:52:25 RLCHAIN c4 DONE
+21:53:02 ident start
+21:53:33 st d2_F [slot] wl2fix:st-d2_F: freed (exit 0)
+21:54:01 st d1_F [slot] wl2fix:st-d1_F: freed (exit 0)
+21:54:31 st d2_F0 [slot] wl2fix:st-d2_F0: freed (exit 0)
+21:54:31 ST DONE
+21:57:21 IDENT DONE
+21:57:21 GATES DONE
+21:57:23 perf start
+22:08:34 FINAL start
+22:08:56 rlfar fmain rl/T1d2_fmain: 100 frames 725x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 26.1 p90 28.0 ms | mirror 98 walk 98 cache 0
+22:09:19 rlfar ffix rl/T1d2_ffix: 100 frames 725x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 27.5 p90 29.5 ms | mirror 99 walk 98 cache 1 
+22:09:42 rlfar fmain2 rl/T1d2_fmain2: 100 frames 725x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 26.1 p90 29.0 ms | mirror 98 walk 98 cache 
+22:10:04 rlfar ffix2 rl/T1d2_ffix2: 100 frames 725x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 27.9 p90 29.7 ms | mirror 98 walk 98 cache 0
+22:10:26 rl e1_main_a rl/e1_main_a: 150 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 22.1 p90 24.0 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0
+22:10:49 rl e1_fix_a rl/e1_fix_a: 150 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 23.3 p90 25.3 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 
+22:11:11 rl e1_main_b rl/e1_main_b: 150 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 22.2 p90 23.8 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0
+22:11:33 rl e1_fix_b rl/e1_fix_b: 150 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 23.2 p90 25.1 ms | mirror 149 walk 148 cache 1 cacheOn 2 | errs 0 
+22:11:33 RLCHAIN e1 DONE
+22:11:33 perf start
+22:19:05 perf done 9
+22:19:40 st d2_FIN done
+22:21:32 FINAL DONE
+22:21:50 fair fast done
+22:24:54 fair reverse done
+22:24:54 POST DONE

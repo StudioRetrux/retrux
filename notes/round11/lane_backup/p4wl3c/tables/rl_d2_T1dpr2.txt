@@ -1,0 +1,18 @@
+M   d2_M1    dt p50 30.5 gap p50 30.4 | left 337 | region 1183 | shelf28 5 | near 214
+M   d2_M2    dt p50 30.3 gap p50 30.3 | left 340 | region 1198 | shelf28 4 | near 215
+M   d2_M3    dt p50 30.5 gap p50 30.6 | left 344 | region 1198 | shelf28 5 | near 219
+M   d2_M4    dt p50 30.5 gap p50 30.4 | left 339 | region 1189 | shelf28 5 | near 216
+L   d2_L1    dt p50 31.6 gap p50 31.6 | left 324 | region 1169 | shelf28 5 | near 217
+L   d2_L2    dt p50 31.8 gap p50 31.8 | left 322 | region 1178 | shelf28 5 | near 216
+L   d2_L3    dt p50 31.8 gap p50 31.8 | left 322 | region 1199 | shelf28 5 | near 214
+L   d2_L4    dt p50 31.9 gap p50 31.8 | left 327 | region 1197 | shelf28 5 | near 222
+== dt-matched on engine dt (1-ms bins, both n>=10): M weights / L weights
+  left0-160              matched n 530 | 528 : M 357 vs L 260 (-27 %) | L-weighted 398 vs 310 (-22 %)
+  region                 matched n 530 | 528 : M 1238 vs L 1006 (-19 %) | L-weighted 1343 vs 1169 (-13 %)
+  shelf280-480x440-520   matched n 530 | 528 : M 5 vs L 3 (-34 %) | L-weighted 5 vs 5 (-12 %)
+  near0-100x575-620      matched n 530 | 528 : M 228 vs L 185 (-19 %) | L-weighted 256 vs 211 (-18 %)
+== dt-matched on real gap (1-ms bins, both n>=10): M weights / L weights
+  left0-160              matched n 532 | 528 : M 356 vs L 263 (-26 %) | L-weighted 389 vs 310 (-20 %)
+  region                 matched n 532 | 528 : M 1236 vs L 1013 (-18 %) | L-weighted 1326 vs 1169 (-12 %)
+  shelf280-480x440-520   matched n 532 | 528 : M 5 vs L 4 (-26 %) | L-weighted 5 vs 5 (-12 %)
+  near0-100x575-620      matched n 532 | 528 : M 227 vs L 187 (-18 %) | L-weighted 248 vs 211 (-15 %)

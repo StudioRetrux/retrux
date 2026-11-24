@@ -1,0 +1,6 @@
+gpuab rest start 07:18:32 load { 9.69 10.17 9.04 }
+[slot] judge_p4env3:perf_gpuab: taken (load 9.7)
+{"sum":{"n":320,"A_med":67,"B_med":67.39999999850988,"ratio_med":1.0059701492314908,"A_tmean":66.42539062499418,"B_tmean":66.90664062491851,"ratio_tmean":1.0072449705661686,"load_min":38.9,"load_max":443.3}}
+[slot] judge_p4env3:perf_gpuab: freed (exit 0)
+gpuab crack start 07:25:10 load { 334.26 254.43 128.59 }
+[slot] judge_p4env3:perf_gpuab2 waiting (load 334.3 / max 30, slots 3, holders [])

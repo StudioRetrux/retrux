@@ -1,0 +1,14 @@
+  left0-160              matched n 384 | 270 : M 433 vs L 371 (-14 %) | L-weighted 490 vs 384 (-22 %)
+  region                 matched n 384 | 270 : M 1461 vs L 1328 (-9 %) | L-weighted 1617 vs 1422 (-12 %)
+  shelf280-480x440-520   matched n 384 | 270 : M 7 vs L 5 (-22 %) | L-weighted 9 vs 7 (-20 %)
+  near0-100x575-620      matched n 384 | 270 : M 271 vs L 233 (-14 %) | L-weighted 316 vs 238 (-25 %)
+== dt-matched on real gap (1-ms bins, both n>=10): M weights / L weights
+  left0-160              matched n 361 | 248 : M 428 vs L 377 (-12 %) | L-weighted 483 vs 375 (-22 %)
+  region                 matched n 361 | 248 : M 1443 vs L 1320 (-9 %) | L-weighted 1595 vs 1370 (-14 %)
+  shelf280-480x440-520   matched n 361 | 248 : M 7 vs L 5 (-16 %) | L-weighted 8 vs 7 (-15 %)
+  near0-100x575-620      matched n 361 | 248 : M 267 vs L 243 (-9 %) | L-weighted 313 vs 242 (-23 %)
+== pooled engine-dt band 28-38 ms
+  left0-160              M n 413 mean 401 dtmean 34.2 | L n 253 mean 368 dtmean 35.4
+  region                 M n 413 mean 1378 dtmean 34.2 | L n 253 mean 1347 dtmean 35.4
+  shelf280-480x440-520   M n 413 mean 6 dtmean 34.2 | L n 253 mean 7 dtmean 35.4
+  near0-100x575-620      M n 413 mean 248 dtmean 34.2 | L n 253 mean 238 dtmean 35.4

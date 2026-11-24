@@ -1,0 +1,579 @@
+--- a/retrux-web/app/hero/engine/hero/IceMaterial.ts
++++ b/retrux-web/app/hero/engine/hero/IceMaterial.ts
+@@ -13,6 +13,39 @@
+  * the round-11 defaults of that build. For A/B captures; `?ice=r10` still restores round 10.
+  */
+ export const ICE_R11A = typeof location !== "undefined" && new URLSearchParams(location.search).get("ice") === "r11a";
++
++/**
++ * P4 ice lane (P3 panel tasks G5, Q3, Q4 ice part, Q6, Q10), T1 / T2 only (T0 keeps MAIN's ice). `?p4ice=0` restores MAIN
++ * exactly (no ICE_P4 define, no new uniforms). Sub-switches, uniform-level in the same program: `?iceaa=r11` (G5 band
++ * limit), `?icefrost=r11` (Q3 frost), `?icecap=0` (Q6 caps / joints), `?orbice=r11` (Q4 orb light in the ice),
++ * `?icehold=r11` (Q10 hold drama / rim / cracks / cast).
++ */
++const P4Q = typeof location !== "undefined" ? new URLSearchParams(location.search) : null;
++export const P4ICE = !!P4Q && P4Q.get("p4ice") !== "0";
++const P4_AA = !!P4Q && P4Q.get("iceaa") !== "r11";
++const P4_FROST = !!P4Q && P4Q.get("icefrost") !== "r11";
++const P4_CAP = !!P4Q && P4Q.get("icecap") !== "0";
++const P4_ORB = !!P4Q && P4Q.get("orbice") !== "r11";
++const P4_HOLD = !!P4Q && P4Q.get("icehold") !== "r11";
++function p4On(quality: { marchSteps: number }) {
++  return P4ICE && iceR11(quality) && quality.marchSteps >= 4;
++}
++/**
++ * The fragment source without the P4 lane's `#ifdef ICE_P4` blocks (their `#else` parts kept): with the lane off (and on T0)
++ * the program text is MAIN's exactly, not only its output (tools/ident hashes every linked program's source).
++ */
++function stripP4(src: string) {
++  const out: string[] = [];
++  let mode = 0; // 0 outside, 1 the P4 part, 2 its #else part (no nested conditionals inside these blocks)
++  for (const line of src.split("\n")) {
++    const t = line.trim();
++    if (mode === 0 && t === "#ifdef ICE_P4") mode = 1;
++    else if (mode === 1 && t === "#else") mode = 2;
++    else if (mode !== 0 && t === "#endif") mode = 0;
++    else if (mode !== 1) out.push(line);
++  }
++  return out.join("\n");
++}
+ 
+ /**
+  * Round-11 ice on this tier? T0 (ice march steps <= 2) keeps the round-10 ice, orb and back-depth pass: the traced
+@@ -359,7 +392,60 @@
+                          // 7 the first exit's orb impact parameter / orb radius (green < 0.15, yellow < 0.35, orange < 0.6, red, blue = no orb)
+ varying vec3 vRingC;
+ varying vec3 vRingA;
++#ifdef ICE_P4
++// P4 ice lane (P3 panel tasks G5 / Q3 / Q4 / Q6 / Q10). ?p4ice=0 compiles none of this: MAIN's program exactly.
++uniform vec4 uP4A;  // G5: x Bump.001 ramp-end filter per pixel footprint (MAIN 1.5), y its floor in Noise A units (MAIN 0.004),
++                    // z octave fade start in cycles per pixel, gone at 2 z (MAIN 0.3), w the trace's finest octave in px (MAIN 2)
++uniform vec4 uP4B;  // Q3: x / y roughness ramp lo / hi (MAIN 0.233 / 1), z Noise A stretched along the ring this many times
++                    // (0 = MAIN's isotropic noise), w 1 = the noise values band-limited like their gradients (G5; MAIN 0)
++uniform vec4 uP4C;  // Q4: x indirect clamp scale on direct orb paths (MAIN 1), y their lobe floor (MAIN 0.012), z orb-through
++                    // variation (MAIN 0), w periwinkle hue of the orb's light inside the ice (MAIN 0)
++uniform vec4 uP4D;  // Q6: x 1 = cut caps traced from their own plane (MAIN 0), y joint seam width (m, MAIN 0.012), z cap edge
++                    // chamfer width (section units, 0 off), w cap glint gain
++uniform vec4 uP4E;  // Q10, reached at full hold (uHold 1): x face-on lobe growth (MAIN uR11K.w), y TIR smoothing scale of the
++                    // one-bounce paths (MAIN 1), z transmitted gain (MAIN uR11D.y), w chroma gain (MAIN uR11B.w)
++uniform vec4 uP4F;  // Q10: x orb share of the grazing reflection tinted by IceColor (MAIN 0), y steel-blue inner rim line,
++                    // z spare (the crack sheets were dropped in the fix round: invisible in every judged pose, F4), w ice-only
++                    // blue cast (all MAIN 0)
++uniform vec4 uP4G;  // Q4 / Q10: x orb-through gain at full hold (MAIN 1), y facet glint gain at full hold (MAIN 0), z the mean's share
++                    // of the orb seen along a direct path (MAIN uR11F.x 0.3), w spare
++uniform vec4 uP4H;  // Q3: x / y the trace's own roughness ramp lo / hi (MAIN = the material roughness, 0.233 / 1); G5 fix round:
++                    // z the critical-angle ramp's width at full hold, every wall (MAIN 1), w spare
++uniform vec4 uP4I;  // Q10 scrape streaks: x the fine bump's Noise B stretched along the ring this many times (0 = MAIN's isotropic
++                    // noise), y / z / w spare
++uniform vec4 uP4J;  // Q6 fix round, joints: x 1 = V profile (0 = the round-1 / MAIN collar formula with uP4D.y metres), y its depth
++                    // share, z spare, w bright far-wall line gain
++uniform float uHold;
++float gP4Direct = 0.0;  // 1 while the trace looks up a first exit after <= 1 internal wall (Q4)
++float gP4OrbMod = 1.0;  // orb-through modulation after the clamp (Q4: variation, hold charge)
+ 
++// Value noise (chunks noised) on a lattice periodic in x with an integer period: Noise A along the ring has no seam at +-pi.
++vec4 p4NoisedP(vec3 x, float per) {
++  vec3 i = floor(x);
++  vec3 w = fract(x);
++  vec3 u = w * w * w * (w * (w * 6.0 - 15.0) + 10.0);
++  vec3 du = 30.0 * w * w * (w * (w - 2.0) + 1.0);
++  float i0 = mod(i.x, per), i1 = mod(i.x + 1.0, per);
++  float a = hash13(vec3(i0, i.y, i.z));
++  float b = hash13(vec3(i1, i.y, i.z));
++  float c = hash13(vec3(i0, i.y + 1.0, i.z));
++  float d = hash13(vec3(i1, i.y + 1.0, i.z));
++  float e = hash13(vec3(i0, i.y, i.z + 1.0));
++  float f = hash13(vec3(i1, i.y, i.z + 1.0));
++  float g = hash13(vec3(i0, i.y + 1.0, i.z + 1.0));
++  float h = hash13(vec3(i1, i.y + 1.0, i.z + 1.0));
++  float k0 = a, k1 = b - a, k2 = c - a, k3 = e - a;
++  float k4 = a - b - c + d, k5 = a - c - e + g, k6 = a - b - e + f;
++  float k7 = -a + b + c - d + e - f - g + h;
++  float v = k0 + k1 * u.x + k2 * u.y + k3 * u.z + k4 * u.x * u.y + k5 * u.y * u.z + k6 * u.z * u.x + k7 * u.x * u.y * u.z;
++  vec3 g3 = du * vec3(
++    k1 + k4 * u.y + k6 * u.z + k7 * u.y * u.z,
++    k2 + k5 * u.z + k4 * u.x + k7 * u.z * u.x,
++    k3 + k6 * u.x + k5 * u.y + k7 * u.x * u.y);
++  return vec4(v * 2.0 - 1.0, 2.0 * g3);
++}
++#endif
++
+ // Octagon edges: outward normal (x radial, y axial) and offset h (n.q <= h inside), in units of the radial half-width.
+ const vec3 R11_OCT[8] = vec3[8](
+   vec3(0.98404, 0.17791, 0.98404), vec3(0.61500, 0.78855, 1.63782),
+@@ -467,6 +553,68 @@
+   return 0.5 * g / s;
+ }
+ 
++#ifdef ICE_P4
++// G5: r11FbmGrad with the octave fade starting at fLo cycles per pixel (gone at 2 fLo; MAIN 0.3), and with vBand 1 the value
++// band-limited too (MAIN sums every octave's value at full weight: Noise A's finest octaves switched roughness / the bump
++// window at 2-3 px and boiled while the rings turned). fLo 0.3, vBand 0 = r11FbmGrad.
++vec3 p4FbmGrad(vec3 x, float freq, float gain, int octaves, float pix, float lowPix, float fLo, float vBand, out float val, out vec3 gLow) {
++  vec3 g = vec3(0.0);
++  gLow = vec3(0.0);
++  float a = 1.0, f = freq, s = 0.0;
++  val = 0.0;
++  mat3 m = mat3(1.0);
++  vec3 y = x * freq;
++  for (int i = 0; i < 7; i++) {
++    if (i >= octaves) break;
++    vec4 n = noised(y);
++    float fade = 1.0 - smoothstep(fLo, 2.0 * fLo, f * pix);
++    val += a * mix(1.0, fade, vBand) * n.x;
++    g += a * fade * f * (m * n.yzw);
++    gLow += a * (1.0 - smoothstep(fLo, 2.0 * fLo, f * lowPix)) * f * (m * n.yzw);
++    s += a;
++    a *= gain;
++    f *= 2.02;
++    y = RX_OCT * y * 2.02;
++    m = RX_OCT_INV * m;
++  }
++  val = 0.5 + 0.5 * val / s;
++  gLow *= 0.5 / s;
++  return 0.5 * g / s;
++}
++// Q3: Noise A in ring coordinates (arc length / S, rho - R, axial), so its clear / frosted patches stretch S times along the
++// ring (streaks, not isotropic cloud blobs). The lattice is periodic in theta (an integer cell count per revolution), octaves
++// double exactly. Same outputs as p4FbmGrad: value, gradient per metre in the ring frame (gLow: the trace's octaves).
++vec3 p4FbmRing(vec3 pr, float freq, float S, float gain, int octaves, float pix, float lowPix, float fLo, float vBand, out float val, out vec3 gLow) {
++  float rho = max(length(pr.xy), 1e-4);
++  float th = atan(pr.y, pr.x);
++  float per = max(floor(6.2831853 * uSectionRadius * freq / S + 0.5), 1.0);
++  vec3 ex = vec3(-pr.y, pr.x, 0.0) * (per / (6.2831853 * rho * rho));
++  vec3 ey = vec3(pr.xy / rho, 0.0) * freq;
++  vec3 ez = vec3(0.0, 0.0, freq);
++  vec3 y = vec3(th * (per / 6.2831853) + uSeed * 7.0, (rho - uSectionRadius) * freq + 4.0 + uSeed * 13.7, pr.z * freq + 4.0 - uSeed * 5.3);
++  vec3 g = vec3(0.0);
++  gLow = vec3(0.0);
++  float a = 1.0, f = freq, k = 1.0, s = 0.0;
++  val = 0.0;
++  for (int i = 0; i < 7; i++) {
++    if (i >= octaves) break;
++    vec4 n = p4NoisedP(y, per * k);
++    float fade = 1.0 - smoothstep(fLo, 2.0 * fLo, f * pix);
++    vec3 gp = k * (n.y * ex + n.z * ey + n.w * ez);
++    val += a * mix(1.0, fade, vBand) * n.x;
++    g += a * fade * gp;
++    gLow += a * (1.0 - smoothstep(fLo, 2.0 * fLo, f * lowPix)) * gp;
++    s += a;
++    a *= gain;
++    f *= 2.0;
++    k *= 2.0;
++    y = y * 2.0 + vec3(0.37, 1.71, 3.13);
++  }
++  val = 0.5 + 0.5 * val / s;
++  gLow *= 0.5 / s;
++  return 0.5 * g / s;
++}
++#endif
+ // Share of a Gaussian lobe of width sig (rad) around D, from X, that a sphere (centre C, the orb's radius) covers.
+ float r11Cover(vec3 X, vec3 D, vec3 C, float sig) {
+   vec3 oc = C - X;
+@@ -531,7 +679,11 @@
+   // (roughness up to 1) gathers it from a wide cone, the twin's teal orb light on rings B / C / D (20-28 % at q00).
+   // The far half of the cage is drawn before the orb (its copy has no orb, and the orb lies in front of it).
+   if (uRingSplit.x < 0.5) {
++#ifdef ICE_P4
++    float sig = mix(0.012, uP4C.y, gP4Direct) + uR11C.z * rough * rough;
++#else
+     float sig = 0.012 + uR11C.z * rough * rough;
++#endif
+     col = r11LakeOrb(X, D, col, sig);
+     vec3 oc = uOrbCenter - X;
+     float dc = max(length(oc), uOrbRadius * 1.001);
+@@ -558,8 +710,28 @@
+       vec3 meanL = r11OrbMean();
+       // (uR11F.x: Cycles' band lens magnifies the orb ~3.7x, so its plasma reads as an even glow through the ice, not as
+       // tongues at their own scale, batch s19.)
++#ifdef ICE_P4
++      // (Q4: a direct path keeps more of the orb's sharp sample - its plasma structure - than the 0.3 share of the mean.)
++      float dK = gP4Direct * (1.0 - smoothstep(0.45, 0.75, dmin / uOrbRadius));
++      vec3 orbL = mix(sharpL, meanL, max(mix(uR11F.x, uP4G.z, dK), smoothstep(0.25, 1.2, sig / beta)));
++#else
+       vec3 orbL = mix(sharpL, meanL, max(uR11F.x, smoothstep(0.25, 1.2, sig / beta)));
++#endif
++#ifdef ICE_P4
++      // (Q4: a direct path - first exit after <= 1 internal wall, through the orb's inner 0.45-0.75 radii - is clamped at
++      // uP4C.x x the indirect limit: Cycles clamps each sample, and a straight path's samples stay together, so the band over
++      // the orb keeps its lift and its structure. The ramp keeps the switch continuous. Then the orb's light keeps a
++      // periwinkle hue inside the ice (luma-neutral) and its variation / hold charge, gP4OrbMod.)
++      vec3 thrO = uR11Tint * 0.92;
++      float lim = uR11M.x * mix(1.0, uP4C.x, dK);
++      vec3 cO = orbL * uR11D.w;
++      float sO = dot(cO * thrO, vec3(1.0));
++      if (uR11M.x > 0.0 && sO > lim) cO *= lim / sO;
++      cO *= mix(vec3(1.0), vec3(1.0325, 0.9808, 1.0944), uP4C.w) * gP4OrbMod;
++      col = mix(col, cO, cov);
++#else
+       col = mix(col, r11ClampOrb(orbL * uR11D.w, uR11Tint * 0.92), cov);
++#endif
+       hitOut = cov;
+     }
+   }
+@@ -574,7 +746,14 @@
+     float sig = 0.02 + 2.0 * uR11C.z * rough * rough;
+     col = r11LakeOrb(X, R, col, sig);
+     float cov = r11Cover(X, R, uOrbCenter, sig);
++#ifdef ICE_P4
++    // (Q10: the orb seen in the grazing reflection tinted by IceColor, luma kept: MAIN's untinted mean drew the uniform mint
++    // rim, q03 B-G 5-14 vs F045's neutral 19-24.)
++    vec3 tR = mix(vec3(1.0), uR11Tint / dot(uR11Tint, vec3(0.2126, 0.7152, 0.0722)), uP4F.x);
++    if (cov > 1e-3) col = mix(col, r11ClampOrb(r11OrbMean() * uR11D.w, vec3(1.0)) * tR, cov);
++#else
+     if (cov > 1e-3) col = mix(col, r11ClampOrb(r11OrbMean() * uR11D.w, vec3(1.0)), cov);
++#endif
+   }
+   return col;
+ }
+@@ -642,6 +821,26 @@
+   float ky = 1.0;
+   vec2 qf = vec2((rW - uSectionRadius) / w, aW / (w * ky));
+   vec2 vel = vec2(dot(-V, er) / w, dot(-V, ea) / (w * ky));  // section velocity of the view ray, per metre
++#ifdef ICE_P4
++  // Q6: a fragment on a cut cap of a piece that has left its rest place. The cap is the piece's planar cut face; MAIN shaded it
++  // as the revolved octagon's wall the view would have entered by (the entry moved back onto the infinite tube, outside the
++  // piece), i.e. as a continuation of the curved tube: the domed 'bone' ends. capK 1 = enter through the cap's own plane.
++  float capK = 0.0;
++  vec3 capN = Ng;
++  if (uP4D.x > 0.5 && uPieceCuts.z > 0.5 && uPieceCuts.w < 0.999) {
++    vec3 tW = normalize(cross(ea, er));
++    float dCut = 1e9;
++    for (int c = 0; c < 2; c++) {
++      float ang = c == 0 ? uPieceCuts.x : uPieceCuts.y;
++      vec3 nc = normalize(toW * vec3(-sin(ang), cos(ang), 0.0));
++      vec3 rc = toW * vec3(cos(ang), sin(ang), 0.0);
++      if (dot(rel, rc) <= 0.0) continue;
++      float dc0 = abs(dot(rel, nc));
++      if (dc0 < dCut) { dCut = dc0; capN = dot(nc, V) >= 0.0 ? nc : -nc; }
++    }
++    capK = smoothstep(0.75, 0.92, abs(dot(Ng, tW))) * (1.0 - smoothstep(0.03, 0.06, dCut));
++  }
++#endif
+   int face = 0;
+   vec2 qe = qf;
+   float sEnt = 0.0;  // distance (m) from the fragment to the analytic octagon's entry point along the view ray
+@@ -676,6 +875,29 @@
+   vec3 Nmac = normalize(n2.x * er + (n2.y / ky) * ea);
+   // Keep the entry face towards the camera (the fallback face of a ray that misses the octagon may not be).
+   Nmac = normalize(mix(Ng, Nmac, smoothstep(0.02, 0.15, dot(Nmac, V))));
++#ifdef ICE_P4
++  float capEdge = 0.0;
++  if (capK > 0.0) {
++    // The cap's own plane, entered at the fragment (the trace below follows the ray inside the revolved octagon from there).
++    vec3 Nc = capN;
++    if (uP4D.z > 0.0) {
++      // A narrow chamfer along the cap's octagon outline: the normal turns towards the nearest wall (a crisp bright edge).
++      float dW = 1e9;
++      int iW = 0;
++      for (int i = 0; i < 8; i++) {
++        float o = R11_OCT[i].z - dot(R11_OCT[i].xy, qf);
++        if (o < dW) { dW = o; iW = i; }
++      }
++      vec3 nWc = normalize(R11_OCT[iW].x * er + R11_OCT[iW].y * ea);
++      capEdge = 1.0 - smoothstep(0.0, uP4D.z, dW);
++      Nc = normalize(mix(Nc, nWc, 0.5 * capEdge));
++      if (dot(Nc, V) < 0.05) Nc = capN;
++    }
++    Nmac = normalize(mix(Nmac, Nc, capK));
++    sEnt *= 1.0 - capK;
++    qe = mix(qe, qf, capK);
++  }
++#endif
+ 
+   // ---- frost (Blender's roughness ramp), facets, bumps
+   vec3 p = vObjPos + uSeed * 13.7;
+@@ -688,10 +910,24 @@
+   // only those above 0.12 m. Blender's frost bump tilts the normal by ~13 deg at every scale, so in Cycles the path inside
+   // the ice changes at the frost's own scale: that is the twin's cloudy, granular transmission, judge 1 finding (d). With
+   // the continuous trace above, those changes are soft, not islands.)
++#ifdef ICE_P4
++  // (G5: the trace's finest octave at uP4A.w pixel footprints, octaves faded from uP4A.z cycles per pixel, values band-limited
++  // with uP4B.w. Q3: Noise A stretched along the ring, uP4B.z; the roughness ramp compressed to uP4B.x .. y.)
++  float lowPixT = uR11K.z > 0.0 ? max(uR11K.z, uP4A.w * pix) : 0.12;
++  vec3 gA = uP4B.z > 0.0
++    ? p4FbmRing(vObjPos, 4.2 / 1.975, uP4B.z, 0.5, FROST_OCTAVES, pix, lowPixT, uP4A.z, uP4B.w, nA, gALow)
++    : p4FbmGrad(p + 4.0 / (4.2 / 1.975), 4.2 / 1.975, 0.5, FROST_OCTAVES, pix, lowPixT, uP4A.z, uP4B.w, nA, gALow);
++  float frostLin = clamp((nA - 0.5423) / (0.7657 - 0.5423) + (uFrost - 0.6) * 0.8, 0.0, 1.0);
++  float rough = mix(uP4B.x, uP4B.y, frostLin);
++  // (The trace's lobe keeps its own, narrower ramp: with the compressed material roughness (floor 0.45) its critical-angle
++  // ramp and lobe growth washed out the oblique bands' dark steel-blue TIR zones, q03 outer ring lf 20 -> 10 vs F045 23.5.)
++  float roughT = mix(uP4H.x, uP4H.y, frostLin);
++#else
+   float lowPixT = uR11K.z > 0.0 ? max(uR11K.z, 2.0 * pix) : 0.12;
+   vec3 gA = r11FbmGrad(p + 4.0 / (4.2 / 1.975), 4.2 / 1.975, 0.5, FROST_OCTAVES, pix, lowPixT, nA, gALow);
+   float frostLin = clamp((nA - 0.5423) / (0.7657 - 0.5423) + (uFrost - 0.6) * 0.8, 0.0, 1.0);
+   float rough = 0.233 + 0.767 * frostLin;
++#endif
+   // Facets: Cycles displaces the SubD-L1 vertices (cells ~0.4 m, vertices ~0.2 m apart) and smooth-shades the result
+   // (the facets meet at less than 30 deg), so the shading normal wanders smoothly by a few degrees at the L1 scale: a
+   // smooth tilt field (two value-noise gradients in the object frame, so it moves with the ring). A Voronoi chisel with hard
+@@ -701,7 +937,11 @@
+   vec3 tiltO = (t1.yzw + 0.5 * t2.yzw) * 0.5;
+   vec3 tilt2O = (noised(p * (5.0 / 1.975) * 1.6 + 21.3).yzw + 0.5 * noised(RX_OCT * p * (5.0 / 1.975) * 3.3 + 33.9).yzw) * 0.5;
+   vec3 tiltW = toW * tiltO;
++#ifdef ICE_P4
++  vec3 N = normalize(Nmac + (tiltW - Nmac * dot(tiltW, Nmac)) * (uR11A.y * (1.0 - capK)));
++#else
+   vec3 N = normalize(Nmac + (tiltW - Nmac * dot(tiltW, Nmac)) * uR11A.y);
++#endif
+   if (uR11H.x > 0.5) {
+     // (Round-11 batch s28: the smooth tilt field drew rounded "liquid" blotches; the twin's facets are the plateaus.)
+     vec3 gS = toW * r11PlateauGrad(p).yzw * (uDisplace * uR11H.y);
+@@ -711,7 +951,11 @@
+   // Bump.001 (strength 0.2) on Noise A's ramp 0.468 -> 0 .. 0.773 -> 0.222, then the fine Bump (0.06) on Noise B.
+   // (Fix round, uR11K.x: the ramp's ends filtered at the pixel footprint. Unfiltered, the frost bump switched on and off along
+   // Noise A's iso-lines, which drew closed "drop" outlines and contour lines through the trace, judge 1 finding (d).)
++#ifdef ICE_P4
++  float fwA = fwidth(nA) * uP4A.x + uP4A.y;
++#else
+   float fwA = fwidth(nA) * 1.5 + 0.004;
++#endif
+   float rampK = uR11K.x > 0.5
+     ? (0.222 / 0.305) * (smoothstep(0.468 - fwA, 0.468 + fwA, nA) - smoothstep(0.773 - fwA, 0.773 + fwA, nA))
+     : ((nA > 0.468 && nA < 0.773) ? 0.222 / 0.305 : 0.0);
+@@ -719,7 +963,15 @@
+   vec3 gH1L = toW * gALow * rampK;
+   float nB;
+   vec3 gBLow;
++#ifdef ICE_P4
++  // (Q10: F000's fine horizontal scrape streaks: the fine bump's Noise B in ring coordinates, stretched uP4I.x times along the
++  // ring; band-limited like every octave here, so its finest surviving streaks are 3-7 px wide.)
++  vec3 gB = toW * (uP4I.x > 0.0
++    ? p4FbmRing(vObjPos + 11.0 * vec3(0.0, 0.0, 1.0), 4.0 / 1.975, uP4I.x, 0.8, FINE_OCTAVES + 2, pix, 0.12, uP4A.z, uP4B.w, nB, gBLow)
++    : p4FbmGrad(p * 1.0 + 11.0, 4.0 / 1.975, 0.8, FINE_OCTAVES + 2, pix, 0.12, uP4A.z, uP4B.w, nB, gBLow));
++#else
+   vec3 gB = toW * r11FbmGrad(p * 1.0 + 11.0, 4.0 / 1.975, 0.8, FINE_OCTAVES + 2, pix, 0.12, nB, gBLow);
++#endif
+   vec3 Ntr = normalize(mix(N, normalize(N - (gH1L - N * dot(gH1L, N))), uR11C.x));
+   vec3 Nb1 = normalize(N - (gH1 - N * dot(gH1, N)));
+   N = normalize(mix(N, Nb1, uR11C.x));
+@@ -760,10 +1012,22 @@
+   vec3 d1 = d;
+   // Every rough interface widens the lobe (a reflection about twice the microfacet spread): light that bounced inside
+   // reads a wider, softer cone of the scene (Cycles' internal-reflection zones are soft, not sharp navy bands).
++#ifdef ICE_P4
++  float rb = roughT;
++#else
+   float rb = rough;
++#endif
+   // (Fix round, uR11K.w: lobe growth per bounce scaled to uR11K.w x uR11B.x where the ring faces the camera (view along its
+   // axis), uR11B.x where it is seen edge-on or obliquely; 1 = uR11B.x everywhere.)
++#ifdef ICE_P4
++  // (Q10: the face-on lobe growth eases to uP4E.x in the hold, so the far-wall TIR line and the refracted orb strip stay crisp.)
++  float kWh = mix(uR11K.w, uP4E.x, uHold);
++  float growB = kWh == 1.0 ? uR11B.x : uR11B.x * mix(1.0, kWh, smoothstep(0.5, 0.85, abs(dot(V, ea))));
++  // (Q4: the orb-through term keeps a variation - less behind frosted patches, the fine bump's value - and charges in the hold.)
++  gP4OrbMod = mix(1.0, uP4G.x, uHold) * mix(1.0, 1.0 - 0.35 * smoothstep(0.35, 1.0, rough) * uR11D.z + 0.25 * (nB - 0.5), uP4C.z);
++#else
+   float growB = uR11K.w == 1.0 ? uR11B.x : uR11B.x * mix(1.0, uR11K.w, smoothstep(0.5, 0.85, abs(dot(V, ea))));
++#endif
+   vec3 lastL = vec3(0.0);
+   float wTrap = 0.0;  // energy that stopped inside (uR11J.x): it leaves as the trapped lookup below
+   float wOut = 0.0;   // energy that left through the walls so far
+@@ -829,6 +1093,12 @@
+       // reflection at the critical angle is a ramp, not a per-pixel switch: Fresnel averaged over +-dc (1-2-1 taps); light
+       // that still leaves just beyond the critical angle leaves grazing.)
+       float dc = (uR11J.y > 0.0 ? uR11J.y * rb * rb * 0.667 : -uR11J.y * rough * rough * 0.667) + uR11N.x * pxSpread;
++#ifdef ICE_P4
++      if (b == 1) dc *= mix(1.0, uP4E.y, uHold);
++      // (G5 fix round: in the hold the close-up arcs drew soft outlines along the internal-reflection zones' edges (p05);
++      // their ramp widens to uP4H.z x at full hold only, so the idle crawl is untouched.)
++      dc *= mix(1.0, uP4H.z, uHold);
++#endif
+       if (uR11L.y > 0.5) {
+         // one-sided (uR11L.y 1): total reflection stays total; below the critical angle the reflected share falls from 1 to
+         // Fresnel's over dc, so the step becomes a ramp without leaking light out grazing (that leak lightened the oblique
+@@ -852,7 +1122,13 @@
+       // a single ray drew thin contour lines of the facet field there (batch s18); Cycles' rough lobe smears them.
+       float gz = 1.0 - abs(dot(normalize(dt), nW));
+       float rx = min(rb + uR11E.z * gz * gz * gz, 1.0);
++#ifdef ICE_P4
++      gP4Direct = b <= 1 ? 1.0 : 0.0;
++#endif
+       lastL = r11Radiance(P, normalize(normalize(dt) - bumpOff), rx, clamp(log2(1.0 + uR11A.w * rx * rx), 0.0, uR11E.y), hit);
++#ifdef ICE_P4
++      gP4Direct = 0.0;
++#endif
+       Lt += wIn * (1.0 - F) * lastL;
+       wOut += wIn * (1.0 - F);
+       if (nOut == 0) {
+@@ -880,7 +1156,11 @@
+     // (Fix round, uR11J.w: a wall touched at grazing incidence barely deflects the ray, so it should not widen the lobe; the
+     // full growth at every touch made the lookup's blur jump where a ray starts to graze a curved wall.)
+     float gG = uR11J.w > 0.5 ? smoothstep(0.0, 0.35, abs(ci)) : 1.0;
++#ifdef ICE_P4
++    rb = min(sqrt(rb * rb + gG * growB * growB * roughT * roughT), 1.0);
++#else
+     rb = min(sqrt(rb * rb + gG * growB * growB * rough * rough), 1.0);
++#endif
+   }
+   // What is still inside is light guided along the ring: it leaves somewhere far along it. (The rough panorama along the last
+   // direction drew dim islands with hard closed outlines wherever a band's curvature traps the view in a whispering-gallery
+@@ -945,7 +1225,11 @@
+   float wT = 1.0;
+   // Blender 5.2's Principled tints a whole pass once (measured on the twin without the orb, ring / background per channel:
+   // R/B 0.64-0.76, G/B 0.83-0.89 against IceColor's 0.648 / 0.833; squared would be 0.42 / 0.69).
++#ifdef ICE_P4
++  vec3 trans = Lt * (wT * mix(uR11D.y, uP4E.z, uHold)) * uR11Tint;
++#else
+   vec3 trans = Lt * (wT * uR11D.y) * uR11Tint;
++#endif
+ 
+   // ---- reflection at the entry (glossy rays see the Nishita world, the cloud cards and the geometry)
+   float Fe = r11Fresnel(dot(N, V), ior);
+@@ -960,6 +1244,23 @@
+   vec3 spec = min(uSunColor * ggxSpec(N, V, L, rSpec), vec3(2.5)) * sil;
+   Fe *= mix(0.35, 1.0, sil);
+   vec3 col = trans * (1.0 - Fe) + refl * Fe + spec * Fe;
++#ifdef ICE_P4
++  {
++    // (Q6 / Q10: a tight sun glint, GGX alpha 0.04, on the flat cut caps and, in the hold, on the facets; widened by the
++    // normal's own spread over the pixel, so it cannot sparkle.)
++    float gk = uP4D.w * capK + uP4G.y * uHold;
++    if (gk > 0.0) {
++      float rG = sqrt(0.04 + 0.35 * nVar);
++      col += min(uSunColor * ggxSpec(N, V, L, rG), vec3(3.0)) * Fe * sil * gk;
++    }
++  }
++  if (uP4F.y > 0.0) {
++    // (Q10: F045's steel-blue line 3-5 px inside the silhouette, where the side face turns away: L 173-179, B-G 34-37.)
++    float ndvG = dot(Ng, V);
++    float lk = smoothstep(0.08, 0.16, ndvG) * (1.0 - smoothstep(0.22, 0.34, ndvG)) * (1.0 - capK);
++    col *= mix(vec3(1.0), vec3(0.74, 0.83, 1.0), lk * uP4F.y);
++  }
++#endif
+ 
+   // ---- the orb as a light: specular glint and the light scattered by frosted ice facing it
+   vec3 toO = uOrbCenter - vWorldPos;
+@@ -975,23 +1276,59 @@
+     vec3 e1 = P1 - vRingC;
+     float jk = 0.0;
+     float wob = (nA - 0.5) * 0.03;  // a slightly irregular seam (Noise A), metres
++#ifdef ICE_P4
++    // (F2 fix round: the seam lines' pixel widths from derivatives taken here, in uniform control flow.)
++    vec3 dE0x = dFdx(e0), dE0y = dFdy(e0), dE1x = dFdx(e1), dE1y = dFdy(e1);
++    float jLine = 0.0;
++#endif
+     for (int c = 0; c < 2; c++) {
+       float ang = c == 0 ? uPieceCuts.x : uPieceCuts.y;
+       vec3 nc = normalize(toW * vec3(-sin(ang), cos(ang), 0.0));
+       vec3 rc = toW * vec3(cos(ang), sin(ang), 0.0);
+       if (dot(e0, rc) <= 0.0) continue;
+       float se = dot(e0, nc) + wob, sx = dot(e1, nc) + wob;
++#ifdef ICE_P4
++      float crossK;
++      if (uP4J.x > 0.5) {
++        // (F2 fix round: F015 / F030 show a 2-3 px dark seam and a bright edge line, not a flat painted collar. Across the
++        // band of rays whose first segment crosses the plane the shade is a V, deepest where the crossing is midway along the
++        // segment and 0 at both ends (se -> 0 at the entry face, sx -> 0 at the far wall), so it has no hard edge and reads
++        // as a line at any width; a bright line uP4D.y px either side of where the plane meets the far wall (sx -> 0).)
++        float fS = abs(dot(dE0x, nc)) + abs(dot(dE0y, nc)) + 1e-5;
++        float fX = clamp(abs(dot(dE1x, nc)) + abs(dot(dE1y, nc)), 0.5 * fS, 4.0 * fS);
++        float tC = abs(se) / max(abs(se) + abs(sx), 1e-6);
++        float vK = se * sx < 0.0 ? 1.0 - abs(2.0 * tC - 1.0) : 0.0;
++        jLine = max(jLine, (1.0 - smoothstep(0.0, uP4D.y * fX, abs(sx))) * smoothstep(fS, 3.0 * fS, abs(se)));
++        crossK = uP4J.y * vK;
++      } else {
++        crossK = se * sx < 0.0 ? 1.0 : 1.0 - smoothstep(0.0, uP4D.y, min(abs(se), abs(sx)));
++      }
++#else
+       float crossK = se * sx < 0.0 ? 1.0 : 1.0 - smoothstep(0.0, 0.012, min(abs(se), abs(sx)));
++#endif
+       float tirK = 1.0 - smoothstep(0.62, 0.8, abs(dot(d1, nc)));  // cos 41.8 deg = 0.745
+       jk = max(jk, crossK * mix(0.12, 1.0, tirK));
+     }
++#ifdef ICE_P4
++    col *= (1.0 - uR11B.z * jk) * (1.0 + uP4J.w * jLine);
++#else
+     col *= 1.0 - uR11B.z * jk;
++#endif
+   }
+ 
++#ifdef ICE_P4
++  // (Q10: an ice-only cast towards blue at equal luma, against the residual cyan; the chroma eases to uP4E.w in the hold.)
++  col *= mix(vec3(1.0), vec3(1.0083, 0.9931, 1.0436), uP4F.w);
+   {
+     float lc = dot(col, vec3(0.2126, 0.7152, 0.0722));
++    col = max(vec3(lc) + (col - vec3(lc)) * mix(uR11B.w, uP4E.w, uHold), vec3(0.0));
++  }
++#else
++  {
++    float lc = dot(col, vec3(0.2126, 0.7152, 0.0722));
+     col = max(vec3(lc) + (col - vec3(lc)) * uR11B.w, vec3(0.0));
+   }
++#endif
+   if (uR11Dbg > 0.5) {
+     if (uR11Dbg < 1.5) col = vec3(orbHit, out_ ? 1.0 : 0.0, nTir / 4.0);
+     else if (uR11Dbg < 2.5) col = vec3(float(face) / 7.0, float(fExit) / 7.0, 0.0);
+@@ -1416,10 +1753,12 @@
+   if (silhouette) defines.ICE_SILHOUETTE = "";
+   const r11 = iceR11(quality);
+   if (r11) defines.ICE_R11 = "";
+-  return new THREE.ShaderMaterial({
++  const p4 = p4On(quality);
++  if (p4) defines.ICE_P4 = "";
++  const mat = new THREE.ShaderMaterial({
+     name: "rx-ice",
+     vertexShader: ICE_VERT,
+-    fragmentShader: ICE_FRAG,
++    fragmentShader: p4 ? ICE_FRAG : stripP4(ICE_FRAG),
+     defines,
+     uniforms: {
+       uRefraction: shared.uRefraction,
+@@ -1477,10 +1816,55 @@
+       uOrbCenter: shared.uOrbCenter,
+       uOrbGlow: shared.uOrbGlow,
+       ...(!r11 ? {} : r11Uniforms()),
++      ...(!p4 ? {} : { uHold: shared.uHold }),
+     },
+   });
++  if (p4) p4Uniforms(mat);
++  return mat;
+ }
+ 
++/** P4 ice lane uniforms (runtime-tunable through `__hero.rings.materials[i].uniforms`); each sub-switch restores MAIN's values. */
++function p4Uniforms(mat: THREE.ShaderMaterial) {
++  const u = mat.uniforms;
++  // G5: ramp-end filter 4 px + 0.02, octave fade from 0.15 c/px, the trace's finest octave 3 px, values band-limited.
++  u.uP4A = { value: P4_AA ? new THREE.Vector4(4, 0.02, 0.15, 3) : new THREE.Vector4(1.5, 0.004, 0.3, 2) };
++  // Q3: roughness 0.45 .. 0.9, Noise A stretched 4x along the ring; w = G5's value band limit.
++  u.uP4B = { value: new THREE.Vector4(P4_FROST ? 0.45 : 0.233, P4_FROST ? 0.9 : 1, P4_FROST ? 4 : 0, P4_AA ? 1 : 0) };
++  if (P4_FROST) {
++    // frosted-diffuse share 0.8 -> 0.5; transmitted panorama blur floor 0.45 -> 0.6 (no sky cloud shapes through a band);
++    // transmitted gain 0.94 -> 0.92: the compressed frost lifted the band faces ~5 L (q00 face 216.5 vs F000 209.3, batch b5).
++    u.uR11D.value.z = 0.5;
++    u.uR11E.value.w = 0.6;
++    u.uR11D.value.y = 0.92;
++  }
++  // Q4 (ice part): direct orb paths clamp 1.6x higher with a 0.008 lobe floor, variation on, periwinkle hue (x2 the plan's
++  // (1, 0.95, 1.06): q03 ring D B-G +8 at x1). (2.2 put q03 ring D 14 L and the q00 band over the orb 7 L above the reference,
++  // batch b2; 1.6: q00 229.3 vs F000 231.8, q03 ring D sd 14.3 vs MAIN 8.7 / F045 17.3, batch b3.)
++  u.uP4C = { value: P4_ORB ? new THREE.Vector4(1.6, 0.008, 1, 2) : new THREE.Vector4(1, 0.012, 0, 0) };
++  // Q6: caps from their own plane, joint seams 5 mm wide and 0.6 deep, a 4 % chamfer, cap glint.
++  // (Fix round, F2: with the V profile (uP4J.x 1) uP4D.y is the far-wall line's half width in pixels: uP4J below.)
++  u.uP4D = { value: P4_CAP ? new THREE.Vector4(1, 1.25, 0.04, 1) : new THREE.Vector4(0, 0.012, 0, 0) };
++  u.uP4J = { value: P4_CAP ? new THREE.Vector4(1, 0.8, 0, 0.45) : new THREE.Vector4(0, 0, 0, 0) };
++  if (P4_CAP) u.uR11B.value.z = 0.6;
++  // Q10: at full hold face-on lobe growth 1.2, one-bounce TIR smoothing x0.7, transmitted gain 0.98, chroma 0.92 (the plan's
++  // 1.02 / 0.85 overshot with the brighter orb paths: p06 band L 212.8 / sat 0.138 vs F420 206.9 / 0.162, batch b2).
++  u.uP4E = { value: P4_HOLD ? new THREE.Vector4(1.2, 0.7, 0.98, 0.92) : new THREE.Vector4(u.uR11K.value.w, 1, u.uR11D.value.y, u.uR11B.value.w) };
++  // Q10: rim tint, steel-blue inner line, crack sheets, blue cast x3 (x1: q02 B-G +22.8 vs F030 +29.3, q01 inner band +18 vs
++  // F015 +22; x3: q02 +28.5, q03 ring D +16 vs F045 +14, outer ring +32 vs +33, batch b5).
++  // (z: the crack sheets were dropped in the fix round, F4: hash-placed, invisible in every judged pose, paid on every fragment.)
++  u.uP4F = { value: P4_HOLD ? new THREE.Vector4(1, 1.3, 0, 3) : new THREE.Vector4(0, 0, 0, 0) };
++  // Q4 / Q10: orb-through x1.4 and a facet glint at full hold.
++  u.uP4G = { value: new THREE.Vector4(P4_ORB ? 1.4 : 1, P4_HOLD ? 0.5 : 0, P4_ORB ? 0.15 : u.uR11F.value.x, 0) };
++  // Q3: the trace's own roughness ramp: MAIN's 0.233 .. 1 (0.6 / 0.85 washed out the oblique bands' TIR zones or raised the
++  // tumble crawl, batches b2 / b3: q03 outer ring L 186 / sd 30 / lf 21 at 1 vs F045 174 / 31 / 23.5; crawl 1.47 / 1.32 / 1.53
++  // vs MAIN-equivalent 1.55 / 1.48 / 1.48). Only the frost terms take the compressed ramp above.
++  // z (fix round, F1): the critical-angle ramp x2.5 at full hold (1 = MAIN): p05's TIR-zone outlines soften (right arc
++  // Laplacian 8.7 -> 6.2 at x2, 5.6 at x3; F402 2.9), p06 band 208.6 -> 205.6 (x2) / 202.3 (x3) vs F420 206.9 (batch b2).
++  u.uP4H = { value: new THREE.Vector4(0.233, 1, P4_AA ? 2.5 : 1, 0) };
++  // Q10: scrape streaks, Noise B stretched 8x along the ring.
++  u.uP4I = { value: new THREE.Vector4(P4_HOLD ? 8 : 0, 0, 0, 0) };
++}
++
+ /**
+  * Round-11 tunables (runtime-tunable through `__hero.rings.materials[i].uniforms`). The values are the Cycles twin's
+  * (Ice.004) where the shader models the same thing, and fitted to the twin's measured boxes otherwise (WORK/LOG.md).

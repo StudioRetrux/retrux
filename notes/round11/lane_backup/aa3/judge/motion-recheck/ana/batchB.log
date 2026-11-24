@@ -1,0 +1,13 @@
+[slot] motion-recheck:B g8+realloop waiting (load 6.7 / max 24, slots 2, holders [{"label":"judge-artifacts-recheck:R1","pid":54413,"at":1795165405485,"slot":0},{"label":"aa5a batch3","pid":57338,"at":1795165092267,"slot":1}])
+[slot] motion-recheck:B g8+realloop waiting (load 5.9 / max 24, slots 2, holders [{"label":"judge-artifacts-recheck:R1","pid":54413,"at":1795165405485,"slot":0},{"label":"motion-recheck:A fix caps","pid":61054,"at":1795165481670,"slot":1}])
+[slot] motion-recheck:B g8+realloop waiting (load 6.9 / max 24, slots 2, holders [{"label":"judge-artifacts-recheck:R1","pid":54413,"at":1795165405485,"slot":0},{"label":"motion-recheck:A fix caps","pid":61054,"at":1795165481670,"slot":1}])
+[slot] motion-recheck:B g8+realloop: taken (load 11.6)
+[cap] /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/judge/motion-recheck/caps/off_medium: 240 frames; 0 errors/warnings
+[batchB] off_medium took 48 s
+[cap] /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/judge/motion-recheck/caps/basenm_medium: 240 frames; 0 errors/warnings
+[batchB] basenm_medium took 49 s
+[rl] /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/judge/motion-recheck/rl/fix_medium: 180 frames, frame ms med 29.9 p90 38.4 max 49.2; mirror frames 180; 0 log lines
+[rl] /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work3/judge/motion-recheck/rl/fix_slow: 180 frames, frame ms med 28.6 p90 30.0 max 33.2; mirror frames 180; 0 log lines
+[batchB] rl took 87 s
+BATCHB-DONE
+[slot] motion-recheck:B g8+realloop: freed (exit 0)

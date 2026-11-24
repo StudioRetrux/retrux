@@ -1,0 +1,4 @@
+far_main         n=40 (200, 580) | farwater blips/fr 2.1 max 6 mean|dL| 0.380 p99 1.35 | lips blips/fr 1.2 max 4 mean|dL| 0.354 p99 1.00
+far_main_gt      n=40 (200, 580) | farwater blips/fr 0.0 max 1 mean|dL| 0.230 p99 1.21 | lips blips/fr 0.0 max 0 mean|dL| 0.205 p99 1.00
+far_lane         n=40 (200, 580) | farwater blips/fr 1.8 max 5 mean|dL| 0.386 p99 1.21 | lips blips/fr 1.1 max 3 mean|dL| 0.362 p99 1.00
+far_lane_gt      n=40 (200, 580) | farwater blips/fr 0.0 max 1 mean|dL| 0.225 p99 1.21 | lips blips/fr 0.0 max 0 mean|dL| 0.201 p99 1.00

@@ -1,0 +1,6 @@
+== aa8_vs_aa7.patch: 282 lines, sha256 c45436d9563e0034604d139cbab68c2809c7868dd0684545ca30d94509428991
+   source differences aa7 vs aa8 outside the six files (excl. node_modules, dist, .next, tsbuildinfo, logs):
+Only in /Users/muhamadrifaldi/Library/Caches/retrux-lanes/aa8/retrux-web: log_fixer
+== aa8.patch: 1236 lines, sha256 c6629527494f69a0bbc7a563dd8c87c83db94cbb763dc270a5418c4aec9b0448
+   source differences aa3_base vs aa8 outside the six files (excl. node_modules, dist, .next, tsbuildinfo, logs):
+Only in /Users/muhamadrifaldi/Library/Caches/retrux-lanes/aa8/retrux-web: log_fixer

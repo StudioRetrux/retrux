@@ -1,0 +1,282 @@
+--- a/retrux-web/app/hero/engine/HeroEngine.ts
++++ b/retrux-web/app/hero/engine/HeroEngine.ts
+@@ -112,6 +112,8 @@
+   /** Press-and-hold version: "r11" (default) or "r10" (`?hold=r10`, the round-10 hold exactly). */
+   readonly holdMode: HoldMode = holdModeFromUrl();
+   private pmrem?: THREE.WebGLRenderTarget;
++  /** The clamped panorama the PMREM is built from (kept for a context restore, AA8 AJ-2: 1024 x 512 RGBA half = 4 MiB). */
++  private panorama?: THREE.DataTexture;
+   private postParams: PostParams = { ...DEFAULT_POST, lensCenter: new THREE.Vector2() };
+   private raf = 0;
+   private running = false;
+@@ -192,10 +194,19 @@
+     const onLost = (e: Event) => {
+       e.preventDefault();
+       this.stop();
++      this.envEdge?.resetTAA();
+       console.warn("[hero] WebGL context lost");
+     };
+     canvas.addEventListener("webglcontextlost", onLost);
+     this.disposers.push(() => canvas.removeEventListener("webglcontextlost", onLost));
++    // AA8 (perf judge P-1): the restored context starts with empty targets, so the waterline TAA starts without history.
++    // (AA8 AJ-2: and the targets drawn only once at load are drawn again, restoreBaked.)
++    const onRestored = () => {
++      this.envEdge?.resetTAA();
++      this.restoreBaked();
++    };
++    canvas.addEventListener("webglcontextrestored", onRestored);
++    this.disposers.push(() => canvas.removeEventListener("webglcontextrestored", onRestored));
+     this.resize();
+   }
+ 
+@@ -219,6 +230,7 @@
+     );
+ 
+     clampHalfFloat(assets.panorama, PANO_CLAMP);
++    this.panorama = assets.panorama;
+     const gen = new THREE.PMREMGenerator(this.renderer);
+     this.pmrem = gen.fromEquirectangular(assets.panorama);
+     gen.dispose();
+@@ -264,8 +276,9 @@
+       this.scene.add(this.lakeMirror.skyMesh);
+       this.lakeMirror.setSize(this.pipeline.size.width, this.pipeline.size.height, this.adaptive.scale);
+       this.lakeMirrorSize.set(this.lakeMirror.target.width, this.lakeMirror.target.height);
+-      // AA5c (20 Nov, the cost of AA3 step B's every-frame mirror): the same mirror target for less work, bit-identical (tools/ident:
+-      // mirror, walk and final hashes): the sky pass after the surfaces at the far plane (LakeMirror.setSkyLate), the baked
++      // AA5c (20 Nov, the cost of AA3 step B's every-frame mirror): the same mirror target for less work, bit-identical in Chrome
++      // and WebKit (tools/ident: mirror, walk and final hashes; WebKit 0 px), not in Firefox (159: ~160 lake px of the final frame
++      // differ by 1 level, max 1; invisible): the sky pass after the surfaces at the far plane (LakeMirror.setSkyLate), the baked
+       // surfaces through a fragment shader of their mirror branch alone (PlateEnvironment.mirrorSlim). `?mirrorcost=0` off (AA3
+       // exactly); lab (with ?debug) `?mcsky=0` / `?mcslim=0` one of them off.
+       if (lq?.get("mirrorcost") !== "0") {
+@@ -291,6 +304,7 @@
+     }
+     this.water = new Water(assets.plate, this.env.plateViewProj, this.env.plateGain, this.shared, envDefines, this.env.occlusion, {
+       glitter: this.profile.tier !== "T0",
++      debug: !!this.opts.debug,
+       shore: shoreAA,
+       projectors: this.env.projectorBinding,
+       mirror: mirror ? { texture: mirror.target.texture, size: this.lakeMirrorSize, uniforms: mirror.lookup, corr: assets.lakeCorr, r12: assets.lakeR12, height: this.lakeHeight } : undefined,
+@@ -332,7 +346,7 @@
+     const aaResolve = msaaBaked && eq?.get("aaresolve") !== "0";
+     if (edges || aaResolve) {
+       // (The compression's knee, chunks.ts GLSL_AA_RESOLVE; a uniform so it can be tuned live: __hero.pipeline.aa.read.uAAKnee.
+-      // 0.5 here; 1.0 once the waterline TAA runs with the glide, see below.)
++      // 0.5 here; 0.6 when the waterline TAA runs with the glide, see below.)
+       const aaKnee = { value: 0.5 };
+       const aaRead = createAAUniforms(aaKnee);
+       const edge = new EnvEdge(this.renderer, this.scene, this.env.plateGain, aaResolve ? { uniforms: aaRead, edges } : undefined);
+@@ -381,10 +395,14 @@
+               sharp: gq("lkgres", GLIDE.sharp),
+             }
+           : null;
+-        // AA6 (20 Nov, lead decision L10): with the TAA and the glide the resolve's knee 0.5 (set before either existed) is no
+-        // longer needed against waterline jumps; 0.5 darkened thin dark features beyond BASE and the 16-sample GT (judge A-3).
+-        // Knee 1.0 halves that over-darkening at the same crawl. Only with the glide, so `?lkglide=0` keeps 0.5 exactly.
+-        if (glide) aaKnee.value = 1.0;
++        // The knee with the glide (AA6 L10: 1.0; AA8 L11 knee study, 20 Nov: 0.6). 0.5 darkened thin dark features beyond BASE and
++        // the 16-sample GT (judge A-3); a larger knee lifts them, but it also lightens the floes' thin dark waterline lines away from
++        // the GT (AR-2) and lets more > 48-level waterline jumps through where the TAA does not smooth them (slow WR J48: 1.0 missed
++        // the L4 floor). Measured K 0.6 / 0.7 / 0.8 / 0.9 / 1.0 on the six G1 paths: only 0.6 keeps every G1 / L4 cell >= 1 point
++        // inside its bar, and it has the lowest summed GT error (thin dark features + waterline lines, medium + rest). The value
++        // also holds where the TAA does not run (hold crest train, hero reflection, frames without history, jumps, rest after
++        // the hand-over). Only with the glide, so `?lkglide=0` keeps 0.5 exactly.
++        if (glide) aaKnee.value = 0.6;
+         edge.enableTAA({
+           camera: this.rig.camera,
+           reflection: lab && eq?.get("lktaarefl") === "0" ? null : this.pipeline.reflection,
+@@ -496,6 +514,27 @@
+     if (!this.state.ready) return;
+     if (this.visible && this.onScreen) this.start();
+     else this.stop();
++  }
++
++  /**
++   * AA8 (judge AJ-2): a restored WebGL context hands back every render target empty. What is drawn each frame recovers by
++   * itself and three.js re-uploads every texture that keeps its data, but the PMREM of the panorama is drawn once at load: it
++   * stayed black, so the rings, orb and shards lost their environment light (black blotches on the rings) and the lake its
++   * ripple shading. Build it again from the kept panorama (same size, so the materials' cubeUV defines still hold) and redraw
++   * the lake passes on the next frame (as after a resize). The plate lake (T0, `?envlake=plate`) also bakes its projector
++   * depth maps once at load (no clouds and no lake reflections without them): bake them again. Old targets are dropped, not
++   * disposed: their GL objects belong to the lost context.
++   */
++  private restoreBaked() {
++    if (this.panorama && this.pmrem) {
++      const gen = new THREE.PMREMGenerator(this.renderer);
++      this.pmrem = gen.fromEquirectangular(this.panorama);
++      gen.dispose();
++      this.panorama.dispose();
++      this.shared.uEnvMap.value = this.pmrem.texture;
++    }
++    if (this.env && this.water && !this.lakeMirror) this.env.bakeDepth(this.renderer, [this.water.group], true);
++    this.lakeSched?.invalidate();
+   }
+ 
+   private trackFps(frameMs: number, now: number) {
+--- a/retrux-web/app/hero/engine/shaders/chunks.ts
++++ b/retrux-web/app/hero/engine/shaders/chunks.ts
+@@ -216,13 +216,15 @@
+  * the first covered sample moved a waterline pixel ~60 % of the way and the outline stepped like 1-2 AA levels. Below the
+  * horizon line the environment pass now writes x = c / (K + luma c) per sample, the hardware resolve averages x, and the
+  * readers expand c = K x / (1 - luma x), which is sum(c w) / sum(w) with w = 1 / (K + luma c) (Karis' weighting): a
+- * perceptual average at an edge, the exact inverse wherever a pixel's samples agree. K (uAAKnee, HeroEngine) is 0.5, not
+- * Karis' 1: the lake is 0.5-1.5 here and the dark faces 0.015-0.2, where 1 + luma still left ~50 % of a waterline pixel's
+- * change in its first covered sample (linear: ~60 %). Display-even steps would need K ~ 0.18 (AgX's mid grey), but that also
+- * darkens every 1-sample sliver of a thin dark line, which then flickers more; in same-session sweeps K = 0.5 cut the
+- * waterline jumps > 48 levels by 65-74 % and > 32 by 26-37 % (K = 1: 40-49 / 20-29 %, K = 0.18: flicker energy up 0-9 %).
+- * Those sweeps predate the waterline TAA: with the TAA and its glide (the T1 / T2 mirror lake) K is 1.0 (AA6, 20 Nov: the
+- * crawl is the same, and 0.5's extra darkening of thin dark features beyond BASE and the 16-sample GT is halved).
++ * perceptual average at an edge, the exact inverse wherever a pixel's samples agree. K (uAAKnee, HeroEngine) is 0.5 without
++ * the waterline TAA's glide (the plate lake, `?lkglide=0`) and 0.6 with it (the T1 / T2 mirror lake), not Karis' 1: the lake is
++ * 0.5-1.5 here and the dark faces 0.015-0.2, where 1 + luma still left ~50 % of a waterline pixel's change in its first covered
++ * sample (linear: ~60 %). Display-even steps would need K ~ 0.18 (AgX's mid grey), but that also darkens every 1-sample sliver
++ * of a thin dark line, which then flickers more; in same-session sweeps K = 0.5 cut the waterline jumps > 48 levels by 65-74 %
++ * and > 32 by 26-37 % (K = 1: 40-49 / 20-29 %, K = 0.18: flicker energy up 0-9 %). Those sweeps predate the waterline TAA.
++ * With the TAA and its glide, AA6 raised K to 1.0 (0.5 darkened thin dark features beyond BASE and the 16-sample GT); the AA8
++ * knee study (K 0.6-1.0 on the six G1 paths) settled on 0.6: the only value that keeps every G1 / L4 cell >= 1 point inside its
++ * bar (1.0 missed the slow-path J48 floor), with the lowest summed GT error on thin dark features and waterline lines.
+  * The region (set per frame by RenderPipeline) is decided once per
+  * pixel centre, the same way in every writer and reader, so no pixel mixes the two spaces: below the horizon line
+  * (uAAPlane, a half-plane in pixels) and outside the box where a cloud card reaches below it (uAAExc: inside where all three
+--- a/retrux-web/app/hero/engine/world/EnvEdge.ts
++++ b/retrux-web/app/hero/engine/world/EnvEdge.ts
+@@ -580,6 +580,20 @@
+     if (!this.taa) return;
+     this.taa.dt = dt;
+     this.taa.pxPerCss = pxPerCss;
++  }
++
++  /**
++   * AA8 (perf judge P-1): the WebGL context was lost / restored, so the history target three recreates is empty. Without this
++   * the first frames after a restore blended every waterline band with that empty history (a dark outline for ~3 frames). The
++   * next frame runs as the first one does: no history, no motion probe, the glide ramping in from 0. The still count is kept
++   * (a camera at rest stays handed over).
++   */
++  resetTAA() {
++    const t = this.taa;
++    if (!t) return;
++    t.valid = false;
++    t.hasPrev = false;
++    t.tail = 0;
+   }
+ 
+   /** (lab) the lake-edge TAA's state: last history weight (-1: pass skipped), frames it ran, still frames. */
+--- a/retrux-web/app/hero/engine/world/LakeMirror.ts
++++ b/retrux-web/app/hero/engine/world/LakeMirror.ts
+@@ -50,7 +50,8 @@
+  * AA5c (20 Nov, the cost of the every-frame mirror): the sky pass drawn AFTER the opaque geometry, at the far plane with the
+  * depth test, so only the texels no surface covers run SKY_FRAG (it ran under every surface and was overdrawn). Same colour and
+  * alpha in every texel (no surface reaches the far plane; the transparent cloud cards still blend over it): the target is
+- * bit-identical (tools/ident). `?mirrorcost=0` off.
++ * bit-identical in Chrome and WebKit (tools/ident; WebKit 0 px), not in Firefox (159: ~160 lake px of the final frame differ by
++ * 1 level, max 1, with AA5c on vs `?mirrorcost=0`). `?mirrorcost=0` off.
+  */
+ const SKY_VERT_LATE = /* glsl */ `
+ varying vec2 vNdc;
+@@ -80,7 +81,10 @@
+   readonly target: THREE.WebGLRenderTarget;
+   /** The mirrored camera with the water plane as its (oblique) near plane. */
+   readonly camera = new THREE.PerspectiveCamera();
+-  /** Full-screen world-sky pass, drawn first in the mirror pass only (add it to the scene on the env layer). */
++  /**
++   * Full-screen world-sky pass, drawn in the mirror pass only (add it to the scene on the env layer): last, at the far plane
++   * (AA5c's setSkyLate, the default), or first (`?mirrorcost=0`, lab `?mcsky=0`).
++   */
+   readonly skyMesh: THREE.Mesh;
+   readonly scale: [number, number];
+   /**
+--- a/retrux-web/app/hero/engine/world/PlateEnvironment.ts
++++ b/retrux-web/app/hero/engine/world/PlateEnvironment.ts
+@@ -533,7 +533,9 @@
+  * AA5c (20 Nov, the cost of the every-frame lake mirror, AA3 step B): the baked materials' lake-mirror branch alone. PLATE_FRAG
+  * returns from its mirror branch (uMirrorPass) right after this same expression, but the GPU still runs the whole uber-shader's
+  * prologue and register budget for it; this program draws the same value (same vertex shader, defines and uniforms), so the
+- * mirror target is bit-identical (tools/ident: mirror / walk / final hashes) at a smaller fragment cost. `?mirrorcost=0` off.
++ * mirror target is bit-identical in Chrome and WebKit (tools/ident: mirror / walk / final hashes; WebKit 0 px) at a smaller
++ * fragment cost; Firefox (159) compiles the two differently: ~160 lake px of the final frame differ by 1 level (max 1).
++ * `?mirrorcost=0` off.
+  */
+ const PLATE_MIRROR_FRAG = /* glsl */ `
+ #ifdef ATMOS_CARDLIGHT
+@@ -1280,7 +1282,10 @@
+   /** AA5c: the baked meshes (their uber material) and, once `mirrorSlim` is on, each material's mirror-pass twin (PLATE_MIRROR_FRAG). */
+   private readonly bakedMeshes: THREE.Mesh[] = [];
+   private readonly mirrorTwins = new Map<THREE.Material, THREE.ShaderMaterial>();
+-  /** AA5c: draw the lake mirror pass with PLATE_MIRROR_FRAG (bit-identical target, cheaper); off = the uber-shader's branch. */
++  /**
++   * AA5c: draw the lake mirror pass with PLATE_MIRROR_FRAG (cheaper; bit-identical target in Chrome / WebKit, <= 1 level on ~160
++   * lake px in Firefox); off = the uber-shader's branch.
++   */
+   mirrorSlim = false;
+   /** The materials swapped for the current mirror pass (restored when it ends). */
+   private mirrorSwapped = false;
+@@ -1817,12 +1822,14 @@
+   /**
+    * Renders the projectors' depth maps once (the proxies, the lake and the projectors never move) and switches
+    * the projection-shadow fill on. `extra` holds the other plate-projected surfaces (the lake planes).
++   * `restored` (AA8 AJ-2, after a WebGL context restore): the old maps belong to the lost context, so they are dropped, not
++   * disposed.
+    */
+-  bakeDepth(renderer: THREE.WebGLRenderer, extra: THREE.Object3D[]) {
++  bakeDepth(renderer: THREE.WebGLRenderer, extra: THREE.Object3D[], restored = false) {
+     const ext = renderer.extensions;
+     if (!ext.has("EXT_color_buffer_float") && !ext.has("EXT_color_buffer_half_float")) return;
+     const p1 = this.bakeProjector(renderer, extra, this.plateCamera, this.plateViewProj, this.coverage);
+-    this.depthTarget?.dispose();
++    if (!restored) this.depthTarget?.dispose();
+     this.depthTarget = p1.target;
+     const cam = this.plateCamera;
+     this.occlusion.uPlateDepth.value = p1.target.texture;
+@@ -1833,7 +1840,7 @@
+     this.occlusion.uPlateDepthOn.value = 1;
+     for (const p of this.projectors) {
+       const b = this.bakeProjector(renderer, extra, p.camera, p.viewProj, p.coverage);
+-      p.target?.dispose();
++      if (!restored) p.target?.dispose();
+       p.target = b.target;
+       const P = EXTRA_PROJECTORS.find((e) => e.key === p.key)!.P;
+       const u = p.uniforms;
+--- a/retrux-web/app/hero/engine/world/Water.ts
++++ b/retrux-web/app/hero/engine/world/Water.ts
+@@ -2134,6 +2134,8 @@
+     occlusion: PlateOcclusionUniforms,
+     opts: {
+       glitter?: boolean;
++      /** The engine's debug option (HeroEngineOptions.debug): gates the water's lab URL params (AA5b's ffb*). */
++      debug?: boolean;
+       /** Hotfix 2 (smooth waterline): the plate lake's soft shore switches (SHORE_AA; with PlateEnvironment.depthLinear). */
+       shore?: boolean;
+       projectors?: ExtraProjectorBinding;
+@@ -2234,24 +2236,25 @@
+           }
+           // (frame budget at rest / in the hold: the cached path skips the bump and the walk read; `?lkcachen=0` off)
+           this.cacheN = fix1 && lq?.get("lkcachen") !== "0";
+-          // AA5b (the far-floe pale block, LK_FFB_GLSL): `?ffblock=0` = AA3 exactly (same source); lab `?debug&ffb=<texels>`.
++          // AA5b (the far-floe pale block, LK_FFB_GLSL): `?ffblock=0` = AA3 exactly (same source); lab (the engine's debug option,
++          // like every other lab param; AA8, perf judge P-4: it was the URL's `?debug`, which the product page honoured) `ffb=<texels>`.
+           if (lq?.get("ffblock") !== "0") {
+             frag = waterFragFF(WATER_FRAG);
+-            const fb = lq?.has("debug") && lq.get("ffb") !== null ? Number(lq.get("ffb")) : NaN;
++            const fb = opts.debug && lq && lq.get("ffb") !== null ? Number(lq.get("ffb")) : NaN;
+             defines.LK_FFB = (fb >= 0 && fb <= 4 ? fb : 1).toFixed(3);
+-            const ft = lq?.has("debug") && lq.get("ffbt") !== null ? Number(lq.get("ffbt")) : NaN;
++            const ft = opts.debug && lq && lq.get("ffbt") !== null ? Number(lq.get("ffbt")) : NaN;
+             defines.LK_FFBT = (ft > 0 && ft <= 10 ? ft : 0.3).toFixed(3);
+             // AA6 fix (R-1 / R-2): the replaced row's depth range behind the front row (m) and its luma margin over it; lab
+-            // `?debug&ffbd0=<m>&ffbd1=<m>&ffbl=<luma>`.
++            // (debug) `ffbd0=<m>&ffbd1=<m>&ffbl=<luma>`.
+             const lab = (k: string, lo: number, hi: number, d: number) => {
+-              const v = lq?.has("debug") && lq.get(k) !== null ? Number(lq.get(k)) : NaN;
++              const v = opts.debug && lq && lq.get(k) !== null ? Number(lq.get(k)) : NaN;
+               return (v >= lo && v <= hi ? v : d).toFixed(3);
+             };
+             defines.LK_FFBD0 = lab("ffbd0", 0, 50, 8);
+             defines.LK_FFBD1 = Math.max(Number(lab("ffbd1", 0.01, 100, 16)), Number(defines.LK_FFBD0) + 0.01).toFixed(3);
+             defines.LK_FFBL = lab("ffbl", 0.001, 1, 0.05);
+-            // (lab, G7: `?debug&ffbtoggle=1` = a run-time switch uLkFfbOn for one-session A/B timing; not in the product source)
+-            if (lq?.has("debug") && lq.get("ffbtoggle") === "1") {
++            // (lab, G7: (debug) `ffbtoggle=1` = a run-time switch uLkFfbOn for one-session A/B timing; not in the product source)
++            if (opts.debug && lq && lq.get("ffbtoggle") === "1") {
+               defines.LK_FFB_TOG = "";
+               frag = "uniform float uLkFfbOn;\n" + frag;
+               mirrorUniforms.uLkFfbOn = { value: 1 };

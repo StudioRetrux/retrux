@@ -1,0 +1,6 @@
+medium 880,738,1070,766 OLD:   dark: events 7, px-frames 1588, frames 210, dmax 110, nmax 35, spans k150-203 k47-64 k166-199 k91-145 k123-151 k169-177   bright: events 0, px-frames 0, frames 0, dmax 0, nmax 0 
+medium 50,525,185,590 OLD:   dark: events 11, px-frames 364, frames 44, dmax 78, nmax 19, spans k0-10 k0-6 k206-211 k31-33 k10-11 k208-209   bright: events 11, px-frames 2144, frames 239, dmax 140, nmax 31, spans k47-175 k198-225 k21-39 k0-18 k228-239 k123-129 
+reverse 880,738,1070,766 OLD:   dark: events 25, px-frames 2471, frames 154, dmax 98, nmax 50, spans k164-181 k43-61 k222-237 k104-118 k87-93 k207-213   bright: events 0, px-frames 0, frames 0, dmax 0, nmax 0 
+reverse 50,525,185,590 OLD:   dark: events 27, px-frames 545, frames 108, dmax 82, nmax 16, spans k213-221 k93-100 k136-138 k18-23 k121-124 k192-199   bright: events 10, px-frames 1505, frames 173, dmax 153, nmax 26, spans k43-82 k161-201 k15-37 k133-149 k204-217 k84-97 
+rest 880,738,1070,766 OLD:   dark: events 2, px-frames 1111, frames 41, dmax 69, nmax 17, spans k0-39 k0-0   bright: events 0, px-frames 0, frames 0, dmax 0, nmax 0 
+rest 50,525,185,590 OLD:   dark: events 4, px-frames 196, frames 123, dmax 82, nmax 3, spans k0-39 k0-39 k0-34 k11-18   bright: events 2, px-frames 429, frames 80, dmax 103, nmax 10, spans k0-39 k0-39 

@@ -1,0 +1,30 @@
+caps/rl_medium_A8: 180 frames, frame ms med 28.3 p90 35.1 max 45.0; mirror redraw frames 180/180; taa active 180; W 1440 scale 1
+  union band, by redraw phase (0 = redrawn this frame): 7.71 (179) | - | - | -
+  folded amplitude (lv) ALL band: P2 0.242 P3 0.062 P4 0.523 P6 0.622 P8 0.693; mean 7.71
+  ALL  band: 1/2 1.2 1/3 2.1 1/4 0.5 1/8 2.3 peak 2.7@0.112  | box: 1/2 1.2 1/3 2.0 1/4 0.6 1/8 2.1 peak 3.0@0.112
+  FS   band: 1/2 1.2 1/3 2.2 1/4 0.9 1/8 1.8 peak 4.0@0.112  | box: 1/2 1.1 1/3 2.1 1/4 0.9 1/8 1.8 peak 4.0@0.112
+  WR   band: 1/2 1.1 1/3 2.0 1/4 0.8 1/8 1.7 peak 3.0@0.112  | box: 1/2 1.1 1/3 2.0 1/4 0.8 1/8 1.7 peak 3.0@0.112
+  DR   band: 1/2 1.3 1/3 2.0 1/4 0.6 1/8 2.4 peak 2.9@0.112  | box: 1/2 1.2 1/3 1.9 1/4 0.6 1/8 2.3 peak 3.0@0.112
+  FF   band: 1/2 1.0 1/3 1.9 1/4 0.9 1/8 3.2 peak 3.2@0.128  | box: 1/2 1.2 1/3 1.7 1/4 0.4 1/8 2.5 peak 2.9@0.112
+  FR   band: 1/2 1.4 1/3 2.2 1/4 0.7 1/8 1.8 peak 2.5@0.112  | box: 1/2 1.3 1/3 2.2 1/4 0.8 1/8 1.9 peak 2.6@0.134
+  RS   band: 1/2 1.1 1/3 2.0 1/4 0.8 1/8 1.7 peak 3.2@0.106  | box: 1/2 1.1 1/3 2.0 1/4 0.8 1/8 1.8 peak 3.4@0.106
+caps/rl_medium_A7: 180 frames, frame ms med 32.5 p90 64.2 max 79.7; mirror redraw frames 180/180; taa active 180; W 1440 scale 1
+  union band, by redraw phase (0 = redrawn this frame): 7.72 (179) | - | - | -
+  folded amplitude (lv) ALL band: P2 0.088 P3 0.173 P4 0.351 P6 0.377 P8 0.924; mean 7.72
+  ALL  band: 1/2 0.8 1/3 1.2 1/4 1.1 1/8 5.6 peak 6.6@0.106  | box: 1/2 0.8 1/3 1.5 1/4 1.1 1/8 5.6 peak 6.7@0.106
+  FS   band: 1/2 0.9 1/3 1.1 1/4 1.0 1/8 6.5 peak 6.5@0.106  | box: 1/2 0.9 1/3 1.0 1/4 1.0 1/8 5.6 peak 5.8@0.106
+  WR   band: 1/2 0.6 1/3 1.1 1/4 1.1 1/8 7.5 peak 7.5@0.123  | box: 1/2 0.6 1/3 1.1 1/4 1.1 1/8 7.5 peak 7.5@0.123
+  DR   band: 1/2 1.0 1/3 1.3 1/4 1.0 1/8 6.2 peak 6.3@0.106  | box: 1/2 0.9 1/3 1.4 1/4 1.1 1/8 5.1 peak 6.1@0.106
+  FF   band: 1/2 0.5 1/3 1.2 1/4 1.3 1/8 2.5 peak 5.4@0.106  | box: 1/2 0.5 1/3 2.1 1/4 1.3 1/8 3.4 peak 6.7@0.106
+  FR   band: 1/2 1.0 1/3 1.3 1/4 1.6 1/8 7.2 peak 7.2@0.123  | box: 1/2 1.1 1/3 1.4 1/4 1.2 1/8 5.8 peak 5.8@0.123
+  RS   band: 1/2 0.8 1/3 1.1 1/4 1.1 1/8 6.6 peak 6.6@0.123  | box: 1/2 0.8 1/3 1.1 1/4 1.1 1/8 6.8 peak 6.8@0.123
+caps/rl_medium_base: 180 frames, frame ms med 26.7 p90 30.4 max 33.7; mirror redraw frames 60/180; taa active 0; W 1440 scale 1
+  union band, by redraw phase (0 = redrawn this frame): 7.43 (60) | 7.47 (60) | 6.78 (59) | -
+  folded amplitude (lv) ALL band: P2 0.171 P3 0.693 P4 0.287 P6 0.964 P8 0.710; mean 7.23
+  ALL  band: 1/2 0.2 1/3 3.0 1/4 0.6 1/8 1.6 peak 3.0@0.335  | box: 1/2 0.1 1/3 3.1 1/4 0.8 1/8 0.9 peak 3.1@0.335
+  FS   band: 1/2 0.1 1/3 2.4 1/4 0.5 1/8 1.7 peak 3.5@0.101  | box: 1/2 0.1 1/3 2.6 1/4 0.6 1/8 2.1 peak 3.8@0.101
+  WR   band: 1/2 0.5 1/3 3.6 1/4 0.6 1/8 1.7 peak 3.6@0.335  | box: 1/2 0.5 1/3 3.6 1/4 0.6 1/8 1.7 peak 3.6@0.335
+  DR   band: 1/2 0.3 1/3 2.2 1/4 0.9 1/8 1.0 peak 2.3@0.101  | box: 1/2 0.3 1/3 2.3 1/4 0.9 1/8 1.4 peak 2.3@0.335
+  FF   band: 1/2 0.1 1/3 3.7 1/4 0.7 1/8 2.3 peak 4.1@0.201  | box: 1/2 0.1 1/3 3.9 1/4 0.6 1/8 1.1 peak 3.9@0.335
+  FR   band: 1/2 0.3 1/3 2.5 1/4 1.0 1/8 0.9 peak 2.5@0.335  | box: 1/2 0.3 1/3 2.4 1/4 1.0 1/8 1.1 peak 2.4@0.335
+  RS   band: 1/2 0.3 1/3 2.4 1/4 0.7 1/8 1.3 peak 2.7@0.101  | box: 1/2 0.2 1/3 2.4 1/4 0.7 1/8 1.2 peak 2.7@0.101

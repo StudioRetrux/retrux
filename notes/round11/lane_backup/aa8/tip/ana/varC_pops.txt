@@ -1,0 +1,20 @@
+== reverse C
+new pops (X flagged, ref not, X != ref): 194 px, 48 clusters, >= 6 px: 11
+  k76-78 x1207-1211 y503-506 n18 emax95
+  k109-112 x1149-1153 y496-499 n15 emax91
+  k24-29 x1238-1253 y504-507 n16 emax82
+  k32-33 x1262-1265 y504-507 n11 emax85
+  k69-72 x1220-1227 y500-502 n9 emax93
+new pops (X flagged, ref not, X != ref): 92 px, 34 clusters, >= 6 px: 4
+  k64-67 x238-249 y501-503 n18 emax78
+  k101-101 x251-258 y503-504 n10 emax57
+== fast C
+new pops (X flagged, ref not, X != ref): 153 px, 38 clusters, >= 6 px: 9
+  k56-62 x1205-1227 y504-507 n17 emax94
+  k87-93 x1124-1133 y491-496 n16 emax82
+  k73-75 x1161-1168 y500-504 n16 emax77
+  k2-2 x1282-1285 y520-523 n10 emax67
+  k50-51 x1244-1247 y505-508 n9 emax51
+new pops (X flagged, ref not, X != ref): 185 px, 56 clusters, >= 6 px: 11
+  k20-22 x285-305 y511-515 n15 emax58
+  k1-4 x267-275 y519-522 n14 emax58

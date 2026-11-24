@@ -1,0 +1,4 @@
+medium 880,738,1070,766 FINAL:   dark: events 5, px-frames 251, frames 105, dmax 30, nmax 5, spans k91-145 k123-151 k145-154 k170-177 k189-191   bright: events 0, px-frames 0, frames 0, dmax 0, nmax 0 
+medium 50,525,185,590 FINAL:   dark: events 11, px-frames 364, frames 44, dmax 79, nmax 19, spans k0-10 k0-6 k206-211 k31-33 k10-11 k208-209   bright: events 0, px-frames 0, frames 0, dmax 0, nmax 0 
+rest 880,738,1070,766 FINAL:   dark: events 0, px-frames 0, frames 0, dmax 0, nmax 0   bright: events 0, px-frames 0, frames 0, dmax 0, nmax 0 
+rest 50,525,185,590 FINAL:   dark: events 4, px-frames 196, frames 123, dmax 82, nmax 3, spans k0-39 k0-39 k0-34 k11-18   bright: events 0, px-frames 0, frames 0, dmax 0, nmax 0 

@@ -1,0 +1,108 @@
+{
+ "qs": "",
+ "port": "5199",
+ "logs": [],
+ "counts": {
+  "frames": 21,
+  "mirror": 20,
+  "walk": 20,
+  "cache": 1,
+  "cacheOn": 1
+ },
+ "targets": {
+  "mirror": {
+   "w": 720,
+   "h": 383,
+   "hash": "5d1d33667152965d"
+  },
+  "walk": {
+   "w": 360,
+   "h": 192,
+   "hash": "a34dc505c37072ea"
+  },
+  "cache": {
+   "w": 1440,
+   "h": 766,
+   "hash": "08058c803be09b5f"
+  },
+  "cacheN": {
+   "w": 1440,
+   "h": 766,
+   "hash": "4430c2ce905d92e5"
+  },
+  "reflection": {
+   "w": 720,
+   "h": 383,
+   "hash": "c238405b7d0d8a18"
+  },
+  "final": {
+   "w": 1440,
+   "h": 766,
+   "hash": "2dfa1c4a79515011"
+  }
+ },
+ "programs": {
+  "rx-plate-baked|ShaderMaterial": [
+   "865d1fc4f9872720",
+   "c2fd1b9b7ccb47d4"
+  ],
+  "rx-cloud|ShaderMaterial": [
+   "22d6a4db6fc1c96b",
+   "24d3b650aa3e2507"
+  ],
+  "rx-lake-sky-late|ShaderMaterial": [
+   "a10817089f4156ec",
+   "fafcf1c5758c8a16"
+  ],
+  "rx-water|ShaderMaterial": [
+   "1ba36f6ab8fbb3e0",
+   "dece2f6151ef07a0"
+  ],
+  "rx-env-edge|ShaderMaterial": [
+   "60e89ca1a7fe7f1c",
+   "9a638914bc06080a"
+  ],
+  "rx-ice|ShaderMaterial": [
+   "02bd3315218f0821",
+   "f628c67efad10b19"
+  ],
+  "rx-orb|ShaderMaterial": [
+   "62b5844971389ad2",
+   "80cf5b96c0bc111e"
+  ],
+  "rx-shards|ShaderMaterial": [
+   "2cf6c8dd842e78df",
+   "5a508e585f3497d5"
+  ],
+  "rx-ice-back|ShaderMaterial": [
+   "c0500856298d5e5c"
+  ],
+  "rx-plate-baked-mirror|ShaderMaterial": [
+   "0cf122483cb0ba4d"
+  ],
+  "rx-water-walk|ShaderMaterial": [
+   "afe7e3a4e2ff6395"
+  ],
+  "rx-lake-edge-taa|ShaderMaterial": [
+   "a1284f90bb614762"
+  ],
+  "rx-blit|ShaderMaterial": [
+   "c67046d98d3f65d6"
+  ],
+  "rx-bloom-down|ShaderMaterial": [
+   "c1d61d13e0332746"
+  ],
+  "rx-bloom-up|ShaderMaterial": [
+   "2bc7e6301f5c75e6"
+  ],
+  "rx-grade|ShaderMaterial": [
+   "23df7a28171be020"
+  ],
+  "rx-water-cache|ShaderMaterial": [
+   "db014a0e0a51518c"
+  ],
+  "rx-water-cache-n|ShaderMaterial": [
+   "7d72a4b00a433e09"
+  ]
+ }
+}

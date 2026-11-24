@@ -1,0 +1,9 @@
+hold_M0  ch4 k30-150 y686-766 flip=True: mean|dL| 4.325 px>12 9.710% flicker 4.763%
+hold_M0  ch4 k150-300 y686-766 flip=True: mean|dL| 1.640 px>12 2.249% flicker 0.688%
+hold_M0  ch4 k330-420 y686-766 flip=True: mean|dL| 5.487 px>12 13.784% flicker 5.062%
+hold_Z   ch4 k30-150 y686-766 flip=True: mean|dL| 5.466 px>12 13.542% flicker 6.548%
+hold_Z   ch4 k150-300 y686-766 flip=True: mean|dL| 2.199 px>12 3.275% flicker 1.058%
+hold_Z   ch4 k330-420 y686-766 flip=True: mean|dL| 5.428 px>12 13.657% flicker 4.870%
+hold_F2  ch4 k30-150 y686-766 flip=True: mean|dL| 4.126 px>12 9.308% flicker 4.309%
+hold_F2  ch4 k150-300 y686-766 flip=True: mean|dL| 1.557 px>12 2.210% flicker 0.681%
+hold_F2  ch4 k330-420 y686-766 flip=True: mean|dL| 5.450 px>12 13.729% flicker 4.927%

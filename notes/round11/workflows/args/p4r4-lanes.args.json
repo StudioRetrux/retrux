@@ -1,0 +1,49 @@
+{
+ "note": "P4 round 4 lanes wf_83d8555b-414 (21 Nov 11:45)",
+ "args": {
+  "brief": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/briefs/p4r4_common.md",
+  "refPort": 5179,
+  "round": "p4r4",
+  "buildMin": 120,
+  "judgeMin": 50,
+  "fixMin": 60,
+  "rejudgeMin": 40,
+  "lanes": [
+   {
+    "key": "w4",
+    "lane": "p4w4",
+    "port": 5177,
+    "build": "LANE TASKS (water; read each in full in MAIN/notes/round11/p3/r11_3_plan.json, with the panel issues behind them): R4-G1 first (priority 1, the client-flagged 'weird bottom': during the hold / pop the bottom strip is a smeared, stair-stepped pale band - the plan's anti-aliased hero reflection plus texture-filtered chop; the lead's direction for the chop, ripples and far-water detail: a tileable wave NORMAL texture with mipmaps sampled with proper (trilinear / anisotropic, or textureGrad) filtering is band-limited by construction - prefer it over high-frequency procedural noise, generate it offline (Blender or a script; list its size), and keep the reflection target's cost measured), then R4-G4 (remove the far-water orbit ghost at its source - the quarter-size walk's disagreeing taps - then turn on the glassy far lake; round 2's attempt and why it stayed off: MAIN/notes/round11/lane_backup/p4r2/p4water/ and rejudge_p4water/), then R4-Q14 (rest ripple ring: crisp crests, cobalt troughs, a cyan glint at the reference's height, no sparkle). Files: world/Water.ts, world/LakeSchedule.ts, world/LakeMirror.ts, pipeline/RenderPipeline.ts (reflection target), world/EnvEdge.ts only if the plan says so, HeroEngine.ts for switches. The waterline AA gates (no new pops vs :5179 with the bloom-free masks, G1 crawl not worse; tools + masks in MAIN/notes/round11/workflows/briefs/aa8_common.md) hold for every change on the lake. Verify at 60 fps (consecutive frames) that nothing shimmers in the bottom strip during press / hold / release.",
+    "judge": "LENSES to score: glitch_hold_sweep, environment, glitch_cursor_orbit, color_grade_post, awwwards_jury. Check the bottom strip in every hold / pop / release sweep frame and p04-p08 at x1 and x4 vs REF (F358 / F402 / F420) and MAIN ($SP/p3/r11_3), flicker on consecutive 60 fps frames in the strip, the orbit views for the far-water ghost, the ripple ring at q00 vs F000, and the waterline AA gates (no new pops, crawl not worse)."
+   },
+   {
+    "key": "e4",
+    "lane": "p4e4",
+    "port": 5174,
+    "build": "LANE TASKS (environment; read each in full in MAIN/notes/round11/p3/r11_3_plan.json): R4-G2 (the bottom-right navy notch revealed when the pointer goes to the bottom edge; one-object re-bake), R4-G3 (crawling black specks, comb ticks, floe seam ticks and rock needles on sub-pixel environment edges; centroid / push-pull fill as the plan says), R4-G5 (the flat slate wedge of the near-left rock in the pop / release corner while the camera dollies; re-bake with a pop-camera plate). You own Blender this round (copies only, through the slot, one Blender machine-wide). Previous env lanes' notes: MAIN/notes/round11/lane_backup/p4r1/p4env/, p4r3/p4env3/ (J1 / J4 still open). Verify every spot at x1 and contrast-stretched zooms, all 10 pointer spots, the sweep, the rest region stats vs MAIN.",
+    "judge": "LENSES to score: glitch_cursor_orbit, glitch_hold_sweep, environment, awwwards_jury. Check the G2 / G3 / G5 spots in the lane's ptr/ and sweep/ captures at x1 and with contrast-stretched zooms vs MAIN ($SP/p3/r11_3), crawl on consecutive frames at the specks / ticks, the rest frame's region stats, T0."
+   },
+   {
+    "key": "a4",
+    "lane": "p4a4",
+    "port": 5178,
+    "build": "LANE TASKS (atmosphere; read each in full in MAIN/notes/round11/p3/r11_3_plan.json): R4-Q2 (rest atmosphere: taller milky waterline mist at the iceberg, hazier floe band, thinner left-foot mist, darker far range and tall berg - refit the waterline knots to the reference's mist series), R4-Q6 (the hold fog bank: a billowing bank on the left mountain's base, the iceberg stays deep slate-blue, NO straight stripes - round 3's bank is behind `?fogbank=p4` and was held back for its N1 stripe: MAIN/notes/round11/lane_backup/p4r3/rejudge_p4atmos/; ship the new bank as the default only when no straight stripe / streak remains at sustain or at the release snap, measured with the rejudge's stripe metric and at 60 fps). Files: p4atmos.ts, world/PlateEnvironment.ts, world/Atmos.ts, world/Water.ts ONLY for the shared GLSL_PLATE_MIST chunk if unavoidable (the water lane owns Water.ts: keep it to that chunk and say so). No Blender.",
+    "judge": "LENSES to score: environment, color_grade_post, awwwards_jury, glitch_hold_sweep. Compare q00 / q03 / p04-p08 with REF (F000 / F045 / F358-F460: waterline mist, floe band, left-foot mist, far range, the hold bank vs F420) and MAIN ($SP/p3/r11_3); region stats; hard fog edges, straight stripes, banding or pulsing on consecutive frames; the release snap."
+   },
+   {
+    "key": "o4",
+    "lane": "p4o4",
+    "port": 5176,
+    "build": "LANE TASKS (orb + crystals; read each in full in MAIN/notes/round11/p3/r11_3_plan.json): R4-Q4 (the hold orb: no flat clipped white disc - keep its dark plasma figure and move the energy into the limb and the ice glow; NOTE the client's ice decision: the ice's LOOK must not change, so any 'energy into the ice' must come from the orb / post side, proven not to change the ice at rest), R4-Q10 (the idle orb as plasma in glass: a hot clipped centre, grey-lavender smoke lanes, a thin mint rim, a violet fringe), R4-Q11 (sapphire crystals: deep saturated cores, translucent tips, ridge glints, a depth cue, no wash in the hold - the previous panel called them too dark and saturated, so gate both ways against REF). Files: hero/Orb.ts, hero/Shards.ts, pipeline/PostChain.ts, HeroEngine.ts (small hunks). Do NOT edit hero/IceMaterial.ts. Previous orb lanes: MAIN/notes/round11/lane_backup/p4r1/p4orb/, p4r3/p4orb3/.",
+    "judge": "LENSES to score: orb_shards_light, color_grade_post, awwwards_jury. Compare orb / crystal crops at q00, q03, p04, p05, p06 with REF and MAIN ($SP/p3/r11_3); clipping numbers; the ice around the orb at rest unchanged (client's ice decision); crystal flicker in the sweep."
+   },
+   {
+    "key": "h4",
+    "lane": "p4h4",
+    "port": 5175,
+    "build": "LANE TASKS (hold + capture harness; read each in full in MAIN/notes/round11/p3/r11_3_plan.json): R4-Q8 (hold framing: the opened ring keeps clear of the frame edges and of the bottom UI label - a smaller constant opening and / or a positive frame margin; keep the client's continuous slow-motion rotation in the rest direction and the opening offsets, no steering, split rings stay exactly one ring), R4-G7 (release rejoin: no light bars or flat steps at ring-A joints while the gap closes - the plan's fix in Rings.ts; any IceMaterial.ts change must be look-neutral at rest and in the idle loop per the client's ice decision, proven within 1 level), R4-Q1 (capture harness and lab parity: holds driven through the UI path so captures show the real headline ink dissolve; add a 60 fps press / hold / release capture tool to /Users/muhamadrifaldi/RetruxR11Work/hp - harness only, lab-gated code in Choreography.ts / hero-lab if needed). Files: hero/HoldR11.ts, CameraRig.ts, HeroEngine.ts (small hunks), hero/Rings.ts, Choreography.ts (lab-gated), hero-lab/*, the hp tools. Previous hold lane: MAIN/notes/round11/lane_backup/p4r2/p4hold/.",
+    "judge": "LENSES to score: composition_motion, glitch_hold_sweep, awwwards_jury. Check the hold extents at 1440x766 / 1280x800 / 1920x1080 and 390x844 (top / bottom margins, the bottom label), the release rejoin frames at 60 fps (no light bars / steps at ring-A joints), continuity (no per-frame step > 15 deg), click inert, the ink dissolve in the new captures, and the ice at rest unchanged."
+   }
+  ]
+ }
+}

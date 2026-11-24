@@ -1,0 +1,324 @@
+--- a/retrux-web/app/hero/engine/HeroEngine.ts
++++ b/retrux-web/app/hero/engine/HeroEngine.ts
+@@ -263,6 +263,9 @@
+       this.shared,
+       envDefines,
+       assets.extraPlates,
++      // (P4 round 3, lane p4atmos: the tier, so its environment hunks stay off on T0.)
++      null,
++      this.profile.tier,
+     );
+     setLayer(this.env.group, LAYER.ENV);
+     this.scene.add(this.env.group);
+--- a/retrux-web/app/hero/engine/world/PlateEnvironment.ts
++++ b/retrux-web/app/hero/engine/world/PlateEnvironment.ts
+@@ -2,6 +2,7 @@
+ import { CLOUDS, HERO_CENTER, PLATE, REF_ASPECT, REST_CAMERA } from "../config";
+ import { CAM_TARGETS } from "../curves";
+ import { P4ENV } from "../p4env";
++import { createP4AtmosUniforms, P4_BANK_TINT, P4_RIDGE_FOG, P4_VEIL_SHADE_DROP, P4ATMOS, p4atmosFrag, p4atmosMist } from "../p4atmos";
+ import { GLSL_AA_RESOLVE, GLSL_COMMON, GLSL_ENV } from "../shaders/chunks";
+ import type { SharedUniforms } from "../uniforms";
+ import {
+@@ -372,7 +373,8 @@
+  * The far-shore mist shared by the plate and the lake, so the band runs on across the water: drifting wisps
+  * (world-anchored noise) and a thin layer, dense below ~2 m, from ~35 m out.
+  */
+-export const GLSL_PLATE_MIST = /* glsl */ `
++// (P4 round 3, lane p4atmos: Q14's billows spliced into plateBank, p4atmos.ts; `?fogbank=r11` / `?p4atmos=0` leave this text as it is.)
++export const GLSL_PLATE_MIST = p4atmosMist(/* glsl */ `
+ ${ATMOS_URL.mist ? "#define ATMOS_STEADY_WISP" : ""}
+ ${ATMOS_URL.berg ? "#define ATMOS_BERG" : ""}
+ ${ATMOS_URL.bergDrift ? "#define BERG_DRIFT" : ""}
+@@ -429,7 +431,7 @@
+   return hold * reach * step(d, 330.0) * hgt * plateBankBillow;
+ }
+ ${ATMOS_URL.shore ? GLSL_ATMOS_LAKE : ""}
+-`;
++`);
+ 
+ /** An extra projector (EXTRA_PROJECTORS): its camera, depth map and the uniforms the shaders read. */
+ export type ExtraProjector = {
+@@ -1143,6 +1145,8 @@
+ #endif
+ }
+ `;
++/** P4 round 3, lane p4atmos (p4atmos.ts): PLATE_FRAG with the lane's hunks spliced in (= PLATE_FRAG when every part is off). */
++const PLATE_FRAG_P4 = p4atmosFrag(PLATE_FRAG);
+ 
+ const CLOUD_VERT = /* glsl */ `
+ uniform float uTime;
+@@ -1377,7 +1381,10 @@
+     extraPlates: Partial<Record<ProjectorKey, { plate: THREE.Texture; meta: PlateMeta }>> = {},
+     /** Baked environment (assets `env=baked`): per mesh node name, its baked texture (the plates' encoding). */
+     baked: Record<string, THREE.Texture> | null = null,
++    /** P4 round 3 (lane p4atmos): the GPU tier; the lane's environment hunks stay off on T0 (MAIN's program and values there). */
++    tier = "T1",
+   ) {
++    this.p4atmos = tier !== "T0" && (P4ATMOS.wl || P4ATMOS.veil || P4ATMOS.blue || P4ATMOS.bank);
+     this.plateCamera = createPlateCamera(meta);
+     this.occlusion.uPlateFrustum.value.copy(projectionTerms(this.plateCamera));
+     this.coverage = plateCoverage(meta);
+@@ -1409,7 +1416,7 @@
+     this.plateMaterial = new THREE.ShaderMaterial({
+       name: "rx-plate",
+       vertexShader: PLATE_VERT,
+-      fragmentShader: PLATE_FRAG,
++      fragmentShader: this.p4atmos ? PLATE_FRAG_P4 : PLATE_FRAG,
+       // (Round 11 ATMOS: ATMOS_MIST, the rolling ground mist; `?atmos=r10` / `?atmosmist=0` leave the program as it was.)
+       defines: {
+         ...this.projectorBinding.defines,
+@@ -1426,6 +1433,7 @@
+       uniforms: {
+         ...this.projectorBinding.uniforms,
+         ...this.atmosUniforms,
++        ...(this.p4atmos ? this.p4atmosUniforms : {}),
+         uPlate: { value: plate },
+         uPlateGain: { value: this.plateGain },
+         uPlateViewProj: { value: this.plateViewProj },
+@@ -1491,6 +1499,19 @@
+         this.atmosUniforms.uAtmosHazeC.value.setRGB(...ATMOS_VEIL_HI);
+         if (this.atmos.swell) this.atmosUniforms.uAtmosVeil2.value.y = ATMOS_VEIL_SHADE;
+       }
++      // P4 round 3, lane p4atmos (p4atmos.ts; `?atmosblue2=0` / `?atmosveil2=0` / `?p4atmos=0` keep MAIN's values): the left bank
++      // bluer and less steady fog on the dark ridge; the shade under the veil follows the veil's lowered top.
++      if (this.p4atmos && P4ATMOS.blue) {
++        this.atmosUniforms.uAtmosBank.value.z = P4_RIDGE_FOG[0];
++        this.atmosUniforms.uAtmosRidgeFit.value.w = P4_RIDGE_FOG[1];
++        for (const c of [this.atmosUniforms.uAtmosBankLo.value, this.atmosUniforms.uAtmosBankHi.value, this.atmosUniforms.uAtmosVeilC.value]) {
++          c.setRGB(c.r * P4_BANK_TINT[0], c.g * P4_BANK_TINT[1], c.b * P4_BANK_TINT[2]);
++        }
++      }
++      if (this.p4atmos && P4ATMOS.veil && this.atmos.hazeVeil && this.atmos.blue) {
++        this.atmosUniforms.uAtmosVeilSh2.value.z -= P4_VEIL_SHADE_DROP;
++        this.atmosUniforms.uAtmosVeilSh2.value.w -= P4_VEIL_SHADE_DROP;
++      }
+     }
+     const cardLight = this.atmos.cardLight && baked ? this.createCardLight() : null;
+     if (cardLight) Object.assign(bakedDefines, cardLightDefines(cardLight.slots, this.atmos.cardClamp ? cardLight.live.length : 0));
+@@ -1532,7 +1553,7 @@
+         m = new THREE.ShaderMaterial({
+           name: "rx-plate-baked",
+           vertexShader: PLATE_VERT,
+-          fragmentShader: PLATE_FRAG,
++          fragmentShader: this.p4atmos ? PLATE_FRAG_P4 : PLATE_FRAG,
+           defines: bakedDefines,
+           side: bakedSide,
+           uniforms: {
+@@ -1689,6 +1710,10 @@
+   readonly atmos: AtmosFlags = atmosFromUrl();
+   /** Round 11 ATMOS: the ground mist's uniforms (shared by the plate and every baked material; runtime-tunable). */
+   readonly atmosUniforms = createAtmosMistUniforms();
++  /** P4 round 3, lane p4atmos (p4atmos.ts): its runtime-tunable values (in the materials only while the lane is on). */
++  readonly p4atmosUniforms = createP4AtmosUniforms();
++  /** P4 round 3, lane p4atmos: the lane's environment hunks are on (any part on, not T0). */
++  readonly p4atmos: boolean;
+   /** Round 11 ATMOS: each cloud card's conveyor constants (same order as cloudMaterials). */
+   private readonly cloudLanes: CloudLane[] = [];
+   /** aaresolve: each card's lowest edge and x extent (world, before its lane shift) and its plane (z). */
+--- /dev/null
++++ b/retrux-web/app/hero/engine/p4atmos.ts
+@@ -0,0 +1,203 @@
++/**
++ * P4 round 3, ATMOS lane (p4atmos; the P3 panel's tasks Q5 / Q14, notes/round11/p3/r11_1_plan.json; panel environment items 1, 3,
++ * 6 and color_grade item 1).
++ *
++ * Switches (each restores MAIN's behaviour of its part exactly; read once at module load):
++ *   ?p4atmos=0     the whole lane off (MAIN exactly: the same program sources, uniforms and frames)
++ *   ?atmoswl=0     Q5: no waterline mist at the iceberg and the right shore
++ *   ?atmosveil2=0  item 1: the massif's veil as MAIN (full density up to its white-blue top: the hard horizontal stripe)
++ *   ?atmosblue2=0  Q5 (4): the left bases' haze, the left bank's colours and the dark ridge's steady fog as MAIN
++ *   ?fogbank=r11   Q14: the hold fog bank (one smooth scale) and its release (all of it lingers 0.6-2 s) as MAIN
++ *
++ * Everything is spliced into MAIN's GLSL by exact-text replacement (p4Splice throws if a target is missing), so with a part off its
++ * program source is MAIN's byte for byte. Tiers: the environment's hunks (PLATE_FRAG_P4, uniforms, values) are T1 / T2 only
++ * (PlateEnvironment takes the tier); Q14's billows live in the chunk the plate and the water share (GLSL_PLATE_MIST, built at
++ * module load), so they apply on T0 too, where they act only while the hold's fog is up (rest frames on T0 are MAIN's).
++ */
++import * as THREE from "three";
++
++export type P4AtmosFlags = {
++  /** Q5: the milky waterline mist along the iceberg's foot (PLATE_FRAG, after the mist layers). */
++  wl: boolean;
++  /** Item 1: the massif's veil thickens gradually towards the bank and its top is feathered, lower (no level stripe). */
++  veil: boolean;
++  /** Q5 (4): the left bases' haze and bank bluer (B up, R down), less steady fog on the dark ridge. */
++  blue: boolean;
++  /** Q14: the hold bank's two-scale billows (shared chunk: plate and water) and the upper bank clearing with the camera. */
++  bank: boolean;
++};
++
++export function p4atmosFromUrl(): P4AtmosFlags {
++  const q = typeof location !== "undefined" ? new URLSearchParams(location.search) : null;
++  const off = q?.get("p4atmos") === "0";
++  const on = (k: string) => !off && q?.get(k) !== "0";
++  return { wl: on("atmoswl"), veil: on("atmosveil2"), blue: on("atmosblue2"), bank: !off && q?.get("fogbank") !== "r11" };
++}
++
++export const P4ATMOS: P4AtmosFlags = p4atmosFromUrl();
++
++/** Replaces `a` by `b` in `src`; throws if `a` is not there exactly once (a merge that moved the target must not pass silently). */
++export function p4Splice(src: string, a: string, b: string, what: string): string {
++  const i = src.indexOf(a);
++  if (i < 0 || src.indexOf(a, i + 1) >= 0) throw new Error(`p4atmos: ${what}: target ${i < 0 ? "not found" : "not unique"}`);
++  return src.slice(0, i) + b + src.slice(i + a.length);
++}
++
++/**
++ * Runtime-tunable values (`__hero.env.p4atmosUniforms`), in the environment's materials only while the lane is on (not T0).
++ *
++ * Q5 waterline mist (uP4Wl*): measured on the reference's rest frames at the iceberg (x 1000-1150, 6-row bands; WORK
++ * an/base_boxes.txt, rowprof): F000 / Loop F045 lift the berg's lower face from the engine's flat 114-124 to 139-150 at rows
++ * 408-450 (world 0.4-2.0 m at ~70 m) under a soft top near row ~405 (~2 m), the reference's thin phase (S297) still +15..+20 in the
++ * last ~0.6 m over the water (rows 438-456). So: a layer whose top rides between WL_TOP.x (thin) and WL_TOP.y (thick) m on the
++ * iceberg's measured mist envelope (Atmos.ts bergEnvelope, the knots fitted to the reference's berg-foot series), with a soft edge
++ * (WL_TOP.z m) and a drifting ~18 m fBm on its top (WL_TOP.w m) and density; it stays in the hold (F420's iceberg base is misty).
++ *   uP4Wl:  x left edge (world x, m; full 4 m further right), y right edge (gone there, from 4.5 m before), z amount, w cap. The
++ *           reference's base mist covers the berg's left and middle (x 950-1150 at rest, world x ~8-17 m) but not its right end (x
++ *           1150-1240 stays dark: 101-111 at rows 400-424 in F000 / L045, where MAIN already reads +20) nor the far bergs and range
++ *           beyond the berg (MAIN +7..+20 brighter than the reference there): it ends at ~20 m and at the berg's depth.
++ *   uP4WlZ: x near edge (world z, m: beyond the right floes; full 4 m further out), y far edge (gone there, from 6 m before)
++ *   uP4WlT: x thin top, y thick top, z edge, w top noise (m)
++ *   uP4WlC: the mist's colour (scene-linear, post-grade; renders ~186,198,214, between the reference's milky base and its sky)
++ * uP4Blue: the left bases' haze (the plain and the mountains' feet behind the lake, below ~3-6 m; rest, every mist state) x rgb,
++ *   w its weight. Matched rest frames (x 0-520 rows 420-460; x 0-120 rows 380-430): the reference's B-R 46 / 41 / 42 / 36 at F000 /
++ *   L030 / L045 / S297 vs MAIN's 38 / 38 / 37 / 31, the ridge's foot saturation 0.45-0.50 vs 0.34.
++ * Veil (uP4Veil): x the fall-off under the top (m; MAIN's ATMOS_VEIL_H.w 1.8), y the top's drop (m), z the wisps' share of the top (m).
++ */
++export function createP4AtmosUniforms() {
++  return {
++    uP4Wl: { value: new THREE.Vector4(2.0, 18.5, 0.3, 0.4) },
++    uP4WlZ: { value: new THREE.Vector4(-38.0, -64.0, 0, 0) },
++    uP4WlT: { value: new THREE.Vector4(1.0, 2.0, 0.9, 0.45) },
++    uP4WlC: { value: new THREE.Color(0.66, 0.84, 1.16) },
++    uP4Veil: { value: new THREE.Vector4(3.0, 0.5, 1.6, 0) },
++    uP4Blue: { value: new THREE.Vector4(0.94, 0.99, 1.1, 1.0) },
++  };
++}
++export type P4AtmosUniforms = ReturnType<typeof createP4AtmosUniforms>;
++
++/**
++ * Q5 (4): the left bank's colours (post-grade scene-linear) with the lane on: MAIN's ATMOS_BANK_HI_MIST3 / LO_MIST3 / the thin
++ * veil x (0.95, 0.99, 1.07). At the reference's misty rest frames (Loop F045 t 9.4, S297 t 13.3) the left bases (x 0-520,
++ * rows 420-460) read 151,168,193 / 161,176,197 vs MAIN's 139,154,176 / 156,169,187: bluer (B-R 42 / 36 vs 37 / 31).
++ */
++export const P4_BANK_TINT: [number, number, number] = [0.95, 0.99, 1.07];
++/**
++ * Q5 (4) "-15 % opacity over the dark ridge": the steady fog on the ridge's body (uAtmosBank.z, MAIN 0.7) and on its upper face
++ * (uAtmosRidgeFit.w, MAIN 0.35). The ridge box x 0-100 rows 285-345 at F000 / L015 / L030 / L045 / S297: MAIN +16 / +16 / +15 / +16 / +4
++ * over the reference, with these +14 / +14 / +14 / +14 / +2 (0.45 / 0.18: +13 .. +1, the rest is the bake's lighter rock).
++ */
++export const P4_RIDGE_FOG: [number, number] = [0.55, 0.25];
++/** Item 1: the shade under the veil (Atmos.ts HAZE_SHADOW, uAtmosVeilSh2.z / .w) lowered with the veil's top (m). */
++export const P4_VEIL_SHADE_DROP = 0.5;
++
++/** The shared far-shore chunk (GLSL_PLATE_MIST: the plate AND the water): Q14's two-scale billows in plateBank. */
++export function p4atmosMist(src: string): string {
++  if (!P4ATMOS.bank) return src;
++  return p4Splice(
++    src,
++    "  plateBankBillow = 0.6 + 0.4 * fbm(p * 0.035 + vec3(time * 0.014, 0.0, time * 0.006), 3);",
++    `  // P4 Q14 (p4atmos.ts, ?fogbank=r11): two scales, as F358 / F420's dense billowing bank (luma spread per 20 px band 20-52 there vs
++  // 10-17 for the one smooth 28 m octave): the 28 m swell plus ~8 m puffs rolling up and drifting with the wind (0.43 m/s), which
++  // also break the top into lumps.
++  float pbS = fbm(p * 0.035 + vec3(time * 0.014, 0.0, time * 0.006), 3);
++  float pbP = fbm(vec3((p.x + 0.43 * time) * 0.12, p.y * 0.2 - time * 0.05, p.z * 0.12 + time * 0.01), 2);
++  // Puffs and gaps (value noise is soft: its fBm's sd ~0.2 left MAIN's +-0.1 billow invisible), contrast-stretched; above 1 the
++  // bank's two-tone colour (plate and water alike) runs on to lighter puff tops, the density being capped by the callers.
++  float puff = smoothstep(-0.3, 0.3, 0.45 * pbS + pbP);
++  plateBankBillow = 0.42 + 0.8 * puff;
++  // (Its top ~2.5 m lower, in lumps of +-1.5 m: F420's massif face over the bank is dark slate, L119-123 at rows 440-480, x 120-320,
++  // and its bank starts at row ~490, where MAIN's bank top reached L131-147; the bank's own rows 480-520 sd 18-23 there vs MAIN's 8.)
++  hgt = 1.0 - smoothstep(top - 5.0 + 3.0 * (puff - 0.5), top - 1.3 + 3.0 * (puff - 0.5), p.y);`,
++    "plateBank billow",
++  );
++}
++
++/** PLATE_FRAG (the environment's program, with GLSL_ATMOS_MIST inside): the lane's hunks. */
++export function p4atmosFrag(src: string): string {
++  let s = src;
++  if (P4ATMOS.wl || P4ATMOS.veil || P4ATMOS.blue) {
++    s = p4Splice(
++      s,
++      "uniform float uFogHold;     // the hold fog bank (follows the dolly in, lingers after a release)\n",
++      `uniform float uFogHold;     // the hold fog bank (follows the dolly in, lingers after a release)
++// P4 round 3, lane p4atmos (p4atmos.ts createP4AtmosUniforms).
++uniform vec4 uP4Wl;
++uniform vec4 uP4WlZ;
++uniform vec4 uP4WlT;
++uniform vec3 uP4WlC;
++uniform vec4 uP4Blue;
++`,
++      "uniforms",
++    );
++  }
++  if (P4ATMOS.veil) {
++    // (The veil's uniform is declared before GLSL_ATMOS_MIST, which is spliced in above PLATE_FRAG's own uniforms.)
++    s = p4Splice(s, "uniform vec4 uAtmosVeilP;     // x / y the wisps' density", "uniform vec4 uP4Veil;\nuniform vec4 uAtmosVeilP;     // x / y the wisps' density", "veil uniform");
++    s = p4Splice(
++      s,
++      `        atmosHaze = hzK * smoothstep(uAtmosVeilH.x, uAtmosVeilH.y, hy) * (1.0 - smoothstep(top - uAtmosVeilH.w, top, hy))`,
++      `        // P4 (p4atmos.ts, ?atmosveil2=0; P3 environment item 1: "a straight horizontal haze band crosses the face at y ~265-290; in
++        // the reference the haze builds up gradually toward the base"): the top lower and feathered by the wisps, the density falling
++        // off over uP4Veil.x m under it instead of MAIN's 1.8 m, so the bright upper colour never sits at full density in a level band.
++        float topP4 = top - uP4Veil.y + uP4Veil.z * hw;
++        atmosHaze = hzK * smoothstep(uAtmosVeilH.x, uAtmosVeilH.y, hy) * (1.0 - smoothstep(topP4 - uP4Veil.x, topP4, hy))`,
++      "veil density",
++    );
++  }
++  if (P4ATMOS.bank) {
++    s = p4Splice(
++      s,
++      "    float bk = plateBank(d, fp, uFogHold, uTime) * (1.0 - 0.45 * ridgeBody * smoothstep(1.0, 6.0, fp.y)) * skyGate;\n",
++      `    float bk = plateBank(d, fp, uFogHold, uTime) * (1.0 - 0.45 * ridgeBody * smoothstep(1.0, 6.0, fp.y)) * skyGate;
++    // P4 Q14 (?fogbank=r11): after a release the bank above ~3 m clears with the camera (uHold, the dolly's share, over the
++    // lingering uFogHold); only the low residue keeps the 0.6-2 s linger (F453 keeps a low bank, F460's mountain faces are clear:
++    // the left ridge patch x 0-200 y 300-380 at p08 read 99/118/145 vs F460's 78/98/130). In the hold both are equal: unchanged.
++    bk *= mix(1.0, smoothstep(0.0, 0.6, uHold / max(uFogHold, 1e-3)), smoothstep(2.0, 4.0, fp.y));
++`,
++      "bank release",
++    );
++  }
++  if (P4ATMOS.wl) {
++    s = p4Splice(
++      s,
++      "#ifdef BAKED_EDGE\n  // Round 11 fix round: the view distance in alpha for EnvEdge",
++      `#ifdef ATMOS_BERG
++  {
++    // P4 Q5 (p4atmos.ts, ?atmoswl=0; P3 environment item 3, color_grade item 1): the reference's milky waterline mist along the
++    // iceberg and the right shore (F000, Loop F015-F045, F358, F420, F460: the berg's lower ~40 % veiled, the far bergs greyed). A
++    // ground layer world-anchored over the far shore right of the hero and beyond the right floes; its top rises and falls with the
++    // iceberg's measured mist envelope (BERG_ENV, Atmos.ts), lumpy and drifting with the wind. Not on the sky; in the hold too.
++    float wlR = smoothstep(uP4Wl.x, uP4Wl.x + 4.0, fp.x) * (1.0 - smoothstep(uP4Wl.y - 4.5, uP4Wl.y, fp.x))
++      * (1.0 - smoothstep(uP4WlZ.x - 4.0, uP4WlZ.x, fp.z)) * smoothstep(uP4WlZ.y, uP4WlZ.y + 6.0, fp.z) * skyGate;
++    if (wlR > 0.0 && fp.y < uP4WlT.y + uP4WlT.z + uP4WlT.w) {
++      float wlN = fbm(vec3((fp.x + 0.43 * uTime) / 18.0, fp.z / 18.0 + 3.7, uTime * 0.01), 2);
++      float wlTop = mix(uP4WlT.x, uP4WlT.y, BERG_ENV(fp, uTime)) + uP4WlT.w * wlN;
++      float wl = wlR * (1.0 - smoothstep(wlTop - uP4WlT.z, wlTop + 0.35 * uP4WlT.z, fp.y)) * (0.85 + 0.3 * wlN);
++      col = mix(col, uP4WlC * (0.97 + 0.06 * wlN), min(wl * uP4Wl.z, uP4Wl.w));
++    }
++  }
++#endif
++#ifdef BAKED_EDGE
++  // Round 11 fix round: the view distance in alpha for EnvEdge`,
++      "waterline",
++    );
++  }
++  if (P4ATMOS.blue) {
++    s = p4Splice(
++      s,
++      "#ifdef BAKED_EDGE\n  // Round 11 fix round: the view distance in alpha for EnvEdge",
++      `  {
++    // P4 Q5 (4) (p4atmos.ts, ?atmosblue2=0; P3 color_grade item 1 (c)): the haze at the left mountains' feet and over the plain behind
++    // the lake bluer, as the reference's (a tonal shift on the composited colour; at rest, fading out with the hold's dolly).
++    float blueK = smoothstep(-96.0, -88.0, fp.x) * (1.0 - smoothstep(-10.0, -4.0, fp.x)) * (1.0 - smoothstep(-62.0, -57.0, fp.z))
++      * (1.0 - smoothstep(3.0, 6.0, fp.y)) * skyGate * (1.0 - uHold) * uP4Blue.w;
++    col *= mix(vec3(1.0), uP4Blue.xyz, blueK);
++  }
++#ifdef BAKED_EDGE
++  // Round 11 fix round: the view distance in alpha for EnvEdge`,
++      "left blue",
++    );
++  }
++  return s;
++}

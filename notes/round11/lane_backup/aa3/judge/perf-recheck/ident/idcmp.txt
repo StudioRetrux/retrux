@@ -1,0 +1,7 @@
+base_t1 vs new_lane_t1_off         frames 340/340 identical | targets differ: - | programs 14, differ: - | taaOn false/false mirrorEvery 3/3 | tier T1/T1 main 1440,766/1440,766 | logs 0/0
+base_t1 vs new_base_t1_ctl2        frames 340/340 identical | targets differ: - | programs 14, differ: - | taaOn false/false mirrorEvery 3/3 | tier T1/T1 main 1440,766/1440,766 | logs 0/0
+base_t2 vs new_lane_t2_off         frames 340/340 identical | targets differ: - | programs 14, differ: - | taaOn false/false mirrorEvery 3/3 | tier T2/T2 main 1440,766/1440,766 | logs 0/0
+base_plate vs new_lane_plate       frames 340/340 identical | targets differ: - | programs 12, differ: - | taaOn false/false mirrorEvery null/null | tier T1/T1 main 1440,766/1440,766 | logs 0/0
+base_t0d vs new_lane_t0d           frames 340/340 identical | targets differ: - | programs 12, differ: - | taaOn false/false mirrorEvery null/null | tier T0/T0 main 332,717/332,717 | logs 0/0
+base_t1 vs new_lane_t1             frames 0/340 identical (first diff k0) | targets differ: main,refraction | programs 15, differ: rx-plate-baked|ShaderMaterial,rx-cloud|ShaderMaterial,rx-water|ShaderMaterial,rx-env-edge|ShaderMaterial,rx-blit|ShaderMaterial,rx-lake-edge-taa|ShaderMaterial | taaOn false/true mirrorEvery 3/1 | tier T1/T1 main 1440,766/1440,766 | logs 0/0
+old_lane_t1 vs new_lane_t1         frames 1/340 identical (first diff k1) | targets differ: main,refraction | programs 15, differ: rx-lake-edge-taa|ShaderMaterial | taaOn true/true mirrorEvery 1/1 | tier T1/T1 main 1440,766/1440,766 | logs 0/0

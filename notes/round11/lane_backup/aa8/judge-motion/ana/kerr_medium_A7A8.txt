@@ -1,0 +1,3 @@
+{"lane":"BASE","frames":240,"thinDark":{"n":8950864,"meanAbs":1.4624,"meanSigned":0.1187,"overBright12":0},"wlLines":{"n":4054207,"meanAbs":6.2227,"meanSigned":3.5769,"overBright12":0},"jgt2OutsideBase3x3":0,"jgt2Darker":0}
+{"lane":"A7","frames":240,"thinDark":{"n":8950864,"meanAbs":1.4334,"meanSigned":-0.0146,"overBright12":0},"wlLines":{"n":4054207,"meanAbs":4.3565,"meanSigned":1.2494,"overBright12":39482},"jgt2OutsideBase3x3":3943,"jgt2Darker":3940}
+{"lane":"A8","frames":240,"thinDark":{"n":8950864,"meanAbs":1.4311,"meanSigned":-0.0659,"overBright12":0},"wlLines":{"n":4054207,"meanAbs":4.2362,"meanSigned":0.8908,"overBright12":30607},"jgt2OutsideBase3x3":6810,"jgt2Darker":6808}

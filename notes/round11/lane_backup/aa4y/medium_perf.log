@@ -1,0 +1,124 @@
+[slot] aa4y perf: taken (load 6.0)
+pair 0 mlaa: wall med 24.28 ms, gpu med 62.68 ms (n 180)
+pair 0 aa3: wall med 24.98 ms, gpu med 62.41 ms (n 180)
+pair 0 base: wall med 20.25 ms, gpu med 57.16 ms (n 180)
+pair 1 base: wall med 23.20 ms, gpu med 62.88 ms (n 180)
+pair 1 aa3: wall med 27.86 ms, gpu med 69.96 ms (n 180)
+pair 1 mlaa: wall med 22.23 ms, gpu med 58.46 ms (n 180)
+pair 2 mlaa: wall med 23.08 ms, gpu med 56.18 ms (n 180)
+pair 2 aa3: wall med 24.75 ms, gpu med 60.70 ms (n 180)
+pair 2 base: wall med 20.03 ms, gpu med 56.25 ms (n 180)
+pair 3 base: wall med 23.96 ms, gpu med 66.64 ms (n 180)
+pair 3 aa3: wall med 25.68 ms, gpu med 58.93 ms (n 180)
+pair 3 mlaa: wall med 22.50 ms, gpu med 55.46 ms (n 180)
+{
+ "mlaa": {
+  "wallMedOfMeds": 23.08,
+  "gpuMedOfMeds": 58.457,
+  "wallP90": 24.49,
+  "wallMax": 27.66,
+  "gpuP90": 68.287,
+  "gpuMax": 87.798,
+  "perPair": {
+   "wall": [
+    24.28,
+    22.23,
+    23.08,
+    22.5
+   ],
+   "gpu": [
+    62.682,
+    58.457,
+    56.184,
+    55.461
+   ]
+  },
+  "ratioGpuPairs": [
+   1.097,
+   0.93,
+   0.999,
+   0.832
+  ],
+  "ratioWallPairs": [
+   1.199,
+   0.958,
+   1.152,
+   0.939
+  ],
+  "ratioGpuMed": 0.999,
+  "ratioWallMed": 1.152
+ },
+ "aa3": {
+  "wallMedOfMeds": 25.68,
+  "gpuMedOfMeds": 62.405,
+  "wallP90": 29.54,
+  "wallMax": 49.09,
+  "gpuP90": 89.326,
+  "gpuMax": 183.391,
+  "perPair": {
+   "wall": [
+    24.98,
+    27.86,
+    24.75,
+    25.68
+   ],
+   "gpu": [
+    62.405,
+    69.959,
+    60.697,
+    58.932
+   ]
+  },
+  "ratioGpuPairs": [
+   1.092,
+   1.113,
+   1.079,
+   0.884
+  ],
+  "ratioWallPairs": [
+   1.234,
+   1.201,
+   1.236,
+   1.072
+  ],
+  "ratioGpuMed": 1.092,
+  "ratioWallMed": 1.234
+ },
+ "base": {
+  "wallMedOfMeds": 23.2,
+  "gpuMedOfMeds": 62.877,
+  "wallP90": 24.61,
+  "wallMax": 55.6,
+  "gpuP90": 77.213,
+  "gpuMax": 201.207,
+  "perPair": {
+   "wall": [
+    20.25,
+    23.2,
+    20.03,
+    23.96
+   ],
+   "gpu": [
+    57.158,
+    62.877,
+    56.251,
+    66.643
+   ]
+  },
+  "ratioGpuPairs": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "ratioWallPairs": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "ratioGpuMed": 1,
+  "ratioWallMed": 1
+ }
+}
+[slot] aa4y perf: freed (exit 0)

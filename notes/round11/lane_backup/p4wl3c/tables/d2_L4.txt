@@ -1,0 +1,1 @@
+rl/d2_L4: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 31.9 p90 34.7 ms | mirror 148 walk 148 cache 0 cacheOn 2 | errs 0 forced 0 | render ms p50 1.0/2.4/2.7 cap ms p50 0.0/0.1/0.2 gap p50/p90/max 31.8/34.7/52.0

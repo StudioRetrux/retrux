@@ -1,0 +1,8 @@
+rest lane {'blocks': 8, 'mean': 47.41, 'med': 46.4, 'blockMeans': [51.91, 48.17, 43.86, 44.95, 47.58, 43.08, 43.49, 56.24], 'loads': [9.82, 9.24, 8.74, 7.93, 7.93, 7.33, 6.99, 6.99]} 
+     main {'blocks': 8, 'mean': 47.563, 'med': 46.4, 'blockMeans': [45.65, 43.26, 54.48, 52.02, 46.74, 42.64, 43.76, 51.94], 'loads': [9.43, 9.43, 8.74, 8.28, 7.54, 7.54, 6.99, 6.99]}
+rest pairedMeanRatios [1.137, 1.113, 0.805, 0.864, 1.018, 1.01, 0.994, 1.083] | pairedMedRatios [1.122, 1.124, 0.812, 0.841, 1.015, 1.014, 0.982, 1.064] | loadMax 9.82
+rest median of paired mean ratios 1.014, of paired median ratios 1.014
+hold lane {'blocks': 8, 'mean': 52.052, 'med': 51.1, 'blockMeans': [54.38, 58.76, 56.98, 46.55, 49.29, 48.46, 49.81, 52.18], 'loads': [7.07, 6.51, 6.47, 5.86, 5.71, 5.52, 5.52, 5.95]} 
+     main {'blocks': 8, 'mean': 49.69, 'med': 48.7, 'blockMeans': [47.96, 57.62, 49.05, 46.86, 48.89, 51.64, 48.01, 47.5], 'loads': [6.9, 6.9, 6.11, 6.11, 5.71, 5.66, 6.12, 6.12]}
+hold pairedMeanRatios [1.134, 1.02, 1.162, 0.994, 1.008, 0.938, 1.038, 1.099] | pairedMedRatios [1.137, 1.041, 1.137, 1, 1.012, 0.962, 1.008, 1.08] | loadMax 7.07
+hold median of paired mean ratios 1.029, of paired median ratios 1.026

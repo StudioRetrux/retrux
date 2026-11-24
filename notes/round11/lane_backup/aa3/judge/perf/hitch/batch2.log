@@ -1,0 +1,4 @@
+[slot] !judge-perf:hitch waiting (load 21.2 / max 24, slots 2, holders [{"label":"judge-artifacts:live","pid":21944,"at":1795159737111,"slot":0},{"label":"judge-artifacts:tab","pid":22898,"at":1795159639952,"slot":1}])
+[slot] !judge-perf:hitch waiting (load 21.7 / max 24, slots 2, holders [{"label":"judge-artifacts:live","pid":21944,"at":1795159737111,"slot":0},{"label":"judge-artifacts:tab","pid":22898,"at":1795159639952,"slot":1}])
+[slot] !judge-perf:hitch: taken (load 20.1)
+[slot] !judge-perf:hitch: freed (exit 0)

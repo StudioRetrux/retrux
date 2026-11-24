@@ -1,0 +1,4 @@
+int1_desktop.json lines 0 state {'phase': 'idle', 'ready': '1'} []
+int1_phone.json lines 0 state {'phase': 'idle', 'ready': '1'} []
+main_desktop.json lines 0 state {'phase': 'idle', 'ready': '1'} []
+main_phone.json lines 0 state {'phase': 'idle', 'ready': '1'} []

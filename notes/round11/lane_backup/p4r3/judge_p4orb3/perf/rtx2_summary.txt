@@ -1,0 +1,12 @@
+secs 170 boot {'lane': 4889, 'main': 5073} logs []
+move lane {'blocks': 6, 'frames': 274, 'med': 50, 'p95': 100, 'blockMeds': [66.7, 83.3, 50.05, 49.9, 49.9, 49.9], 'loads': [11.55, 11.07, 11.07, 10.61, 10.56, 10.01], 'scale': [1]}
+move main {'blocks': 6, 'frames': 287, 'med': 50, 'p95': 83.4, 'blockMeds': [75, 74.95, 50, 49.9, 49.9, 49.9], 'loads': [11.55, 11.43, 10.67, 10.61, 10.36, 10.36], 'scale': [1]}
+move pair {'paired': [0.889, 1.111, 1.001, 1, 1, 1], 'pairedMed': 1, 'loadMax': [11.55, 11.43, 11.07, 10.61, 10.56, 10.36], 'pairsUnder10': 0, 'pairedMedUnder10': None, 'ratioOfMedians': 1, 'pairedP95Med': 1}
+rest lane {'blocks': 6, 'frames': 343, 'med': 33.4, 'p95': 66.6, 'blockMeds': [50, 50, 49.9, 33.4, 33.4, 33.4], 'loads': [9.61, 8.69, 8.47, 9.63, 9.34, 8.77], 'scale': [1]}
+rest main {'blocks': 6, 'frames': 385, 'med': 33.4, 'p95': 50.1, 'blockMeds': [33.4, 33.4, 33.4, 33.4, 33.4, 33.4], 'loads': [9.16, 8.75, 8.27, 8.81, 9.47, 9.27], 'scale': [1]}
+rest pair {'paired': [1.497, 1.497, 1.494, 1, 1, 1], 'pairedMed': 1.247, 'loadMax': [9.61, 8.75, 8.81, 9.63, 9.47, 9.27], 'pairsUnder10': 6, 'pairedMedUnder10': 1.247, 'ratioOfMedians': 1, 'pairedP95Med': 1.001}
+hold lane {'blocks': 6, 'frames': 328, 'med': 50, 'p95': 66.6, 'blockMeds': [49.9, 49.9, 49.9, 49.95, 50, 50], 'loads': [8.55, 7.48, 7.44, 7.21, 7.91, 10.26], 'scale': [1]}
+hold main {'blocks': 6, 'frames': 313, 'med': 50, 'p95': 66.7, 'blockMeds': [49.9, 33.4, 50, 49.95, 66.6, 50], 'loads': [8.1, 7.69, 7.4, 7.4, 7.68, 9.07], 'scale': [1]}
+hold pair {'paired': [1, 1.494, 0.998, 1, 0.751, 1], 'pairedMed': 1, 'loadMax': [8.55, 7.69, 7.44, 7.91, 9.07, 10.26], 'pairsUnder10': 5, 'pairedMedUnder10': 1, 'ratioOfMedians': 1, 'pairedP95Med': 1}
+rest lane/main: paired MEAN-interval ratios (load<10) [1.231, 1.331, 1.079, 1.112, 1.033, 0.985] median 1.096 mean 1.129 min 0.985 max 1.331 n 6
+hold lane/main: paired MEAN-interval ratios (load<10) [0.976, 1.042, 0.919, 0.993, 0.735] median 0.976 mean 0.933 min 0.735 max 1.042 n 5

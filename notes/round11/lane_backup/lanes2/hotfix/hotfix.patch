@@ -1,0 +1,268 @@
+--- a/retrux-web/app/hero/engine/hero/HoldR11.ts
++++ b/retrux-web/app/hero/engine/hero/HoldR11.ts
+@@ -59,6 +59,23 @@
+  * Off under `?spin=s3` and `?spin=f2` (and in the r10 / r11a holds).
+  */
+ export const SPIN_P2B = !SPIN_S3 && !SPIN_F2;
++
++/**
++ * `?spin=p2b`: the P2b rotating hold exactly as the rings lane handed it off (16 Nov 03:25): one frame-guard share per ring, so
++ * ring A opens less (down to ~1/3) whenever its tumble turns it tall on screen and its opening breathes with the tumble phase,
++ * and the hold dolly runs to the full CAM_TARGETS.expand on landscape screens.
++ */
++export const SPIN_P2B_GUARD = SPIN_P2B && typeof location !== "undefined" && new URLSearchParams(location.search).get("spin") === "p2b";
++
++/**
++ * Steady hold (default; lead hotfix of 16 Nov, the user: the two outer rings must STAY open through the whole press-and-hold,
++ * not open and close): no frame guard. Ring A's quarters and ring B's halves ease open with the press (spinOpenAt) and close
++ * only on the release, so the opening is one constant through the sustain at every press moment and hold length. The rings stay
++ * inside the frame by framing instead: the hold dolly stops, once per screen shape, where the opened ring A's bounding sphere
++ * fits the frame at any tumble phase (CameraRig.frameShare); the camera is as steady as before. Off under `?spin=p2b` (the
++ * guard) and outside P2b.
++ */
++export const HOLD_STEADY = SPIN_P2B && !SPIN_P2B_GUARD;
+ 
+ /**
+  * Idle tumble of rings C / D. "p2b" (default): measured from Default Loop.mp4 as constant-rate flips (IDLE_CD in Rings.ts).
+@@ -132,8 +149,21 @@
+   /**
+    * P2b: one frame-guard share for all pieces of a ring (the smallest any piece needs), so a guarded ring opens less as a whole
+    * and keeps its exploded shape (a rigid unit) instead of one piece sliding in on its own. 0 = per piece (`?spin=f2` / s3).
++   * Only with the guard on (`steady` 0: `?spin=p2b`); the default steady hold has no guard.
+    */
+   guardRing: SPIN_P2B ? 1 : 0,
++  /**
++   * Steady hold (HOLD_STEADY, the default; 0 = the frame guard, `?spin=p2b` and the older builds): no guard, the opening is the
++   * choreography's own (constant through the sustain); the hold camera's dolly share is chosen once per screen shape so the
++   * opened ring A's bounding sphere stays frameMargin inside the frame (CameraRig.frameShare).
++   */
++  steady: HOLD_STEADY ? 1 : 0,
++  /**
++   * Steady hold: how far inside the frame the opened ring A's bounding sphere stays (NDC units of the frame height: 0.04 = 15 px
++   * at 766), beyond the camera's own pointer pan and handheld drift. The sphere already holds every vertex plus the ice shader's
++   * largest displacement (Rings.openRadiusA), so no extra allowance for the chisel is needed (the guard's 0.08 had one).
++   */
++  frameMargin: 0.04,
+   /**
+    * P2b: the shards' orbit (and their own spin / rock / bob clock) at full hold as a share of idle, measured in State 2 to 5.mp4:
+    * the blue crystals move 0.024-0.037 rad / frame round the orb in the sustain F380-F449 against 0.050-0.064 at rest
+--- a/retrux-web/app/hero/engine/hero/Rings.ts
++++ b/retrux-web/app/hero/engine/hero/Rings.ts
+@@ -973,6 +973,37 @@
+   /** P2b: each ring's frame-guard share last frame (-1: not opened) and its opening last frame (A, B). */
+   private guardRingS = [-1, -1];
+   private openRingLast = [0, 0];
++
++  private openRCache = { push: NaN, r: 0 };
++  /**
++   * Steady hold (HOLD_SPIN.steady): the radius (m, about the ring centre) of the sphere that holds ring A with its quarters
++   * pushed out `push` m along their radials: every vertex of every quarter plus the ice shader's largest outward displacement
++   * (half its uDisplace amplitude). Ring A's pieces only move in its own plane and the ring turns about its centre, so its
++   * silhouette stays inside this sphere's at any tumble phase and press moment (B / C / D lie inside A). Cached per push.
++   */
++  openRadiusA(push: number) {
++    const c = this.openRCache;
++    if (c.push === push) return c.r;
++    let r2 = 0;
++    let disp = 0;
++    for (const p of this.pieces) {
++      if (p.ring !== 0) continue;
++      const pos = p.mesh.geometry.attributes.position;
++      const ox = p.rest.x + p.radial.x * push;
++      const oy = p.rest.y + p.radial.y * push;
++      const oz = p.rest.z + p.radial.z * push;
++      for (let i = 0; i < pos.count; i++) {
++        const x = ox + pos.getX(i), y = oy + pos.getY(i), z = oz + pos.getZ(i);
++        r2 = Math.max(r2, x * x + y * y + z * z);
++      }
++      const mat = (p.mesh.userData.iceMaterial ?? p.mesh.material) as THREE.ShaderMaterial;
++      const u = mat.uniforms?.uDisplace;
++      if (u) disp = Math.max(disp, 0.5 * Math.abs(u.value as number));
++    }
++    c.push = push;
++    c.r = Math.sqrt(r2) + disp;
++    return c.r;
++  }
+ 
+   /**
+    * P2b rotating hold, piece offsets (the user, 15 Nov 19:20: the split rings must stay aligned, one ring turning as a unit): every
+@@ -981,7 +1012,8 @@
+    * across their cut), all pieces of a ring by the same amount. The frame guard scales the whole ring's opening by one share (the
+    * smallest any piece needs), so a ring near the frame edge opens less as a whole and never tilts or slides one piece; it
+    * tightens at once and lets the opening out again only through a smooth follower, never while the opening closes. Exactly the
+-   * rest pose when the opening is 0.
++   * rest pose when the opening is 0. The guard runs only under `?spin=p2b`: the default steady hold (HOLD_SPIN.steady) has
++   * none, so the opening is the choreography's own, constant through the sustain, and the camera frames the opened ring.
+    */
+   private poseRigid(d: Drivers, dt: number) {
+     const S = HOLD_SPIN;
+@@ -1006,7 +1038,11 @@
+       const follow = (now: number, last: number) =>
+         last >= 0 && now > last ? (closing ? last : Math.min(now, last + (now - last) * (1 - Math.exp(-dt * S.guardRelax)))) : now;
+       let sRing = 1;
+-      if (S.guardRing) {
++      if (S.steady) {
++        // Steady hold (default): no frame guard; the opening is the choreography's own, constant through the sustain (the
++        // camera frames the opened ring instead, CameraRig.frameShare).
++        this.guardRingS[ring] = -1;
++      } else if (S.guardRing) {
+         let sNow = 1;
+         for (const p of this.pieces) if (p.ring === ring) sNow = Math.min(sNow, this.guardScale(p, q, this.offV.copy(p.radial).multiplyScalar(push)));
+         sRing = follow(sNow, this.guardRingS[ring]);
+@@ -1016,7 +1052,7 @@
+         const p = this.pieces[k];
+         if (p.ring !== ring) continue;
+         let s = sRing;
+-        if (!S.guardRing) {
++        if (!S.guardRing && !S.steady) {
+           // (Runtime option: a share per piece, as `?spin=f2`.)
+           s = follow(this.guardScale(p, q, this.offV.copy(p.radial).multiplyScalar(push)), this.guardS[k] ?? -1);
+           this.guardS[k] = s;
+--- a/retrux-web/app/hero/engine/CameraRig.ts
++++ b/retrux-web/app/hero/engine/CameraRig.ts
+@@ -2,7 +2,7 @@
+ import { HERO_CENTER, REF_ASPECT, REST_CAMERA } from "./config";
+ import { CAM_TARGETS } from "./curves";
+ import type { Drivers } from "./Choreography";
+-import { HOLD_SPIN, type HoldMode } from "./hero/HoldR11";
++import { HOLD_SPIN, HOLD_TUNE, type HoldMode } from "./hero/HoldR11";
+ import { lerp, Spring } from "./math";
+ import type { PlateCoverage } from "./world/PlateEnvironment";
+ 
+@@ -28,6 +28,13 @@
+ const EL_PAN = 0.75;
+ /** Extra pitch (deg, up) at full hold; the hold plate's 0.20 top overscan leaves ~4.8 deg above the frame. */
+ const HOLD_PITCH_TRIM = 0.75;
++/**
++ * Steady hold framing: the camera's own rotations in a settled hold that the frame margin must absorb (deg). Vertical: the pointer
++ * pan (Choreography orbitEl <= 1.2 deg x EL_PAN x the hold's 0.2 orbit share) plus the handheld drift's pitch (0.06 + 0.04);
++ * horizontal: the drift's yaw (0.09 + 0.05). The azimuth orbit turns the camera about the orb, which stays centred.
++ */
++const HOLD_SLACK_V = 1.2 * EL_PAN * 0.2 + 0.1;
++const HOLD_SLACK_H = 0.14;
+ 
+ export class CameraRig {
+   readonly camera = new THREE.PerspectiveCamera(25.5, REF_ASPECT, 0.05, 2000);
+@@ -57,6 +64,15 @@
+    * by the same share.
+    */
+   holdFit = 1;
++  /**
++   * The share of the hold dolly the camera (and HeroEngine's hero lift) takes: holdFit, and in the steady hold (HOLD_SPIN.steady,
++   * the default) at most frameShare(), where the opened ring A fits the frame at any tumble phase. A function of the screen shape
++   * only, so it is one constant through every hold (no breathing); the lunge keeps its measured timing and only ends earlier on
++   * the same rest -> hold path. The environment's hold look (uHold, the fog bank) still follows holdFit.
++   */
++  holdShare = 1;
++  /** Steady hold: radius (m) of the sphere about the ring centre that holds the opened ring A (Rings.openRadiusA; HeroEngine). */
++  holdRadius = 0;
+   private tanV = 0;
+ 
+   constructor() {
+@@ -155,7 +171,8 @@
+       // The hold dolly on top of the sprung idle / pointer camera, exactly on the measured curve (any smoothing lags the
+       // lunge: omega 60 still left the live pop at 70 % of the dolly where the reference shows ~78 %).
+       this.holdFit = this.holdMode === "r11" ? this.fitShare() : 1;
+-      const k = d.camExpand * this.holdFit;
++      this.holdShare = this.holdMode === "r11" && HOLD_SPIN.steady ? Math.min(this.holdFit, this.frameShare()) : this.holdFit;
++      const k = d.camExpand * this.holdShare;
+       const rr = lerp(this.r.update(dt), T.expand.r, k);
+       const ee = lerp(this.el.update(dt), T.expand.el, k);
+       const pp = lerp(this.pitch.update(dt), T.expand.pitch + HOLD_PITCH_TRIM, k);
+@@ -178,6 +195,65 @@
+     return Math.max(0, Math.min(1, (r0 - need) / (r0 - r1)));
+   }
+ 
++  private frameKey = "";
++  private frameK = 1;
++  /**
++   * Steady hold: the largest share of the hold dolly (0..1) at which the sphere of radius holdRadius about the lifted ring centre
++   * projects HOLD_SPIN.frameMargin inside the frame, plus room for the hold's pointer pan and handheld drift (HOLD_SLACK_*). The
++   * sphere's extents are exact (tangent cones, perspective included) for the settled hold pose of that share: the camera on the
++   * rest -> hold path (r, el, pitch lerped as in update) looking at the orb, the hero lifted by HOLD_TUNE.holdLift x share.
++   * Depends only on the screen shape and constants: computed once per change, by bisection (the extents grow with the share).
++   */
++  frameShare() {
++    const R = this.holdRadius;
++    if (!(R > 0)) return 1;
++    const m = HOLD_SPIN.frameMargin;
++    const T = CAM_TARGETS;
++    const key = `${this.aspect}|${this.tanV}|${R}|${m}|${HOLD_TUNE.holdLift}|${T.rest.r}|${T.rest.el}|${T.rest.pitch}|${T.expand.r}|${T.expand.el}|${T.expand.pitch}`;
++    if (key === this.frameKey) return this.frameK;
++    let k = 1;
++    if (!this.frameFits(1, R, m)) {
++      let lo = 0;
++      let hi = 1;
++      if (!this.frameFits(0, R, m)) hi = 0;
++      for (let i = 0; i < 40 && hi > lo; i++) {
++        const mid = 0.5 * (lo + hi);
++        if (this.frameFits(mid, R, m)) lo = mid;
++        else hi = mid;
++      }
++      k = lo;
++    }
++    this.frameKey = key;
++    this.frameK = k;
++    return k;
++  }
++
++  /** Steady hold: whether the sphere (radius R about the lifted ring centre) fits the frame at dolly share k (see frameShare). */
++  private frameFits(k: number, R: number, m: number) {
++    const T = CAM_TARGETS;
++    const r = lerp(T.rest.r, T.expand.r, k);
++    const el = lerp(T.rest.el, T.expand.el, k) * DEG;
++    const dp = lerp(T.rest.pitch, T.expand.pitch + HOLD_PITCH_TRIM, k) * DEG + el;
++    const lift = HOLD_TUNE.holdLift * k;
++    // The lifted centre in the look-at frame (looking at the orb from below / above by el, world up kept), then the camera's
++    // pitch dp about its own x axis.
++    const y0 = lift * Math.cos(el);
++    const z0 = -(r - lift * Math.sin(el));
++    const y = y0 * Math.cos(dp) + z0 * Math.sin(dp);
++    const z = -y0 * Math.sin(dp) + z0 * Math.cos(dp);
++    if (!(z < 0)) return false;
++    const rho = Math.hypot(y, z);
++    if (R >= Math.min(rho, -z)) return false;
++    const thc = Math.atan2(y, -z);
++    const a = Math.asin(R / rho);
++    const sv = HOLD_SLACK_V * DEG;
++    const lim = (1 - m) * this.tanV;
++    if (thc + a + sv >= Math.PI / 2 || Math.tan(thc + a + sv) > lim || Math.tan(thc - a - sv) < -lim) return false;
++    // Horizontally the centre is on the view axis (x = 0): half-angle asin(R / -z), the same pixel margin.
++    const ax = Math.asin(R / -z) + HOLD_SLACK_H * DEG;
++    return ax < Math.PI / 2 && Math.tan(ax) <= this.tanV * (this.aspect - m);
++  }
++
+   private apply(r: number, azDeg: number, elDeg: number, pitchDeg: number, time: number) {
+     const az = azDeg * DEG;
+     const el = elDeg * DEG;
+--- a/retrux-web/app/hero/engine/HeroEngine.ts
++++ b/retrux-web/app/hero/engine/HeroEngine.ts
+@@ -408,12 +408,15 @@
+     const d = this.choreo.drivers;
+     const p = s.pointer;
+     const introK = warm ? 1 : intro;
++    // Steady hold (default): the camera frames ring A opened by its full constant push (Rings.openRadiusA, cached per push).
++    if (this.rings && this.holdMode === "r11" && HOLD_SPIN.steady) this.rig.holdRadius = this.rings.openRadiusA(HOLD_SPIN.pushA);
+     this.rig.update(dt, s.time, d, introK);
+     // The hero rises with the dolly (Rings.tune.holdLift); the camera stays on the hold plate's pose, so the plate stays
+     // registered. The shared orb centre follows (ice lantern, ring split depth, lake glint and reflection occlusion).
+     if (this.rings && this.heroBase) {
+-      // (r11: x the camera's hold-dolly share on this screen, 1 on landscape; fix round 2, narrow portrait screens.)
+-      const lift = (this.holdMode !== "r10" ? HOLD_TUNE.holdLift : this.rings.tune.holdLift) * d.camExpand * (this.holdMode === "r11" ? this.rig.holdFit : 1);
++      // (r11: x the camera's hold-dolly share on this screen, 1 on landscape; fix round 2, narrow portrait screens. Steady hold:
++      // the framing share, so the orb keeps its place in the frame; holdShare = holdFit otherwise.)
++      const lift = (this.holdMode !== "r10" ? HOLD_TUNE.holdLift : this.rings.tune.holdLift) * d.camExpand * (this.holdMode === "r11" ? this.rig.holdShare : 1);
+       this.rings.root.position.y = this.heroBase.rings + lift;
+       if (this.orb) this.orb.mesh.position.y = this.heroBase.orb + lift;
+       if (this.shards) this.shards.mesh.position.y = this.heroBase.shards + lift;
+--- a/retrux-web/app/hero/README.md
++++ b/retrux-web/app/hero/README.md
+@@ -14,7 +14,7 @@
+ | Ice rings | Custom GLSL after Blender's `Ice.004`: frost-driven rough transmission, faceted thick-lens refraction (each chiselled facet bends the view, muted refracted colour), Voronoi plateaus with crisp creases + two bump layers, thickness from a back-face depth pass (2x2 nearest, clamped), Beer-Lambert absorption in an azure tint, soft internal fracture sheets, a slate band only where the ice refracts something dark, steel-blue total internal reflection that fades at the silhouette, roughness-aware Fresnel (no silver sheen), the orb's light transmitted along the view ray. Ice behind ice (T1+, `?ibi=0/1` to force): the cage is drawn in two halves split at the orb's view depth, the far half first, then over a fresh screen copy the near half (strict depth test, no discard), which refracts it. The section is remapped to a superellipse slab and the silhouette is broken by soft dips along the facet borders (T1+); one noise domain per ring, so the pieces never show seams | `engine/hero/IceMaterial.ts`, `engine/hero/Rings.ts` |
+ | Orb | Analytic sphere + raymarched emissive volume after the Blender `magick_ball_01` material; core clamped near the AgX white point, at most one bounced pass (the plasma tongues keep their contrast), a thin lilac / mint glass rim, a tight halo (per-level bloom weights), and a light for the ice (glint, transmitted glow) and the lake | `engine/hero/Orb.ts`, `engine/pipeline/PostChain.ts` |
+ | Shards | One draw call, motion in the vertex shader (two counter-rotating belts) | `engine/hero/Shards.ts` |
+-| Motion | State machine reconstructed frame by frame from the reference video: pointer orbit (edges), a hover push-in that grows as the pointer nears the orb (~1.12x), and press-and-hold. A click does nothing (a press only becomes a hold after 0.25 s). The hold is the video's F331-F442: rings pass through a near-frontal vortex, camera creep, the 0.88 s pop (an X of edge-on slabs, end quarters thrown out), then a slow-motion sustain in which every ring keeps tumbling while its axis is drawn towards the hold pose (ring A in four chunky slabs, B a split bowl, C / D moving inside); release resolves the inner rings first and re-joins A last. Every phase change blends the drivers and alignment targets keep their side, so nothing jumps. The idle tumble is motion-captured from the Default Loop (`ringMocap.ts`, built by `hero-pipeline/ringfit`): A and B are its exact constant-rate rotations (A = Ry(90t) Rx(180t), B = Ry(90t) Rx(-135t), deg/s), C and D (round 11 P2b) constant-rate flips about the rest camera's horizontal axis measured from all 121 loop frames (C -90 deg/s, D +45 deg/s; `IDLE_CD` in `Rings.ts`; `?idle=r10` restores their old smoothed mocap tracks, which folded back at edge-on); B runs an 8 s track because its 4 s loop ends turned over (no texture pop). In the rotating hold (r11, default) every ring keeps this idle tumble on one clock slowed to the reference's 0.2, A's quarters and B's halves part only in their ring's plane and keep their ring's rotation exactly, and the shards slow to the reference's 0.5 (`?spin=f2` restores the integrated round-11 hold). The intro sets the tumble clock so its own cycle lands on the loop's 1.5 s pose (the F045 vortex). A 900 deg/s turn-rate cap per ring is the safety net against latched-side flips. `HeroState.alignment` reports how face-on the set is (the audio follows it) | `engine/Choreography.ts`, `engine/curves.ts`, `engine/CameraRig.ts`, `engine/hero/Rings.ts`, `engine/hero/ringMocap.ts` |
++| Motion | State machine reconstructed frame by frame from the reference video: pointer orbit (edges), a hover push-in that grows as the pointer nears the orb (~1.12x), and press-and-hold. A click does nothing (a press only becomes a hold after 0.25 s). The hold is the video's F331-F442: rings pass through a near-frontal vortex, camera creep, the 0.88 s pop (an X of edge-on slabs, end quarters thrown out), then a slow-motion sustain in which every ring keeps tumbling while its axis is drawn towards the hold pose (ring A in four chunky slabs, B a split bowl, C / D moving inside); release resolves the inner rings first and re-joins A last. Every phase change blends the drivers and alignment targets keep their side, so nothing jumps. The idle tumble is motion-captured from the Default Loop (`ringMocap.ts`, built by `hero-pipeline/ringfit`): A and B are its exact constant-rate rotations (A = Ry(90t) Rx(180t), B = Ry(90t) Rx(-135t), deg/s), C and D (round 11 P2b) constant-rate flips about the rest camera's horizontal axis measured from all 121 loop frames (C -90 deg/s, D +45 deg/s; `IDLE_CD` in `Rings.ts`; `?idle=r10` restores their old smoothed mocap tracks, which folded back at edge-on); B runs an 8 s track because its 4 s loop ends turned over (no texture pop). In the rotating hold (r11, default) every ring keeps this idle tumble on one clock slowed to the reference's 0.2, A's quarters and B's halves part only in their ring's plane and keep their ring's rotation exactly, and the shards slow to the reference's 0.5 (`?spin=f2` restores the integrated round-11 hold). The opening is one constant through the sustain (it eases in with the press and closes only on the release, at every press moment and hold length); the rings stay inside the frame by framing: the hold dolly keeps its measured timing but stops, once per screen shape, where the opened ring A's bounding sphere fits the frame at any tumble phase (`CameraRig.frameShare`; `?spin=p2b` restores the per-ring frame guard, whose opening breathed with the tumble). The intro sets the tumble clock so its own cycle lands on the loop's 1.5 s pose (the F045 vortex). A 900 deg/s turn-rate cap per ring is the safety net against latched-side flips. `HeroState.alignment` reports how face-on the set is (the audio follows it) | `engine/Choreography.ts`, `engine/curves.ts`, `engine/CameraRig.ts`, `engine/hero/Rings.ts`, `engine/hero/ringMocap.ts` |
+ | Frame graph | mirrored hero reflection, env + shards, refraction copy, orb, copy, ring back depth, rings, bloom, AgX grade | `engine/pipeline/RenderPipeline.ts`, `engine/pipeline/PostChain.ts` |
+ | Quality | GPU tiers T0 (Intel Iris/UHD) to T2 (RTX / M-Pro) plus an adaptive render scale; MSAA 4 from T1 (Apple GPUs) | `engine/quality.ts`, `engine/types.ts` |
+ | UI | Loader, cursor (the ring is an OS cursor image, so a trackpad never lags behind a slow WebGL frame; the DOM only draws the press disc), staggered text reveal, Figma sound wave, procedural audio | `engine/ui/*`, `engine/audio/SoundEngine.ts`, `public/hero/cursor/` |

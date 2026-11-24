@@ -1,0 +1,20 @@
+dry run rc=0
+patching file 'retrux-web/app/hero/engine/CameraRig.ts'
+patching file 'retrux-web/app/hero/engine/HeroEngine.ts'
+patching file 'retrux-web/app/hero/engine/assets.ts'
+patching file 'retrux-web/app/hero/engine/hero/HoldR11.ts'
+patching file 'retrux-web/app/hero/engine/hero/IceMaterial.ts'
+patching file 'retrux-web/app/hero/engine/hero/Orb.ts'
+patching file 'retrux-web/app/hero/engine/hero/Shards.ts'
+patching file 'retrux-web/app/hero/engine/pipeline/PostChain.ts'
+patching file 'retrux-web/app/hero/engine/quality.ts'
+patching file 'retrux-web/app/hero/engine/world/Atmos.ts'
+patching file 'retrux-web/app/hero/engine/world/PlateEnvironment.ts'
+patching file 'retrux-web/app/hero/engine/p4env.ts'
+apply rc=0
+orig/rej: 0
+applied app/ == int1 app/
+applied public/ (+ asset) == int1 public/
+tsc hero rc=0
+tsc project rc=0
+clone removed

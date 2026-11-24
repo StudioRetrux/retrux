@@ -1,0 +1,12 @@
+hold_O   ch4 k30-150 y686-766 flip=True: mean|dL| 4.325 px>12 9.710% flicker 4.764%
+hold_O   ch4 k30-150 y600-686 flip=True: mean|dL| 3.696 px>12 7.316% flicker 3.284%
+hold_O   ch4 k150-300 y686-766 flip=True: mean|dL| 1.640 px>12 2.249% flicker 0.688%
+hold_O   ch4 k150-300 y600-686 flip=True: mean|dL| 1.520 px>12 2.453% flicker 0.753%
+hold_O   ch4 k330-420 y686-766 flip=True: mean|dL| 5.492 px>12 13.872% flicker 5.113%
+hold_O   ch4 k330-420 y600-686 flip=True: mean|dL| 5.120 px>12 11.797% flicker 4.395%
+hold_R   ch4 k30-150 y686-766 flip=True: mean|dL| 4.126 px>12 9.308% flicker 4.309%
+hold_R   ch4 k30-150 y600-686 flip=True: mean|dL| 3.523 px>12 6.789% flicker 2.940%
+hold_R   ch4 k150-300 y686-766 flip=True: mean|dL| 1.557 px>12 2.210% flicker 0.681%
+hold_R   ch4 k150-300 y600-686 flip=True: mean|dL| 1.520 px>12 2.451% flicker 0.752%
+hold_R   ch4 k330-420 y686-766 flip=True: mean|dL| 5.450 px>12 13.729% flicker 4.927%
+hold_R   ch4 k330-420 y600-686 flip=True: mean|dL| 5.024 px>12 11.577% flicker 4.101%

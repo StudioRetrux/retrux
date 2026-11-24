@@ -1,0 +1,31 @@
+21:03:52 ident start
+21:06:51 ident done
+21:13:34 perf done 8
+21:14:03 st d2_J [slot] judge_wl2:st-d2_J: freed (exit 0)
+21:14:30 st d1_J [slot] judge_wl2:st-d1_J: freed (exit 0)
+21:14:30 rl start
+21:14:56 rl main_a rl/T1d2_main_a: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 33.5 p90 35.0 ms | mirror 148 walk 148 ca
+21:15:22 rl wl2_a rl/T1d2_wl2_a: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 36.2 p90 41.9 ms | mirror 148 walk 148 cac
+21:15:49 rl main_b rl/T1d2_main_b: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 34.1 p90 35.7 ms | mirror 148 walk 148 ca
+21:16:20 rl wl2_b rl/T1d2_wl2_b: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 36.2 p90 43.2 ms | mirror 148 walk 148 cac
+21:16:51 rl main_c rl/T1d2_main_c: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 34.4 p90 40.3 ms | mirror 148 walk 148 ca
+21:17:17 rl wl2_c rl/T1d2_wl2_c: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 33.4 p90 38.3 ms | mirror 148 walk 148 cac
+21:17:40 rlfar fmain rl/T1d2_fmain: 100 frames 725x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 27.3 p90 28.6 ms | mirror 98 walk 98 cache 1
+21:18:02 rlfar fwl2 rl/T1d2_fwl2: 100 frames 725x225 buf 1800,957 pipe 1800,957 scale 1 dt p50 28.7 p90 31.2 ms | mirror 99 walk 98 cache 0 
+21:18:02 CHAIN DONE
+21:18:26 rl2 d1main_a rl/T1d2_d1main_a: 150 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 23.0 p90 25.6 ms | mirror 148 walk 148 cache 0 cacheOn 2 | er
+21:18:50 rl2 d1wl2_a rl/T1d2_d1wl2_a: 150 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 25.4 p90 28.5 ms | mirror 148 walk 148 cache 0 cacheOn 2 | err
+21:19:12 rl2 d1main_b rl/T1d2_d1main_b: 150 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 23.4 p90 26.8 ms | mirror 148 walk 148 cache 0 cacheOn 2 | er
+21:19:34 rl2 d1wl2_b rl/T1d2_d1wl2_b: 150 frames 480x180 buf 1512,860 pipe 1512,860 scale 1 dt p50 24.6 p90 26.8 ms | mirror 148 walk 148 cache 0 cacheOn 2 | err
+21:20:02 rl2 t2main_a rl/T1d2_t2main_a: 150 frames 720x270 buf 2268,1290 pipe 2268,1290 scale 1 dt p50 42.7 p90 47.0 ms | mirror 149 walk 148 cache 0 cacheOn 2 | 
+21:20:31 rl2 t2wl2_a rl/T1d2_t2wl2_a: 150 frames 720x270 buf 2268,1290 pipe 2268,1290 scale 1 dt p50 47.0 p90 50.0 ms | mirror 148 walk 148 cache 0 cacheOn 2 | e
+21:20:31 CHAIN2 DONE
+21:20:33 rl3 clean start (no analysis running)
+21:21:00 rl3 main_d rl/T1d2_main_d: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 34.3 p90 39.3 ms | mirror 149 walk 148 ca
+21:21:25 rl3 wl2_d rl/T1d2_wl2_d: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 32.7 p90 35.5 ms | mirror 148 walk 148 cac
+21:21:50 rl3 main_e rl/T1d2_main_e: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 31.0 p90 33.4 ms | mirror 148 walk 148 ca
+21:22:15 rl3 wl2_e rl/T1d2_wl2_e: 150 frames 600x225 buf 1890,1075 pipe 1890,1075 scale 1 dt p50 32.1 p90 34.7 ms | mirror 148 walk 148 cac
+21:22:15 CHAIN3 DONE
+21:22:26 GO4 (analysis done)
+21:27:31 perf-d2 done 6
+21:27:31 CHAIN4 DONE

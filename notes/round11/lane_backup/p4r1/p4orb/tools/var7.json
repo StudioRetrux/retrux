@@ -1,0 +1,5 @@
+[
+ {"name": "h1", "js": "(()=>{const h=__hero,u=h.orb.material.uniforms;u.uR11OrbC.value.x=0.2;u.uP4OrbB.value.y=0.25;u.uP4Orb.value.y=3.5;u.uP4OrbB.value.x=12;h.orb.holdCut=0.85;u.uHoldFill.value.z=0.35;})()"},
+ {"name": "h2", "js": "(()=>{const h=__hero,u=h.orb.material.uniforms;u.uR11OrbC.value.x=0.1;u.uP4OrbB.value.y=0.25;u.uP4Orb.value.y=3.0;u.uP4OrbB.value.x=11;h.orb.holdCut=0.95;u.uHoldFill.value.z=0.5;})()"},
+ {"name": "h3", "js": "(()=>{const h=__hero,u=h.orb.material.uniforms;u.uR11OrbC.value.x=0.2;u.uP4OrbB.value.y=0.0;u.uP4Orb.value.y=3.5;u.uP4OrbB.value.x=12;h.orb.holdCut=0.85;u.uHoldFill.value.z=0.35;})()"}
+]

@@ -1,0 +1,10 @@
+== source differences lane vs aa7 outside Water.ts (excluding node_modules, dist, .next, tsbuildinfo, logs):
+   none
+patching file 'retrux-web/app/hero/engine/world/Water.ts'
+== .orig / .rej in the apply clone: 0
+== applied app folder vs lane app folder:
+   IDENTICAL (app/)
+== apply-clone tsc hero 0 project 0
+== lane tsc hero 0 project 0
+      85 /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/tip/tip_vs_aa7.patch
+b4bdef10cf2c1db8561231161926532cd218497f75af395931d0535bf10f2659  /private/tmp/claude-501/-Users-muhamadrifaldi-Documents-GitHub-retrux-hero-rnd/a0f5735b-9a7f-477e-9b57-6de40ca5644b/scratchpad/work8/tip/tip_vs_aa7.patch

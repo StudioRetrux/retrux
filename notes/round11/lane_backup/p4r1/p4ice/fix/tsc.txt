@@ -1,0 +1,2 @@
+tsc hero exit 0
+tsc app exit 0

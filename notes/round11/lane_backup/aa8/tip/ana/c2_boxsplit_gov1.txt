@@ -1,0 +1,4 @@
+vA vs fin1 T8 k0-119: box darker 17492 brighter 0 | outside darker 108640 brighter 1253 max 89
+vB vs fin1 T8 k0-119: box darker 15256 brighter 0 | outside darker 100243 brighter 690 max 89
+vC vs fin1 T8 k0-119: box darker 17369 brighter 0 | outside darker 124737 brighter 594 max 90
+vD vs fin1 T8 k0-119: box darker 15754 brighter 0 | outside darker 109488 brighter 193 max 89

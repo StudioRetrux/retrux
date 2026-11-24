@@ -1,0 +1,18 @@
+M      xM_a         N 150 dt p10/50/90 27.3/28.8/30.1 | leftwater 621 region 2536 | errs 0
+M      xM_b         N 150 dt p10/50/90 27.6/29.5/50.0 | leftwater 735 region 2767 | errs 0
+L      xL_a         N 150 dt p10/50/90 30.5/32.5/49.9 | leftwater 1379 region 3496 | errs 0
+L      xL_b         N 150 dt p10/50/90 29.5/31.3/33.6 | leftwater 1125 region 3064 | errs 0
+K1     xK1_a        N 150 dt p10/50/90 30.4/32.9/49.9 | leftwater 1229 region 3294 | errs 0
+K1     xK1_b        N 150 dt p10/50/90 31.1/32.5/34.3 | leftwater 996 region 2849 | errs 0
+S      xS_a         N 150 dt p10/50/90 30.2/31.6/33.2 | leftwater 526 region 2222 | errs 0
+S      xS_b         N 150 dt p10/50/90 29.4/31.0/33.5 | leftwater 514 region 2227 | errs 0
+B      xB_a         N 150 dt p10/50/90 28.2/29.8/32.4 | leftwater 822 region 2848 | errs 0
+B      xB_b         N 150 dt p10/50/90 29.0/31.2/50.0 | leftwater 1011 region 3321 | errs 0
+POOLED dt-controlled (both steps inside the band), blips / frame:
+dt   0-999 | M n 296 leftwater   678 region  2652 || L n 296 leftwater  1252 region  3280 || K1 n 296 leftwater  1113 region  3071 || S n 296 leftwater   520 region  2225 || B n 296 leftwater   917 region  3085
+dt  14-20  | M n   0 leftwater    -1 region    -1 || L n   1 leftwater    81 region   466 || K1 n   1 leftwater    87 region   620 || S n   1 leftwater   148 region   359 || B n   1 leftwater    93 region   637
+dt  20-26  | M n   2 leftwater     1 region   134 || L n   1 leftwater     1 region   668 || K1 n   2 leftwater     0 region   358 || S n   1 leftwater     1 region   656 || B n   2 leftwater     0 region   613
+dt  26-30  | M n 180 leftwater   532 region  2280 || L n   6 leftwater  1623 region  4012 || K1 n   2 leftwater  2252 region  4837 || S n  12 leftwater   286 region  1654 || B n  81 leftwater   939 region  3067
+dt  28-34  | M n 165 leftwater   723 region  2822 || L n 218 leftwater  1164 region  3138 || K1 n 164 leftwater  1123 region  3120 || S n 265 leftwater   531 region  2255 || B n 184 leftwater   837 region  2901
+dt  30-36  | M n  22 leftwater  1158 region  3929 || L n 211 leftwater  1311 region  3364 || K1 n 191 leftwater  1074 region  3008 || S n 228 leftwater   546 region  2318 || B n  68 leftwater   653 region  2516
+dt  26-40  | M n 260 leftwater   639 region  2574 || L n 256 leftwater  1222 region  3229 || K1 n 218 leftwater  1056 region  2971 || S n 285 leftwater   534 region  2276 || B n 206 leftwater   852 region  2938

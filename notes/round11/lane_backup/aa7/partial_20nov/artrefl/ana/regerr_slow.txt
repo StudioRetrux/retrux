@@ -1,0 +1,13 @@
+frames 240, t 12 lv, r 3
+band  BASE  n 12168244 signed 1.35 abs 4.17 brighter>t 705279 darker>t 267614 | beyond GT&BASE: brighter 0 darker 0
+band  A7    n 12168244 signed -0.05 abs 3.44 brighter>t 335395 darker>t 357518 | beyond GT&BASE: brighter 51150 darker 107880
+band  A6    n 12168244 signed -0.30 abs 3.42 brighter>t 289543 darker>t 389247 | beyond GT&BASE: brighter 35020 darker 130791
+band  FIX1  n 12168244 signed 0.94 abs 3.91 brighter>t 612157 darker>t 265702 | beyond GT&BASE: brighter 24568 darker 13333
+lake  BASE  n 48707499 signed -0.02 abs 4.00 brighter>t 1059570 darker>t 1076931 | beyond GT&BASE: brighter 0 darker 0
+lake  A7    n 48707499 signed -0.29 abs 3.98 brighter>t 910977 darker>t 1207112 | beyond GT&BASE: brighter 2764 darker 30615
+lake  A6    n 48707499 signed -0.30 abs 3.98 brighter>t 907800 darker>t 1209720 | beyond GT&BASE: brighter 2745 darker 30679
+lake  FIX1  n 48707499 signed -0.05 abs 4.00 brighter>t 1054299 darker>t 1081892 | beyond GT&BASE: brighter 5899 darker 3446
+solid BASE  n 55545707 signed 0.05 abs 0.60 brighter>t 55429 darker>t 9296 | beyond GT&BASE: brighter 0 darker 0
+solid A7    n 55545707 signed 0.01 abs 0.59 brighter>t 37151 darker>t 14714 | beyond GT&BASE: brighter 80 darker 802
+solid A6    n 55545707 signed -0.01 abs 0.59 brighter>t 28664 darker>t 22205 | beyond GT&BASE: brighter 60 darker 4596
+solid FIX1  n 55545707 signed -0.01 abs 0.59 brighter>t 28620 darker>t 22120 | beyond GT&BASE: brighter 13 darker 4578

@@ -1,0 +1,47 @@
+diff -ruN -x node_modules -x dist -x .next -x *.tsbuildinfo /Users/muhamadrifaldi/Library/Caches/retrux-lanes/aa7/retrux-web/app/hero/engine/world/Water.ts /Users/muhamadrifaldi/Library/Caches/retrux-lanes/aa7g3/retrux-web/app/hero/engine/world/Water.ts
+--- /Users/muhamadrifaldi/Library/Caches/retrux-lanes/aa7/retrux-web/app/hero/engine/world/Water.ts	2026-11-20 19:20:26
++++ /Users/muhamadrifaldi/Library/Caches/retrux-lanes/aa7g3/retrux-web/app/hero/engine/world/Water.ts	2026-11-20 19:58:18
+@@ -686,6 +686,7 @@
+ float lkWalkD = 1.0;              // (lab) the first face's parallax fraction d / (t + d) (1: none)
+ float lkWalkE = 0.0;              // (lab) the final horizon elevation (rad)
+ vec4 lkDbgE = vec4(0.0);          // (lab) the horizon lookup: uv, a / 60000, luma
++vec4 lkDbgG = vec4(-1.0); vec4 lkDbgR0 = vec4(-1.0); vec4 lkDbgR1 = vec4(-1.0); // G3DBG
+ // The heightfield's surface height, bilinear (level 0).
+ float lkHgtAt(vec2 xz) {
+   vec2 g = vec2(xz.x - uLkHgtG.x, uLkHgtG.y - xz.y) * uLkHgtG.z;
+@@ -1006,6 +1007,7 @@
+ #ifdef LK_FFB_TOG
+           if (uLkFfbOn < 0.5) gFt = 0.0;
+ #endif
++          if (first) { lkDbgG = vec4(gFt, aFt, hFt, uvM.y * uEnvMirrorSize.y - uvFt.y * uEnvMirrorSize.y); lkDbgR1 = vec4(dot(cF, vec3(0.2126, 0.7152, 0.0722)), -1.0, uvM.y * uEnvMirrorSize.y, d); } // G3DBG
+           if (gFt > 0.0) {
+             float vR = clamp(uvM.y, 0.0005, 0.9995) * uEnvMirrorSize.y - 0.5;
+             float j0 = floor(vR);
+@@ -1025,6 +1027,7 @@
+             vec3 c0 = mix(r0.rgb, cN, k0);
+             vec3 c1 = mix(r1.rgb, cN, k1);
+             cF = mix(cF, mix(c0, c1, vR - j0), gFt);
++            if (first) { lkDbgR0 = vec4(dot(r0.rgb, lW), dot(r1.rgb, lW), r0.a, r1.a); lkDbgR1.y = dot(cF, lW); } // G3DBG
+           }
+         }
+ `;
+@@ -1585,6 +1588,9 @@
+ #endif
+     base = lkReflect4(muv, lkGx, lkGy, dist, V, lkN, lkSig, moffsW, lkW, lkS) * (uMirrorGain * LK_GAIN);
+   }
++  if (uLakeDebug > 13.5) { gl_FragColor = lkDbgR1; return; } // G3DBG
++  if (uLakeDebug > 12.5) { gl_FragColor = lkDbgR0; return; } // G3DBG
++  if (uLakeDebug > 11.5) { gl_FragColor = lkDbgG; return; } // G3DBG
+   if (uLakeDebug > 10.5) {
+     gl_FragColor = lkDbgE;
+     return;
+@@ -1711,6 +1717,9 @@
+ #else
+   vec3 base = lkReflect4(muv, dFdx(muv) * kDof, dFdy(muv) * kDof, dist, V, lkN, lkSig, moffsW, lkW, lkS) * (uMirrorGain * LK_GAIN);
+ #endif
++  if (uLakeDebug > 13.5) { gl_FragColor = lkDbgR1; return; } // G3DBG
++  if (uLakeDebug > 12.5) { gl_FragColor = lkDbgR0; return; } // G3DBG
++  if (uLakeDebug > 11.5) { gl_FragColor = lkDbgG; return; } // G3DBG
+   if (uLakeDebug > 10.5) {
+     gl_FragColor = lkDbgE;
+     return;

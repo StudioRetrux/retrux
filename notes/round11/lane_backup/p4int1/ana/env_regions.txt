@@ -1,0 +1,36 @@
+== env lane (judge l) vs aa7 MAIN (judge m): the env effect
+  ptr_right              right_far max   16 n>2   2089 | left_far max   55 n>2   9695 | ridge max   55 n>2   2880
+  ptr_top_right          right_far max   21 n>2   2501 | left_far max   60 n>2  19734 | ridge max   60 n>2   5969
+  ptr_bottom_right       right_far max   29 n>2   2599 | left_far max   60 n>2  19769 | ridge max   60 n>2   6019
+  ptr_left               right_far max   27 n>2   1169 | left_far max   15 n>2   2788 | ridge max   15 n>2   2788
+  ptr_top_left           right_far max   32 n>2   1264 | left_far max   31 n>2  17711 | ridge max   31 n>2  17711
+  ptr_bottom_left        right_far max   28 n>2   1677 | left_far max   27 n>2  18422 | ridge max   27 n>2  17609
+  ptr_rest               right_far max    7 n>2     67 | left_far max   41 n>2   1437 | ridge max   41 n>2   1308
+  late90_right           right_far max   26 n>2    536 | left_far max   46 n>2  13266 | ridge max   46 n>2   3653
+  late90_left            right_far max   27 n>2    383 | left_far max   25 n>2  13077 | ridge max   25 n>2  13077
+  late150_right          right_far max    1 n>2      0 | left_far max   45 n>2   6854 | ridge max   45 n>2   2943
+  late150_top_right      right_far max    1 n>2      0 | left_far max   46 n>2   9034 | ridge max   46 n>2   3050
+== int1 (all on) vs aa8 MAIN :5199: the env effect in int1
+  ptr_right              right_far max   74 n>2   5604 | left_far max   80 n>2  13858 | ridge max   55 n>2   2882
+  ptr_top_right          right_far max   74 n>2   4648 | left_far max   78 n>2  23574 | ridge max   60 n>2   5970
+  ptr_bottom_right       right_far max   69 n>2   5437 | left_far max   62 n>2  23539 | ridge max   60 n>2   6020
+  ptr_left               right_far max   67 n>2   3128 | left_far max   57 n>2   5836 | ridge max   15 n>2   2788
+  ptr_top_left           right_far max   68 n>2   2757 | left_far max   57 n>2  20681 | ridge max   31 n>2  17711
+  ptr_bottom_left        right_far max   76 n>2   4663 | left_far max   57 n>2  21320 | ridge max   27 n>2  17609
+  ptr_rest               right_far max   68 n>2   2224 | left_far max   70 n>2   4711 | ridge max   41 n>2   1308
+  late90_right           right_far max   56 n>2   2078 | left_far max   72 n>2  16658 | ridge max   46 n>2   3653
+  late90_left            right_far max   64 n>2   1779 | left_far max   61 n>2  16274 | ridge max   25 n>2  13077
+  late150_right          right_far max   61 n>2   2550 | left_far max   68 n>2  11561 | ridge max   45 n>2   2943
+  late150_top_right      right_far max   53 n>2   1500 | left_far max   71 n>2  12419 | ridge max   46 n>2   3050
+== int1 (all on) vs env lane: must be ~0 above the lake
+  ptr_right              right_far max   74 n>2   3518 | left_far max   80 n>2   4162 | ridge max    1 n>2      0
+  ptr_top_right          right_far max   74 n>2   2148 | left_far max   78 n>2   3815 | ridge max    1 n>2      0
+  ptr_bottom_right       right_far max   69 n>2   2842 | left_far max   62 n>2   3753 | ridge max    8 n>2     17
+  ptr_left               right_far max   67 n>2   1959 | left_far max   57 n>2   3048 | ridge max    2 n>2      0
+  ptr_top_left           right_far max   68 n>2   1493 | left_far max   57 n>2   2970 | ridge max    1 n>2      0
+  ptr_bottom_left        right_far max   76 n>2   2986 | left_far max   57 n>2   2900 | ridge max    4 n>2      6
+  ptr_rest               right_far max   68 n>2   2156 | left_far max   70 n>2   3273 | ridge max    2 n>2      1
+  late90_right           right_far max   56 n>2   1544 | left_far max   72 n>2   3391 | ridge max    1 n>2      0
+  late90_left            right_far max   64 n>2   1409 | left_far max   61 n>2   3197 | ridge max    1 n>2      0
+  late150_right          right_far max   61 n>2   2568 | left_far max   68 n>2   4709 | ridge max    1 n>2      0
+  late150_top_right      right_far max   53 n>2   1501 | left_far max   71 n>2   3380 | ridge max    1 n>2      0

@@ -1,0 +1,19 @@
+p05_expand.png bottom y686-766 MAIN: L 176.5 sd 11.5
+p05_expand.png bottom y686-766 INT1: L 174.3 sd 14.3
+p06_sustain.png bottom y686-766 MAIN: L 177.9 sd 11.4
+p06_sustain.png bottom y686-766 INT1: L 175.4 sd 14.1
+pop_L corner BL x0-160 y676-766        MAIN L  167.3 sd  23.0 min    98 | INT1 L  164.6 sd  22.9 min    97
+pop_L corner BR x1280-1440 y646-766    MAIN L  169.7 sd  18.1 min    98 | INT1 L  170.0 sd  18.0 min    99
+pop_R corner BL x0-160 y676-766        MAIN L  166.9 sd  22.9 min    98 | INT1 L  162.2 sd  23.3 min    96
+pop_R corner BR x1280-1440 y646-766    MAIN L  168.8 sd  18.0 min   101 | INT1 L  169.8 sd  17.3 min   101
+pop_T corner BL x0-160 y676-766        MAIN L  168.2 sd  22.7 min    98 | INT1 L  164.8 sd  22.6 min    96
+pop_T corner BR x1280-1440 y646-766    MAIN L  170.0 sd  17.5 min   102 | INT1 L  170.5 sd  16.9 min    99
+pop_B corner BL x0-160 y676-766        MAIN L  167.3 sd  23.0 min    98 | INT1 L  163.5 sd  23.3 min    96
+pop_B corner BR x1280-1440 y646-766    MAIN L  169.6 sd  17.9 min    98 | INT1 L  170.1 sd  18.0 min    99
+pop_BL corner BL x0-160 y676-766       MAIN L  168.5 sd  22.7 min    98 | INT1 L  164.5 sd  23.1 min    98
+pop_BL corner BR x1280-1440 y646-766   MAIN L  169.3 sd  18.8 min    99 | INT1 L  170.1 sd  18.2 min    98
+pop_TR corner BL x0-160 y676-766       MAIN L  168.0 sd  22.5 min    98 | INT1 L  163.4 sd  23.0 min    96
+pop_TR corner BR x1280-1440 y646-766   MAIN L  169.7 sd  17.4 min   102 | INT1 L  170.6 sd  16.9 min   101
+hold_BL far peak x960-1160 y420-500    MAIN L  185.8 sd  39.9 min    87 | INT1 L  183.9 sd  33.7 min    90
+hold_TR far peak x1000-1200 y420-500   MAIN L  182.6 sd  36.9 min    90 | INT1 L  201.4 sd  28.4 min    82
+p06 smudge x1290-1440 y700-766         MAIN L  172.4 sd  12.4 min   115 | INT1 L  173.4 sd  11.7 min   125

@@ -1,0 +1,5 @@
+[slot] verify_int1:ident: taken (load 7.2)
+04:12:31
+04:16:14
+IDENT DONE
+[slot] verify_int1:ident: freed (exit 0)

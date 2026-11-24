@@ -1,0 +1,6 @@
+[slot] fixer-g10 webkit+firefox: taken (load 11.8)
+webkit 12s
+webkit s07 21s
+firefox 34s
+firefox s07 45s
+[slot] fixer-g10 webkit+firefox: freed (exit 0)

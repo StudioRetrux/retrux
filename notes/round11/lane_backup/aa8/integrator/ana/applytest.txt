@@ -1,0 +1,30 @@
+== aa8_vs_aa7.patch on a fresh clone of aa7 (/Users/muhamadrifaldi/Library/Caches/retrux-lanes/aa8i_apply7)
+   clone 7s
+   dry-run rc 0
+   apply rc 0
+   | patching file 'retrux-web/app/hero/engine/HeroEngine.ts'
+   | patching file 'retrux-web/app/hero/engine/shaders/chunks.ts'
+   | patching file 'retrux-web/app/hero/engine/world/EnvEdge.ts'
+   | patching file 'retrux-web/app/hero/engine/world/LakeMirror.ts'
+   | patching file 'retrux-web/app/hero/engine/world/PlateEnvironment.ts'
+   | patching file 'retrux-web/app/hero/engine/world/Water.ts'
+   .orig / .rej in the clone: 0
+   applied app/ == lane aa8 app/ (diff -rq: IDENTICAL)
+   clone tsc: hero rc 0 (0 lines), project rc 0 (0 lines)
+   clone tsbuildinfo before/after: 1795163951 215617 / 1795163951 215617
+== aa8.patch on a fresh clone of aa3_base (/Users/muhamadrifaldi/Library/Caches/retrux-lanes/aa8i_applyB)
+   clone 6s
+   dry-run rc 0
+   apply rc 0
+   | patching file 'retrux-web/app/hero/engine/HeroEngine.ts'
+   | patching file 'retrux-web/app/hero/engine/shaders/chunks.ts'
+   | patching file 'retrux-web/app/hero/engine/world/EnvEdge.ts'
+   | patching file 'retrux-web/app/hero/engine/world/LakeMirror.ts'
+   | patching file 'retrux-web/app/hero/engine/world/PlateEnvironment.ts'
+   | patching file 'retrux-web/app/hero/engine/world/Water.ts'
+   .orig / .rej in the clone: 0
+   applied app/ == lane aa8 app/ (diff -rq: IDENTICAL)
+stat: /Users/muhamadrifaldi/Library/Caches/retrux-lanes/aa8i_applyB/retrux-web/tsconfig.tsbuildinfo: stat: No such file or directory
+   clone tsc: hero rc 0 (0 lines), project rc 0 (0 lines)
+stat: /Users/muhamadrifaldi/Library/Caches/retrux-lanes/aa8i_applyB/retrux-web/tsconfig.tsbuildinfo: stat: No such file or directory
+   clone tsbuildinfo before/after:  / 

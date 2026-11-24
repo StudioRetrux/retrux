@@ -1,0 +1,22 @@
+A=pre B=fin box 0,380,1440,766 k100-119 T0
+k100 A>B+0: 0  A<B-0: 0  max 0.0
+k101 A>B+0: 0  A<B-0: 0  max 0.0
+k102 A>B+0: 0  A<B-0: 0  max 0.0
+k103 A>B+0: 0  A<B-0: 0  max 0.0
+k104 A>B+0: 0  A<B-0: 0  max 0.0
+k105 A>B+0: 0  A<B-0: 0  max 0.0
+k106 A>B+0: 0  A<B-0: 0  max 0.0
+k107 A>B+0: 0  A<B-0: 0  max 0.0
+k108 A>B+0: 0  A<B-0: 0  max 0.0
+k109 A>B+0: 0  A<B-0: 0  max 0.0
+k110 A>B+0: 0  A<B-0: 0  max 0.0
+k111 A>B+0: 0  A<B-0: 0  max 0.0
+k112 A>B+0: 0  A<B-0: 0  max 0.0
+k113 A>B+0: 0  A<B-0: 0  max 0.0
+k114 A>B+0: 0  A<B-0: 0  max 0.0
+k115 A>B+0: 0  A<B-0: 0  max 0.0
+k116 A>B+0: 0  A<B-0: 0  max 0.0
+k117 A>B+0: 0  A<B-0: 0  max 0.0
+k118 A>B+0: 0  A<B-0: 0  max 0.0
+k119 A>B+0: 0  A<B-0: 0  max 0.0
+total A>B 0  A<B 0

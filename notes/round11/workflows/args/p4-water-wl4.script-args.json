@@ -1,0 +1,41 @@
+{
+ "note": "Workflow args for p4-water-wl3.js used for round 4 (pass .args verbatim on resume)",
+ "args": {
+  "argsFile": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/args/p4wl4-water.args.json",
+  "prevArgs": [
+   "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/args/p4wl-water.args.json",
+   "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/args/p4wl2-water.args.json",
+   "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/args/p4wl3-water.args.json"
+  ],
+  "brief": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/briefs/p4r4_common.md",
+  "brief2": "/Users/muhamadrifaldi/Documents/GitHub/retrux-hero-rnd/notes/round11/workflows/briefs/p4pri2_common.md",
+  "round": "p4wl4",
+  "roundNo": 4,
+  "base": {
+   "lane": "wl3a",
+   "port": 5169
+  },
+  "lanes": [
+   {
+    "key": "wl4c",
+    "port": 5181,
+    "kind": "c2"
+   },
+   {
+    "key": "wl4l",
+    "port": 5182,
+    "kind": "c3"
+   }
+  ],
+  "integ": {
+   "key": "wl4",
+   "port": 5183
+  },
+  "buildMin": 100,
+  "judgeMin": 45,
+  "integMin": 60,
+  "finalJudgeMin": 45,
+  "fixMin": 60,
+  "rejudgeMin": 40
+ }
+}

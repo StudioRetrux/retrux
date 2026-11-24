@@ -1,0 +1,4 @@
+all-off T1 vs :5199                            IDENTICAL final SAME | targets 14 (mirror,walk,cache,cacheN,reflection,main,refraction,back,bloom0,bloom1,bloom2,bloom3,bloom4,final) differ: - | programs 16 differ: - | logs 0/0
+all-off T2 vs :5199                            IDENTICAL final SAME | targets 15 (mirror,walk,cache,cacheN,reflection,main,refraction,back,bloom0,bloom1,bloom2,bloom3,bloom4,bloom5,final) differ: - | programs 16 differ: - | logs 0/0
+all-off T0 vs :5199                            IDENTICAL final SAME | targets 9 (reflection,main,refraction,bloom0,bloom1,bloom2,bloom3,ldr,final) differ: - | programs 12 differ: - | logs 0/0
+all-off plate vs :5199                         IDENTICAL final SAME | targets 10 (reflection,main,refraction,back,bloom0,bloom1,bloom2,bloom3,bloom4,final) differ: - | programs 12 differ: - | logs 0/0

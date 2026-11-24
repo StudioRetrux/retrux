@@ -1,0 +1,7 @@
+[
+ {"name":"v0","js":""},
+ {"name":"k1","js":"__hero.orb.material.uniforms.uP4HitC.value.set(1,1.68,0,0)"},
+ {"name":"k1z5","js":"__hero.orb.material.uniforms.uP4HitC.value.set(1,1.68,0,0);__hero.orb.material.uniforms.uP4Hit.value.z=5"},
+ {"name":"k1z3","js":"__hero.orb.material.uniforms.uP4HitC.value.set(1,1.68,0,0);__hero.orb.material.uniforms.uP4Hit.value.z=3"},
+ {"name":"k05z6","js":"__hero.orb.material.uniforms.uP4HitC.value.set(0.5,1.68,0,0);__hero.orb.material.uniforms.uP4Hit.value.z=6"}
+]

@@ -1,0 +1,66 @@
+{
+ "lane": "p4atmos",
+ "lab": ":5178",
+ "judge": "judge_p4atmos",
+ "date": "2026-11-21",
+ "scores": [
+  {
+   "lens": "environment",
+   "main": 7.8,
+   "lane": 8.1
+  },
+  {
+   "lens": "color_grade_post",
+   "main": 8.3,
+   "lane": 8.5
+  },
+  {
+   "lens": "awwwards_jury",
+   "main": 7.6,
+   "lane": 7.9
+  },
+  {
+   "lens": "glitch_hold_sweep",
+   "main": 8.0,
+   "lane": 8.1
+  }
+ ],
+ "score_note": "Panel scale. MAIN is scored on the panel's r11_1 captures and the lane on qc_final plus my deterministic captures (same sim time as :5173). Part of each delta comes from int1's other lanes (r11_2): ice, orb, hold framing, env slits.",
+ "findings": [
+  {
+   "id": "F1",
+   "severity": "major",
+   "title": "Hold fog bank body shifted down: the massif foot F420 hides is more exposed than in MAIN (Q14)",
+   "evidence": "x120-320, F420 aligned +5 px (row-gradient correlation). Bank body rows 500-520: LANE 137-155 vs F420 157-168 vs MAIN 151-164 in all 4 sampled hold frames (harness qc_final p06; deterministic t=40 expand 2.97 and 2.50; t=25 expand 2.97). Mean |d| vs F420 over rows 440-600: harness 6.0 -> 8.9, t=25 6.5 -> 9.2 (worse); t=40 9.1 -> 8.8, expand 2.50 8.2 -> 7.9 (slightly better). Gains: the face above the bank is darker like F420 (rows 460-480 122-142 vs F420 121-140, MAIN 132-152) and the bank has puffs (sd 8-11 -> 13-19, F420 15-24). Panel environment item 5 asked for a bank that hides the massif foot; the lane hides less of it. Images: an/p06_bank_det.png (F420 | MAIN t40 | LANE t40 | MAIN t25 | LANE t25), an/leftbank_p06_sustain.png, an/bank_p06_boost.png. The builder saw it (LOG 06:36) and reverted a +0.8 m fix.",
+   "repro": "node tools/cap.mjs 5178 caps/lane_hold tools/plan_hold.json and the same on 5173 into caps/main_hold (judge WORK); BPY python -I tools/holda.py and tools/align.py. Or compare qc_final/p06_sustain.png rows 480-540 x120-320 with ref_F420.png rows 485-545.",
+   "suggested_fix": "Keep the two-scale puffs and the lumpy top, but cut the top drop (hgt edge top-5.0 / top-1.3 back toward about top-4.0 / top+0.2) or add density below ~4 m, so that rows 500-540 reach F420's 157-168 at t 25 and 40 and in the harness p06 (fit the time average). Give the release split its own sub-switch, so ?fogbank=r11 is not the only way back."
+  },
+  {
+   "id": "F2",
+   "severity": "minor",
+   "title": "Waterline mist overshoots in the Loop F030 phase (berg base washed out)",
+   "evidence": "berg_base x950-1150 y420-455 luma at t 7.2 (Loop F030 phase): REF 124, MAIN 138, LANE 155 (error +14 -> +31). an/berg_L030_L045_ref_main_lane.png, top row: the lane's lower berg is evenly milky where loop_F030 keeps a mid-blue band. The other matched times improve: F000 124 -> 144 (REF 148), S297 95 -> 115 (117), L045 131 -> 151 (143). Mean |dL| over the 4 times 18 -> 11. The builder documented it (open item 1).",
+   "repro": "BPY python -I tools/lapm.py (caps/{main,lane}_rest/rc_07.20.png vs loop_F030.png).",
+   "suggested_fix": "Give the layer a phase that drifts in x (the reference's mist moves to the berg's right part at L030), or lower uP4Wl.z in the envelope's thick phase."
+  },
+  {
+   "id": "F3",
+   "severity": "minor",
+   "title": "Q5 (2) not delivered: the iceberg's sunlit top is still +11..+15 over F000 / L045",
+   "evidence": "berg_top x1000-1180 y335-365 at t 3.6: REF 145,161,187, MAIN 156,175,197, LANE 156,175,197; at L045: 144,160,189 vs 157,175,197 (both). S297 matches. The builder's gain had no effect because the top lies outside the berg mask's depth band, so it was removed.",
+   "repro": "BPY python -I tools/top.py.",
+   "suggested_fix": "A world-region gain on the berg top (y > ~3 m inside bergRegion), or fix the berg grade's depth gate; plan target -7 %."
+  },
+  {
+   "id": "F4",
+   "severity": "nit",
+   "title": "HANDOFF / p4atmos.ts say the bank billows act on T0 in the hold, but T0 never raises uFogHold",
+   "evidence": "T0 phone p06 (choreo fogHold 1.0): shared uHold = uFogHold = 0. Lane on vs :5173: final + 9 targets SAME; only the rx-plate-baked / rx-water program text differs (dead code). ?fogbank=r11 on T0 is IDENTICAL (ident/m_T0p06, on_T0p06, fb_T0p06.json).",
+   "repro": "zsh tools/idT0hold.sh, then node tools/identcmp.mjs.",
+   "suggested_fix": "Correct the note. Optionally keep MAIN's chunk text on T0, so the T0 programs are byte-identical as well."
+  }
+ ],
+ "ident": "My run. ?p4atmos=0 vs :5173 is IDENTICAL (final image, every target and every linked program, 20 moving frames): T1 rest 14 targets / 16 programs, T2 15/16, T0 phone 9/12, envlake=plate 10/12, and p04 (fogHold 0.765), p06 (fogHold 1.0) and p08 (release, uHold 0.048 / uFogHold 0.967) at 14/18 each. With all 4 sub-switches off it is IDENTICAL at T1 rest and p06. Negative control: with the lane on, T1 rest and p06 differ.",
+ "perf": "REST (judge run, T1 real RAF loop, vsync off, interleaved A=:5173 / B=:5178, 6 pairs, SLOT_BG=0): paired median B/A of run medians 0.952, of run means 0.970; pairs at load < 10: 6 (0.952 / 0.970). The run overlapped another judge's perf run (judge_p4ice3:perf) and judge_p4env3:ab2. Frame times were bimodal (23-54 ms) and the pair ratios ran from 0.59 to 1.64, so this is weak evidence. It still shows no regression above 5 %, consistent with the builder's rest 0.993 and hold 1.020 (paired) and with the code's cost (the waterline mist touches ~1.7 % of the frame at rest; no pass or target was added). The builder's perf files were re-read and their paired medians reproduce.",
+ "not_regressions": "Checked and not worse: the rest frames at matched times (berg, left bases, massif, far bergs unchanged), consecutive-frame pulsing (rest and hold sustain, per-pixel |dI| lane <= MAIN), the release (monotonic, no pop), 5 pointer orbits, the 34-frame sweep, T0 pixels, and the 0 console messages."
+}

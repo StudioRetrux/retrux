@@ -1,0 +1,12 @@
+pair 0  A 21.0  B 21.4  B/A 1.019  invalid  loads A 5.1/4.9 B 4/4.1 others ['judge_wl3a:hold']
+pair 1  A 19.7  B 21.4  B/A 1.086  VALID  loads A 3.6/3.5 B 3.9/3.8 others []
+pair 2  A 19.8  B 21.2  B/A 1.071  VALID  loads A 3.6/3.4 B 3.5/3.8 others []
+pair 3  A 19.6  B 20.5  B/A 1.046  VALID  loads A 3.7/3.4 B 3.8/4 others []
+pair 4  A 19.6  B 21.3  B/A 1.087  VALID  loads A 3.2/2.9 B 2.8/2.7 others []
+pair 5  A 19.8  B 21.1  B/A 1.066  VALID  loads A 2.7/2.8 B 2.6/2.7 others []
+pair 6  A 20.0  B 21.1  B/A 1.055  VALID  loads A 2.7/3.2 B 3.2/3.1 others []
+pair 7  A 19.5  B 21.1  B/A 1.082  VALID  loads A 2.8/2.8 B 2.9/2.9 others []
+pair 8  A 19.2  B 21.3  B/A 1.109  VALID  loads A 2.7/2.6 B 2.5/2.7 others []
+n 9  paired median B/A 1.071  (min 1.019 max 1.109)  median A 19.7  median B 21.2
+modes (split 20.8 ms): A low [19.69999999999891, 19.80000000000109, 19.600000000000364, 19.600000000000364, 19.80000000000109, 20, 19.5, 19.19999999999891] high [21] | B low [20.5] high [21.399999999999636, 21.399999999999636, 21.19999999999891, 21.299999999999272, 21.100000000000364, 21.100000000000364, 21.100000000000364, 21.299999999999272]
+valid pairs 8  paired median 1.076

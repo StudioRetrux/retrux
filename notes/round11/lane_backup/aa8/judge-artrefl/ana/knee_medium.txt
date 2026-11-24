@@ -1,0 +1,7 @@
+-- jgt2 medium
+A8 {"frames":240,"outsideBase3x3":6810,"darker":6808,"laneCloserToGT":2140,"meanErrLane":12.13,"meanErrBase":8.65,"thinDarkPx":8950864,"thinDark_meanSignedLaneMinusGT":-0.07,"thinDark_meanSignedBaseMinusGT":0.12,"thinDark_meanAbsLane":1.43,"thinDark_meanAbsBase":1.46,"thinDarkOutside":5118,"thinDarkOutsideDarker":5118}
+A7 {"frames":240,"outsideBase3x3":3943,"darker":3940,"laneCloserToGT":1590,"meanErrLane":10.87,"meanErrBase":9.46,"thinDarkPx":8950864,"thinDark_meanSignedLaneMinusGT":-0.01,"thinDark_meanSignedBaseMinusGT":0.12,"thinDark_meanAbsLane":1.43,"thinDark_meanAbsBase":1.46,"thinDarkOutside":3100,"thinDarkOutsideDarker":3100}
+-- kerr medium
+{"lane":"BASE","frames":240,"thinDark":{"n":8950864,"meanAbs":1.4624,"meanSigned":0.1187,"overBright12":0},"wlLines":{"n":4054207,"meanAbs":6.2227,"meanSigned":3.5769,"overBright12":0},"jgt2OutsideBase3x3":0,"jgt2Darker":0}
+{"lane":"A7","frames":240,"thinDark":{"n":8950864,"meanAbs":1.4334,"meanSigned":-0.0146,"overBright12":0},"wlLines":{"n":4054207,"meanAbs":4.3565,"meanSigned":1.2494,"overBright12":39482},"jgt2OutsideBase3x3":3943,"jgt2Darker":3940}
+{"lane":"A8","frames":240,"thinDark":{"n":8950864,"meanAbs":1.4311,"meanSigned":-0.0659,"overBright12":0},"wlLines":{"n":4054207,"meanAbs":4.2362,"meanSigned":0.8908,"overBright12":30607},"jgt2OutsideBase3x3":6810,"jgt2Darker":6808}

@@ -1,0 +1,16 @@
+rest_A8 vs rest_A7: frames 40 (40/40), frames differing 40, px > 8: 247, max 13, first 0, pose mismatches 0, W 1440/1440 rows 380-766/380-766
+-- v3err A8 vs A7 thr 8
+frames 40 thr 8: lake+band px-frames 9914400; |X-R|>thr 45; toward GT 45, AWAY from GT 0
+-- dark (away from GT): px 0, events >= 6 px: 0
+-- bright (away from GT): px 0, events >= 6 px: 0
+-- v3err A8 vs A7 thr 16
+frames 40 thr 16: lake+band px-frames 9914400; |X-R|>thr 0; toward GT 0, AWAY from GT 0
+-- dark (away from GT): px 0, events >= 6 px: 0
+-- bright (away from GT): px 0, events >= 6 px: 0
+-- jgt2 rest
+A8 {"frames":40,"outsideBase3x3":1289,"darker":1289,"laneCloserToGT":570,"meanErrLane":12.48,"meanErrBase":10.5,"thinDarkPx":1771326,"thinDark_meanSignedLaneMinusGT":-0.07,"thinDark_meanSignedBaseMinusGT":0.11,"thinDark_meanAbsLane":1.41,"thinDark_meanAbsBase":1.44,"thinDarkOutside":901,"thinDarkOutsideDarker":901}
+A7 {"frames":40,"outsideBase3x3":780,"darker":780,"laneCloserToGT":339,"meanErrLane":12.63,"meanErrBase":11.41,"thinDarkPx":1771326,"thinDark_meanSignedLaneMinusGT":-0.02,"thinDark_meanSignedBaseMinusGT":0.11,"thinDark_meanAbsLane":1.41,"thinDark_meanAbsBase":1.44,"thinDarkOutside":532,"thinDarkOutsideDarker":532}
+-- kerr rest
+{"lane":"BASE","frames":40,"thinDark":{"n":1771326,"meanAbs":1.4448,"meanSigned":0.1069,"overBright12":0},"wlLines":{"n":712894,"meanAbs":6.0426,"meanSigned":3.1277,"overBright12":0},"jgt2OutsideBase3x3":0,"jgt2Darker":0}
+{"lane":"A7","frames":40,"thinDark":{"n":1771326,"meanAbs":1.4138,"meanSigned":-0.0235,"overBright12":0},"wlLines":{"n":712894,"meanAbs":4.3189,"meanSigned":0.3113,"overBright12":2},"jgt2OutsideBase3x3":780,"jgt2Darker":780}
+{"lane":"A8","frames":40,"thinDark":{"n":1771326,"meanAbs":1.4106,"meanSigned":-0.0735,"overBright12":0},"wlLines":{"n":712894,"meanAbs":4.2891,"meanSigned":0.1203,"overBright12":2},"jgt2OutsideBase3x3":1289,"jgt2Darker":1289}
